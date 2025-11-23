@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 SiempreGana - Registro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --gold: #FFD700;
+            --purple: #3a0ca3;
+            --dark: #0a0a0a;
+            --text: #ddd;
+            --success: #4CAF50;
+            --danger: #f44336;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+            background: linear-gradient(135deg, var(--dark), #1a1a1a);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .registro-container {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.2);
+        }
+        
+        .logo {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: var(--gold);
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            margin-top: 20px;
+        }
+        
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 6px;
+            margin: 0 5px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .step.active {
+            background: var(--gold);
+            color: #000;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 14px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            background: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+        
+        .step-content {
+            display: none;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, var(--gold), #FFA500);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--gold);
+            flex: 1;
+        }
+        
+        .error {
+            background: rgba(244, 67, 54, 0.1);
+            color: var(--danger);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            border-left: 4px solid var(--danger);
+        }
+        
+        .success {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--success);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            border-left: 4px solid var(--success);
+        }
+    </style>
+</head>
+<body>
+    <div class="registro-container">
+        <div class="logo">🎰</div>
+        <h1>Regístrate en SiempreGana</h1>
+        
+        <div class="progress">
+            <div class="step active" onclick="goToStep(1)">1️⃣ Correo</div>
+            <div class="step" onclick="goToStep(2)">2️⃣ Datos</div>
+            <div class="step" onclick="goToStep(3)">3️⃣ Términos</div>
+        </div>
+        
+        <div id="errorMsg" class="error"></div>
+        <div id="successMsg" class="success"></div>
+        
+        <form id="registroForm">
+            <!-- STEP 1: EMAIL Y PASSWORD -->
+            <div class="step-content active" id="step1">
+                <div class="form-group">
+                    <label for="correo">📧 Correo Electrónico</label>
+                    <input type="email" id="correo" required placeholder="tu@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">🔐 Contraseña</label>
+                    <input type="password" id="password" required placeholder="Min. 8 caracteres">
+                </div>
+                
+                <div class="form-group">
+                    <label for="passwordConfirm">🔐 Confirma Contraseña</label>
+                    <input type="password" id="passwordConfirm" required placeholder="Repite tu contraseña">
+                </div>
+                
+                <button type="button" class="btn" onclick="goToStep(2)">Siguiente →</button>
+            </div>
+            
+            <!-- STEP 2: DATOS PERSONALES -->
+            <div class="step-content" id="step2">
+                <div class="form-group">
+                    <label for="nombre">👤 Nombre Completo</label>
+                    <input type="text" id="nombre" required placeholder="Juan Pérez">
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefono">📱 Teléfono</label>
+                    <input type="tel" id="telefono" required placeholder="+57 300 1234567">
+                </div>
+                
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="goToStep(1)">← Anterior</button>
+                    <button type="button" class="btn" onclick="goToStep(3)">Siguiente →</button>
+                </div>
+            </div>
+            
+            <!-- STEP 3: TÉRMINOS -->
+            <div class="step-content" id="step3">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terminos" required>
+                    <label for="terminos" style="margin: 0;">
+                        Acepto los <a href="#" style="color: var(--gold);">términos y condiciones</a>
+                    </label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="privacidad" required>
+                    <label for="privacidad" style="margin: 0;">
+                        Acepto la <a href="#" style="color: var(--gold);">política de privacidad</a>
+                    </label>
+                </div>
+                
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="goToStep(2)">← Anterior</button>
+                    <button type="submit" class="btn">✅ Registrarme</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const API_AUTH = 'https://auth-service-v5sb.onrender.com';
+        
+        function goToStep(step) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.step').forEach((el, idx) => {
+                el.classList.toggle('active', idx + 1 <= step);
+            });
+            document.getElementById('step' + step).classList.add('active');
+        }
+        
+        document.getElementById('registroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const correo = document.getElementById('correo').value;
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('passwordConfirm').value;
+            const nombre = document.getElementById('nombre').value;
+            const telefono = document.getElementById('telefono').value;
+            
+            if (password !== passwordConfirm) {
+                document.getElementById('errorMsg').textContent = '❌ Las contraseñas no coinciden';
+                document.getElementById('errorMsg').style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_AUTH}/api/auth/registro`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, correo, telefono, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('usuario', JSON.stringify(data.usuario));
+                    document.getElementById('successMsg').textContent = '✅ Registro exitoso. Redirigiendo...';
+                    document.getElementById('successMsg').style.display = 'block';
+                    setTimeout(() => location.href = 'dashboard.html', 1500);
+                } else {
+                    document.getElementById('errorMsg').textContent = '❌ ' + (data.message || 'Error en registro');
+                    document.getElementById('errorMsg').style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('errorMsg').textContent = '❌ Error de conexión. Intenta más tarde.';
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
