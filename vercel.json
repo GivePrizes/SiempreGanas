@@ -1,6 +1,6 @@
 {
   "buildCommand": "echo 'Static build'",
-  "outputDirectory": ".",
+  "outputDirectory": "frontend",
   "installCommand": "echo 'No install needed'",
   "env": {
     "AUTH_SERVICE": "https://auth-service-v5sb.onrender.com",
