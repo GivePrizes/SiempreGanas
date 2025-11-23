@@ -2,28 +2,6 @@
   "buildCommand": "echo 'Static build'",
   "outputDirectory": ".",
   "installCommand": "echo 'No install needed'",
-  "rewrites": [
-    {
-      "source": "/login",
-      "destination": "/login.html"
-    },
-    {
-      "source": "/registro",
-      "destination": "/registro.html"
-    },
-    {
-      "source": "/dashboard",
-      "destination": "/dashboard.html"
-    },
-    {
-      "source": "/admin",
-      "destination": "/admin.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/$1"
-    }
-  ],
   "env": {
     "AUTH_SERVICE": "https://auth-service-v5sb.onrender.com",
     "APP_SERVICE": "https://app-service-kupj.onrender.com"
