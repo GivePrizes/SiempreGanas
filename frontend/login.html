@@ -1,211 +1,41 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎰 SiempreGana - Login</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        :root {
-            --gold: #FFD700;
-            --purple: #3a0ca3;
-            --dark: #0a0a0a;
-            --text: #ddd;
-            --success: #4CAF50;
-            --danger: #f44336;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
-            background: linear-gradient(135deg, var(--dark), #1a1a1a);
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .login-container {
-            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
-            border: 2px solid var(--gold);
-            border-radius: 16px;
-            padding: 40px;
-            max-width: 400px;
-            width: 100%;
-            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.2);
-        }
-        
-        .logo {
-            text-align: center;
-            font-size: 36px;
-            margin-bottom: 30px;
-            color: var(--gold);
-            font-weight: bold;
-        }
-        
-        h1 {
-            text-align: center;
-            color: var(--gold);
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #ccc;
-            font-weight: 500;
-        }
-        
-        input {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--gold);
-            border-radius: 8px;
-            color: var(--text);
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        input:focus {
-            outline: none;
-            background: rgba(255, 215, 0, 0.1);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(90deg, var(--gold), #FFA500);
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.3s;
-        }
-        
-        .btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-        }
-        
-        .links {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            font-size: 13px;
-        }
-        
-        a {
-            color: var(--gold);
-            text-decoration: none;
-        }
-        
-        a:hover {
-            text-decoration: underline;
-        }
-        
-        .signup-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #999;
-        }
-        
-        .error {
-            background: rgba(244, 67, 54, 0.1);
-            color: var(--danger);
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            display: none;
-            border-left: 4px solid var(--danger);
-        }
-        
-        .success {
-            background: rgba(76, 175, 80, 0.1);
-            color: var(--success);
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            display: none;
-            border-left: 4px solid var(--success);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎰 SIEMPRE GANA - Sorteos Premium</title>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <div class="login-container">
-        <div class="logo">🎰</div>
-        <h1>Inicia Sesión</h1>
-        
-        <div id="errorMsg" class="error"></div>
-        <div id="successMsg" class="success"></div>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="correo">📧 Correo Electrónico</label>
-                <input type="email" id="correo" name="correo" required placeholder="tu@email.com">
-            </div>
-            
-            <div class="form-group">
-                <label for="password">🔐 Contraseña</label>
-                <input type="password" id="password" name="password" required placeholder="••••••••">
-            </div>
-            
-            <button type="submit" class="btn">✅ Inicia Sesión</button>
-            
-            <div class="links">
-                <a href="#">¿Olvidaste tu contraseña?</a>
-                <a href="index.html">← Volver</a>
-            </div>
-        </form>
-        
-        <div class="signup-link">
-            ¿No tienes cuenta? <a href="registro.html"><strong>Regístrate aquí</strong></a>
-        </div>
+  <div class="hero">
+    <h1>🎰 SIEMPRE GANA</h1>
+    <p>¡Participa y gana premios increíbles! Comisión solo 15%</p>
+    <div class="cta">
+      <button class="btn-gold" onclick="showLogin()">ENTRAR</button>
+      <button class="btn-red" onclick="showRegistro()">REGISTRARME</button>
     </div>
+  </div>
 
-    <script>
-        const API_AUTH = 'https://auth-service-v5sb.onrender.com';
-        
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const correo = document.getElementById('correo').value;
-            const password = document.getElementById('password').value;
-            
-            try {
-                const response = await fetch(`${API_AUTH}/api/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ correo, password })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('usuario', JSON.stringify(data.usuario));
-                    document.getElementById('successMsg').textContent = '✅ Login exitoso. Redirigiendo...';
-                    document.getElementById('successMsg').style.display = 'block';
-                    setTimeout(() => location.href = 'dashboard.html', 1500);
-                } else {
-                    document.getElementById('errorMsg').textContent = '❌ ' + (data.message || 'Error en login');
-                    document.getElementById('errorMsg').style.display = 'block';
-                }
-            } catch (error) {
-                document.getElementById('errorMsg').textContent = '❌ Error de conexión. Intenta más tarde.';
-                document.getElementById('errorMsg').style.display = 'block';
-            }
-        });
-    </script>
+  <div id="loginForm" class="form hidden">
+    <h2>Iniciar Sesión</h2>
+    <input type="email" id="loginEmail" placeholder="📧 Email">
+    <input type="password" id="loginPass" placeholder="🔒 Contraseña">
+    <button class="btn-gold" onclick="login()">ENTRAR</button>
+    <p class="link" onclick="showRegistro()">¿No tienes cuenta? Regístrate</p>
+  </div>
+
+  <div id="registroForm" class="form hidden">
+    <h2>Registrarse</h2>
+    <input type="text" id="nombre" placeholder="👤 Nombre completo">
+    <input type="email" id="regEmail" placeholder="📧 Email">
+    <input type="tel" id="telefono" placeholder="📱 Teléfono">
+    <input type="password" id="regPass" placeholder="🔒 Contraseña">
+    <input type="password" id="regPassConfirm" placeholder="🔒 Confirmar contraseña">
+    <button class="btn-gold" onclick="registro()">REGISTRARME</button>
+    <p class="link" onclick="showLogin()">¿Ya tienes cuenta? Entra</p>
+  </div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/auth.js"></script>
 </body>
 </html>
