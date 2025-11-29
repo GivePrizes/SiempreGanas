@@ -16,6 +16,6 @@
     "helmet": "^7.0.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "supabase": "^1.136.2"
+    "@supabase/supabase-js": "^2.45.4"
   }
 }
