@@ -1,0 +1,14 @@
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const dotenv = require('dotenv');
+dotenv.config();
+const app = express();
+app.use(express.json());
+app.use(cors({ origin: process.env.CORS_ALLOWED_ORIGINS.split(',') }));
+app.use(helmet());
+app.use(morgan('dev'));
+const authRoutes = require('./src/routes/authRoutes');
+app.use('/api/auth', authRoutes);
+app.listen(8081, () => console.log('Auth Service on 8081'));
