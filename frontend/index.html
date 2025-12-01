@@ -9,7 +9,7 @@
   <script>
     if (localStorage.getItem('token')) {
       const user = JSON.parse(localStorage.getItem('user'));
-      location.href = user.rol === 'admin' ? 'admin/admin-panel.html' : 'participante/dashboard.html';
+      location.href = user.rol === 'admin' ? 'admin/panel.html' : 'participante/dashboard.html';
     } else {
       location.href = 'login.html';
     }

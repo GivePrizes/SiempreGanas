@@ -1,25 +1,38 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Siempre Gana</title>
-  <link rel="stylesheet" href="../assets/css/style.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siempre Gana — Dashboard</title>
+  <link rel="stylesheet" href="../assets/css/style.css"/>
+  <link rel="stylesheet" href="../assets/css/premium.css"/>
 </head>
-<body>
-  <nav>
-    <button onclick="location.href='mis-numeros.html'">Mis Números</button>
-    <button onclick="logout()">Salir</button>
+<body class="sg-body">
+  <nav class="sg-header">
+    <div class="sg-brand">
+      <span class="sg-logo">SG</span>
+      <h1>Siempre Gana</h1>
+    </div>
+    <div class="sg-actions">
+      <button onclick="location.href='mis-numeros.html'" class="btn-gold">Mis Números</button>
+      <button onclick="logout()" class="btn-red">Salir</button>
+    </div>
   </nav>
 
-  <div class="container">
-    <h1>Sorteos Activos</h1>
-    <div id="sorteos"></div>
-  </div>
+  <main class="sg-main">
+    <h2 class="sg-hero-title">Sorteos Activos</h2>
+    <p class="sg-hero-sub">Elige tus números antes que se agoten</p>
+
+    <!-- Contenedor de sorteos -->
+    <div id="sorteos" class="sorteos-grid"></div>
+  </main>
+
+  <!-- Toast para notificaciones -->
+  <div id="toast" class="toast hidden">¡Participación enviada!</div>
 
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
-  <script src="../assets/js/participante.js"></script>
+  <script type="module" src="../assets/js/participante/index.js"></script>
   <script>
     cargarSorteos();
   </script>

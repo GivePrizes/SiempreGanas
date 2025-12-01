@@ -1,40 +1,91 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎰 SIEMPRE GANA - Sorteos Premium</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siempre Gana — Acceso</title>
+  <!-- CSS base + premium -->
+  <link rel="stylesheet" href="assets/css/style.css"/>
+  <link rel="stylesheet" href="assets/css/premium.css"/>
 </head>
-<body>
-  <div class="hero">
-    <h1>🎰 SIEMPRE GANA</h1>
-    <p>¡Participa y gana premios increíbles! Comisión solo 15%</p>
-    <div class="cta">
-      <button class="btn-gold" onclick="showLogin()">ENTRAR</button>
-      <button class="btn-red" onclick="showRegistro()">REGISTRARME</button>
+<body class="sg-body">
+  <header class="sg-header">
+    <div class="sg-brand">
+      <span class="sg-logo">SG</span>
+      <div class="sg-title">
+        <h1>Siempre Gana</h1>
+        <p>Club de sorteos premium</p>
+      </div>
     </div>
-  </div>
+    <div class="sg-badge">Acceso seguro</div>
+  </header>
 
-  <div id="loginForm" class="form hidden">
-    <h2>Iniciar Sesión</h2>
-    <input type="email" id="loginEmail" placeholder="📧 Email">
-    <input type="password" id="loginPass" placeholder="🔒 Contraseña">
-    <button class="btn-gold" onclick="login()">ENTRAR</button>
-    <p class="link" onclick="showRegistro()">¿No tienes cuenta? Regístrate</p>
-  </div>
+  <main class="sg-main">
+    <!-- Hero persuasivo -->
+    <section class="sg-hero">
+      <h2 class="sg-hero-title">Premios reales, experiencias de lujo</h2>
+      <p class="sg-hero-sub">Comisión solo 15%. Tu oportunidad está aquí.</p>
+      <div class="sg-cta">
+        <button class="btn-gold" onclick="showLogin()">Entrar</button>
+        <button class="btn-red" onclick="showRegistro()">Registrarme</button>
+      </div>
+      <div class="sg-security">
+        <span class="shield">🔒</span> Autenticación protegida con JWT
+      </div>
+    </section>
 
-  <div id="registroForm" class="form hidden">
-    <h2>Registrarse</h2>
-    <input type="text" id="nombre" placeholder="👤 Nombre completo">
-    <input type="email" id="regEmail" placeholder="📧 Email">
-    <input type="tel" id="telefono" placeholder="📱 Teléfono">
-    <input type="password" id="regPass" placeholder="🔒 Contraseña">
-    <input type="password" id="regPassConfirm" placeholder="🔒 Confirmar contraseña">
-    <button class="btn-gold" onclick="registro()">REGISTRARME</button>
-    <p class="link" onclick="showLogin()">¿Ya tienes cuenta? Entra</p>
-  </div>
+    <!-- Login -->
+    <section id="loginForm" class="sg-card hidden">
+      <h3>Iniciar sesión</h3>
+      <div class="sg-field">
+        <label for="loginEmail">Email</label>
+        <input type="email" id="loginEmail" placeholder="tu@email.com"/>
+      </div>
+      <div class="sg-field">
+        <label for="loginPass">Contraseña</label>
+        <input type="password" id="loginPass" placeholder="••••••••"/>
+      </div>
+      <button class="btn-gold wide" onclick="login()">Entrar</button>
+      <div class="sg-switch">
+        <span class="link" onclick="showRegistro()">¿No tienes cuenta? Regístrate</span>
+      </div>
+    </section>
 
+    <!-- Registro -->
+    <section id="registroForm" class="sg-card hidden">
+      <h3>Crear cuenta</h3>
+      <div class="sg-field">
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" placeholder="Nombre y Apellido"/>
+      </div>
+      <div class="sg-field">
+        <label for="regEmail">Email</label>
+        <input type="email" id="regEmail" placeholder="tu@email.com"/>
+      </div>
+      <div class="sg-field">
+        <label for="telefono">Teléfono</label>
+        <input type="tel" id="telefono" placeholder="+57 3XX XXX XXXX"/>
+      </div>
+      <div class="sg-field">
+        <label for="regPass">Contraseña</label>
+        <input type="password" id="regPass" placeholder="••••••••"/>
+      </div>
+      <div class="sg-field">
+        <label for="regPassConfirm">Confirmar contraseña</label>
+        <input type="password" id="regPassConfirm" placeholder="••••••••"/>
+      </div>
+      <button class="btn-red wide" onclick="registro()">Registrarme</button>
+      <div class="sg-switch">
+        <span class="link" onclick="showLogin()">¿Ya tienes cuenta? Entra</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="sg-footer">
+    <div class="sg-footline">Plataforma auditada • Transparencia en cada sorteo</div>
+  </footer>
+
+  <!-- Config y lógica existente -->
   <script src="assets/js/config.js"></script>
   <script src="assets/js/auth.js"></script>
 </body>

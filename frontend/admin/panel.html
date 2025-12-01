@@ -1,29 +1,75 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - Siempre Gana</title>
-  <link rel="stylesheet" href="../assets/css/style.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siempre Gana — Panel Admin</title>
+  <link rel="stylesheet" href="../assets/css/style.css"/>
+  <link rel="stylesheet" href="../assets/css/premium.css"/>
 </head>
-<body>
-  <nav>
-    <button onclick="location.href='crear-sorteo.html'">Crear Sorteo</button>
-    <button onclick="logout()">Salir</button>
+<body class="sg-body">
+  <nav class="sg-header">
+    <div class="sg-brand">
+      <span class="sg-logo">SG</span>
+      <h1>Panel Admin</h1>
+    </div>
+    <div class="sg-actions">
+      <button onclick="location.href='crear-sorteo.html'" class="btn-gold">➕ Crear Sorteo</button>
+      <button onclick="logout()" class="btn-red">Salir</button>
+    </div>
   </nav>
 
-  <div class="container">
-    <h1>Panel Admin</h1>
-    <h2>Comprobantes Pendientes</h2>
-    <div id="comprobantes"></div>
-  </div>
+  <main class="sg-main">
+    <!-- Sección comprobantes -->
+    <section class="sg-card">
+      <h2 class="sg-hero-title">📑 Comprobantes Pendientes</h2>
+      <p class="sg-hero-sub">Revisa y aprueba pagos de participantes</p>
+      <div id="comprobantes" class="comprobantes-grid"></div>
+    </section>
 
+    <!-- Sección sorteos -->
+    <section class="sg-card">
+      <h2 class="sg-hero-title">🎯 Sorteos Activos</h2>
+      <p class="sg-hero-sub">Gestiona sorteos en curso</p>
+      <div id="sorteosAdmin" class="sorteos-grid"></div>
+    </section>
+
+    <!-- Sección gráficos -->
+    <section class="sg-card">
+      <h2 class="sg-hero-title">📈 Visualizaciones</h2>
+      <div class="charts-grid">
+        <canvas id="chartSorteos"></canvas>
+        <canvas id="chartComprobantes"></canvas>
+      </div>
+    </section>
+
+    <!-- Sección estadísticas -->
+    <section class="sg-card stats-section">
+      <h2 class="sg-hero-title">📊 Estadísticas rápidas</h2>
+      <div class="stats-grid">
+        <div class="stat-card gold">
+          <h3>Usuarios</h3>
+          <p id="statUsuarios">—</p>
+        </div>
+        <div class="stat-card ruby">
+          <h3>Sorteos activos</h3>
+          <p id="statSorteos">—</p>
+        </div>
+        <div class="stat-card obsidian">
+          <h3>Comprobantes pendientes</h3>
+          <p id="statPendientes">—</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden">Acción realizada</div>
+
+  <!-- Scripts -->
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
-  <script src="../assets/js/admin.js"></script>
-  <script>
-    cargarComprobantes();
-    setInterval(cargarComprobantes, 10000); // Auto-refresc
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="../assets/js/admin/index.js"></script>
 </body>
 </html>

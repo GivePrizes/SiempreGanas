@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siempre Gana — Mis Números</title>
+  <link rel="stylesheet" href="../assets/css/style.css"/>
+  <link rel="stylesheet" href="../assets/css/premium.css"/>
+</head>
+<body class="sg-body">
+  <nav class="sg-header">
+    <div class="sg-brand">
+      <span class="sg-logo">SG</span>
+      <h1>Siempre Gana</h1>
+    </div>
+    <div class="sg-actions">
+      <button onclick="location.href='dashboard.html'" class="btn-gold">Volver</button>
+      <button onclick="logout()" class="btn-red">Salir</button>
+    </div>
+  </nav>
+
+  <main class="sg-main">
+    <h2 class="sg-hero-title">🎟️ Mis Números</h2>
+    <p class="sg-hero-sub">Tus participaciones en sorteos premium</p>
+
+    <!-- Contenedor de participaciones -->
+    <div id="misNumeros" class="sorteos-grid"></div>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden">Acción realizada</div>
+
+  <!-- Scripts -->
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script type="module" src="../assets/js/participante/index-mis.js"></script>
+</body>
+</html>
