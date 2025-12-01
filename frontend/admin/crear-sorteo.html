@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Sorteo - Admin</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <nav>
+    <button onclick="location.href='panel.html'">Volver al Panel</button>
+    <button onclick="logout()">Salir</button>
+  </nav>
+
+  <div class="form">
+    <h2>Crear Nuevo Sorteo</h2>
+    <input type="text" id="descripcion" placeholder="Descripción del sorteo">
+    <input type="text" id="premio" placeholder="Premio (ej: $1000 en efectivo)">
+    <input type="number" id="cantidad_numeros" placeholder="Total números (ej: 1000)">
+    <input type="number" id="precio_numero" placeholder="Precio por número (ej: 50)">
+    <input type="datetime-local" id="fecha_sorteo">
+    <button class="btn-gold" onclick="crearSorteo()">CREAR SORTEO</button>
+  </div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script>
+    async function crearSorteo() {
+      const data = {
+        descripcion: document.getElementById('descripcion').value,
+        premio: document.getElementById('premio').value,
+        cantidad_numeros: parseInt(document.getElementById('cantidad_numeros').value),
+        precio_numero: parseFloat(document.getElementById('precio_numero').value),
+        fecha_sorteo: document.getElementById('fecha_sorteo').value
+      };
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${API_URL}/sorteos/crear`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        alert('✅ Sorteo creado!');
+        location.href = 'panel.html';
+      } else {
+        alert('❌ Error al crear');
+      }
+    }
+  </script>
+</body>
+</html>

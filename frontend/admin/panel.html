@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Siempre Gana</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <nav>
+    <button onclick="location.href='crear-sorteo.html'">Crear Sorteo</button>
+    <button onclick="logout()">Salir</button>
+  </nav>
+
+  <div class="container">
+    <h1>Panel Admin</h1>
+    <h2>Comprobantes Pendientes</h2>
+    <div id="comprobantes"></div>
+  </div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/admin.js"></script>
+  <script>
+    cargarComprobantes();
+    setInterval(cargarComprobantes, 10000); // Auto-refresc
+  </script>
+</body>
+</html>

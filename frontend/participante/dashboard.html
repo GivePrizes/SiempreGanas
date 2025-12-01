@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Siempre Gana</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <nav>
+    <button onclick="location.href='mis-numeros.html'">Mis Números</button>
+    <button onclick="logout()">Salir</button>
+  </nav>
+
+  <div class="container">
+    <h1>Sorteos Activos</h1>
+    <div id="sorteos"></div>
+  </div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/participante.js"></script>
+  <script>
+    cargarSorteos();
+  </script>
+</body>
+</html>
