@@ -3,9 +3,16 @@
 // 👇 EXPORTAMOS la función para que index.js la pueda importar
 export async function cargarComprobantes() {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API_URL}/admin/comprobantes`, {
+  const res = await fetch(`${API_URL}/api/admin/comprobantes`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
+
+  if (res.status === 401 || res.status === 403) {
+    document.getElementById('comprobantes').innerHTML =
+      '<p>No tienes permisos o tu sesión expiró. Vuelve a iniciar sesión.</p>';
+    console.warn('No autorizado en /api/admin/comprobantes');
+    return;
+  }
 
   if (!res.ok) {
     console.error('Error al cargar comprobantes:', res.status);
@@ -39,7 +46,7 @@ export async function cargarComprobantes() {
 async function aprobar(id) {
   if (!confirm('¿Aprobar?')) return;
   const token = localStorage.getItem('token');
-  await fetch(`${API_URL}/admin/comprobantes/aprobar/${id}`, {
+  await fetch(`${API_URL}/api/admin/comprobantes/aprobar/${id}`, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -49,7 +56,7 @@ async function aprobar(id) {
 async function rechazar(id) {
   if (!confirm('¿Rechazar?')) return;
   const token = localStorage.getItem('token');
-  await fetch(`${API_URL}/admin/comprobantes/rechazar/${id}`, {
+  await fetch(`${API_URL}/api/admin/comprobantes/rechazar/${id}`, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` }
   });
