@@ -1,22 +1,41 @@
-async function cargarComprobantes() {
+// frontend/assets/js/admin/comprobantes.js
+
+// 👇 EXPORTAMOS la función para que index.js la pueda importar
+export async function cargarComprobantes() {
   const token = localStorage.getItem('token');
   const res = await fetch(`${API_URL}/admin/comprobantes`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
+
+  if (!res.ok) {
+    console.error('Error al cargar comprobantes:', res.status);
+    document.getElementById('comprobantes').innerHTML =
+      '<p>Error al cargar comprobantes.</p>';
+    return;
+  }
+
   const data = await res.json();
-  document.getElementById('comprobantes').innerHTML = data.map(c => `
-    <div class="comprobante">
-      <h3>${c.usuario} - ${c.sorteo}</h3>
-      <p>Número: ${c.numero} | ${new Date(c.fecha).toLocaleString()}</p>
-      ${c.comprobante_url ? `<img src="${c.comprobante_url}" width="200" alt="Comprobante">` : '<p>Sin imagen</p>'}
-      <div>
-        <button class="btn-green" onclick="aprobar(${c.id})">✅ Aprobar</button>
-        <button class="btn-red" onclick="rechazar(${c.id})">❌ Rechazar</button>
+
+  document.getElementById('comprobantes').innerHTML =
+    data.map(c => `
+      <div class="comprobante">
+        <h3>${c.usuario} - ${c.sorteo}</h3>
+        <p>Número: ${c.numero} | ${new Date(c.fecha).toLocaleString()}</p>
+        ${
+          c.comprobante_url
+            ? `<img src="${c.comprobante_url}" width="200" alt="Comprobante">`
+            : '<p>Sin imagen</p>'
+        }
+        <div>
+          <button class="btn-green" onclick="aprobar(${c.id})">✅ Aprobar</button>
+          <button class="btn-red" onclick="rechazar(${c.id})">❌ Rechazar</button>
+        </div>
       </div>
-    </div>
-  `).join('') || '<p>¡No hay pendientes! 🎉</p>';
+    `).join('') || '<p>¡No hay pendientes! 🎉</p>';
 }
 
+// Estas dos funciones se usan desde el HTML con onclick="..."
+// En módulos NO se vuelven globales, así que las colgamos de window:
 async function aprobar(id) {
   if (!confirm('¿Aprobar?')) return;
   const token = localStorage.getItem('token');
@@ -36,3 +55,7 @@ async function rechazar(id) {
   });
   cargarComprobantes();
 }
+
+// 👇 Hacemos que sean accesibles desde el HTML inline
+window.aprobar = aprobar;
+window.rechazar = rechazar;
