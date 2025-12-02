@@ -26,7 +26,7 @@ export async function cargarComprobantes() {
   document.getElementById('comprobantes').innerHTML =
     data.map(c => `
       <div class="comprobante">
-        <h3>${c.usuario} - ${c.sorteo}</h3>
+        <h3>${c.usuario} (${c.telefono}) - ${c.sorteo}</h3>
         <p>Número: ${c.numero} | ${new Date(c.fecha).toLocaleString()}</p>
         ${
           c.comprobante_url
