@@ -1,0 +1,174 @@
+/* assets/css/ruleta.css */
+
+.ruleta-card {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.ruleta-header {
+  margin-bottom: 1.5rem;
+}
+
+.mini-sub {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.ruleta-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr);
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+  .ruleta-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Contenedor de la ruleta tipo lista “slot” */
+.ruleta-container {
+  display: flex;
+  justify-content: center;
+}
+
+.ruleta-window {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  height: 360px;
+  margin: 0 auto;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  background: radial-gradient(circle at top, #1f2933, #05070a);
+}
+
+.ruleta-lista {
+  padding: 0.75rem 0;
+  position: relative;
+}
+
+.ruleta-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  opacity: 0.55;
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+}
+
+.ruleta-item:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.ruleta-item .num {
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.ruleta-item .nombre {
+  font-weight: 600;
+}
+
+/* item que está pasando por la “ventana” */
+.ruleta-item.active {
+  opacity: 1;
+  transform: scale(1.03);
+  background: linear-gradient(to right, rgba(250, 204, 21, 0.14), rgba(56, 189, 248, 0.12));
+}
+
+/* ganador final */
+.ruleta-item.ganador {
+  opacity: 1;
+  transform: scale(1.06);
+  background: linear-gradient(135deg, #fbbf24, #ef4444);
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.7);
+}
+
+/* línea de foco */
+.ruleta-highlight {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3.2rem;
+  margin-top: -1.6rem;
+  border-top: 2px solid rgba(250, 204, 21, 0.65);
+  border-bottom: 2px solid rgba(250, 204, 21, 0.65);
+  pointer-events: none;
+}
+
+/* Panel lateral de información */
+.ruleta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ruleta-info h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.25rem;
+}
+
+.ruleta-info ul {
+  margin-left: 1.1rem;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.ruleta-info li::marker {
+  color: #facc15;
+}
+
+.ruleta-actions {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-girar {
+  width: 100%;
+  font-size: 1.05rem;
+  padding: 0.8rem 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* pequeño texto psicológico debajo del botón */
+.ruleta-hint {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Resultado final */
+.resultado-ruleta {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.9rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  font-size: 0.95rem;
+}
+
+.resultado-ruleta strong {
+  font-size: 1.1rem;
+}
+
+/* animación suave de “latido” para el texto ganador */
+.resultado-ruleta.ganador-texto {
+  animation: winnerPulse 1s ease-in-out 2;
+}
+
+@keyframes winnerPulse {
+  0%   { transform: scale(1);   box-shadow: 0 0 0 rgba(250, 204, 21, 0.0); }
+  50%  { transform: scale(1.03); box-shadow: 0 0 24px rgba(250, 204, 21, 0.6); }
+  100% { transform: scale(1);   box-shadow: 0 0 0 rgba(250, 204, 21, 0.0); }
+}

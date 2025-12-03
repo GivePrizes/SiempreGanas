@@ -1,79 +1,178 @@
-import { showToast, confeti } from './ui.js';
+// assets/js/participante/sorteos.js
 
 export async function cargarSorteos() {
-  const res = await fetch(`${API_URL}/api/sorteos`);
-  const sorteos = await res.json();
+  const cont = document.getElementById('sorteosActivos');
+  const statSorteos = document.getElementById('statSorteosActivos');
+  const statProxima = document.getElementById('statProximaRuleta');
 
-  document.getElementById('sorteos').innerHTML = sorteos.map(s => `
-    <div class="sorteo-card">
-      <h3>${s.descripcion}</h3>
-      <p>Premio: ${s.premio}</p>
-      <p>Precio por número: $${s.precio_numero}</p>
-      <p>Ocupados: ${s.ocupados}/${s.cantidad_numeros}</p>
-      <div class="progress">
-        <div class="progress-bar" style="width:${(s.ocupados/s.cantidad_numeros)*100}%"></div>
-      </div>
-      <p class="countdown" id="countdown-${s.id}">⏳ Calculando...</p>
-      <button class="btn-red" onclick="participar(${s.id})">¡PARTICIPAR AHORA!</button>
-    </div>
-  `).join('');
+  if (!cont) return;
 
-  // Inicializar countdowns
-  sorteos.forEach(s => iniciarCountdown(s.id, s.fecha_sorteo));
-}
+  cont.innerHTML = '<p>Cargando sorteos...</p>';
 
-function iniciarCountdown(id, fechaSorteo) {
-  const target = new Date(fechaSorteo).getTime();
-  const el = document.getElementById(`countdown-${id}`);
+  try {
+    const res = await fetch(`${API_URL}/api/sorteos`);
+    const data = await res.json();
 
-  function update() {
-    const now = new Date().getTime();
-    const diff = target - now;
-
-    if (diff <= 0) {
-      el.textContent = "🎉 Sorteo en curso o finalizado";
+    if (!res.ok) {
+      console.error('Error al cargar sorteos:', data);
+      cont.innerHTML = '<p>Error al cargar sorteos. Intenta de nuevo en unos segundos.</p>';
+      if (statSorteos) statSorteos.textContent = '—';
+      if (statProxima) statProxima.textContent = '—';
       return;
     }
 
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const s = Math.floor((diff % (1000 * 60)) / 1000);
+    if (!Array.isArray(data) || data.length === 0) {
+      cont.innerHTML = `
+        <p>No hay sorteos activos en este momento.</p>
+        <p>Vuelve pronto, estamos preparando nuevas oportunidades ✨</p>
+      `;
+      if (statSorteos) statSorteos.textContent = '0';
+      if (statProxima) statProxima.textContent = '—';
+      return;
+    }
 
-    el.textContent = `⏳ ${d}d ${h}h ${m}m ${s}s restantes`;
+    // stats
+    if (statSorteos) statSorteos.textContent = data.length.toString();
+
+    // identificar el sorteo más avanzado para “próxima ruleta”
+    const ordenados = [...data].sort((a, b) => {
+      const pa = a.ocupados / a.cantidad_numeros;
+      const pb = b.ocupados / b.cantidad_numeros;
+      return pb - pa;
+    });
+    const masCercano = ordenados[0];
+    if (statProxima && masCercano) {
+      const faltan = masCercano.cantidad_numeros - masCercano.ocupados;
+      statProxima.textContent =
+        faltan <= 0
+          ? 'Listo para ruleta'
+          : `Faltan ${faltan} número(s) para la ruleta`;
+    }
+
+    cont.innerHTML = data
+      .map(s => {
+        const ocupados = s.ocupados || 0;
+        const total = s.cantidad_numeros;
+        const porcentaje = Math.min(
+          100,
+          Math.round((ocupados / total) * 100)
+        );
+        const faltan = total - ocupados;
+        const lleno = s.estado === 'lleno' || faltan <= 0;
+
+        let mensajeEstado = '';
+        if (lleno) {
+          mensajeEstado =
+            'Este sorteo ya se cerró. La ruleta se lanzará en cualquier momento 🎰';
+        } else if (porcentaje >= 80) {
+          mensajeEstado =
+            '🔥 ¡Últimos números! Estás a nada de ver la ruleta girar.';
+        } else if (porcentaje >= 50) {
+          mensajeEstado =
+            'Ya vamos por la mitad, cada número que compras acelera la ruleta.';
+        } else {
+          mensajeEstado =
+            'Aprovecha ahora: hay buena disponibilidad de números.';
+        }
+
+        const disabledAttr = lleno ? 'disabled' : '';
+        const btnLabel = lleno ? 'Cupo lleno' : 'Participar ahora';
+
+        return `
+          <article class="sorteo-card">
+            <h3>${s.descripcion}</h3>
+            <p class="sorteo-premio">🎁 Premio: <strong>${s.premio}</strong></p>
+            <p class="sorteo-precio">
+              💸 Precio por número: <strong>$${s.precio_numero}</strong>
+            </p>
+
+            <div class="progress-wrapper">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:${porcentaje}%;"></div>
+              </div>
+              <p class="progress-text">
+                ${ocupados} de ${total} números vendidos
+                ${!lleno ? `• Quedan <strong>${faltan}</strong>` : ''}
+              </p>
+            </div>
+
+            <p class="sorteo-mensaje">
+              ${mensajeEstado}
+            </p>
+
+            <button
+              class="btn-gold btn-full"
+              ${disabledAttr}
+              onclick="irASorteo(${s.id})"
+            >
+              ${btnLabel}
+            </button>
+          </article>
+        `;
+      })
+      .join('');
+
+    // pequeño CSS inline si quieres, o llévalo a premium.css
+    injectParticipantStyles();
+  } catch (err) {
+    console.error(err);
+    cont.innerHTML = '<p>Error de conexión al cargar los sorteos.</p>';
+    if (statSorteos) statSorteos.textContent = '—';
+    if (statProxima) statProxima.textContent = '—';
   }
-
-  update();
-  setInterval(update, 1000);
 }
 
-export async function participar(id) {
-  const numeros = prompt('Elige 1-5 números (separados por coma):');
-  if (!numeros) return;
+// Navegar a la página de participar en un sorteo concreto
+function irASorteo(id) {
+  // podrías tener participante/sorteo.html?id=123
+  location.href = `sorteo.html?id=${id}`;
+}
 
-  const nums = numeros.split(',').map(n => parseInt(n.trim())).filter(n => n > 0);
-  if (nums.length < 1 || nums.length > 5) return showToast("❌ Elige 1-5 números válidos");
+window.irASorteo = irASorteo;
 
-  const file = prompt('Sube comprobante (base64 o URL):');
-  const token = localStorage.getItem('token');
+// Inyectar estilos mínimos para la barra de progreso si no los tienes
+function injectParticipantStyles() {
+  if (document.getElementById('sg-participante-styles')) return;
 
-  try {
-    const res = await fetch(`${API_URL}/api/participante/guardar-numeros`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ sorteo_id: id, numeros: nums, comprobante: file })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      showToast("✅ Participación enviada! Esperando aprobación");
-      confeti();
-    } else {
-      showToast("❌ " + data.error);
+  const style = document.createElement('style');
+  style.id = 'sg-participante-styles';
+  style.textContent = `
+    .sorteo-card {
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.3);
     }
-  } catch (err) {
-    showToast("❌ Error de conexión");
-  }
+    .sorteo-premio, .sorteo-precio, .sorteo-mensaje {
+      font-size: 0.9rem;
+      margin: 0.2rem 0;
+    }
+    .progress-wrapper {
+      margin-top: 0.6rem;
+      margin-bottom: 0.4rem;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 0.4rem;
+      border-radius: 999px;
+      background: rgba(30, 64, 175, 0.3);
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #facc15);
+      border-radius: 999px;
+    }
+    .progress-text {
+      font-size: 0.75rem;
+      opacity: 0.85;
+      margin-top: 0.25rem;
+    }
+    .btn-full {
+      width: 100%;
+      margin-top: 0.6rem;
+    }
+  `;
+  document.head.appendChild(style);
 }

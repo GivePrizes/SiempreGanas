@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Siempre Ganas — Ruleta del Sorteo</title>
+
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/premium.css" />
+  <!-- Estilos específicos de la ruleta -->
+  <link rel="stylesheet" href="../assets/css/ruleta.css" />
+</head>
+<body class="sg-body">
+  <nav class="sg-header">
+    <div class="sg-brand">
+      <span class="sg-logo">SG</span>
+      <div>
+        <h1>Ruleta del sorteo</h1>
+        <p class="sg-hero-sub mini-sub">El momento de la verdad ✨</p>
+      </div>
+    </div>
+    <div class="sg-actions">
+      <button onclick="location.href='panel.html'" class="btn-gold">⬅ Volver al panel</button>
+      <button onclick="logout()" class="btn-red">Salir</button>
+    </div>
+  </nav>
+
+  <main class="sg-main">
+    <section class="sg-card ruleta-card">
+      <header class="ruleta-header">
+        <h2 class="sg-hero-title" id="tituloSorteo">Cargando sorteo...</h2>
+        <p class="sg-hero-sub" id="subtituloSorteo">
+          Prepara a la audiencia, la suerte está por girar… 🎰
+        </p>
+      </header>
+
+      <section class="ruleta-layout">
+        <!-- Columna izquierda: “ruleta” lista animada -->
+        <div class="ruleta-container">
+          <div class="ruleta-window">
+            <div id="ruletaLista" class="ruleta-lista">
+              <!-- items generados por JS -->
+            </div>
+            <div class="ruleta-highlight"></div>
+          </div>
+        </div>
+
+        <!-- Columna derecha: información / psicología -->
+        <aside class="ruleta-info">
+          <h3>Cómo impresionar a los participantes</h3>
+          <ul>
+            <li>Cuenta regresiva en voz alta antes de girar.</li>
+            <li>Menciona el premio y recuerda que todos pagaron por sus números.</li>
+            <li>Lee en voz alta algunos nombres mientras gira.</li>
+            <li>Haz una pausa dramática antes de anunciar al ganador.</li>
+          </ul>
+
+          <div class="ruleta-actions">
+            <button id="btnGirar" class="btn-gold btn-girar">
+              🎰 GIRAR RULETA
+            </button>
+            <p class="ruleta-hint">
+              Este giro es definitivo. El ganador quedará registrado en el sistema.
+            </p>
+          </div>
+
+          <div id="resultadoRuleta" class="resultado-ruleta">
+            <!-- Resultado dinámico -->
+          </div>
+        </aside>
+      </section>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script type="module" src="../assets/js/admin/ruleta.js"></script>
+</body>
+</html>

@@ -1,34 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Siempre Gana — Dashboard</title>
-  <link rel="stylesheet" href="../assets/css/style.css"/>
-  <link rel="stylesheet" href="../assets/css/premium.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Siempre Ganas — Mis sorteos</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/premium.css" />
 </head>
 <body class="sg-body">
   <nav class="sg-header">
     <div class="sg-brand">
       <span class="sg-logo">SG</span>
-      <h1>Siempre Gana</h1>
+      <div>
+        <h1 id="tituloBienvenida">Hola 👋</h1>
+        <p class="sg-hero-sub" id="subtituloBienvenida">
+          Elige tus números, sube tu comprobante y deja que la ruleta haga su magia.
+        </p>
+      </div>
     </div>
     <div class="sg-actions">
-      <button onclick="location.href='mis-numeros.html'" class="btn-gold">Mis Números</button>
-      <button onclick="logout()" class="btn-red">Salir</button>
+      <button onclick="location.href='mis-numeros.html'" class="btn-gold">
+        🎟 Mis números
+      </button>
+      <button onclick="logout()" class="btn-red">
+        Salir
+      </button>
     </div>
   </nav>
 
   <main class="sg-main">
-    <h2 class="sg-hero-title">Sorteos Activos</h2>
-    <p class="sg-hero-sub">Elige tus números antes que se agoten</p>
+    <!-- Resumen rápido -->
+    <section class="sg-card stats-section">
+      <h2 class="sg-hero-title">📊 Resumen rápido</h2>
+      <div class="stats-grid">
+        <div class="stat-card gold">
+          <h3>Sorteos activos</h3>
+          <p id="statSorteosActivos">—</p>
+        </div>
+        <div class="stat-card ruby">
+          <h3>Números comprados</h3>
+          <p id="statMisNumeros">—</p>
+        </div>
+        <div class="stat-card obsidian">
+          <h3>Próxima ruleta</h3>
+          <p id="statProximaRuleta">—</p>
+        </div>
+      </div>
+    </section>
 
-    <!-- Contenedor de sorteos -->
-    <div id="sorteos" class="sorteos-grid"></div>
+    <!-- Sorteos disponibles -->
+    <section class="sg-card">
+      <h2 class="sg-hero-title">🎯 Sorteos disponibles</h2>
+      <p class="sg-hero-sub">
+        Cada número que compras es tu acceso al producto digital <strong>y</strong> a la ruleta.
+        Cuando se llenen todos los números, el sorteo se activa en vivo.
+      </p>
+      <div id="sorteosActivos" class="sorteos-grid">
+        <!-- tarjetas generadas por JS -->
+      </div>
+    </section>
   </main>
-
-  <!-- Toast para notificaciones -->
-  <div id="toast" class="toast hidden">¡Participación enviada!</div>
 
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>

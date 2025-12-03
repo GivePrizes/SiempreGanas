@@ -259,3 +259,62 @@ canvas {
   50% { color: var(--gold); }
   100% { color: var(--red); }
 }
+/* Estilos específicos para la ruleta */
+.sorteo-card-admin {
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.sorteo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.sorteo-detalle {
+  font-size: 0.9rem;
+}
+
+.sorteo-detalle-mini {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 0.3rem;
+}
+
+.sorteo-actions-admin {
+  margin-top: 0.6rem;
+}
+
+.btn-sm {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+/* badges */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.badge-activo {
+  background: rgba(56, 189, 248, 0.15);
+  color: #7dd3fc;
+}
+
+.badge-lleno {
+  background: rgba(250, 204, 21, 0.18);
+  color: #facc15;
+}
+
+.badge-finalizado {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fecaca;
+}
