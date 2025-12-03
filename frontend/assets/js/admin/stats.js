@@ -6,15 +6,16 @@ async function cargarStats() {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     });
     const usuarios = resUsuarios.ok ? await resUsuarios.json() : { total: 0 };
-    document.getElementById('statUsuarios').textContent = usuarios.total || '—';
+    document.getElementById('statUsuarios').textContent = '—';
+
 
     // Sorteos activos (app-service)
-    const resSorteos = await fetch(`${API_URL}/sorteos`);
+    const resSorteos = await fetch(`${API_URL}/api/sorteos`);
     const sorteos = await resSorteos.json();
     document.getElementById('statSorteos').textContent = sorteos.length;
 
     // Comprobantes pendientes (app-service)
-    const resComp = await fetch(`${API_URL}/admin/comprobantes`, {
+    const resComp = await fetch(`${API_URL}/api/admin/comprobantes`, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
     });
     const comp = await resComp.json();

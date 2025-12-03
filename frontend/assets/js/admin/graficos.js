@@ -1,6 +1,6 @@
 async function cargarGraficos() {
   // Sorteos ocupación
-  const resSorteos = await fetch(`${API_URL}/sorteos`);
+  const resSorteos = await fetch(`${API_URL}/api/sorteos`);
   const sorteos = await resSorteos.json();
   const labels = sorteos.map(s => s.descripcion);
   const ocupados = sorteos.map(s => s.ocupados);
@@ -19,13 +19,14 @@ async function cargarGraficos() {
   });
 
   // Comprobantes estado
-  const resComp = await fetch(`${API_URL}/admin/comprobantes`, {
+  const resComp = await fetch(`${API_URL}/api/admin/comprobantes`, {
     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
   });
   const comp = await resComp.json();
-  const pendientes = comp.filter(c => c.estado === 'pendiente').length;
-  const aprobados = comp.filter(c => c.estado === 'aprobado').length;
-  const rechazados = comp.filter(c => c.estado === 'rechazado').length;
+  const pendientes = comp.length;
+  const aprobados = 0;
+  const rechazados = 0;
+
 
   new Chart(document.getElementById('chartComprobantes'), {
     type: 'pie',

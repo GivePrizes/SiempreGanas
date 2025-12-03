@@ -1,7 +1,7 @@
 import { showToast, confeti } from './ui.js';
 
 export async function cargarSorteos() {
-  const res = await fetch(`${API_URL}/sorteos`);
+  const res = await fetch(`${API_URL}/api/sorteos`);
   const sorteos = await res.json();
 
   document.getElementById('sorteos').innerHTML = sorteos.map(s => `
@@ -58,7 +58,7 @@ export async function participar(id) {
   const token = localStorage.getItem('token');
 
   try {
-    const res = await fetch(`${API_URL}/participante/guardar-numeros`, {
+    const res = await fetch(`${API_URL}/api/participante/guardar-numeros`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

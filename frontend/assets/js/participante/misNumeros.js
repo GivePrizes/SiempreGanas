@@ -1,6 +1,6 @@
 export async function cargarMisNumeros() {
   const token = localStorage.getItem('token');
-  const res = await fetch(`${API_URL}/participante/mis-participaciones`, {
+  const res = await fetch(`${API_URL}/api/participante/mis-participaciones`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   const participaciones = await res.json();
