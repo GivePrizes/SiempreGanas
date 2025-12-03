@@ -1,26 +1,59 @@
+// assets/js/admin/stats.js
 
-async function cargarStats() {
+export async function cargarStats() {
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  // Solo admin
+  if (!token || user.rol !== 'admin') return;
+
+  const statUsuarios = document.getElementById('statUsuarios');
+  const statSorteos = document.getElementById('statSorteos');
+  const statPendientes = document.getElementById('statPendientes');
+
   try {
-    // Usuarios registrados (auth-service)
-    const resUsuarios = await fetch(`${AUTH_URL}/api/auth/validate`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    // 1) Sorteos (app-service)
+    const resSorteos = await fetch(`${API_URL}/api/sorteos`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
-    const usuarios = resUsuarios.ok ? await resUsuarios.json() : { total: 0 };
-    document.getElementById('statUsuarios').textContent = '—';
-
-
-    // Sorteos activos (app-service)
-    const resSorteos = await fetch(`${API_URL}/api/sorteos`);
     const sorteos = await resSorteos.json();
-    document.getElementById('statSorteos').textContent = sorteos.length;
 
-    // Comprobantes pendientes (app-service)
+    if (statSorteos) {
+      if (Array.isArray(sorteos)) {
+        statSorteos.textContent = sorteos.length.toString();
+      } else {
+        statSorteos.textContent = '—';
+      }
+    }
+
+    // 2) Comprobantes pendientes (app-service)
     const resComp = await fetch(`${API_URL}/api/admin/comprobantes`, {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
-    const comp = await resComp.json();
-    document.getElementById('statPendientes').textContent = comp.length;
+    const comprobantes = await resComp.json();
+
+    if (statPendientes) {
+      if (Array.isArray(comprobantes)) {
+        statPendientes.textContent = comprobantes.length.toString();
+      } else {
+        statPendientes.textContent = '—';
+      }
+    }
+
+    // 3) Usuarios (auth-service)
+    // De momento no tenemos un endpoint de "total usuarios",
+    // así que lo dejamos en "—" para no inventar datos.
+    if (statUsuarios) {
+      statUsuarios.textContent = '—';
+    }
   } catch (err) {
-    console.error(err);
+    console.error('Error cargando stats admin:', err);
+    if (statSorteos) statSorteos.textContent = '—';
+    if (statPendientes) statPendientes.textContent = '—';
+    if (statUsuarios) statUsuarios.textContent = '—';
   }
 }
