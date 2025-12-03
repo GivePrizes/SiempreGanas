@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Siempre Ganas — Elegir números</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/premium.css" />
+  <link rel="stylesheet" href="../assets/css/participante-sorteo.css" />
+</head>
+<body class="sg-body">
+  <nav class="sg-header">
+    <div class="sg-brand">
+      <span class="sg-logo">SG</span>
+      <div>
+        <h1 id="tituloSorteo">Cargando sorteo...</h1>
+        <p class="sg-hero-sub" id="subtituloSorteo">
+          Selecciona tus números, sube tu comprobante y prepárate para la ruleta 🎰
+        </p>
+      </div>
+    </div>
+    <div class="sg-actions">
+      <button onclick="location.href='dashboard.html'" class="btn-gold">
+        ⬅ Volver a sorteos
+      </button>
+      <button onclick="location.href='mis-numeros.html'" class="btn-gold">
+        🎟 Mis números
+      </button>
+      <button onclick="logout()" class="btn-red">
+        Salir
+      </button>
+    </div>
+  </nav>
+
+  <main class="sg-main">
+    <section class="sg-card sorteo-layout">
+      <!-- Columna izquierda: info general del sorteo -->
+      <div class="sorteo-info">
+        <h2 class="sg-hero-title" id="tituloPremio">Premio</h2>
+        <p class="sorteo-premio-sub">
+          Este sorteo entrega un producto digital real <strong>y</strong> tu pase a la ruleta.
+        </p>
+
+        <div class="sorteo-data">
+          <p>
+            🎁 <strong>Premio:</strong>
+            <span id="textoPremio">—</span>
+          </p>
+          <p>
+            💸 <strong>Precio por número:</strong>
+            <span id="textoPrecio">—</span>
+          </p>
+          <p>
+            🔢 <strong>Cantidad de números:</strong>
+            <span id="textoCantidad">—</span>
+          </p>
+        </div>
+
+        <div class="progress-wrapper">
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+          <p class="progress-text" id="textoProgreso">
+            Cargando ocupación...
+          </p>
+        </div>
+
+        <div class="sorteo-steps">
+          <h3>Cómo funciona este sorteo</h3>
+          <ol>
+            <li>Elige tus números favoritos en la cuadrícula.</li>
+            <li>Paga el valor total (verás el total antes de enviar).</li>
+            <li>Sube una foto nítida del comprobante.</li>
+            <li>Cuando se llenen todos los números, la ruleta elegirá un ganador en vivo.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Columna derecha: selección de números + comprobante -->
+      <div class="sorteo-interaccion">
+        <div class="sorteo-numeros-card">
+          <div class="sorteo-numeros-header">
+            <h3>Elige tus números</h3>
+            <p class="sorteo-numeros-sub">
+              Toca para seleccionar. Máximo <span id="maxNumerosTexto">5</span> por compra.
+            </p>
+          </div>
+          <div id="gridNumeros" class="numeros-grid">
+            <!-- Números generados por JS -->
+          </div>
+        </div>
+
+        <div class="sorteo-compra-card">
+          <h3>Resumen de tu compra</h3>
+          <p class="resumen-linea">
+            Números seleccionados:
+            <span id="resumenNumeros">Ninguno todavía</span>
+          </p>
+          <p class="resumen-linea">
+            Total a pagar:
+            <span id="resumenTotal">$0</span>
+          </p>
+
+          <div class="comprobante-box">
+            <label for="inputComprobante">📷 Comprobante de pago</label>
+            <p class="comprobante-sub">
+              Sube una captura clara del pago. Puedes volver a comprar más números luego con otros comprobantes.
+            </p>
+            <input type="file" id="inputComprobante" accept="image/*" />
+            <div id="previewComprobante" class="comprobante-preview oculto">
+              <p>Vista previa:</p>
+              <img id="imgPreview" alt="Comprobante" />
+            </div>
+          </div>
+
+          <button id="btnConfirmar" class="btn-gold btn-full">
+            Confirmar participación
+          </button>
+          <p class="sorteo-nota">
+            Al confirmar, tus números quedarán reservados con estado
+            <strong>pendiente</strong> hasta que un administrador valide tu comprobante.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast simple -->
+  <div id="toast" class="toast hidden">Mensaje</div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script type="module" src="../assets/js/participante/sorteo-detalle.js"></script>
+</body>
+</html>

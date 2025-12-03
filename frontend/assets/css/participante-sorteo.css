@@ -1,0 +1,217 @@
+/* Layout general de la vista de sorteo */
+.sorteo-layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.7fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .sorteo-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sorteo-info h2 {
+  margin-bottom: 0.25rem;
+}
+
+.sorteo-premio-sub {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+}
+
+.sorteo-data p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+}
+
+.sorteo-steps h3 {
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.3rem;
+}
+
+.sorteo-steps ol {
+  margin-left: 1.2rem;
+  font-size: 0.9rem;
+}
+
+.sorteo-steps li::marker {
+  color: #facc15;
+}
+
+/* Barra de progreso */
+.progress-wrapper {
+  margin: 0.75rem 0;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgba(30, 64, 175, 0.3);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #22c55e, #facc15);
+  border-radius: 999px;
+  transition: width 0.4s ease-out;
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 0.15rem;
+}
+
+/* Columna derecha */
+.sorteo-interaccion {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sorteo-numeros-card,
+.sorteo-compra-card {
+  border-radius: 1rem;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+.sorteo-numeros-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.sorteo-numeros-header h3 {
+  font-size: 1rem;
+}
+
+.sorteo-numeros-sub {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+/* Grid de números */
+.numeros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+}
+
+.numero-item {
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.35rem 0;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  background: rgba(15, 23, 42, 0.9);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.numero-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+}
+
+.numero-item.seleccionado {
+  background: linear-gradient(135deg, #22c55e, #facc15);
+  color: #020617;
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.numero-item.ocupado {
+  background: rgba(15, 23, 42, 0.8);
+  color: #6b7280;
+  border-style: dashed;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* Resumen y comprobante */
+.resumen-linea {
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+}
+
+.comprobante-box {
+  margin: 0.6rem 0;
+  font-size: 0.9rem;
+}
+
+.comprobante-box label {
+  font-weight: 600;
+}
+
+.comprobante-sub {
+  font-size: 0.78rem;
+  opacity: 0.8;
+  margin-bottom: 0.3rem;
+}
+
+#inputComprobante {
+  font-size: 0.82rem;
+}
+
+.comprobante-preview {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+}
+
+.comprobante-preview img {
+  margin-top: 0.2rem;
+  max-width: 100%;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+}
+
+.oculto {
+  display: none;
+}
+
+.sorteo-nota {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 0.4rem;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.96);
+  color: #e5e7eb;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  font-size: 0.85rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 50;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, -4px);
+}
+
+.toast.hidden {
+  display: none;
+}
