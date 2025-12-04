@@ -83,20 +83,18 @@
       formData.append('precio_numero', document.getElementById('precio_numero').value);
       formData.append('fecha_sorteo', document.getElementById('fecha_sorteo').value);
 
-      // AGREGAR IMAGEN SOLO SI EL ADMIN SUBIÓ UNA
-      const file = document.getElementById('imagen').files[0];
-      if (file) {
-        formData.append('imagen', file);
+      const imagenInput = document.getElementById('imagen');
+      if (imagenInput && imagenInput.files.length > 0) {
+        formData.append('imagen', imagenInput.files[0]);
       }
 
       const token = localStorage.getItem('token');
 
-      const res = await fetch(`${API_URL}/api/sorteos/crear`, {
+      const res = await fetch(`${API_URL}/api/sorteos/crear`, {   // 👈 OJO AQUÍ: /api/sorteos/crear
         method: 'POST',
         headers: { 
           'Authorization': `Bearer ${token}`
-          // ⚠️ NO agregar Content-Type aquí.
-          // fetch lo maneja automático porque usamos FormData.
+          // NO ponemos 'Content-Type', fetch lo arma solo al usar FormData
         },
         body: formData
       });
@@ -105,7 +103,8 @@
         alert('✅ Sorteo creado!');
         location.href = 'panel.html';
       } else {
-        alert('❌ Error al crear sorteo');
+        alert('❌ Error al crear');
+        console.log('Error crear sorteo:', await res.text());
       }
     }
   </script>
