@@ -14,6 +14,7 @@
 
   <div class="form">
     <h2>Crear Nuevo Sorteo</h2>
+    <input type="file" id="imagen" accept="image/*">
     <input type="text" id="descripcion" placeholder="Descripción del sorteo">
     <input type="text" id="premio" placeholder="Premio (ej: $1000 en efectivo)">
     <input type="number" id="cantidad_numeros" placeholder="Total números (ej: 1000)">
@@ -26,29 +27,39 @@
   <script src="../assets/js/auth.js"></script>
   <script>
     async function crearSorteo() {
-      const data = {
-        descripcion: document.getElementById('descripcion').value,
-        premio: document.getElementById('premio').value,
-        cantidad_numeros: parseInt(document.getElementById('cantidad_numeros').value),
-        precio_numero: parseFloat(document.getElementById('precio_numero').value),
-        fecha_sorteo: document.getElementById('fecha_sorteo').value
-      };
+      const formData = new FormData();
+      formData.append('descripcion', document.getElementById('descripcion').value);
+      formData.append('premio', document.getElementById('premio').value);
+      formData.append('cantidad_numeros', document.getElementById('cantidad_numeros').value);
+      formData.append('precio_numero', document.getElementById('precio_numero').value);
+      formData.append('fecha_sorteo', document.getElementById('fecha_sorteo').value);
+
+      // AGREGAR IMAGEN SOLO SI EL ADMIN SUBIÓ UNA
+      const file = document.getElementById('imagen').files[0];
+      if (file) {
+        formData.append('imagen', file);
+      }
+
       const token = localStorage.getItem('token');
+
       const res = await fetch(`${API_URL}/api/sorteos/crear`, {
         method: 'POST',
         headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${token}`
+          // ⚠️ NO agregar Content-Type aquí.
+          // fetch lo maneja automático porque usamos FormData.
         },
-        body: JSON.stringify(data)
+        body: formData
       });
+
       if (res.ok) {
         alert('✅ Sorteo creado!');
         location.href = 'panel.html';
       } else {
-        alert('❌ Error al crear');
+        alert('❌ Error al crear sorteo');
       }
     }
   </script>
+
 </body>
 </html>

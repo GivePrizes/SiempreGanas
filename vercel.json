@@ -1,9 +1,0 @@
-{
-  "buildCommand": "echo 'Static build'",
-  "outputDirectory": "frontend",
-  "installCommand": "echo 'No install needed'",
-  "env": {
-    "AUTH_SERVICE": "https://auth-service-v5sb.onrender.com",
-    "APP_SERVICE": "https://app-service-kupj.onrender.com"
-  }
-}
