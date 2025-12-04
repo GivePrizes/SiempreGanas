@@ -102,15 +102,7 @@ function toggleNumero(numero, el) {
   actualizarResumen();
 }
 
-// Convertir file -> base64
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = e => resolve(e.target.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
+// Nota: Envío multipart/FormData en lugar de Base64 (más eficiente para imágenes)
 
 // --- cargar sorteo desde backend ---
 async function cargarSorteo() {
@@ -189,14 +181,41 @@ async function cargarSorteo() {
 
 // --- manejar comprobante ---
 if (inputComprobante) {
+  let _currentObjectUrl = null;
   inputComprobante.addEventListener('change', () => {
     const file = inputComprobante.files[0];
+    // limpiar url anterior si había
+    if (_currentObjectUrl) {
+      URL.revokeObjectURL(_currentObjectUrl);
+      _currentObjectUrl = null;
+    }
+
     if (!file) {
       previewComprobante.classList.add('oculto');
       imgPreview.src = '';
       return;
     }
+
+    // Validaciones básicas: tipo y tamaño
+    if (!file.type || !file.type.startsWith('image/')) {
+      mostrarToast('Selecciona un archivo de imagen (jpg, png, ...).');
+      inputComprobante.value = '';
+      previewComprobante.classList.add('oculto');
+      imgPreview.src = '';
+      return;
+    }
+
+    const maxBytes = 5 * 1024 * 1024; // 5 MB
+    if (file.size > maxBytes) {
+      mostrarToast('El archivo es demasiado grande. Máx 5 MB.');
+      inputComprobante.value = '';
+      previewComprobante.classList.add('oculto');
+      imgPreview.src = '';
+      return;
+    }
+
     const url = URL.createObjectURL(file);
+    _currentObjectUrl = url;
     imgPreview.src = url;
     previewComprobante.classList.remove('oculto');
   });
@@ -229,23 +248,35 @@ if (btnConfirmar) {
       return;
     }
 
+    // Validaciones duplicadas por seguridad antes de enviar
+    if (!file.type || !file.type.startsWith('image/')) {
+      mostrarToast('El comprobante debe ser una imagen (jpg, png, ...).');
+      return;
+    }
+    const maxBytes = 5 * 1024 * 1024; // 5 MB
+    if (file.size > maxBytes) {
+      mostrarToast('El comprobante es demasiado grande. Máx 5 MB.');
+      return;
+    }
+
     btnConfirmar.disabled = true;
     btnConfirmar.textContent = 'Enviando...';
 
     try {
-      const comprobanteBase64 = await fileToBase64(file);
+      // Construir FormData (multipart) — backend debe aceptar multipart/form-data
+      const formData = new FormData();
+      formData.append('sorteo_id', String(Number(sorteoId)));
+      // Enviar los números como JSON en un campo
+      formData.append('numeros', JSON.stringify(seleccionados));
+      formData.append('comprobante', file);
 
       const res = await fetch(`${API_URL}/api/participante/guardar-numeros`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Authorization': `Bearer ${token}`
+          // NO poner Content-Type: fetch lo establece automáticamente para FormData
         },
-        body: JSON.stringify({
-          sorteo_id: Number(sorteoId),
-          numeros: seleccionados,
-          comprobante: comprobanteBase64
-        })
+        body: formData
       });
 
       const data = await res.json();

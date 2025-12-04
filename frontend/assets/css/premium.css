@@ -324,9 +324,22 @@ canvas {
     gap: 15px;
 }
 
-.sorteo-img {
-    width: 120px;
-    height: 120px;
-    border-radius: 10px;
-    object-fit: cover;
+.sorteo-con-imagen {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-align: left;
 }
+
+.sorteo-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+}
+
+.sorteo-info {
+  flex: 1;
+}
+

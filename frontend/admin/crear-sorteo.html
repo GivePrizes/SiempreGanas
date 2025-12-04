@@ -14,7 +14,12 @@
 
   <div class="form">
     <h2>Crear Nuevo Sorteo</h2>
+    <label for="imagen">Imagen del sorteo</label>
     <input type="file" id="imagen" accept="image/*">
+    <div id="previewImagen" class="imagen-preview oculto">
+      <p>Vista previa:</p>
+      <img id="imgPreviewAdmin" alt="Preview imagen del sorteo" />
+    </div>
     <input type="text" id="descripcion" placeholder="Descripción del sorteo">
     <input type="text" id="premio" placeholder="Premio (ej: $1000 en efectivo)">
     <input type="number" id="cantidad_numeros" placeholder="Total números (ej: 1000)">
@@ -26,6 +31,50 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script>
+    // Mostrar vista previa de la imagen seleccionada
+    (function () {
+      const input = document.getElementById('imagen');
+      const previewWrapper = document.getElementById('previewImagen');
+      const img = document.getElementById('imgPreviewAdmin');
+
+      function resetPreview() {
+        img.src = '';
+        previewWrapper.classList.add('oculto');
+      }
+
+      input.addEventListener('change', () => {
+        const file = input.files && input.files[0];
+        if (!file) {
+          resetPreview();
+          return;
+        }
+
+        // Validar tipo básico
+        if (!file.type.startsWith('image/')) {
+          alert('Por favor selecciona un archivo de imagen (jpg, png, etc.).');
+          input.value = '';
+          resetPreview();
+          return;
+        }
+
+        // Validar tamaño (ej. 5MB)
+        const maxBytes = 5 * 1024 * 1024;
+        if (file.size > maxBytes) {
+          alert('El archivo es demasiado grande. Máx 5 MB.');
+          input.value = '';
+          resetPreview();
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          img.src = e.target.result;
+          previewWrapper.classList.remove('oculto');
+        };
+        reader.readAsDataURL(file);
+      });
+    })();
+
     async function crearSorteo() {
       const formData = new FormData();
       formData.append('descripcion', document.getElementById('descripcion').value);

@@ -80,6 +80,11 @@ export async function cargarSorteos() {
 
         return `
           <article class="sorteo-card">
+            ${s.imagen_url ? `
+              <img src="${s.imagen_url}" class="sorteo-img" alt="Imagen del sorteo">
+            ` : `
+              <img src="../assets/img/default.png" class="sorteo-img" alt="Imagen por defecto">
+            `}
             <h3>${s.descripcion}</h3>
             <p class="sorteo-premio">🎁 Premio: <strong>${s.premio}</strong></p>
             <p class="sorteo-precio">
@@ -172,6 +177,13 @@ function injectParticipantStyles() {
     .btn-full {
       width: 100%;
       margin-top: 0.6rem;
+    }
+    .sorteo-img {
+      width: 100%;
+      max-height: 160px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      margin-bottom: 0.6rem;
     }
   `;
   document.head.appendChild(style);
