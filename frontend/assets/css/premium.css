@@ -18,53 +18,139 @@
 
 /* Header */
 .sg-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   background: linear-gradient(180deg, rgba(255,215,0,0.04), transparent);
 }
+
 .sg-brand { display: flex; align-items: center; gap: 14px; }
+
 .sg-logo {
   width: 44px; height: 44px; border-radius: 50%;
   background: radial-gradient(circle at 30% 30%, #fff 0%, var(--gold) 40%, #b48c00 100%);
   color: #000; display: grid; place-items: center; font-weight: 800; letter-spacing: 0.5px;
   box-shadow: 0 0 24px rgba(255,215,0,0.25);
 }
-.sg-title h1 { font-size: 1.2rem; margin: 0; letter-spacing: 0.6px; font-weight: 800; color: var(--gold); }
-.sg-title p { margin: 0; font-size: 0.85rem; color: var(--muted); }
-.sg-badge { font-size: 0.8rem; color: var(--muted); border: 1px solid rgba(255,255,255,0.12); padding: 6px 10px; border-radius: 999px; }
 
-/* Hero */
-.sg-main { max-width: 980px; margin: 0 auto; padding: 24px 16px 64px; }
-.sg-hero { text-align: center; padding: 36px 12px 18px; }
+.sg-title h1 {
+  font-size: 1.2rem; margin: 0; letter-spacing: 0.6px;
+  font-weight: 800; color: var(--gold);
+}
+
+.sg-title p { margin: 0; font-size: 0.85rem; color: var(--muted); }
+
+.sg-badge {
+  font-size: 0.8rem; color: var(--muted);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 6px 10px; border-radius: 999px;
+}
+
+/* Layout principal */
+.sg-main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+.sg-hero {
+  text-align: center;
+  padding: 36px 12px 18px;
+}
+
 .sg-hero-title {
   font-size: 1.8rem; font-weight: 800; margin-bottom: 6px;
-  background: linear-gradient(90deg, #fff, var(--gold)); -webkit-background-clip: text; background-clip: text; color: transparent;
+  background: linear-gradient(90deg, #fff, var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
+
 .sg-hero-sub { font-size: 1rem; color: var(--muted); }
-.sg-cta { margin-top: 18px; display: flex; justify-content: center; gap: 12px; }
+
+.sg-cta {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
 
 /* Botones premium */
 .btn-gold, .btn-red {
-  padding: 12px 20px; border: none; border-radius: 14px; font-weight: 700; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
-.btn-gold { background: var(--gold); color: #121212; box-shadow: 0 10px 24px rgba(255,215,0,0.2); }
-.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 18px 30px rgba(255,215,0,0.28); }
-.btn-red { background: var(--red); color: #fff; box-shadow: 0 10px 24px rgba(229,9,20,0.25); }
-.btn-red:hover { transform: translateY(-1px); box-shadow: 0 18px 30px rgba(229,9,20,0.32); }
+
+.btn-gold {
+  background: var(--gold);
+  color: #121212;
+  box-shadow: 0 10px 24px rgba(255,215,0,0.2);
+}
+.btn-gold:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 30px rgba(255,215,0,0.28);
+}
+
+.btn-red {
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(229,9,20,0.25);
+}
+.btn-red:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 30px rgba(229,9,20,0.32);
+}
+
 .wide { width: 100%; }
 
 /* Cards y campos */
 .sg-card {
-  margin: 18px auto; max-width: 520px; background: var(--glass); border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 16px; padding: 18px 16px; backdrop-filter: blur(12px);
+  margin: 18px auto;
+  max-width: 520px;
+  background: var(--glass);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  padding: 18px 16px;
+  backdrop-filter: blur(12px);
 }
-.sg-card h3 { margin: 0 0 10px; font-size: 1.2rem; font-weight: 800; color: #fff; }
-.sg-field { margin: 10px 0; display: grid; gap: 6px; }
-.sg-field label { font-size: 0.9rem; color: var(--muted); }
+
+.sg-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.sg-field {
+  margin: 10px 0;
+  display: grid;
+  gap: 6px;
+}
+
+.sg-field label {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
 .sg-field input {
-  width: 100%; padding: 12px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(0,0,0,0.35); color: #fff; outline: none; transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
+
 .sg-field input:focus {
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(255,215,0,0.18);
@@ -73,18 +159,29 @@
 /* Switch y pie */
 .sg-switch { margin-top: 10px; text-align: center; }
 .link { color: var(--gold); font-weight: 600; text-decoration: underline; cursor: pointer; }
-.sg-footer { margin-top: 22px; display: grid; place-items: center; }
+
+.sg-footer {
+  margin-top: 22px;
+  display: grid;
+  place-items: center;
+}
+
 .sg-footline { font-size: 0.9rem; color: var(--muted); }
 
-/* Responsive */
+/* Responsive general */
 @media (max-width: 640px) {
   .sg-hero-title { font-size: 1.5rem; }
   .sg-main { padding-bottom: 48px; }
+
+  .sg-header {
+    padding: 12px 16px;
+  }
+  .sg-title h1 {
+    font-size: 1rem;
+  }
 }
 
-
-
-/*estilos para las tarjetas de sorteo*/
+/* ---- SORTEOS / CARDS ---- */
 
 .sorteos-grid {
   display: grid;
@@ -95,6 +192,7 @@
   .sorteos-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* Card base de sorteo */
 .sorteo-card {
   background: var(--glass);
   border: 1px solid var(--gold);
@@ -102,6 +200,11 @@
   padding: 20px;
   text-align: center;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  animation: fadeSlideIn 0.6s ease forwards;
 }
 .sorteo-card:hover {
   transform: translateY(-4px);
@@ -111,6 +214,39 @@
 .sorteo-card h3 { color: var(--gold); margin-bottom: 8px; }
 .sorteo-card p { color: var(--muted); margin: 4px 0; }
 
+/* Variante con imagen a la izquierda (admin o listado premium) */
+.sorteo-con-imagen {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-align: left;
+}
+
+.sorteo-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+}
+
+.sorteo-info {
+  flex: 1;
+}
+
+/* Responsivo para la variante con imagen */
+@media (max-width: 640px) {
+  .sorteo-con-imagen {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sorteo-img {
+    width: 100%;
+    max-width: 160px;
+  }
+}
+
+/* Barra de progreso */
 .progress {
   margin: 12px 0;
   background: #1a1a1a;
@@ -123,10 +259,7 @@
   transition: width 0.6s ease;
 }
 
-
-
-/**/
-/* Estilos para el panel de administración */
+/* ---- PANEL DE ADMIN / STATS ---- */
 
 .comprobantes-grid {
   display: grid;
@@ -181,8 +314,7 @@
 
 .stat-card:hover { transform: translateY(-4px); }
 
-/* Estilos para gráficos */
-
+/* Gráficos */
 .charts-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -198,12 +330,10 @@ canvas {
   .charts-grid { grid-template-columns: 1fr; }
 }
 
-
-/* Estilos para las tarjetas de mis números */
+/* Mis números - estados */
 .sorteo-card.aprobado { border: 2px solid var(--gold); }
 .sorteo-card.pendiente { border: 2px solid var(--red); opacity: 0.8; }
 .sorteo-card.rechazado { border: 2px solid #555; color: #999; }
-
 
 /* Animación de entrada */
 @keyframes fadeSlideIn {
@@ -224,16 +354,7 @@ canvas {
   100% { box-shadow: 0 0 0 rgba(255,215,0,0.4); }
 }
 
-/* Aplicar animaciones a las tarjetas */
-.sorteo-card {
-  animation: fadeSlideIn 0.6s ease forwards;
-  transition: transform 0.2s ease;
-}
-.sorteo-card:hover {
-  transform: translateY(-4px);
-}
-
-/* Estados diferenciados */
+/* Aplicar animaciones a las tarjetas por estado */
 .sorteo-card.aprobado {
   border: 2px solid var(--gold);
   animation: fadeSlideIn 0.6s ease forwards, goldPulse 2s infinite;
@@ -259,7 +380,9 @@ canvas {
   50% { color: var(--gold); }
   100% { color: var(--red); }
 }
-/* Estilos específicos para la ruleta */
+
+/* ---- RUETA / ADMIN CARDS ---- */
+
 .sorteo-card-admin {
   border-radius: 1rem;
   padding: 1rem;
@@ -318,28 +441,3 @@ canvas {
   background: rgba(239, 68, 68, 0.18);
   color: #fecaca;
 }
-
-.sorteo-card {
-    display: flex;
-    gap: 15px;
-}
-
-.sorteo-con-imagen {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  text-align: left;
-}
-
-.sorteo-img {
-  width: 120px;
-  height: 120px;
-  border-radius: 12px;
-  object-fit: cover;
-  border: 2px solid var(--gold);
-}
-
-.sorteo-info {
-  flex: 1;
-}
-

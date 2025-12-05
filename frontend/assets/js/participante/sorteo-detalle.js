@@ -102,7 +102,15 @@ function toggleNumero(numero, el) {
   actualizarResumen();
 }
 
-// Nota: Envío multipart/FormData en lugar de Base64 (más eficiente para imágenes)
+// helper para convertir un File a base64 (data URL)
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result); // "data:image/png;base64,AAAA..."
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 // --- cargar sorteo desde backend ---
 async function cargarSorteo() {
@@ -263,20 +271,23 @@ if (btnConfirmar) {
     btnConfirmar.textContent = 'Enviando...';
 
     try {
-      // Construir FormData (multipart) — backend debe aceptar multipart/form-data
-      const formData = new FormData();
-      formData.append('sorteo_id', String(Number(sorteoId)));
-      // Enviar los números como JSON en un campo
-      formData.append('numeros', JSON.stringify(seleccionados));
-      formData.append('comprobante', file);
+      // 1️⃣ convertir archivo a base64 (data URL)
+      const base64 = await fileToBase64(file);
+
+      // 2️⃣ armar body JSON como lo espera el backend
+      const body = {
+        sorteo_id: Number(sorteoId),
+        numeros: seleccionados,
+        comprobante: base64
+      };
 
       const res = await fetch(`${API_URL}/api/participante/guardar-numeros`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`
-          // NO poner Content-Type: fetch lo establece automáticamente para FormData
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
-        body: formData
+        body: JSON.stringify(body)
       });
 
       const data = await res.json();
@@ -290,6 +301,7 @@ if (btnConfirmar) {
       }
 
       mostrarToast('¡Listo! Tu participación quedó registrada como pendiente ✅');
+
       // reset selección
       seleccionados = [];
       inputComprobante.value = '';
