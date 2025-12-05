@@ -3,7 +3,7 @@
   "outputDirectory": "frontend",
   "installCommand": "echo 'No install needed'",
   "env": {
-    "AUTH_SERVICE": "https://app-service-phi.vercel.app/api",
-    "APP_SERVICE": "https://auth-service-v5sb.onrender.com"
+    "AUTH_SERVICE": "https://siempregana-auth-service.vercel.app",
+    "APP_SERVICE": "https://app-service-phi.vercel.app"
   }
 }
