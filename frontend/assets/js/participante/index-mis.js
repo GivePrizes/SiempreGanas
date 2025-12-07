@@ -1,3 +1,6 @@
-import { cargarMisNumeros } from './misNumeros.js';
+// assets/js/participante/index-mis.js
+import { cargarMisNumerosDetalle } from './misNumeros.js';
 
-cargarMisNumeros();
+document.addEventListener('DOMContentLoaded', () => {
+  cargarMisNumerosDetalle();
+});

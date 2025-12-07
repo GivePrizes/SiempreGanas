@@ -4,69 +4,128 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Siempre Gana — Panel Admin</title>
-  <link rel="stylesheet" href="../assets/css/style.css"/>
-  <link rel="stylesheet" href="../assets/css/premium.css"/>
+
+  <!-- SOLO los CSS nuevos del sistema -->
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
-<body class="sg-body">
-  <nav class="sg-header">
-    <div class="sg-brand">
-      <span class="sg-logo">SG</span>
-      <h1>Panel Admin</h1>
-    </div>
-    <div class="sg-actions">
-      <button onclick="location.href='crear-sorteo.html'" class="btn-gold">➕ Crear Sorteo</button>
-      <button onclick="logout()" class="btn-red">Salir</button>
-    </div>
-  </nav>
+<body class="admin-body">
+  <div class="admin-wrapper">
 
-  <main class="sg-main">
-    <!-- Sección comprobantes -->
-    <section class="sg-card">
-      <h2 class="sg-hero-title">📑 Comprobantes Pendientes</h2>
-      <p class="sg-hero-sub">Revisa y aprueba pagos de participantes</p>
-      <div id="comprobantes" class="comprobantes-grid"></div>
-    </section>
-
-    <!-- Sección sorteos -->
-    <section class="sg-card">
-      <h2 class="sg-hero-title">🎯 Sorteos Activos</h2>
-      <p class="sg-hero-sub">Gestiona sorteos en curso</p>
-      <div id="sorteosAdmin" class="sorteos-grid"></div>
-    </section>
-
-    <!-- Sección gráficos -->
-    <section class="sg-card">
-      <h2 class="sg-hero-title">📈 Visualizaciones</h2>
-      <div class="charts-grid">
-        <canvas id="chartSorteos"></canvas>
-        <canvas id="chartComprobantes"></canvas>
+    <!-- HEADER ADMIN -->
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <h1>Panel de Administración</h1>
+        <span class="admin-subtitle">Control de sorteos y comprobantes</span>
       </div>
-    </section>
-
-    <!-- Sección estadísticas -->
-    <section class="sg-card stats-section">
-      <h2 class="sg-hero-title">📊 Estadísticas rápidas</h2>
-      <div class="stats-grid">
-        <div class="stat-card gold">
-          <h3>Usuarios</h3>
-          <p id="statUsuarios">—</p>
-        </div>
-        <div class="stat-card ruby">
-          <h3>Sorteos activos</h3>
-          <p id="statSorteos">—</p>
-        </div>
-        <div class="stat-card obsidian">
-          <h3>Comprobantes pendientes</h3>
-          <p id="statPendientes">—</p>
-        </div>
+      <div class="admin-header-right">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="location.href='crear-sorteo.html'">
+          ➕ Crear sorteo
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          onclick="logout()">
+          Salir
+        </button>
       </div>
-    </section>
-  </main>
+    </header>
 
-  <!-- Toast -->
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="admin-main">
+
+      <!-- 📑 COMPROBANTES PENDIENTES -->
+      <section class="card">
+        <div class="card-title-row">
+          <div>
+            <h2>📑 Comprobantes pendientes</h2>
+            <p class="text-muted">
+              Revisa y aprueba pagos de participantes antes de liberar sus números.
+            </p>
+          </div>
+        </div>
+
+        <!-- El JS admin/index.js llena este contenedor -->
+        <div id="comprobantes" class="table-wrapper">
+          <!-- Aquí se inyectan las tarjetas o filas de comprobantes -->
+        </div>
+      </section>
+
+      <!-- 🎯 SORTEOS ACTIVOS -->
+      <section class="card" style="margin-top:18px;">
+        <div class="card-title-row">
+          <div>
+            <h2>🎯 Sorteos activos</h2>
+            <p class="text-muted">
+              Gestiona los sorteos que están en curso y accede a la ruleta.
+            </p>
+          </div>
+        </div>
+
+        <!-- El JS admin/index.js usa este contenedor -->
+        <div id="sorteosAdmin" class="table-wrapper">
+          <!-- Aquí se listan los sorteos (cards o tabla) -->
+        </div>
+      </section>
+
+      <!-- 📈 GRÁFICAS -->
+      <section class="card" style="margin-top:18px;">
+        <div class="card-title-row">
+          <div>
+            <h2>📈 Visualizaciones</h2>
+            <p class="text-muted">
+              Comportamiento de sorteos y comprobantes en el tiempo.
+            </p>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="card" style="background:transparent; box-shadow:none; border:none; padding:0;">
+            <canvas id="chartSorteos"></canvas>
+          </div>
+          <div class="card" style="background:transparent; box-shadow:none; border:none; padding:0;">
+            <canvas id="chartComprobantes"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- 📊 ESTADÍSTICAS RÁPIDAS -->
+      <section class="card" style="margin-top:18px;">
+        <div class="card-title-row">
+          <div>
+            <h2>📊 Estadísticas rápidas</h2>
+            <p class="text-muted">
+              Resumen de usuarios, sorteos activos y comprobantes pendientes.
+            </p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card gold">
+            <h3>Usuarios</h3>
+            <p id="statUsuarios">—</p>
+          </div>
+          <div class="stat-card ruby">
+            <h3>Sorteos activos</h3>
+            <p id="statSorteos">—</p>
+          </div>
+          <div class="stat-card obsidian">
+            <h3>Comprobantes pendientes</h3>
+            <p id="statPendientes">—</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast de feedback -->
   <div id="toast" class="toast hidden">Acción realizada</div>
 
-  <!-- Scripts -->
+  <!-- Scripts existentes (NO tocar) -->
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

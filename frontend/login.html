@@ -4,89 +4,158 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Siempre Gana — Acceso</title>
-  <!-- CSS base + premium -->
-  <link rel="stylesheet" href="assets/css/style.css"/>
-  <link rel="stylesheet" href="assets/css/premium.css"/>
+
+  <!-- NUEVOS CSS MODULARES -->
+  <link rel="stylesheet" href="assets/css/common.css">
+  <link rel="stylesheet" href="assets/css/participant.css">
+
+  <style>
+    /* Ajustes específicos del login */
+    .auth-wrapper {
+      max-width: 460px;
+      margin: 50px auto;
+      text-align: center;
+    }
+
+    .auth-logo {
+      font-size: 40px;
+      font-weight: 800;
+      color: var(--color-primary);
+      margin-bottom: 4px;
+    }
+
+    .auth-card {
+      background: var(--color-card);
+      padding: 22px 24px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-top: 22px;
+    }
+
+    .auth-card h3 {
+      margin-bottom: 18px;
+      color: var(--color-primary);
+    }
+
+    .auth-field {
+      margin-bottom: 14px;
+      text-align: left;
+    }
+
+    .auth-field label {
+      font-size: 13px;
+      color: var(--color-text-main);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .auth-field input {
+      width: 100%;
+    }
+
+    .switch-link {
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--color-primary-soft);
+      cursor: pointer;
+    }
+
+    .switch-link:hover {
+      text-decoration: underline;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
-<body class="sg-body">
-  <header class="sg-header">
-    <div class="sg-brand">
-      <span class="sg-logo">SG</span>
-      <div class="sg-title">
-        <h1>Siempre Gana</h1>
-        <p>Club de sorteos premium</p>
-      </div>
-    </div>
-    <div class="sg-badge">Acceso seguro</div>
-  </header>
+<body>
 
-  <main class="sg-main">
-    <!-- Hero persuasivo -->
-    <section class="sg-hero">
-      <h2 class="sg-hero-title">Premios reales, experiencias de lujo</h2>
-      <p class="sg-hero-sub">Comisión solo 15%. Tu oportunidad está aquí.</p>
-      <div class="sg-cta">
-        <button class="btn-gold" onclick="showLogin()">Entrar</button>
-        <button class="btn-red" onclick="showRegistro()">Registrarme</button>
-      </div>
-      <div class="sg-security">
-        <span class="shield">🔒</span> Autenticación protegida con JWT
-      </div>
-    </section>
+  <div class="auth-wrapper">
+    
+    <div class="auth-logo">SG</div>
+    <h1 style="margin:0; color:white;">Siempre Gana</h1>
+    <p class="text-muted">Club de sorteos premium</p>
 
-    <!-- Login -->
-    <section id="loginForm" class="sg-card hidden">
+    <!-- LOGIN -->
+    <section id="loginForm" class="auth-card">
       <h3>Iniciar sesión</h3>
-      <div class="sg-field">
-        <label for="loginEmail">Email</label>
-        <input type="email" id="loginEmail" placeholder="tu@email.com"/>
+
+      <div class="auth-field">
+        <label for="loginEmail">Correo</label>
+        <input type="email" id="loginEmail" placeholder="usuario@correo.com">
       </div>
-      <div class="sg-field">
+
+      <div class="auth-field">
         <label for="loginPass">Contraseña</label>
-        <input type="password" id="loginPass" placeholder="••••••••"/>
+        <input type="password" id="loginPass" placeholder="••••••••">
       </div>
-      <button class="btn-gold wide" onclick="login()">Entrar</button>
-      <div class="sg-switch">
-        <span class="link" onclick="showRegistro()">¿No tienes cuenta? Regístrate</span>
+
+      <button class="btn btn-primary" style="width:100%;" onclick="login()">
+        Entrar
+      </button>
+
+      <div class="switch-link" onclick="showRegistro()">
+        ¿No tienes cuenta? Registrarse
       </div>
     </section>
 
-    <!-- Registro -->
-    <section id="registroForm" class="sg-card hidden">
+    <!-- REGISTRO -->
+    <section id="registroForm" class="auth-card hidden">
       <h3>Crear cuenta</h3>
-      <div class="sg-field">
-        <label for="nombre">Nombre completo</label>
-        <input type="text" id="nombre" placeholder="Nombre y Apellido"/>
+
+      <div class="auth-field">
+        <label for="regNombre">Nombre completo</label>
+        <input type="text" id="regNombre" placeholder="Nombre y Apellido">
       </div>
-      <div class="sg-field">
-        <label for="regEmail">Email</label>
-        <input type="email" id="regEmail" placeholder="tu@email.com"/>
+
+      <div class="auth-field">
+        <label for="regEmail">Correo</label>
+        <input type="email" id="regEmail" placeholder="email@ejemplo.com">
       </div>
-      <div class="sg-field">
-        <label for="telefono">Teléfono</label>
-        <input type="tel" id="telefono" placeholder="+57 3XX XXX XXXX"/>
+
+      <div class="auth-field">
+        <label for="regTelefono">Teléfono</label>
+        <input type="tel" id="regTelefono" placeholder="+57 3XX XXX XXXX">
       </div>
-      <div class="sg-field">
+
+      <div class="auth-field">
         <label for="regPass">Contraseña</label>
-        <input type="password" id="regPass" placeholder="••••••••"/>
+        <input type="password" id="regPass" placeholder="••••••••">
       </div>
-      <div class="sg-field">
+
+      <div class="auth-field">
         <label for="regPassConfirm">Confirmar contraseña</label>
-        <input type="password" id="regPassConfirm" placeholder="••••••••"/>
+        <input type="password" id="regPassConfirm" placeholder="••••••••">
       </div>
-      <button class="btn-red wide" onclick="registro()">Registrarme</button>
-      <div class="sg-switch">
-        <span class="link" onclick="showLogin()">¿Ya tienes cuenta? Entra</span>
+
+      <button class="btn btn-primary" style="width:100%;" onclick="registro()">
+        Registrarme
+      </button>
+
+      <div class="switch-link" onclick="showLogin()">
+        ¿Ya tienes cuenta? Iniciar sesión
       </div>
     </section>
-  </main>
 
-  <footer class="sg-footer">
-    <div class="sg-footline">Plataforma auditada • Transparencia en cada sorteo</div>
-  </footer>
+  </div>
 
-  <!-- Config y lógica existente -->
+  <!-- LÓGICA EXISTENTE -->
   <script src="assets/js/config.js"></script>
   <script src="assets/js/auth.js"></script>
+
+  <script>
+    function showRegistro() {
+      document.getElementById("loginForm").classList.add("hidden");
+      document.getElementById("registroForm").classList.remove("hidden");
+    }
+
+    function showLogin() {
+      document.getElementById("registroForm").classList.add("hidden");
+      document.getElementById("loginForm").classList.remove("hidden");
+    }
+  </script>
+
 </body>
 </html>

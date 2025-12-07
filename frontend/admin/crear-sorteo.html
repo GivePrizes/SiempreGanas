@@ -1,113 +1,96 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crear Sorteo - Admin</title>
-  <link rel="stylesheet" href="../assets/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear nuevo sorteo</title>
+    <!-- Carga de estilos comunes y específicos de administrador -->
+    <link rel="stylesheet" href="/assets/css/common.css">
+    <link rel="stylesheet" href="/assets/css/admin.css">
 </head>
-<body>
-  <nav>
-    <button onclick="location.href='panel.html'">Volver al Panel</button>
-    <button onclick="logout()">Salir</button>
-  </nav>
+<body class="admin-body">
+    <div class="admin-wrapper">
+        <!-- Cabecera con título y acciones -->
+        <header class="admin-header">
+            <div class="admin-header-left">
+                <h1>Panel de administración</h1>
+                <span class="admin-subtitle">Crear nuevo sorteo</span>
+            </div>
+            <div class="admin-header-right">
+                <!-- Enlaces de navegación del panel -->
+                <button class="btn btn-secondary" onclick="window.location.href='panel-admin.php'">Volver al panel</button>
+                <button class="btn btn-danger" onclick="window.location.href='logout.php'">Salir</button>
+            </div>
+        </header>
 
-  <div class="form">
-    <h2>Crear Nuevo Sorteo</h2>
-    <label for="imagen">Imagen del sorteo</label>
-    <input type="file" id="imagen" accept="image/*">
-    <div id="previewImagen" class="imagen-preview oculto">
-      <p>Vista previa:</p>
-      <img id="imgPreviewAdmin" alt="Preview imagen del sorteo" />
+        <main>
+            <!-- Tarjeta del formulario de sorteo -->
+            <div class="card form-card">
+                <h2 class="card-title">Datos del sorteo</h2>
+                <form action="guardar-sorteo.php" method="post" enctype="multipart/form-data" id="formCrearSorteo">
+                    <div class="form-grid">
+                        <!-- Columna: imagen del sorteo -->
+                        <div class="image-upload">
+                            <label for="imagen">Imagen del sorteo</label>
+                            <input type="file" id="imagen" name="imagen" accept="image/*">
+                            <div id="previewImagen" class="image-preview">
+                                <!-- Mensaje predeterminado de previsualización -->
+                                <span class="preview-placeholder">Vista previa</span>
+                            </div>
+                        </div>
+                        <!-- Columna: datos del sorteo -->
+                        <div>
+                            <div class="form-group">
+                                <label for="descripcion">Descripción</label>
+                                <input type="text" id="descripcion" name="descripcion" placeholder="Ej: Sorteo Televisor 55''" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="premio">Premio</label>
+                                <input type="text" id="premio" name="premio" placeholder="Ej: 1000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="totalNumeros">Total de números</label>
+                                <input type="number" id="totalNumeros" name="totalNumeros" placeholder="Ej: 1000" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="precioNumero">Precio por número</label>
+                                <input type="number" id="precioNumero" name="precioNumero" placeholder="Ej: 50" required>
+                            </div>
+                            <div class="form-row-inline">
+                                <div class="form-group">
+                                    <label for="fechaSorteo">Fecha del sorteo</label>
+                                    <input type="date" id="fechaSorteo" name="fechaSorteo" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="horaSorteo">Hora</label>
+                                    <input type="time" id="horaSorteo" name="horaSorteo" required>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Crear sorteo</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
     </div>
-    <input type="text" id="descripcion" placeholder="Descripción del sorteo">
-    <input type="text" id="premio" placeholder="Premio (ej: $1000 en efectivo)">
-    <input type="number" id="cantidad_numeros" placeholder="Total números (ej: 1000)">
-    <input type="number" id="precio_numero" placeholder="Precio por número (ej: 50)">
-    <input type="datetime-local" id="fecha_sorteo">
-    <button class="btn-gold" onclick="crearSorteo()">CREAR SORTEO</button>
-  </div>
 
-  <script src="../assets/js/config.js"></script>
-  <script src="../assets/js/auth.js"></script>
-  <script>
-    // Mostrar vista previa de la imagen seleccionada
-    (function () {
-      const input = document.getElementById('imagen');
-      const previewWrapper = document.getElementById('previewImagen');
-      const img = document.getElementById('imgPreviewAdmin');
-
-      function resetPreview() {
-        img.src = '';
-        previewWrapper.classList.add('oculto');
-      }
-
-      input.addEventListener('change', () => {
-        const file = input.files && input.files[0];
-        if (!file) {
-          resetPreview();
-          return;
+    <!-- Script para previsualizar la imagen del sorteo -->
+    <script>
+    document.getElementById('imagen').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById('previewImagen');
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                preview.innerHTML = `<img src="${ev.target.result}" alt="Vista previa" />`;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.innerHTML = '<span class="preview-placeholder">Vista previa</span>';
         }
-
-        // Validar tipo básico
-        if (!file.type.startsWith('image/')) {
-          alert('Por favor selecciona un archivo de imagen (jpg, png, etc.).');
-          input.value = '';
-          resetPreview();
-          return;
-        }
-
-        // Validar tamaño (ej. 5MB)
-        const maxBytes = 5 * 1024 * 1024;
-        if (file.size > maxBytes) {
-          alert('El archivo es demasiado grande. Máx 5 MB.');
-          input.value = '';
-          resetPreview();
-          return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          img.src = e.target.result;
-          previewWrapper.classList.remove('oculto');
-        };
-        reader.readAsDataURL(file);
-      });
-    })();
-
-    async function crearSorteo() {
-      const formData = new FormData();
-      formData.append('descripcion', document.getElementById('descripcion').value);
-      formData.append('premio', document.getElementById('premio').value);
-      formData.append('cantidad_numeros', document.getElementById('cantidad_numeros').value);
-      formData.append('precio_numero', document.getElementById('precio_numero').value);
-      formData.append('fecha_sorteo', document.getElementById('fecha_sorteo').value);
-
-      const imagenInput = document.getElementById('imagen');
-      if (imagenInput && imagenInput.files.length > 0) {
-        formData.append('imagen', imagenInput.files[0]);
-      }
-
-      const token = localStorage.getItem('token');
-
-      const res = await fetch(`${API_URL}/api/sorteos/crear`, {   // 👈 OJO AQUÍ: /api/sorteos/crear
-        method: 'POST',
-        headers: { 
-          'Authorization': `Bearer ${token}`
-          // NO ponemos 'Content-Type', fetch lo arma solo al usar FormData
-        },
-        body: formData
-      });
-
-      if (res.ok) {
-        alert('✅ Sorteo creado!');
-        location.href = 'panel.html';
-      } else {
-        alert('❌ Error al crear');
-        console.log('Error crear sorteo:', await res.text());
-      }
-    }
-  </script>
-
+    });
+    </script>
 </body>
 </html>

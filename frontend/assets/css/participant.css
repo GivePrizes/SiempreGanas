@@ -1,0 +1,423 @@
+/*css/participant.css
+*/
+
+/*
+
+ * Participant-facing styles for the Sorteo platform
+ *
+ * This stylesheet is designed to be fully responsive so that customers
+ * interacting with raffles on mobile, tablet or desktop have an
+ * enjoyable experience. It builds on the common variables and
+ * introduces flexible card layouts, responsive grids and persuasive
+ * call‑to‑action elements. The goal is to convey trust, excitement
+ * and ease of use, encouraging users to participate in raffles.
+ */
+
+
+
+/* =============================
+   Section: Sorteos disponibles
+   ============================= */
+
+.sorteos-section {
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sorteos-section h2 {
+  font-size: 2rem;
+  color: var(--colour-primary);
+  margin-bottom: 0.5rem;
+}
+
+.sorteos-section p.section-description {
+  font-size: 1rem;
+  color: var(--colour-muted);
+  margin-bottom: 1.5rem;
+  max-width: 650px;
+}
+
+/* Grid layout for available raffles */
+.sorteos-grid {
+  display: grid;
+  gap: 1.5rem;
+  /* Automatically fit as many cards per row as possible; min card width 280px */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Card representing a single raffle */
+.sorteo-card {
+  background-color: var(--colour-surface);
+  border-radius: 0.8rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sorteo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+}
+
+/* Raffle image */
+.sorteo-card .sorteo-image {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+  background-color: var(--colour-surface-alt);
+}
+
+.sorteo-card .sorteo-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sorteo-card .sorteo-image .placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--colour-muted);
+  font-size: var(--font-size-small);
+}
+
+/* Card content */
+.sorteo-card .sorteo-content {
+  padding: 1rem 1.25rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.sorteo-card .sorteo-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--colour-primary);
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sorteo-card .sorteo-info {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  margin-bottom: 0.35rem;
+}
+
+.sorteo-card .sorteo-info .icon {
+  margin-right: 0.3rem;
+}
+
+.sorteo-card .sorteo-info span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Progress bar representing sold numbers */
+.sorteo-card .progress-container {
+  width: 100%;
+  height: 0.5rem;
+  background-color: var(--colour-progress-bg);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  margin: 0.8rem 0 0.5rem;
+}
+
+.sorteo-card .progress-bar {
+  height: 100%;
+  background-color: var(--colour-progress-bar);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+.sorteo-card .availability {
+  font-size: var(--font-size-small);
+  color: var(--colour-muted);
+  margin-bottom: 0.5rem;
+}
+
+.sorteo-card .cta {
+  margin-top: auto;
+  text-align: center;
+}
+
+.sorteo-card .cta .btn-primary {
+  width: 100%;
+  font-size: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+}
+
+
+
+/* Status badges / chips (e.g. “Sorteo cerrado”, “En progreso”) */
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  margin-right: 0.35rem;
+  color: #000;
+}
+
+.status-open {
+  background-color: #0f9d58; /* green */
+}
+
+.status-closed {
+  background-color: #d32f2f; /* red */
+}
+
+.status-pending {
+  background-color: #f4b400; /* amber */
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .sorteos-section h2 {
+    font-size: 1.5rem;
+  }
+  .sorteo-card .sorteo-title {
+    font-size: 1.1rem;
+  }
+  .sorteo-card .cta .btn-primary {
+    font-size: 0.9rem;
+  }
+}
+
+/* =============================
+   Layout general participante
+   ============================= */
+
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+/* Header de dashboard / mis números */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-header h2 {
+  font-size: 1.6rem;
+}
+
+.dashboard-header .btn {
+  margin-left: 0.5rem;
+}
+
+/* =============================
+   Resumen rápido del dashboard
+   ============================= */
+
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1.75rem;
+}
+
+.summary-card {
+  background-color: var(--colour-surface);
+  border-radius: 0.7rem;
+  padding: 0.8rem 1rem;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
+}
+
+.summary-label {
+  font-size: var(--font-size-small);
+  color: var(--colour-muted);
+  margin-bottom: 0.25rem;
+}
+
+.summary-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* =============================
+   Mis números (cards agrupadas)
+   ============================= */
+
+.resumen-linea {
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
+}
+
+/* Reaprovechamos .sorteos-grid y .sorteo-card ya definidos arriba,
+   solo usamos .sorteo-content, .sorteo-title, .cta que ya existen.
+*/
+
+/* =============================
+   Detalle de sorteo (elegir números)
+   ============================= */
+
+.sorteo-detalle-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(260px, 1.7fr);
+  gap: 1.4rem;
+  margin-top: 1rem;
+}
+
+.sorteo-detalle-main,
+.sorteo-detalle-side {
+  background-color: var(--colour-surface);
+  border-radius: 0.8rem;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.55);
+}
+
+/* Info del sorteo */
+.sorteo-detalle-main h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.sorteo-data p {
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+/* Barra de progreso en detalle */
+.progress-wrapper {
+  margin: 0.8rem 0 1rem;
+}
+
+.progress-wrapper .progress-container {
+  height: 0.6rem;
+  border-radius: 0.3rem;
+}
+
+.progress-wrapper .progress-text {
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--colour-muted);
+}
+
+/* Texto de pasos */
+.sorteo-steps h3 {
+  margin-bottom: 0.4rem;
+}
+
+.sorteo-steps ol {
+  padding-left: 1.25rem;
+  font-size: 0.9rem;
+}
+
+.sorteo-steps li {
+  margin-bottom: 0.3rem;
+}
+
+/* Columna derecha: números + comprobante */
+
+.sorteo-numeros-card {
+  margin-bottom: 0.9rem;
+}
+
+.sorteo-numeros-header h3 {
+  margin-bottom: 0.2rem;
+}
+
+/* Grid de números */
+.numeros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(46px, 1fr));
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.numero-bola {
+  border-radius: 999px;
+  padding: 0.25rem 0;
+  font-size: 0.85rem;
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid var(--colour-border);
+  background-color: var(--colour-surface-alt);
+  color: var(--colour-text);
+  transition: background-color 0.15s ease, transform 0.08s ease, border-color 0.15s ease;
+}
+
+.numero-bola:hover {
+  background-color: var(--colour-primary-hover);
+  color: #000;
+  transform: translateY(-1px);
+}
+
+.numero-bola--ocupado {
+  background-color: #292938;
+  color: var(--colour-muted);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+.numero-bola--seleccionado {
+  background-color: var(--colour-primary);
+  color: #000;
+  border-color: var(--colour-primary);
+}
+
+/* Comprobante */
+.comprobante-upload {
+  margin-top: 0.9rem;
+}
+
+.comprobante-upload label {
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+  display: inline-block;
+}
+
+.comprobante-upload input[type="file"] {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.comprobante-preview {
+  margin-top: 0.6rem;
+  border-radius: 0.7rem;
+  border: 1px dashed var(--colour-border);
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--colour-surface-alt);
+  padding: 0.5rem;
+  overflow: hidden;
+}
+
+.comprobante-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .sorteo-detalle-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
