@@ -1,96 +1,104 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear nuevo sorteo</title>
-    <!-- Carga de estilos comunes y específicos de administrador -->
-    <link rel="stylesheet" href="/assets/css/common.css">
-    <link rel="stylesheet" href="/assets/css/admin.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siempre Gana — Crear sorteo</title>
+
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body class="admin-body">
-    <div class="admin-wrapper">
-        <!-- Cabecera con título y acciones -->
-        <header class="admin-header">
-            <div class="admin-header-left">
-                <h1>Panel de administración</h1>
-                <span class="admin-subtitle">Crear nuevo sorteo</span>
-            </div>
-            <div class="admin-header-right">
-                <!-- Enlaces de navegación del panel -->
-                <button class="btn btn-secondary" onclick="window.location.href='panel-admin.php'">Volver al panel</button>
-                <button class="btn btn-danger" onclick="window.location.href='logout.php'">Salir</button>
-            </div>
-        </header>
+  <div class="admin-wrapper">
 
-        <main>
-            <!-- Tarjeta del formulario de sorteo -->
-            <div class="card form-card">
-                <h2 class="card-title">Datos del sorteo</h2>
-                <form action="guardar-sorteo.php" method="post" enctype="multipart/form-data" id="formCrearSorteo">
-                    <div class="form-grid">
-                        <!-- Columna: imagen del sorteo -->
-                        <div class="image-upload">
-                            <label for="imagen">Imagen del sorteo</label>
-                            <input type="file" id="imagen" name="imagen" accept="image/*">
-                            <div id="previewImagen" class="image-preview">
-                                <!-- Mensaje predeterminado de previsualización -->
-                                <span class="preview-placeholder">Vista previa</span>
-                            </div>
-                        </div>
-                        <!-- Columna: datos del sorteo -->
-                        <div>
-                            <div class="form-group">
-                                <label for="descripcion">Descripción</label>
-                                <input type="text" id="descripcion" name="descripcion" placeholder="Ej: Sorteo Televisor 55''" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="premio">Premio</label>
-                                <input type="text" id="premio" name="premio" placeholder="Ej: 1000" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="totalNumeros">Total de números</label>
-                                <input type="number" id="totalNumeros" name="totalNumeros" placeholder="Ej: 1000" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="precioNumero">Precio por número</label>
-                                <input type="number" id="precioNumero" name="precioNumero" placeholder="Ej: 50" required>
-                            </div>
-                            <div class="form-row-inline">
-                                <div class="form-group">
-                                    <label for="fechaSorteo">Fecha del sorteo</label>
-                                    <input type="date" id="fechaSorteo" name="fechaSorteo" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="horaSorteo">Hora</label>
-                                    <input type="time" id="horaSorteo" name="horaSorteo" required>
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="btn btn-primary">Crear sorteo</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </main>
-    </div>
+    <!-- HEADER -->
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <h1>Crear nuevo sorteo</h1>
+        <span class="admin-subtitle">Configura el premio, los números y la imagen del sorteo.</span>
+      </div>
+      <div class="admin-header-right">
+        <button type="button" class="btn btn-secondary"
+                onclick="location.href='panel.html'">
+          Volver al panel
+        </button>
+        <button type="button" class="btn btn-danger" onclick="logout()">
+          Salir
+        </button>
+      </div>
+    </header>
 
-    <!-- Script para previsualizar la imagen del sorteo -->
-    <script>
-    document.getElementById('imagen').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        const preview = document.getElementById('previewImagen');
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                preview.innerHTML = `<img src="${ev.target.result}" alt="Vista previa" />`;
-            };
-            reader.readAsDataURL(file);
-        } else {
-            preview.innerHTML = '<span class="preview-placeholder">Vista previa</span>';
-        }
-    });
-    </script>
+    <!-- CONTENIDO -->
+    <main class="admin-main">
+      <section class="card">
+        <div class="card-title-row">
+          <h2>Datos del sorteo</h2>
+        </div>
+
+        <form id="formCrearSorteo" class="form-grid-two">
+          <!-- Columna izquierda: imagen -->
+          <div>
+            <div class="form-section-title">Imagen del sorteo</div>
+            <div class="image-upload">
+              <label for="imagen">Selecciona una imagen</label>
+              <small>Formato recomendado: JPG o PNG, proporción 16:9.</small>
+              <input type="file" id="imagen" name="imagen" accept="image/*">
+              <div id="previewImagen" class="image-preview">
+                <span>Sin imagen seleccionada</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna derecha: campos de texto/números -->
+          <div>
+            <div class="form-section-title">Información general</div>
+
+            <div class="form-group">
+              <label for="descripcion">Descripción del sorteo</label>
+              <input type="text" id="descripcion" name="descripcion"
+                     placeholder="Ej: Pantalla Netflix / iPhone 15 Pro" required>
+            </div>
+
+            <div class="form-group">
+              <label for="premio">Premio</label>
+              <input type="text" id="premio" name="premio"
+                     placeholder="Ej: 1 mes de Netflix, iPhone 15 Pro, etc." required>
+            </div>
+
+            <div class="form-row-inline">
+              <div class="form-group">
+                <label for="cantidad_numeros">Cantidad de números</label>
+                <input type="number" id="cantidad_numeros" name="cantidad_numeros"
+                       min="1" step="1" required>
+              </div>
+              <div class="form-group">
+                <label for="precio_numero">Precio por número</label>
+                <input type="number" id="precio_numero" name="precio_numero"
+                       min="0" step="0.01" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="fecha_sorteo">Fecha del sorteo</label>
+              <input type="date" id="fecha_sorteo" name="fecha_sorteo" required>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                Guardar sorteo
+              </button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden">Mensaje</div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script type="module" src="../assets/js/admin/crear-sorteo.js"></script>
 </body>
 </html>

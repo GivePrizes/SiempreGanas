@@ -40,36 +40,45 @@ export async function cargarSorteosAdmin() {
 
         let estadoLabel = '';
         if (finalizado) {
-          estadoLabel = '<span class="badge badge-finalizado">Finalizado</span>';
+          estadoLabel = '<span class="badge badge-danger">Finalizado</span>';
         } else if (lleno) {
-          estadoLabel = '<span class="badge badge-lleno">Lleno — Listo para ruleta</span>';
+          estadoLabel = '<span class="badge badge-warning">Lleno — Listo para ruleta</span>';
         } else {
-          estadoLabel = '<span class="badge badge-activo">En venta</span>';
+          estadoLabel = '<span class="badge badge-success">En venta</span>';
         }
 
         const btnRuleta = lleno
-          ? `<button class="btn-gold btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">
+          ? `<button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">
                🎰 Lanzar ruleta
              </button>`
           : '';
 
+        const imagenHtml = s.imagen_url
+          ? `<div class="sorteo-admin-image">
+               <img src="${s.imagen_url}" alt="Imagen sorteo ${s.descripcion}">
+             </div>`
+          : '';
+
         return `
           <article class="sorteo-card-admin">
-            <div class="sorteo-header">
-              <h3>${s.descripcion}</h3>
-              ${estadoLabel}
-            </div>
-            <p class="sorteo-detalle">Premio: <strong>${s.premio}</strong></p>
-            <p class="sorteo-detalle">Ocupación: <strong>${ocupacion}</strong></p>
-            <p class="sorteo-detalle-mini">
-              ${
-                lleno
-                  ? 'Este sorteo ya está completo. Puedes lanzar la ruleta en vivo y crear expectativa con los participantes.'
-                  : 'Aún se están vendiendo números. Cuantos más participen, más fuerte se siente el momento del sorteo.'
-              }
-            </p>
-            <div class="sorteo-actions-admin">
-              ${btnRuleta}
+            ${imagenHtml}
+            <div class="sorteo-admin-body">
+              <div class="sorteo-header-admin">
+                <h3>${s.descripcion}</h3>
+                ${estadoLabel}
+              </div>
+              <p class="sorteo-detalle">Premio: <strong>${s.premio}</strong></p>
+              <p class="sorteo-detalle">Ocupación: <strong>${ocupacion}</strong></p>
+              <p class="sorteo-detalle-mini">
+                ${
+                  lleno
+                    ? 'Este sorteo ya está completo. Puedes lanzar la ruleta en vivo y crear expectativa con los participantes.'
+                    : 'Aún se están vendiendo números. Cuantos más participen, más fuerte se siente el momento del sorteo.'
+                }
+              </p>
+              <div class="sorteo-actions-admin">
+                ${btnRuleta}
+              </div>
             </div>
           </article>
         `;

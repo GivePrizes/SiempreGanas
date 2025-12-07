@@ -198,3 +198,62 @@
   background-color: var(--colour-primary);
   color: #000;
 }
+
+
+/* Card de sorteo dentro del panel admin */
+.sorteo-card-admin {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  background-color: var(--colour-surface);
+  border-radius: 0.7rem;
+  padding: 0.75rem 0.9rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+  margin-bottom: 0.75rem;
+}
+
+.sorteo-admin-image {
+  width: 120px;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: var(--colour-surface-alt);
+}
+
+.sorteo-admin-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sorteo-admin-body {
+  flex: 1;
+}
+
+.sorteo-header-admin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.sorteo-header-admin h3 {
+  font-size: 1rem;
+  margin-right: 0.5rem;
+}
+
+.sorteo-detalle {
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.sorteo-detalle-mini {
+  font-size: 0.8rem;
+  color: var(--colour-muted);
+  margin-top: 0.15rem;
+}
+
+.sorteo-actions-admin {
+  margin-top: 0.5rem;
+}
