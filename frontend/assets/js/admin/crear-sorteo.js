@@ -79,10 +79,11 @@ async function enviarFormulario(e) {
     const data = await resp.json();
 
     if (!resp.ok || data.error) {
-      console.error('Error creando sorteo:', data);
+      console.error('Error creando sorteo:', data.error || data);
       mostrarToast(data.error || 'Error al crear el sorteo.');
       return;
     }
+
 
     mostrarToast('Sorteo creado correctamente.');
     // Pequeño delay y regresar al panel
