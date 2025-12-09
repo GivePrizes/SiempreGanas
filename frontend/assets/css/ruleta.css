@@ -41,115 +41,140 @@
   }
 }
 
-/* Contenedor de la ruleta tipo lista “slot” */
+/* ==============
+   RULETA CIRCULAR
+   ============== */
+
 .ruleta-container {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
-.ruleta-window {
+.ruleta-circle-wrapper {
+  position: relative;
+  width: min(380px, 80vw);
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Disco que gira */
+.ruleta-circle {
   position: relative;
   width: 100%;
-  max-width: 440px;
-  height: 360px;
-  margin: 0 auto;
-  border-radius: 1.4rem;
+  height: 100%;
+  border-radius: 50%;
   overflow: hidden;
-  box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+  border: 4px solid var(--gold);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.8),
+    0 0 0 6px rgba(15,23,42,0.9);
   background:
     radial-gradient(circle at 15% 0%, rgba(250, 204, 21, 0.25), transparent 55%),
     radial-gradient(circle at 85% 100%, rgba(56, 189, 248, 0.2), transparent 55%),
-    radial-gradient(circle at top, #111827, #020617);
-  border: 1px solid rgba(148, 163, 184, 0.4);
+    radial-gradient(circle at top, #020617, #020617);
+  transform: rotate(0deg);
+  transition: transform 4.5s cubic-bezier(0.17, 0.89, 0.32, 1.28);
 }
 
-.ruleta-lista {
-  padding: 0.75rem 0;
-  position: relative;
-}
-
-/* Fila de participante */
-.ruleta-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.65rem 1.25rem;
-  font-size: 0.95rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  opacity: 0.55;
-  transition:
-    transform 0.16s ease,
-    opacity 0.16s ease,
-    background 0.16s ease,
-    box-shadow 0.16s ease;
-}
-
-.ruleta-item:nth-child(odd) {
-  background: rgba(255, 255, 255, 0.01);
-}
-
-.ruleta-item .num {
-  font-weight: 800;
-  letter-spacing: 0.11em;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  opacity: 0.8;
-  color: rgba(248, 250, 252, 0.8);
-}
-
-.ruleta-item .nombre {
-  font-weight: 700;
-  font-size: 1.02rem;
-  letter-spacing: 0.01em;
-}
-
-/* Estado activo: fila que cruza la ventana */
-.ruleta-item.active {
-  opacity: 1;
-  transform: scale(1.03);
-  background: linear-gradient(
-    to right,
-    rgba(250, 204, 21, 0.14),
-    rgba(56, 189, 248, 0.12)
-  );
-  box-shadow: 0 0 16px rgba(15, 23, 42, 0.9);
-}
-
-/* Ganador final */
-.ruleta-item.ganador {
-  opacity: 1;
-  transform: scale(1.06);
-  background: linear-gradient(135deg, #fbbf24, #ef4444);
-  box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
-  color: #020617;
-}
-
-.ruleta-item.ganador .num {
-  color: #111827;
-  opacity: 1;
-}
-
-.ruleta-item.ganador .nombre {
-  font-size: 1.08rem;
-}
-
-/* Línea de foco central */
-.ruleta-highlight {
+/* Rebanadas (slices) de la ruleta */
+.ruleta-slice {
   position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 3.2rem;
-  margin-top: -1.6rem;
-  border-top: 2px solid rgba(250, 204, 21, 0.75);
-  border-bottom: 2px solid rgba(250, 204, 21, 0.75);
-  pointer-events: none;
-  box-shadow:
-    0 -4px 10px rgba(0,0,0,0.85),
-    0 4px 10px rgba(0,0,0,0.85);
+  width: 50%;
+  height: 50%;
+  top: 0;
+  left: 50%;
+  transform-origin: 0% 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  color: #f9fafb;
+  font-size: 0.7rem;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+  box-sizing: border-box;
 }
 
-/* Panel lateral de información */
+/* Número dentro del slice */
+.ruleta-slice .slice-num {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Colores alternos para las rebanadas */
+.ruleta-slice:nth-child(odd) {
+  background: linear-gradient(
+    to bottom,
+    rgba(250, 204, 21, 0.9),
+    rgba(250, 204, 21, 0.4)
+  );
+  color: #0f172a;
+}
+
+.ruleta-slice:nth-child(even) {
+  background: linear-gradient(
+    to bottom,
+    rgba(56, 189, 248, 0.9),
+    rgba(56, 189, 248, 0.4)
+  );
+}
+
+/* Centro de la ruleta */
+.ruleta-center {
+  position: absolute;
+  width: 34%;
+  height: 34%;
+  border-radius: 50%;
+  background: radial-gradient(circle at top, #020617, #020617);
+  border: 3px solid var(--gold);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  box-shadow:
+    0 0 18px rgba(15,23,42,0.9),
+    inset 0 0 12px rgba(148,163,184,0.4);
+}
+
+.ruleta-center span {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #e5e7eb;
+}
+
+.ruleta-center .rc-top {
+  font-weight: 500;
+}
+
+.ruleta-center .rc-bottom {
+  font-weight: 800;
+  color: var(--gold);
+}
+
+/* Puntero superior (flecha fija) */
+.ruleta-pointer {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-bottom: 26px solid var(--gold);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
+  z-index: 4;
+}
+
+/* =================
+   Panel lateral info
+   ================= */
+
 .ruleta-info {
   display: flex;
   flex-direction: column;
@@ -228,20 +253,14 @@
 
 /* Responsive fino para móviles */
 @media (max-width: 640px) {
-  .ruleta-window {
-    height: 320px;
-  }
-
-  .ruleta-item {
-    padding-inline: 1rem;
-    font-size: 0.9rem;
-  }
-
-  .ruleta-item .nombre {
-    font-size: 0.98rem;
-  }
-
   .ruleta-header h2 {
     font-size: 1.35rem;
   }
 }
+
+/* Efecto especial para slice ganador */
+.ruleta-slice.ganador {
+  box-shadow: 0 0 26px rgba(250, 204, 21, 0.9);
+  filter: brightness(1.1);
+}
+

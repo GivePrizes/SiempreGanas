@@ -5,11 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Siempre Ganas — Ruleta del Sorteo</title>
 
-  <link rel="stylesheet" href="../assets/css/style.css" />
-  <link rel="stylesheet" href="../assets/css/premium.css" />
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
-
   <!-- Estilos específicos de la ruleta -->
   <link rel="stylesheet" href="../assets/css/ruleta.css" />
 </head>
@@ -38,13 +35,22 @@
       </header>
 
       <section class="ruleta-layout">
-        <!-- Columna izquierda: “ruleta” lista animada -->
+        <!-- Columna izquierda: ruleta circular -->
         <div class="ruleta-container">
-          <div class="ruleta-window">
-            <div id="ruletaLista" class="ruleta-lista">
-              <!-- items generados por JS -->
+          <div class="ruleta-circle-wrapper">
+            <!-- Disco que gira -->
+            <div id="ruletaCircle" class="ruleta-circle">
+              <!-- Slices generadas por JS con .ruleta-slice -->
             </div>
-            <div class="ruleta-highlight"></div>
+
+            <!-- Centro de la ruleta -->
+            <div class="ruleta-center">
+              <span class="rc-top">Siempre</span>
+              <span class="rc-bottom">Ganas</span>
+            </div>
+
+            <!-- Puntero fijo arriba -->
+            <div class="ruleta-pointer"></div>
           </div>
         </div>
 
@@ -52,9 +58,9 @@
         <aside class="ruleta-info">
           <h3>Cómo impresionar a los participantes</h3>
           <ul>
-            <li>Cuenta regresiva en voz alta antes de girar.</li>
+            <li>Haz una cuenta regresiva en voz alta antes de girar.</li>
             <li>Menciona el premio y recuerda que todos pagaron por sus números.</li>
-            <li>Lee en voz alta algunos nombres mientras gira.</li>
+            <li>Lee en voz alta algunos números / nombres antes de que se detenga.</li>
             <li>Haz una pausa dramática antes de anunciar al ganador.</li>
           </ul>
 
@@ -68,7 +74,7 @@
           </div>
 
           <div id="resultadoRuleta" class="resultado-ruleta">
-            <!-- Resultado dinámico -->
+            <!-- Resultado dinámico: lo llena JS -->
           </div>
         </aside>
       </section>

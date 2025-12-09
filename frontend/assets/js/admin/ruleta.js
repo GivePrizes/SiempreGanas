@@ -6,19 +6,54 @@ const sorteoId = params.get('sorteo');
 
 const tituloSorteo = document.getElementById('tituloSorteo');
 const subtituloSorteo = document.getElementById('subtituloSorteo');
-const ruletaLista = document.getElementById('ruletaLista');
+const ruletaCircle = document.getElementById('ruletaCircle');
 const resultadoRuleta = document.getElementById('resultadoRuleta');
 const btnGirar = document.getElementById('btnGirar');
 
 let participantes = [];
+let rotacionActual = 0;
+let girando = false;
 
 if (!sorteoId) {
   tituloSorteo.textContent = 'Sorteo no especificado';
   subtituloSorteo.textContent = 'Vuelve al panel y entra desde el botón de ruleta.';
-  btnGirar.disabled = true;
+  if (btnGirar) btnGirar.disabled = true;
 }
 
-// 2) Cargar datos para la ruleta desde el backend
+// ---------- helpers visuales ----------
+
+// Construir la ruleta circular con slices
+function construirRuleta(participants) {
+  if (!ruletaCircle) return;
+
+  ruletaCircle.innerHTML = '';
+
+  const total = participants.length;
+  if (total === 0) return;
+
+  const anguloSlice = 360 / total;
+
+  participants.forEach((p, index) => {
+    const slice = document.createElement('div');
+    slice.className = 'ruleta-slice';
+
+    // Ángulo donde arranca este slice
+    const anguloInicio = index * anguloSlice;
+
+    // Rotamos el “brazo” y usamos skew para formar el triángulo
+    slice.style.transform =
+      `rotate(${anguloInicio}deg) skewY(${90 - anguloSlice}deg)`;
+
+    slice.innerHTML = `
+      <span class="slice-num">#${p.numero}</span>
+    `;
+
+    ruletaCircle.appendChild(slice);
+  });
+}
+
+// ---------- 2) Cargar datos para la ruleta desde el backend ----------
+
 async function cargarRuleta() {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -41,42 +76,41 @@ async function cargarRuleta() {
     if (!res.ok) {
       console.error('Error ruleta:', data);
       tituloSorteo.textContent = data.error || 'Error al cargar ruleta';
-      btnGirar.disabled = true;
+      if (btnGirar) btnGirar.disabled = true;
       return;
     }
 
     const { sorteo, participantes: parts } = data;
-    participantes = parts;
+    participantes = parts || [];
 
     tituloSorteo.textContent = `${sorteo.descripcion} — Premio: ${sorteo.premio}`;
-    subtituloSorteo.textContent = `Números aprobados: ${participantes.length} / ${sorteo.cantidad_numeros}. 
-Hazlo emocionante: que todos vean que aquí la suerte es transparente.`;
+    subtituloSorteo.textContent =
+      `Números aprobados: ${participantes.length} / ${sorteo.cantidad_numeros}. ` +
+      `Hazlo emocionante: que todos vean que aquí la suerte es transparente.`;
 
-    if (participantes.length === 0) {
-      ruletaLista.innerHTML = '<p>No hay participantes aprobados todavía.</p>';
-      btnGirar.disabled = true;
+    if (!participantes.length) {
+      if (ruletaCircle) {
+        ruletaCircle.innerHTML = '<p style="text-align:center; padding:1rem;">No hay participantes aprobados todavía.</p>';
+      }
+      if (btnGirar) btnGirar.disabled = true;
       return;
     }
 
-    // Pintar todos los participantes como “segmentos”
-    ruletaLista.innerHTML = participantes
-      .map(p => `
-        <div class="ruleta-item">
-          <span class="num">#${p.numero}</span>
-          <span class="nombre">${p.nombre_corto}</span>
-        </div>
-      `)
-      .join('');
+    // Construir visualmente la ruleta circular
+    construirRuleta(participantes);
+    if (btnGirar) btnGirar.disabled = false;
   } catch (err) {
     console.error(err);
     tituloSorteo.textContent = 'Error de conexión al cargar la ruleta.';
-    btnGirar.disabled = true;
+    if (btnGirar) btnGirar.disabled = true;
   }
 }
 
-// 3) Girar ruleta con animación y ganador “real” desde backend
+// ---------- 3) Girar ruleta con backend como “juez” ----------
+
 async function girarRuleta() {
-  if (participantes.length === 0) {
+  if (girando) return;
+  if (!participantes.length) {
     alert('No hay participantes aprobados.');
     return;
   }
@@ -86,7 +120,8 @@ async function girarRuleta() {
   );
   if (!confirmar) return;
 
-  btnGirar.disabled = true;
+  girando = true;
+  if (btnGirar) btnGirar.disabled = true;
   resultadoRuleta.textContent = 'Girando ruleta... 🎰✨';
 
   const token = localStorage.getItem('token');
@@ -104,66 +139,85 @@ async function girarRuleta() {
   } catch (err) {
     console.error('Error al realizar sorteo:', err);
     resultadoRuleta.textContent = 'Error al conectar con el servidor.';
-    btnGirar.disabled = false;
+    girando = false;
+    if (btnGirar) btnGirar.disabled = false;
     return;
   }
 
   if (!res.ok) {
     console.error('Error al realizar sorteo:', data);
     resultadoRuleta.textContent = data.error || 'Error al realizar sorteo.';
-    btnGirar.disabled = false;
+    girando = false;
+    if (btnGirar) btnGirar.disabled = false;
     return;
   }
 
   const numeroGanador = data.ganador;
-  const ganador = participantes.find(p => p.numero === numeroGanador) || null;
+  const idxGanador = participantes.findIndex(p => p.numero === numeroGanador);
+  const ganador = idxGanador >= 0 ? participantes[idxGanador] : null;
 
-  // Anime la “ruleta”: recorre los items varias veces y termina en el ganador
-  const items = Array.from(document.querySelectorAll('.ruleta-item'));
-  let indexActual = 0;
-  let vueltas = 30 + Math.floor(Math.random() * 15); // vueltas para dramatismo
+  if (!ruletaCircle) {
+    // fallback por si algo raro
+    resultadoRuleta.innerHTML = ganador
+      ? `🎉 Ganador: <strong>${ganador.nombre_corto}</strong> con el número <strong>#${numeroGanador}</strong>.`
+      : `🎉 Número ganador: <strong>#${numeroGanador}</strong>.`;
+    girando = false;
+    return;
+  }
 
-  const interval = setInterval(() => {
-    items.forEach(el => el.classList.remove('active'));
+  const slices = Array.from(ruletaCircle.querySelectorAll('.ruleta-slice'));
+  const total = participantes.length;
+  const anguloSlice = 360 / total;
 
-    const item = items[indexActual];
-    if (item) item.classList.add('active');
+  const indice = idxGanador >= 0 ? idxGanador : 0;
+  const anguloCentro = indice * anguloSlice + anguloSlice / 2;
 
-    indexActual = (indexActual + 1) % items.length;
-    vueltas--;
+  // Vueltas extra para dramatismo
+  const vueltasExtra = 5 + Math.floor(Math.random() * 3); // 5–7 vueltas
 
-    if (vueltas <= 0) {
-      clearInterval(interval);
+  // Rotación destino: varias vueltas + llevar el centro del slice ganador al puntero (0deg)
+  const rotacionDestino =
+    rotacionActual +
+    vueltasExtra * 360 +
+    (360 - anguloCentro);
 
-      // Marcar solo al ganador
-      items.forEach(el => el.classList.remove('active', 'ganador'));
+  ruletaCircle.style.transform = `rotate(${rotacionDestino}deg)`;
+  rotacionActual = rotacionDestino;
 
-      const idxGanador = participantes.findIndex(p => p.numero === numeroGanador);
-      if (idxGanador >= 0) {
-        const itemGanador = items[idxGanador];
-        if (itemGanador) {
-          itemGanador.classList.add('ganador');
-          itemGanador.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
-
-      // Mensaje final con psicología de impacto
-      resultadoRuleta.classList.add('ganador-texto');
-      resultadoRuleta.innerHTML = ganador
-        ? `
-          🎉 <strong>${ganador.nombre_corto}</strong> es el ganador con el número <strong>#${numeroGanador}</strong>.<br/>
-          Llama su nombre, muéstrale el comprobante y celebra el momento: aquí todos vieron que la ruleta fue justa.
-        `
-        : `
-          🎉 Número ganador: <strong>#${numeroGanador}</strong>.<br/>
-          Revisa en el panel qué usuario tiene este número y anúncialo en voz alta.
-        `;
+  // Después de la animación (coincidir con transition de CSS: 4.5s)
+  setTimeout(() => {
+    // Marcar visualmente el slice ganador (opcional, si defines .ruleta-slice.ganador en CSS)
+    slices.forEach(s => s.classList.remove('ganador'));
+    if (slices[indice]) {
+      slices[indice].classList.add('ganador');
     }
-  }, 80);
+
+    resultadoRuleta.classList.add('ganador-texto');
+    resultadoRuleta.innerHTML = ganador
+      ? `
+        🎉 <strong>${ganador.nombre_corto}</strong> es el ganador con el número <strong>#${numeroGanador}</strong>.<br/>
+        Llama su nombre, muéstrale el comprobante y celebra el momento: aquí todos vieron que la ruleta fue justa.
+      `
+      : `
+        🎉 Número ganador: <strong>#${numeroGanador}</strong>.<br/>
+        Revisa en el panel qué usuario tiene este número y anúncialo en voz alta.
+      `;
+
+    setTimeout(() => {
+      resultadoRuleta.classList.remove('ganador-texto');
+    }, 1400);
+
+    girando = false;
+    // No volvemos a habilitar el botón porque el giro es definitivo.
+  }, 4700);
 }
 
-// 4) Eventos
-btnGirar.addEventListener('click', girarRuleta);
+// ---------- 4) Eventos ----------
 
-// 5) Inicializar
+if (btnGirar) {
+  btnGirar.addEventListener('click', girarRuleta);
+}
+
+// ---------- 5) Inicializar ----------
+
 cargarRuleta();
