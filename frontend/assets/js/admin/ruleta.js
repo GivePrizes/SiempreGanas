@@ -33,24 +33,38 @@ function construirRuleta(participants) {
 
   const anguloSlice = 360 / total;
 
+  // Máximo de labels visibles para que no se vea caótico
+  const maxLabels = 22; // por ejemplo, 22 numeritos como máximo alrededor
+  const pasoLabel = total <= maxLabels ? 1 : Math.ceil(total / maxLabels);
+
   participants.forEach((p, index) => {
     const slice = document.createElement('div');
     slice.className = 'ruleta-slice';
 
-    // Ángulo donde arranca este slice
     const anguloInicio = index * anguloSlice;
 
-    // Rotamos el “brazo” y usamos skew para formar el triángulo
     slice.style.transform =
       `rotate(${anguloInicio}deg) skewY(${90 - anguloSlice}deg)`;
 
-    slice.innerHTML = `
-      <span class="slice-num">#${p.numero}</span>
-    `;
+    // Ajustar tamaño de letra según el total
+    let fontSizeRem = 0.75;
+    if (total > 40 && total <= 80) fontSizeRem = 0.6;
+    else if (total > 80 && total <= 160) fontSizeRem = 0.5;
+    else if (total > 160) fontSizeRem = 0.45;
+
+    slice.style.fontSize = `${fontSizeRem}rem`;
+
+    // Solo mostramos texto en algunos slices para evitar saturación
+    const mostrarLabel = index % pasoLabel === 0;
+
+    slice.innerHTML = mostrarLabel
+      ? `<span class="slice-num">#${p.numero}</span>`
+      : '';
 
     ruletaCircle.appendChild(slice);
   });
 }
+
 
 // ---------- 2) Cargar datos para la ruleta desde el backend ----------
 

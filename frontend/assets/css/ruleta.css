@@ -264,3 +264,13 @@
   filter: brightness(1.1);
 }
 
+/* Opcional: si son muchísimos participantes el triángulo se ve muy fino,
+   esto ayuda a que visualmente se vea más agradable */
+.ruleta-slice {
+  padding-right: 8px;
+}
+
+.ruleta-slice .slice-num {
+  white-space: nowrap;
+}
+
