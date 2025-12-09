@@ -15,11 +15,15 @@ export async function cargarSorteosAdmin() {
   if (!cont) return;
 
   try {
-    const res = await fetch(`${API_URL}/api/sorteos`, {
+    // pequeño truco para evitar caché en Vercel / navegador
+    const cacheBust = Date.now();
+
+    const res = await fetch(`${API_URL}/api/sorteos?nocache=${cacheBust}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
+
 
     const data = await res.json();
 
@@ -57,9 +61,10 @@ export async function cargarSorteosAdmin() {
 
         const imagenHtml = s.imagen_url
           ? `<div class="sorteo-admin-image">
-               <img src="${s.imagen_url}" alt="Imagen sorteo ${s.descripcion}">
-             </div>`
+              <img src="${s.imagen_url}?v=${cacheBust}" alt="Imagen sorteo ${s.descripcion}">
+            </div>`
           : '';
+
 
         return `
           <article class="sorteo-card-admin">
