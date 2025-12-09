@@ -35,9 +35,12 @@ export async function cargarMisNumerosResumen() {
 export async function cargarMisNumerosDetalle() {
   const token = localStorage.getItem('token');
   const contenedor = document.getElementById('misNumeros');
+  const emptyBox = document.getElementById('misNumerosEmpty');
 
   if (!token || !contenedor) return;
 
+  // estado inicial: ocultar bloque vacío y mostrar loading en el grid
+  if (emptyBox) emptyBox.classList.add('oculto');
   contenedor.innerHTML = '<p class="loading">Cargando tus participaciones...</p>';
 
   try {
@@ -56,11 +59,15 @@ export async function cargarMisNumerosDetalle() {
 
     const data = await res.json();
 
+    // === Sin participaciones: mostramos la tarjeta vacía y limpiamos el grid ===
     if (!Array.isArray(data) || data.length === 0) {
-      contenedor.innerHTML =
-        '<p class="empty">Aún no has participado en ningún sorteo.</p>';
+      contenedor.innerHTML = '';
+      if (emptyBox) emptyBox.classList.remove('oculto');
       return;
     }
+
+    // si hay datos, nos aseguramos de ocultar el mensaje vacío
+    if (emptyBox) emptyBox.classList.add('oculto');
 
     // === Agrupar por sorteo_id ===
     const grupos = {}; // { sorteo_id: { descripcion, premio, numeros: [], aprobados, pendientes, rechazados } }
@@ -132,10 +139,14 @@ export async function cargarMisNumerosDetalle() {
           </p>
 
           <p class="resumen-linea">
-            ${badges.length ? badges.join(' ') : '<span class="text-muted">Sin estado registrado</span>'}
+            ${
+              badges.length
+                ? badges.join(' ')
+                : '<span class="text-muted">Sin estado registrado</span>'
+            }
           </p>
 
-          <div class="cta" style="margin-top:10px;">
+          <div class="cta cta-mis-numeros">
             <a href="sorteo.html?id=${grupo.sorteo_id}" class="btn btn-primary">
               Ver sorteo
             </a>

@@ -294,6 +294,136 @@
   font-size: 0.95rem;
 }
 
+/* =============================
+   Método de pago Nequi (detalle sorteo)
+   ============================= */
+
+.pago-nequi-card {
+  margin-top: 0.9rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.9rem;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 215, 0, 0.06), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(94, 94, 168, 0.18), transparent 55%),
+    var(--colour-surface);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.7);
+  animation: pagoNequiGlow 4s ease-in-out infinite alternate;
+}
+
+.pago-nequi-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.pago-nequi-badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 215, 0, 0.15);
+  color: #ffd700;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pago-nequi-title {
+  font-weight: 700;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.pago-nequi-subtitle {
+  font-size: 0.85rem;
+  color: var(--colour-muted);
+  margin: 0;
+}
+
+.pago-nequi-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr);
+  gap: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.pago-nequi-datos {
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 0.7rem;
+  padding: 0.7rem 0.8rem;
+}
+
+.pago-nequi-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--colour-muted);
+  margin-bottom: 0.15rem;
+}
+
+.pago-nequi-value {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.pago-nequi-value--big {
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+}
+
+.btn-nequi-copy {
+  width: 100%;
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  border-radius: 999px;
+}
+
+.pago-nequi-steps ol {
+  margin-left: 1.1rem;
+  padding-left: 0;
+  font-size: 0.85rem;
+  color: #e3e3e3;
+}
+
+.pago-nequi-steps li {
+  margin-bottom: 0.25rem;
+}
+
+.pago-nequi-seguro {
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--colour-muted);
+}
+
+.pago-nequi-footer {
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: #ffd666;
+  border-top: 1px dashed rgba(255, 215, 0, 0.35);
+  padding-top: 0.35rem;
+}
+
+/* Animación suave para que sea acogedor, no agresivo */
+@keyframes pagoNequiGlow {
+  0% {
+    box-shadow: 0 8px 26px rgba(0, 0, 0, 0.7);
+    border-color: rgba(255, 215, 0, 0.3);
+  }
+  100% {
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 234, 122, 0.7);
+  }
+}
+
+@media (max-width: 900px) {
+  .pago-nequi-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 /* Barra de progreso en detalle */
 .progress-wrapper {
   margin: 0.8rem 0 1rem;
@@ -334,44 +464,6 @@
   margin-bottom: 0.2rem;
 }
 
-/* Grid de números */
-.numeros-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(46px, 1fr));
-  gap: 0.4rem;
-  margin-top: 0.6rem;
-}
-
-.numero-bola {
-  border-radius: 999px;
-  padding: 0.25rem 0;
-  font-size: 0.85rem;
-  text-align: center;
-  cursor: pointer;
-  border: 1px solid var(--colour-border);
-  background-color: var(--colour-surface-alt);
-  color: var(--colour-text);
-  transition: background-color 0.15s ease, transform 0.08s ease, border-color 0.15s ease;
-}
-
-.numero-bola:hover {
-  background-color: var(--colour-primary-hover);
-  color: #000;
-  transform: translateY(-1px);
-}
-
-.numero-bola--ocupado {
-  background-color: #292938;
-  color: var(--colour-muted);
-  border-style: dashed;
-  cursor: not-allowed;
-}
-
-.numero-bola--seleccionado {
-  background-color: var(--colour-primary);
-  color: #000;
-  border-color: var(--colour-primary);
-}
 
 /* Comprobante */
 .comprobante-upload {
@@ -419,5 +511,241 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
+  }
+}
+
+
+/* Grid de números */
+.numeros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(46px, 1fr));
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+/* bolita base */
+.numero-bola {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid var(--colour-border, #555);
+  cursor: pointer;
+  font-weight: 600;
+  background-color: var(--colour-surface-alt);
+  color: var(--colour-text);
+  transition:
+    background-color 0.15s ease,
+    transform 0.08s ease,
+    border-color 0.15s ease;
+  margin: 0; /* el gap del grid ya separa las bolitas */
+}
+
+.numero-bola:hover {
+  background-color: var(--colour-primary-hover);
+  color: #000;
+  transform: translateY(-1px);
+}
+
+/* número ocupado (ya vendido) */
+.numero-bola--ocupado {
+  background-color: #292938;
+  color: var(--colour-muted);
+  border-style: dashed;
+  cursor: not-allowed;
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+/* número seleccionado por el usuario */
+.numero-bola--seleccionado {
+  background-color: var(--colour-primary, #facc15);
+  color: #000;
+  border-color: var(--colour-primary, #facc15);
+}
+
+@media (max-width: 600px) {
+  .pago-nequi-card {
+    padding: 0.8rem 0.85rem;
+    border-radius: 0.75rem;
+  }
+
+  .pago-nequi-title {
+    font-size: 0.95rem;
+  }
+
+  .pago-nequi-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .pago-nequi-main {
+    gap: 0.6rem;
+  }
+
+  .pago-nequi-value--big {
+    font-size: 1.05rem;
+  }
+
+  .btn-nequi-copy {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.7rem;
+  }
+}
+
+/* =============================
+   Micro bloque de confianza (header)
+   ============================= */
+
+.confianza-strip {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+/* Tip debajo de la barra de progreso */
+.progress-tip-text {
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* =============================
+   Bloque "¿Por qué a la gente le gusta este formato?"
+   ============================= */
+
+.sorteo-motivos-card {
+  margin-top: 1rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 0.7rem;
+  background: rgba(250, 204, 21, 0.06);
+  font-size: 0.85rem;
+}
+
+.sorteo-motivos-title {
+  font-size: 1rem;
+  margin-bottom: 0.35rem;
+}
+
+.sorteo-motivos-list {
+  padding-left: 1.1rem;
+  margin: 0;
+}
+
+.sorteo-motivos-item {
+  margin-bottom: 0.25rem;
+}
+
+/* =============================
+   Tarjeta resumen de compra
+   ============================= */
+
+.sorteo-compra-card {
+  margin-top: 0.9rem;
+}
+
+.help-text {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+}
+
+.footnote-text {
+  margin-top: 0.4rem;
+  font-size: 0.7rem;
+}
+
+/* Título dentro del preview de comprobante */
+.comprobante-preview-title {
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+}
+
+/* Botón ancho para móvil/desktop */
+.btn-full-width {
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+
+/* =============================
+   Mis números (vista participante)
+   ============================= */
+
+.mis-numeros-section h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.3rem;
+}
+
+.mis-numeros-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.mis-numeros-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* Chips de filtro de estado */
+.chip-filtro {
+  border: 1px solid var(--colour-border);
+  background-color: var(--colour-surface-alt);
+  color: var(--colour-text);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.8rem;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.08s ease;
+}
+
+.chip-filtro:hover {
+  transform: translateY(-1px);
+  border-color: var(--colour-primary);
+}
+
+.chip-filtro--activo {
+  background-color: var(--colour-primary);
+  color: #000;
+  border-color: var(--colour-primary);
+}
+
+/* Estado vacío de Mis números */
+.mis-numeros-empty {
+  background-color: var(--colour-surface);
+  border-radius: 0.8rem;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.55);
+  margin-bottom: 1.2rem;
+  text-align: left;
+}
+
+.mis-numeros-empty-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.mis-numeros-empty-text {
+  font-size: 0.9rem;
+  color: var(--colour-muted);
+  margin-bottom: 0.7rem;
+}
+
+/* Responsive pequeños */
+@media (max-width: 600px) {
+  .mis-numeros-header {
+    align-items: flex-start;
+  }
+
+  .mis-numeros-filtros {
+    justify-content: flex-start;
   }
 }

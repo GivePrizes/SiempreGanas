@@ -62,7 +62,7 @@ function actualizarResumen() {
 }
 
 function renderNumeros() {
-  if (!sorteoActual) return;
+  if (!sorteoActual || !gridNumeros) return;
 
   const total = sorteoActual.cantidad_numeros;
   gridNumeros.innerHTML = '';
@@ -70,12 +70,21 @@ function renderNumeros() {
   for (let n = 1; n <= total; n++) {
     const ocupado = numerosOcupados.includes(n);
     const div = document.createElement('div');
-    div.className = 'numero-item';
+
+    // clase base de la bolita
+    div.className = 'numero-bola';
     div.textContent = n.toString();
+    div.dataset.numero = n;
 
     if (ocupado) {
-      div.classList.add('ocupado');
+      // estilo de número ya vendido / ocupado
+      div.classList.add('numero-bola--ocupado');
     } else {
+      // si ese número ya está en "seleccionados", marcarlo
+      if (seleccionados.includes(n)) {
+        div.classList.add('numero-bola--seleccionado');
+      }
+
       div.addEventListener('click', () => toggleNumero(n, div));
     }
 
@@ -83,24 +92,58 @@ function renderNumeros() {
   }
 }
 
+
+// --- función para copiar Nequi (global para el onclick del HTML) ---
+function copiarNequi() {
+  const numero = '3045538465';
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard
+      .writeText(numero)
+      .then(() => {
+        mostrarToast('Número Nequi copiado ✅');
+      })
+      .catch(() => {
+        alert('No se pudo copiar automáticamente, pero el número es: ' + numero);
+      });
+  } else {
+    // Fallback para navegadores antiguos / contextos no seguros
+    const inputOculto = document.createElement('input');
+    inputOculto.value = numero;
+    document.body.appendChild(inputOculto);
+    inputOculto.select();
+    document.execCommand('copy');
+    document.body.removeChild(inputOculto);
+    alert('Número Nequi copiado ✅');
+  }
+}
+
+// exponerla al scope global, porque el script es type="module"
+window.copiarNequi = copiarNequi;
+
+
 function toggleNumero(numero, el) {
+  // por seguridad: si está ocupado, no hacer nada
+  if (el.classList.contains('numero-bola--ocupado')) return;
+
   const idx = seleccionados.indexOf(numero);
 
   if (idx >= 0) {
     // quitar selección
     seleccionados.splice(idx, 1);
-    el.classList.remove('seleccionado');
+    el.classList.remove('numero-bola--seleccionado');
   } else {
     if (seleccionados.length >= MAX_NUMEROS_POR_COMPRA) {
       mostrarToast(`Máximo ${MAX_NUMEROS_POR_COMPRA} números por compra.`);
       return;
     }
     seleccionados.push(numero);
-    el.classList.add('seleccionado');
+    el.classList.add('numero-bola--seleccionado');
   }
 
   actualizarResumen();
 }
+
 
 // helper para convertir un File a base64 (data URL)
 function fileToBase64(file) {

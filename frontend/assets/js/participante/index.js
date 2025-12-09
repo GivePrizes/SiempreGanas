@@ -27,6 +27,7 @@ function setBienvenida() {
   }
 }
 
+
 /**
  * Renderiza el HTML de una card de sorteo usando las clases del CSS.
  */
@@ -50,7 +51,8 @@ function renderSorteoCard(s) {
     ? `<img src="${s.imagen_url}" alt="Imagen sorteo ${s.descripcion}">`
     : `<span class="placeholder">Imagen por defecto</span>`;
 
-  const precioNumero = s.precio_numero ?? s.precio ?? 0;
+  const precioNumero = Number(s.precio_numero ?? s.precio ?? 0) || 0;
+  const precioFormateado = precioNumero.toLocaleString('es-CO');
 
   const disponibilidadTexto =
     porcentaje === 0
@@ -75,7 +77,7 @@ function renderSorteoCard(s) {
 
         <div class="sorteo-info">
           <span class="icon">💵</span>
-          <span>Precio por número: $${precioNumero}</span>
+          <span>Precio por número: $${precioFormateado}</span>
         </div>
 
         <div class="sorteo-info">
@@ -100,6 +102,7 @@ function renderSorteoCard(s) {
     </article>
   `;
 }
+
 
 /**
  * Renderiza TODA la lista de sorteos dentro de #sorteosActivos

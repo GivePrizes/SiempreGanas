@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Siempre Ganas — Elegir números</title>
+  <title>Siempre Ganas — Elige tus números y entra a la ruleta</title>
 
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/participant.css">
@@ -11,20 +11,28 @@
 <body>
   <div class="main-container">
 
-    <!-- HEADER -->
+    <!-- HEADER CON ENFOQUE EMOCIONAL + SEGURIDAD -->
     <header class="dashboard-header">
       <div>
         <h2 id="tituloSorteo">Cargando sorteo...</h2>
         <p id="subtituloSorteo" class="text-muted">
-          Selecciona tus números, sube tu comprobante y prepárate para la ruleta 🎰
+          Estás a unos pasos de asegurar tus números y tu lugar en la ruleta 🎰
         </p>
+
+        <!-- micro-bloque de confianza -->
+        <div class="confianza-strip">
+          ✅ Números reservados al enviar tu comprobante &nbsp;•&nbsp;
+          🔒 Proceso validado por administradores &nbsp;•&nbsp;
+          🎁 Siempre recibes un producto digital
+        </div>
+
       </div>
       <div>
         <button
           type="button"
           class="btn btn-secondary"
           onclick="location.href='dashboard.html'">
-          ⬅ Volver a sorteos
+          ⬅ Ver otros sorteos
         </button>
         <button
           type="button"
@@ -46,13 +54,17 @@
       <!-- Columna izquierda: info general del sorteo -->
       <div class="sorteo-detalle-main">
         <h2 id="tituloPremio">Premio</h2>
+
+        <!-- Mensaje persuasivo corto -->
         <p class="section-description">
-          Este sorteo entrega un producto digital real <strong>y</strong> tu pase a la ruleta.
+          Este sorteo te da acceso a un <strong>producto digital real</strong> y a una
+          <strong>oportunidad extra</strong> en la ruleta Siempre Ganas. No es solo suerte:
+          cada número que eliges te devuelve valor.
         </p>
 
         <div class="sorteo-data">
           <p>
-            🎁 <strong>Premio:</strong>
+            🎁 <strong>Premio principal:</strong>
             <span id="textoPremio">—</span>
           </p>
           <p>
@@ -60,11 +72,63 @@
             <span id="textoPrecio">—</span>
           </p>
           <p>
-            🔢 <strong>Cantidad de números:</strong>
+            🔢 <strong>Cantidad total de números:</strong>
             <span id="textoCantidad">—</span>
           </p>
         </div>
 
+        <!-- Método de pago destacado -->
+        <div class="pago-nequi-card">
+          <div class="pago-nequi-header">
+            <span class="pago-nequi-badge">Paso 1</span>
+            <div>
+              <p class="pago-nequi-title">Paga tus números por Nequi</p>
+              <p class="pago-nequi-subtitle">
+                Asegura tu lugar en la ruleta en menos de 1 minuto ⚡
+              </p>
+            </div>
+          </div>
+
+          <div class="pago-nequi-main">
+            <!-- Datos Nequi -->
+            <div class="pago-nequi-datos">
+              <p class="pago-nequi-label">Número Nequi</p>
+              <p class="pago-nequi-value pago-nequi-value--big">3045538465</p>
+
+              <p class="pago-nequi-label">Titular</p>
+              <p class="pago-nequi-value">Jen** Por***</p>
+
+              <button
+                type="button"
+                class="btn btn-primary btn-nequi-copy"
+                onclick="copiarNequi()"
+              >
+                📋 Copiar número de Nequi
+              </button>
+            </div>
+
+            <!-- Pasos suaves y acogedores -->
+            <div class="pago-nequi-steps">
+              <ol>
+                <li>Elige tus números y mira el total a pagar.</li>
+                <li>Envía el pago a Nequi con la nota <strong>“Sorteo + tu nombre”</strong>.</li>
+                <li>Haz una captura clara del comprobante y súbelo en esta página.</li>
+              </ol>
+              <p class="pago-nequi-seguro">
+                🛡️ Tu pago es revisado manualmente para mantener el sorteo
+                <strong>100% transparente</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div class="pago-nequi-footer">
+            💡 Tip: si te gustan ciertos números, págalos apenas los elijas para que nadie más los tome.
+          </div>
+        </div>
+
+
+
+        <!-- Progreso de ocupación (urgencia visual) -->
         <div class="progress-wrapper">
           <div class="progress-container">
             <div id="progressFill" class="progress-bar"></div>
@@ -72,26 +136,50 @@
           <p class="progress-text" id="textoProgreso">
             Cargando ocupación...
           </p>
+          <p class="text-muted progress-tip-text">
+            Tip: los mejores números se van rápido. Si te gusta uno, resérvalo antes de que se ocupe.
+          </p>
+
         </div>
 
+        <!-- Sección educativa + persuasiva -->
         <div class="sorteo-steps">
-          <h3>Cómo funciona este sorteo</h3>
+          <h3>Cómo asegurar tus números en 4 pasos</h3>
           <ol>
-            <li>Elige tus números favoritos en la cuadrícula.</li>
-            <li>Paga el valor total (verás el total antes de enviar).</li>
-            <li>Sube una foto nítida del comprobante.</li>
-            <li>Cuando se llenen todos los números, la ruleta elegirá un ganador en vivo.</li>
+            <li><strong>Explora la cuadrícula</strong> y toca tus números favoritos.</li>
+            <li><strong>Revisa el resumen</strong> para ver cuántos números llevas y el total a pagar.</li>
+            <li><strong>Realiza el pago</strong> por el valor total y toma una captura clara del comprobante.</li>
+            <li><strong>Sube tu comprobante y confirma</strong>: tus números quedarán reservados como
+              <strong>pendientes</strong> hasta ser validados por un administrador.</li>
           </ol>
         </div>
-      </div>
+
+        <!-- Beneficios / psicología de permanencia -->
+        <div class="sorteo-motivos-card">
+          <h3 class="sorteo-motivos-title">¿Por qué a la gente le gusta este formato?</h3>
+          <ul class="sorteo-motivos-list">
+            <li class="sorteo-motivos-item">
+              <strong>Doble beneficio:</strong> siempre recibes un producto digital, ganes o no en la ruleta.
+            </li>
+            <li class="sorteo-motivos-item">
+              <strong>Emoción controlada:</strong> ves en tiempo real cuántos números quedan y tu probabilidad mejora al comprar más.
+            </li>
+            <li class="sorteo-motivos-item">
+              <strong>Transparencia total:</strong> todos los números ocupados se muestran y la ruleta se hace cuando el sorteo se llena.
+            </li>
+          </ul>
+        </div>
+
 
       <!-- Columna derecha: selección de números + comprobante -->
       <aside class="sorteo-detalle-side">
+        <!-- Tarjeta de selección de números -->
         <div class="sorteo-numeros-card">
           <div class="sorteo-numeros-header">
             <h3>Elige tus números</h3>
             <p class="text-muted">
-              Toca para seleccionar. Máximo <span id="maxNumerosTexto">5</span> por compra.
+              Toca para seleccionar. Máximo <span id="maxNumerosTexto">5</span> por compra.  
+              Puedes volver luego por más si quieres aumentar tus chances.
             </p>
           </div>
           <div id="gridNumeros" class="numeros-grid">
@@ -99,36 +187,53 @@
           </div>
         </div>
 
+        <!-- Tarjeta de resumen de compra + comprobante -->
         <div class="sorteo-compra-card" style="margin-top:14px;">
           <h3>Resumen de tu compra</h3>
           <p class="resumen-linea">
-            Números seleccionados:
+            <strong>Números seleccionados:</strong>
             <span id="resumenNumeros">Ninguno todavía</span>
           </p>
           <p class="resumen-linea">
-            Total a pagar:
+            <strong>Total a pagar:</strong>
             <span id="resumenTotal">$0</span>
           </p>
+          <p class="text-muted help-text">
+            Elige primero los números que más te gusten. No se enviará nada hasta que subas tu comprobante.
+          </p>
+
 
           <div class="comprobante-upload">
-            <label for="inputComprobante">📷 Comprobante de pago</label>
+            <label for="inputComprobante">📷 Sube tu comprobante de pago</label>
             <p class="text-muted">
-              Sube una captura clara del pago. Puedes volver a comprar más números luego con otros comprobantes.
+              Asegúrate de que se vea <strong>monto, fecha y referencia</strong>.  
+              Esto ayuda a que tu participación sea aprobada más rápido.
             </p>
             <input type="file" id="inputComprobante" accept="image/*" />
             <div id="previewComprobante" class="comprobante-preview oculto">
-              <p>Vista previa:</p>
+              <p class="comprobante-preview-title">Vista previa del comprobante:</p>
               <img id="imgPreview" alt="Comprobante" />
             </div>
           </div>
 
-          <button id="btnConfirmar" class="btn btn-primary" style="width:100%; margin-top:12px;">
+          <button
+            id="btnConfirmar"
+            class="btn btn-primary btn-full-width">
             Confirmar participación
           </button>
-          <p class="text-muted" style="margin-top:8px; font-size:12px;">
-            Al confirmar, tus números quedarán reservados con estado
-            <strong>pendiente</strong> hasta que un administrador valide tu comprobante.
+
+
+          <p class="text-muted help-text">
+            Al confirmar, tus números quedan en estado
+            <strong>pendiente de validación</strong>.  
+            Cuando un administrador apruebe tu comprobante, tu participación quedará <strong>activa</strong>.
           </p>
+
+          <p class="text-muted footnote-text">
+            Si el sorteo se llena mientras estás aquí, tus números siguen respetados siempre que hayas enviado
+            el comprobante correctamente.
+          </p>
+
         </div>
       </aside>
     </section>
