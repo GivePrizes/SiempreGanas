@@ -16,7 +16,15 @@
     <header class="admin-header">
       <div class="admin-header-left">
         <h1>Panel de Administración</h1>
-        <span class="admin-subtitle">Control de sorteos y comprobantes</span>
+        <span class="admin-subtitle">
+          Control total de sorteos, comprobantes y ruletas en un solo lugar.
+        </span>
+
+        <!-- Cinta de estado / confianza -->
+        <div class="admin-status-pill">
+          <span class="dot"></span>
+          <span>Sistema en línea · Validaciones manuales para máxima transparencia</span>
+        </div>
       </div>
       <div class="admin-header-right">
         <button
@@ -43,8 +51,12 @@
           <div>
             <h2>📑 Comprobantes pendientes</h2>
             <p class="text-muted">
-              Revisa y aprueba pagos de participantes antes de liberar sus números.
+              Cada comprobante aprobado libera números reales para los participantes.
+              Revisa monto, fecha y referencia antes de aceptar.
             </p>
+          </div>
+          <div class="card-title-right text-muted mini-hint">
+            Tip: una bandeja “en cero” antes de girar ruletas transmite seriedad.
           </div>
         </div>
 
@@ -60,8 +72,12 @@
           <div>
             <h2>🎯 Sorteos activos</h2>
             <p class="text-muted">
-              Gestiona los sorteos que están en curso y accede a la ruleta.
+              Observa el avance de cada sorteo, llena cupos y pasa a la ruleta cuando
+              todo esté validado.
             </p>
+          </div>
+          <div class="card-title-right text-muted mini-hint">
+            Recomendado: anuncia con tiempo qué sorteo será el próximo en pasar a ruleta.
           </div>
         </div>
 
@@ -77,7 +93,8 @@
           <div>
             <h2>📈 Visualizaciones</h2>
             <p class="text-muted">
-              Comportamiento de sorteos y comprobantes en el tiempo.
+              Ve el comportamiento de sorteos y comprobantes en el tiempo para tomar
+              mejores decisiones: qué sorteo repetir, qué días hay más movimiento, etc.
             </p>
           </div>
         </div>
@@ -98,7 +115,8 @@
           <div>
             <h2>📊 Estadísticas rápidas</h2>
             <p class="text-muted">
-              Resumen de usuarios, sorteos activos y comprobantes pendientes.
+              Un vistazo general al estado de la plataforma. Úsalo para abrir
+              transmisiones mostrando cómo crece la comunidad.
             </p>
           </div>
         </div>
@@ -107,14 +125,17 @@
           <div class="stat-card gold">
             <h3>Usuarios</h3>
             <p id="statUsuarios">—</p>
+            <span class="stat-hint">Personas registradas en Siempre Gana</span>
           </div>
           <div class="stat-card ruby">
             <h3>Sorteos activos</h3>
             <p id="statSorteos">—</p>
+            <span class="stat-hint">Sorteos listos para seguir vendiendo números</span>
           </div>
           <div class="stat-card obsidian">
             <h3>Comprobantes pendientes</h3>
             <p id="statPendientes">—</p>
+            <span class="stat-hint">Pagos por validar antes de pasar a ruleta</span>
           </div>
         </div>
       </section>

@@ -102,6 +102,22 @@ async function cargarRuleta() {
       `Números aprobados: ${participantes.length} / ${sorteo.cantidad_numeros}. ` +
       `Hazlo emocionante: que todos vean que aquí la suerte es transparente.`;
 
+    // --- Mini stats en el panel derecho ---
+    const totalNumeros = sorteo.cantidad_numeros || 0;
+    const totalEnJuego = participantes.length;
+    const probMedia =
+      totalEnJuego > 0 ? `Cada número tiene 1 entre ${totalEnJuego}` : '-';
+
+
+    const elTotal = document.getElementById('statTotalNumeros');
+    const elEnJuego = document.getElementById('statParticipantes');
+    const elProb = document.getElementById('statProbMedia');
+
+    if (elTotal) elTotal.textContent = totalNumeros;
+    if (elEnJuego) elEnJuego.textContent = totalEnJuego;
+    if (elProb) elProb.textContent = probMedia;
+
+
     if (!participantes.length) {
       if (ruletaCircle) {
         ruletaCircle.innerHTML = '<p style="text-align:center; padding:1rem;">No hay participantes aprobados todavía.</p>';

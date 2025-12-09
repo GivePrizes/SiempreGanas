@@ -55,6 +55,7 @@
         </div>
 
         <!-- Columna derecha: información / psicología -->
+                <!-- Columna derecha: información / psicología -->
         <aside class="ruleta-info">
           <h3>Cómo impresionar a los participantes</h3>
           <ul>
@@ -63,6 +64,23 @@
             <li>Lee en voz alta algunos números / nombres antes de que se detenga.</li>
             <li>Haz una pausa dramática antes de anunciar al ganador.</li>
           </ul>
+
+          <!-- 🧠 Bloque de stats persuasivo -->
+          <div class="ruleta-mini-stats">
+            <h4>Resumen rápido del sorteo</h4>
+            <p>
+              <span class="label">Números totales:</span>
+              <span id="statTotalNumeros">-</span>
+            </p>
+            <p>
+              <span class="label">Números en juego:</span>
+              <span id="statParticipantes">-</span>
+            </p>
+            <p>
+              <span class="label">Probabilidad por número:</span>
+              <span id="statProbMedia">-</span>
+            </p>
+          </div>
 
           <div class="ruleta-actions">
             <button id="btnGirar" class="btn-gold btn-girar">
@@ -77,6 +95,7 @@
             <!-- Resultado dinámico: lo llena JS -->
           </div>
         </aside>
+
       </section>
     </section>
   </main>
