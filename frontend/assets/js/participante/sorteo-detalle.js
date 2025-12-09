@@ -1,5 +1,8 @@
 // assets/js/participante/sorteo-detalle.js
 
+const API_URL = window.API_URL || ''; // viene de config.js
+
+
 const params = new URLSearchParams(window.location.search);
 const sorteoId = params.get('id');
 
@@ -256,14 +259,15 @@ if (inputComprobante) {
       return;
     }
 
-    const maxBytes = 5 * 1024 * 1024; // 5 MB
+    const maxBytes = 2 * 1024 * 1024; // 2 MB
     if (file.size > maxBytes) {
-      mostrarToast('El archivo es demasiado grande. Máx 5 MB.');
+      mostrarToast('El archivo es demasiado grande. Máx 2 MB.');
       inputComprobante.value = '';
       previewComprobante.classList.add('oculto');
       imgPreview.src = '';
       return;
     }
+
 
     const url = URL.createObjectURL(file);
     _currentObjectUrl = url;
@@ -304,9 +308,10 @@ if (btnConfirmar) {
       mostrarToast('El comprobante debe ser una imagen (jpg, png, ...).');
       return;
     }
-    const maxBytes = 5 * 1024 * 1024; // 5 MB
+    const maxBytes = 2 * 1024 * 1024; // 2 MB
+
     if (file.size > maxBytes) {
-      mostrarToast('El comprobante es demasiado grande. Máx 5 MB.');
+      mostrarToast('El comprobante es demasiado grande. Máx 2 MB.');
       return;
     }
 
