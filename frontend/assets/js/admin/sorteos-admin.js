@@ -15,15 +15,11 @@ export async function cargarSorteosAdmin() {
   if (!cont) return;
 
   try {
-    // pequeño truco para evitar caché en Vercel / navegador
-    const cacheBust = Date.now();
-
-    const res = await fetch(`${API_URL}/api/sorteos?nocache=${cacheBust}`, {
+    const res = await fetch(`${API_URL}/api/sorteos`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
-
 
     const data = await res.json();
 
@@ -61,10 +57,9 @@ export async function cargarSorteosAdmin() {
 
         const imagenHtml = s.imagen_url
           ? `<div class="sorteo-admin-image">
-              <img src="${s.imagen_url}?v=${cacheBust}" alt="Imagen sorteo ${s.descripcion}">
-            </div>`
+               <img src="${s.imagen_url}" alt="Imagen sorteo ${s.descripcion}">
+             </div>`
           : '';
-
 
         return `
           <article class="sorteo-card-admin">
@@ -105,8 +100,6 @@ export async function cargarSorteosAdmin() {
 
 // 🌟 Función para EDITAR sorteo
 function editarSorteo(id) {
-  // Lo llevamos a la misma página de crear sorteo, pero con ?id=
-  // Luego en crear-sorteo.js detectamos ese id y cargamos los datos para editar.
   location.href = `crear-sorteo.html?id=${id}`;
 }
 
