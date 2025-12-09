@@ -1,5 +1,7 @@
 // assets/js/admin/sorteos-admin.js
 
+const API_URL = window.API_URL || '';
+
 export async function cargarSorteosAdmin() {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -78,6 +80,12 @@ export async function cargarSorteosAdmin() {
               </p>
               <div class="sorteo-actions-admin">
                 ${btnRuleta}
+                <button class="btn btn-warning btn-sm" onclick="editarSorteo(${s.id})">
+                  ✏️ Editar
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="eliminarSorteo(${s.id})">
+                  🗑 Eliminar
+                </button>
               </div>
             </div>
           </article>
@@ -89,3 +97,48 @@ export async function cargarSorteosAdmin() {
     cont.innerHTML = '<p>Error de conexión al cargar los sorteos.</p>';
   }
 }
+
+// 🌟 Función para EDITAR sorteo
+function editarSorteo(id) {
+  // Lo llevamos a la misma página de crear sorteo, pero con ?id=
+  // Luego en crear-sorteo.js detectamos ese id y cargamos los datos para editar.
+  location.href = `crear-sorteo.html?id=${id}`;
+}
+
+// 🌟 Función para ELIMINAR sorteo
+async function eliminarSorteo(id) {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Sesión expirada. Vuelve a iniciar sesión.');
+    return;
+  }
+
+  const confirmar = confirm('¿Seguro que quieres ELIMINAR este sorteo? Esta acción no se puede deshacer.');
+  if (!confirmar) return;
+
+  try {
+    const res = await fetch(`${API_URL}/api/sorteos/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      console.error('Error al eliminar sorteo:', data);
+      alert(data.error || 'No se pudo eliminar el sorteo.');
+      return;
+    }
+
+    // Recargar la lista
+    await cargarSorteosAdmin();
+  } catch (err) {
+    console.error('Error de red al eliminar sorteo:', err);
+    alert('Error de conexión al intentar eliminar el sorteo.');
+  }
+}
+
+// Hacemos accesibles las funciones desde el HTML inline
+window.editarSorteo = editarSorteo;
+window.eliminarSorteo = eliminarSorteo;
