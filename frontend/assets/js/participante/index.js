@@ -27,6 +27,96 @@ function setBienvenida() {
   }
 }
 
+/**
+ * Renderiza el HTML de una card de sorteo usando las clases del CSS.
+ */
+function renderSorteoCard(s) {
+  // El backend devuelve 'ocupados' y 'cantidad_numeros'
+  const vendidos =
+    s.ocupados ??
+    s.numeros_vendidos ??
+    s.ocupadosCount ??
+    0;
+
+  const total =
+    s.cantidad_numeros ??
+    s.total_numeros ??
+    s.totalNumeros ??
+    0;
+
+  const porcentaje = total > 0 ? Math.round((vendidos / total) * 100) : 0;
+
+  const imagenHtml = s.imagen_url
+    ? `<img src="${s.imagen_url}" alt="Imagen sorteo ${s.descripcion}">`
+    : `<span class="placeholder">Imagen por defecto</span>`;
+
+  const precioNumero = s.precio_numero ?? s.precio ?? 0;
+
+  const disponibilidadTexto =
+    porcentaje === 0
+      ? 'Aún se están vendiendo números. Entra temprano y elige tus favoritos.'
+      : porcentaje < 100
+      ? `Quedan números disponibles. Ya se ha vendido el ${porcentaje}% del sorteo.`
+      : 'Sorteo lleno. Espera la ruleta 🎰';
+
+  return `
+    <article class="sorteo-card">
+      <div class="sorteo-image">
+        ${imagenHtml}
+      </div>
+
+      <div class="sorteo-content">
+        <h3 class="sorteo-title">${s.descripcion}</h3>
+
+        <div class="sorteo-info">
+          <span class="icon">🎁</span>
+          <span>Premio: ${s.premio}</span>
+        </div>
+
+        <div class="sorteo-info">
+          <span class="icon">💵</span>
+          <span>Precio por número: $${precioNumero}</span>
+        </div>
+
+        <div class="sorteo-info">
+          <span class="icon">🎟</span>
+          <span>Ocupación: ${vendidos} / ${total}</span>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-bar" style="width: ${porcentaje}%;"></div>
+        </div>
+
+        <p class="availability">
+          ${disponibilidadTexto}
+        </p>
+
+        <div class="cta">
+          <a href="sorteo.html?id=${s.id}" class="btn btn-primary">
+            Participar ahora
+          </a>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+/**
+ * Renderiza TODA la lista de sorteos dentro de #sorteosActivos
+ */
+function renderSorteosActivos(lista) {
+  const cont = document.getElementById('sorteosActivos');
+  if (!cont) return;
+
+  if (!lista.length) {
+    cont.innerHTML =
+      '<p class="text-muted">Por ahora no hay sorteos activos.</p>';
+    return;
+  }
+
+  cont.innerHTML = lista.map(renderSorteoCard).join('');
+}
+
 async function cargarStatsSorteos() {
   const statSorteos = document.getElementById('statSorteosActivos');
   const statProxima = document.getElementById('statProximaRuleta');
@@ -50,7 +140,7 @@ async function cargarStatsSorteos() {
       statSorteos.textContent = activos.length.toString();
     }
 
-    // Próxima ruleta (si tu backend tiene alguna fecha de sorteo)
+    // Próxima ruleta (si tu backend tiene fecha de sorteo)
     if (statProxima) {
       const conFecha = sorteos
         .map((s) => ({
@@ -62,7 +152,6 @@ async function cargarStatsSorteos() {
       if (conFecha.length === 0) {
         statProxima.textContent = '—';
       } else {
-        // Tomar la fecha más cercana en el futuro
         const ahora = new Date();
         const futuros = conFecha
           .map((s) => ({ ...s, fechaObj: new Date(s.fecha) }))
@@ -95,73 +184,9 @@ async function cargarSorteosActivos() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
 
     const sorteos = await res.json();
-    if (!Array.isArray(sorteos) || sorteos.length === 0) {
-      contenedor.innerHTML =
-        '<p class="empty">Todavía no hay sorteos activos.</p>';
-      return;
-    }
 
-    contenedor.innerHTML = '';
-
-    sorteos.forEach((s) => {
-      const total =
-        s.cantidad_numeros ??
-        s.total_numeros ??
-        s.totalNumeros ??
-        0;
-      const ocupados =
-        s.ocupados ??
-        s.numeros_ocupados ??
-        s.ocupadosCount ??
-        0;
-
-      const porcentaje =
-        total > 0 ? Math.round((ocupados / total) * 100) : 0;
-      const restantes = total > 0 ? total - ocupados : 0;
-
-      const card = document.createElement('article');
-      card.className = 'sorteo-card';
-
-      const imagenHtml = s.imagen_url
-        ? `<img src="${s.imagen_url}" alt="Imagen del sorteo ${s.descripcion}">`
-        : `<span class="placeholder">Imagen por defecto</span>`;
-
-      card.innerHTML = `
-        <div class="sorteo-image">
-          ${imagenHtml}
-        </div>
-        <div class="sorteo-content">
-          <h3 class="sorteo-title">${s.descripcion}</h3>
-
-          <div class="sorteo-info">
-            <span class="icon">🎁</span>
-            <span>Premio: ${s.premio}</span>
-          </div>
-
-          <div class="sorteo-info">
-            <span class="icon">💵</span>
-            <span>Precio por número: $${s.precio_numero ?? s.precio ?? 0}</span>
-          </div>
-
-          <div class="progress-container">
-            <div class="progress-bar" style="width:${porcentaje}%;"></div>
-          </div>
-
-          <p class="availability">
-            ${ocupados} de ${total} números vendidos ·
-            Quedan ${restantes}
-          </p>
-
-          <div class="cta">
-            <a href="sorteo.html?id=${s.id}" class="btn btn-primary">
-              Participar ahora
-            </a>
-          </div>
-        </div>
-      `;
-
-      contenedor.appendChild(card);
-    });
+    // Renderizamos usando la función nueva
+    renderSorteosActivos(sorteos);
   } catch (err) {
     console.error('Error cargando sorteos activos', err);
     contenedor.innerHTML =
