@@ -257,3 +257,79 @@
 .sorteo-actions-admin {
   margin-top: 0.5rem;
 }
+
+.comprobante-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.comprobante-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.comprobante-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.5rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.comprobante-item:first-child {
+  border-top: none;
+}
+
+.comprobante-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.comprobante-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+
+
+/* Botonera dentro de cada sorteo (Editar / Eliminar / Ruleta) */
+.sorteo-actions-admin {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* Versión pequeña de botones dentro de las tarjetas */
+.btn-sm {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+/* Badges de estado del sorteo */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.badge-success {
+  background-color: #0f9d58; /* verde */
+  color: #000;
+}
+
+.badge-warning {
+  background-color: #f4b400; /* amarillo */
+  color: #000;
+}
+
+.badge-danger {
+  background-color: #d32f2f; /* rojo */
+  color: #fff;
+}
