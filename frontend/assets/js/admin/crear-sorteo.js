@@ -180,27 +180,27 @@ async function enviarFormulario(e) {
 
   // 🔹 MODO EDICIÓN (hay id en la URL → PUT /api/sorteos/:id)
   try {
-    // Por ahora NO cambiamos la imagen en el backend,
-    // sólo reenviamos la URL actual para mantenerla.
-    const payload = {
-      descripcion,
-      premio,
-      precio_numero: Number(precio_numero),
-      cantidad_numeros: Number(cantidad_numeros),
-      estado: estadoActual,
-      imagen_url: imagenActualUrl,
-      fecha_sorteo,
-      // si quieres también actualizar fecha_sorteo, deberías añadir esa columna en el UPDATE del backend
-      // y mandarla aquí
-    };
+    const formData = new FormData();
+    formData.append('descripcion', descripcion);
+    formData.append('premio', premio);
+    formData.append('cantidad_numeros', cantidad_numeros);
+    formData.append('precio_numero', precio_numero);
+    formData.append('fecha_sorteo', fecha_sorteo);
+    formData.append('estado', estadoActual);
+
+    // Si el admin seleccionó una NUEVA imagen, la enviamos
+    if (imagenInput.files[0]) {
+      formData.append('imagen', imagenInput.files[0]);
+    }
+    // Si no hay archivo nuevo, el backend mantendrá la imagen_url actual
 
     const resp = await fetch(`${API_URL}/api/sorteos/${sorteoId}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+        // 🚫 No pongas 'Content-Type' aquí, el navegador lo arma para multipart/form-data
       },
-      body: JSON.stringify(payload),
+      body: formData,
     });
 
     const data = await resp.json();
@@ -219,6 +219,7 @@ async function enviarFormulario(e) {
     console.error(err);
     mostrarToast('Error de conexión al actualizar el sorteo.');
   }
+
 }
 
 document.addEventListener('DOMContentLoaded', () => {
