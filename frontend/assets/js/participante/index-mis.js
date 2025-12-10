@@ -194,7 +194,7 @@ async function cargarMisNumeros() {
 
   try {
     // Ajusta el endpoint si en tu backend se llama distinto
-    const res = await fetch(`${API_URL}/api/participante/misNumeros`, {
+    const res = await fetch(`${API_URL}/api/participante/mis-participaciones`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
