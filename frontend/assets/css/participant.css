@@ -751,3 +751,57 @@
 }
 
 
+/* Acordeones de info en detalle de sorteo */
+.info-accordion {
+  margin-top: 0.6rem;
+  border-radius: 0.7rem;
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid var(--colour-border);
+  padding: 0.55rem 0.85rem 0.7rem;
+  font-size: 0.9rem;
+}
+
+/* separación entre uno y otro */
+.info-accordion + .info-accordion {
+  margin-top: 0.5rem;
+}
+
+/* Estilo del summary (cabecera clickeable) */
+.info-accordion summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  outline: none;
+}
+
+/* Quitamos marcador feo por defecto */
+.info-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Flecha custom */
+.info-accordion summary::after {
+  content: "▾";
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+/* Cuando está abierto, giramos la flecha */
+.info-accordion[open] summary::after {
+  transform: rotate(180deg);
+}
+
+/* Contenido interno (lista) */
+.info-accordion ol,
+.info-accordion ul {
+  margin-top: 0.45rem;
+  padding-left: 1.2rem;
+}
+
+.info-accordion li {
+  margin-bottom: 0.25rem;
+}

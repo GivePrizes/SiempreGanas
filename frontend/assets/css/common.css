@@ -27,7 +27,7 @@
   --colour-text: #f5f5f5;
   --colour-muted: #777;
   --colour-progress-bg: #252736;
-  --colour-progress-bar: #5e5ea8;
+  --colour-progress-bar: hsl(240, 30%, 51%);
 
   /* Typography */
   --font-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -208,4 +208,12 @@ select {
 
 .input-ok {
   border: 1px solid #2ecc71 !important;
+}
+
+/* Specific colors for error messages */
+.error-msg {
+  font-size: 12px;
+  margin-top: 2px;
+  min-height: 14px;
+  color: #ff9a9a; /* rojito suave */
 }

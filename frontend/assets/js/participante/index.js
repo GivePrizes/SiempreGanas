@@ -27,7 +27,6 @@ function setBienvenida() {
   }
 }
 
-
 /**
  * Renderiza el HTML de una card de sorteo usando las clases del CSS.
  */
@@ -54,11 +53,32 @@ function renderSorteoCard(s) {
   const precioNumero = Number(s.precio_numero ?? s.precio ?? 0) || 0;
   const precioFormateado = precioNumero.toLocaleString('es-CO');
 
+  // --- Badge de estado / urgencia ---
+  const estado = (s.estado || '').toString().toLowerCase();
+  let badgeClass = '';
+  let badgeText = '';
+
+  if (porcentaje >= 100 || estado === 'lleno') {
+    badgeClass = 'status-closed';
+    badgeText = 'Listo para ruleta';
+  } else if (porcentaje >= 80) {
+    badgeClass = 'status-pending';
+    badgeText = 'Casi lleno';
+  } else if (porcentaje <= 15) {
+    badgeClass = 'status-open';
+    badgeText = 'Nuevo sorteo';
+  } else {
+    badgeClass = 'status-open';
+    badgeText = 'En venta';
+  }
+
   const disponibilidadTexto =
     porcentaje === 0
       ? 'Aún se están vendiendo números. Entra temprano y elige tus favoritos.'
+      : porcentaje < 80
+      ? `Ya se ha vendido el ${porcentaje}% del sorteo. Todavía tienes buena oportunidad.`
       : porcentaje < 100
-      ? `Quedan números disponibles. Ya se ha vendido el ${porcentaje}% del sorteo.`
+      ? `Quedan pocos números. El sorteo está a un paso de la ruleta.`
       : 'Sorteo lleno. Espera la ruleta 🎰';
 
   return `
@@ -68,7 +88,10 @@ function renderSorteoCard(s) {
       </div>
 
       <div class="sorteo-content">
-        <h3 class="sorteo-title">${s.descripcion}</h3>
+        <div class="sorteo-header-row" style="display:flex; justify-content:space-between; align-items:center; gap:.5rem;">
+          <h3 class="sorteo-title">${s.descripcion}</h3>
+          <span class="status-badge ${badgeClass}">${badgeText}</span>
+        </div>
 
         <div class="sorteo-info">
           <span class="icon">🎁</span>
@@ -102,7 +125,6 @@ function renderSorteoCard(s) {
     </article>
   `;
 }
-
 
 /**
  * Renderiza TODA la lista de sorteos dentro de #sorteosActivos
@@ -188,8 +210,16 @@ async function cargarSorteosActivos() {
 
     const sorteos = await res.json();
 
-    // Renderizamos usando la función nueva
-    renderSorteosActivos(sorteos);
+    // Solo mostrar sorteos disponibles para compra
+    const disponibles = sorteos.filter((s) => {
+      const estado = (s.estado || '').toString().toLowerCase();
+      if (estado === 'lleno' || estado === 'cerrado' || estado === 'finalizado') {
+        return false;
+      }
+      return true;
+    });
+
+    renderSorteosActivos(disponibles);
   } catch (err) {
     console.error('Error cargando sorteos activos', err);
     contenedor.innerHTML =

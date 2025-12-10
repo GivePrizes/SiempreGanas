@@ -155,23 +155,23 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  const errorNombre   = document.getElementById('errorNombre');
-  const errorEmail    = document.getElementById('errorEmail');
-  const errorTelefono = document.getElementById('errorTelefono');
-  const errorPass     = document.getElementById('errorPass');
-  const errorPass2    = document.getElementById('errorPassConfirm');
+  const errorNombre   = document.getElementById('errorNombre') || null;
+  const errorEmail    = document.getElementById('errorEmail') || null;
+  const errorTelefono = document.getElementById('errorTelefono') || null;
+  const errorPass     = document.getElementById('errorPass') || null;
+  const errorPass2    = document.getElementById('errorPassConfirm') || null;
 
   inputNombre.addEventListener('input', () => {
     const valor = inputNombre.value.trim();
     if (!valor) {
-      errorNombre.textContent = '';
+      if (errorNombre) errorNombre.textContent = '';
       inputNombre.classList.remove('input-error', 'input-ok');
     } else if (!nombreValido(valor)) {
-      errorNombre.textContent = 'Ingresa nombre y apellido, sin abreviaturas.';
+      if (errorNombre) errorNombre.textContent = 'Ingresa nombre y apellido, sin abreviaturas.';
       inputNombre.classList.add('input-error');
       inputNombre.classList.remove('input-ok');
     } else {
-      errorNombre.textContent = '✓ Nombre válido';
+      if (errorNombre) errorNombre.textContent = '✓ Nombre válido';
       inputNombre.classList.add('input-ok');
       inputNombre.classList.remove('input-error');
     }
@@ -180,14 +180,14 @@ document.addEventListener('DOMContentLoaded', () => {
   inputEmail.addEventListener('input', () => {
     const valor = inputEmail.value.trim();
     if (!valor) {
-      errorEmail.textContent = '';
+      if (errorEmail) errorEmail.textContent = '';
       inputEmail.classList.remove('input-error', 'input-ok');
     } else if (!correoValido(valor)) {
-      errorEmail.textContent = 'Correo no válido.';
+      if (errorEmail) errorEmail.textContent = 'Correo no válido.';
       inputEmail.classList.add('input-error');
       inputEmail.classList.remove('input-ok');
     } else {
-      errorEmail.textContent = '✓ Correo válido';
+      if (errorEmail) errorEmail.textContent = '✓ Correo válido';
       inputEmail.classList.add('input-ok');
       inputEmail.classList.remove('input-error');
     }
@@ -196,14 +196,14 @@ document.addEventListener('DOMContentLoaded', () => {
   inputTelefono.addEventListener('input', () => {
     const valor = inputTelefono.value.trim();
     if (!valor) {
-      errorTelefono.textContent = '';
+      if (errorTelefono) errorTelefono.textContent = '';
       inputTelefono.classList.remove('input-error', 'input-ok');
     } else if (!telefonoValido(valor)) {
-      errorTelefono.textContent = 'Mínimo 10 dígitos, solo números.';
+      if (errorTelefono) errorTelefono.textContent = 'Mínimo 10 dígitos, solo números.';
       inputTelefono.classList.add('input-error');
       inputTelefono.classList.remove('input-ok');
     } else {
-      errorTelefono.textContent = '✓ Teléfono válido';
+      if (errorTelefono) errorTelefono.textContent = '✓ Teléfono válido';
       inputTelefono.classList.add('input-ok');
       inputTelefono.classList.remove('input-error');
     }
@@ -212,14 +212,14 @@ document.addEventListener('DOMContentLoaded', () => {
   inputPass.addEventListener('input', () => {
     const valor = inputPass.value;
     if (!valor) {
-      errorPass.textContent = '';
+      if (errorPass) errorPass.textContent = '';
       inputPass.classList.remove('input-error', 'input-ok');
     } else if (valor.length < 6) {
-      errorPass.textContent = 'Mínimo 6 caracteres.';
+      if (errorPass) errorPass.textContent = 'Mínimo 6 caracteres.';
       inputPass.classList.add('input-error');
       inputPass.classList.remove('input-ok');
     } else {
-      errorPass.textContent = '✓ Contraseña aceptable';
+      if (errorPass) errorPass.textContent = '✓ Contraseña aceptable';
       inputPass.classList.add('input-ok');
       inputPass.classList.remove('input-error');
     }
@@ -228,14 +228,14 @@ document.addEventListener('DOMContentLoaded', () => {
   inputPass2.addEventListener('input', () => {
     const valor = inputPass2.value;
     if (!valor) {
-      errorPass2.textContent = '';
+      if (errorPass2) errorPass2.textContent = '';
       inputPass2.classList.remove('input-error', 'input-ok');
     } else if (valor !== inputPass.value) {
-      errorPass2.textContent = 'Las contraseñas no coinciden.';
+      if (errorPass2) errorPass2.textContent = 'Las contraseñas no coinciden.';
       inputPass2.classList.add('input-error');
       inputPass2.classList.remove('input-ok');
     } else {
-      errorPass2.textContent = '✓ Coinciden';
+      if (errorPass2) errorPass2.textContent = '✓ Coinciden';
       inputPass2.classList.add('input-ok');
       inputPass2.classList.remove('input-error');
     }
