@@ -193,3 +193,19 @@ select {
 .toast.hidden {
   display: none;
 }
+
+
+/* Form validation styles */
+.error-msg {
+  font-size: 12px;
+  margin-top: 2px;
+  min-height: 14px;
+}
+
+.input-error {
+  border: 1px solid #ff4d4d !important;
+}
+
+.input-ok {
+  border: 1px solid #2ecc71 !important;
+}
