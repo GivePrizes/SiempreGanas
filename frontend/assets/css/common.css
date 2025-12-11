@@ -28,6 +28,8 @@
   --colour-muted: #777;
   --colour-progress-bg: #252736;
   --colour-progress-bar: hsl(240, 30%, 51%);
+  --gold: #ffd700;
+  --muted: #777;
 
   /* Typography */
   --font-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

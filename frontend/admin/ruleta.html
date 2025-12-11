@@ -30,7 +30,7 @@
       <header class="ruleta-header">
         <h2 class="sg-hero-title" id="tituloSorteo">Cargando sorteo...</h2>
         <p class="sg-hero-sub" id="subtituloSorteo">
-          Prepara a la audiencia, la suerte está por girar… 🎰
+          Preparada audiencia, la suerte está por girar… 🎰
         </p>
       </header>
 
@@ -55,15 +55,34 @@
         </div>
 
         <!-- Columna derecha: información / psicología -->
-                <!-- Columna derecha: información / psicología -->
         <aside class="ruleta-info">
-          <h3>Cómo impresionar a los participantes</h3>
-          <ul>
-            <li>Haz una cuenta regresiva en voz alta antes de girar.</li>
-            <li>Menciona el premio y recuerda que todos pagaron por sus números.</li>
-            <li>Lee en voz alta algunos números / nombres antes de que se detenga.</li>
-            <li>Haz una pausa dramática antes de anunciar al ganador.</li>
-          </ul>
+          <!-- NUEVO: panel estado + contador + modo -->
+          <div class="ruleta-estado-admin">
+            <p class="mini-sub">Estado de la ruleta</p>
+            <div class="ruleta-estado-grid">
+              <div>
+                <p class="estado-label">Estado</p>
+                <div class="estado-pill">
+                  <span id="estadoDot" class="estado-dot estado-no_programada"></span>
+                  <span id="estadoTexto">no_programada</span>
+                </div>
+              </div>
+              <div>
+                <p class="estado-label">Programada para</p>
+                <p id="horaProgramadaTexto" class="estado-text">
+                  Sin programar
+                </p>
+              </div>
+              <div>
+                <p class="estado-label">Cuenta regresiva</p>
+                <p id="contadorTexto" class="contador contador-small">--:--:--</p>
+              </div>
+            </div>
+            <p class="estado-label">
+              Modo de sorteo:
+              <strong id="modoSorteoTexto">ALEATORIO</strong>
+            </p>
+          </div>
 
           <!-- 🧠 Bloque de stats persuasivo -->
           <div class="ruleta-mini-stats">
@@ -86,14 +105,45 @@
             <button id="btnGirar" class="btn-gold btn-girar">
               🎰 GIRAR RULETA
             </button>
+
+            <!-- NUEVO: botón para mostrar/ocultar panel de programación -->
+            <button id="btnProgramar" class="btn-secondary">
+              ⏱ Programar ruleta
+            </button>
+
             <p class="ruleta-hint">
               Este giro es definitivo. El ganador quedará registrado en el sistema.
             </p>
           </div>
 
+          <!-- NUEVO: panel para programar ruleta -->
+          <div id="panelProgramar" class="programar-panel" style="display:none;">
+            <span>Programar para:</span>
+            <select id="selectPreset">
+              <option value="10">En 10 minutos</option>
+              <option value="30">En 30 minutos</option>
+              <option value="60">En 1 hora</option>
+              <option value="custom">Fecha/hora personalizada</option>
+            </select>
+
+            <input
+              type="datetime-local"
+              id="inputFechaCustom"
+              class="programar-input"
+              style="display:none;"
+            />
+
+            <button id="btnConfirmProgramar" class="btn-gold btn-sm">
+              Guardar programación
+            </button>
+          </div>
+
           <div id="resultadoRuleta" class="resultado-ruleta">
             <!-- Resultado dinámico: lo llena JS -->
+            Aún no se ha realizado la ruleta para este sorteo.
           </div>
+
+          <div id="topBuyerInfo" class="ruleta-hint"></div>
         </aside>
 
       </section>
