@@ -2,36 +2,187 @@
 
 const API_URL = window.API_URL; // viene de config.js
 
-// Para el dashboard (sólo la cifra total)
-export async function cargarMisNumerosResumen() {
-  const token = localStorage.getItem('token');
-  const stat = document.getElementById('statMisNumeros');
+let __MIS_ROWS__ = [];   // filas crudas del backend (1 por número)
+let __MIS_GRUPOS__ = []; // grupos (1 por sorteo)
 
-  if (!token || !stat) return;
-
-  try {
-    const res = await fetch(`${API_URL}/api/participante/mis-participaciones`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) {
-      console.error('Error HTTP en mis-participaciones (resumen):', res.status);
-      stat.textContent = '—';
-      return;
-    }
-
-    const data = await res.json();
-    const totalNumeros = Array.isArray(data) ? data.length : 0;
-    stat.textContent = totalNumeros || '0';
-  } catch (err) {
-    console.error(err);
-    stat.textContent = '—';
-  }
+function norm(x) {
+  return (x || '').toString().toLowerCase().trim();
 }
 
-// Para la página mis-numeros.html (agrupado por sorteo)
+function estadoTexto(e) {
+  const v = norm(e);
+  if (v === 'aprobado') return 'Pagado';
+  if (v === 'pendiente') return 'Pendiente';
+  if (v === 'rechazado') return 'Rechazado';
+  return '—';
+}
+
+function chipClass(e) {
+  const v = norm(e);
+  if (v === 'aprobado') return 'num-chip chip-ok';
+  if (v === 'pendiente') return 'num-chip chip-warn';
+  if (v === 'rechazado') return 'num-chip chip-bad';
+  return 'num-chip';
+}
+
+function agruparPorSorteo(rows) {
+  const grupos = {};
+
+  rows.forEach((p) => {
+    const sorteoId = p.sorteo_id;
+
+    if (!grupos[sorteoId]) {
+      grupos[sorteoId] = {
+        sorteo_id: sorteoId,
+        descripcion: p.descripcion,
+        premio: p.premio,
+        sorteo_estado: p.sorteo_estado,
+        numero_ganador: p.numero_ganador,
+        numeros: [], // [{numero, estado}]
+        aprobados: 0,
+        pendientes: 0,
+        rechazados: 0,
+      };
+    }
+
+    const g = grupos[sorteoId];
+    const estado = norm(p.estado);
+
+    g.numeros.push({ numero: Number(p.numero), estado });
+
+    if (estado === 'aprobado') g.aprobados += 1;
+    else if (estado === 'pendiente') g.pendientes += 1;
+    else if (estado === 'rechazado') g.rechazados += 1;
+  });
+
+  // ordenar números dentro del grupo
+  return Object.values(grupos).map((g) => {
+    g.numeros = (g.numeros || []).slice().sort((a, b) => a.numero - b.numero);
+    return g;
+  });
+}
+
+function renderGrupos(grupos) {
+  const contenedor = document.getElementById('misNumeros');
+  const emptyBox = document.getElementById('misNumerosEmpty');
+
+  if (!contenedor) return;
+
+  if (!grupos || grupos.length === 0) {
+    contenedor.innerHTML = '';
+    if (emptyBox) emptyBox.classList.remove('oculto');
+    return;
+  }
+
+  if (emptyBox) emptyBox.classList.add('oculto');
+  contenedor.innerHTML = '';
+
+  grupos.forEach((grupo) => {
+    const card = document.createElement('article');
+    card.className = 'sorteo-card';
+
+    const sorteoEstado = norm(grupo.sorteo_estado);
+    const pillSorteo =
+      sorteoEstado === 'finalizado'
+        ? `<span class="badge badge-danger">Finalizado</span>`
+        : `<span class="badge badge-success">Activo</span>`;
+
+    const ganadorHtml =
+      sorteoEstado === 'finalizado' && grupo.numero_ganador != null
+        ? `<p class="resumen-linea"><strong>Ganador:</strong> <span>#${grupo.numero_ganador}</span></p>`
+        : '';
+
+    const chipsHtml =
+      grupo.numeros && grupo.numeros.length
+        ? grupo.numeros
+            .map((it) => {
+              const isWinner =
+                sorteoEstado === 'finalizado' &&
+                grupo.numero_ganador != null &&
+                Number(grupo.numero_ganador) === Number(it.numero);
+
+              const winnerMark = isWinner ? ' ⭐' : '';
+              const winnerClass = isWinner ? ' chip-winner' : '';
+
+              return `
+                <span class="${chipClass(it.estado)}${winnerClass}">
+                  #${it.numero}${winnerMark}
+                  <small>${estadoTexto(it.estado)}</small>
+                </span>
+              `;
+            })
+            .join('')
+        : '<span class="text-muted">—</span>';
+
+    const badges = [];
+    if (grupo.aprobados) badges.push(`<span class="badge badge-success">Pagados: ${grupo.aprobados}</span>`);
+    if (grupo.pendientes) badges.push(`<span class="badge badge-warning">Pendientes: ${grupo.pendientes}</span>`);
+    if (grupo.rechazados) badges.push(`<span class="badge badge-danger">Rechazados: ${grupo.rechazados}</span>`);
+
+    card.innerHTML = `
+      <div class="sorteo-content">
+        <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+          <div>
+            <h3 class="sorteo-title">${grupo.descripcion}</h3>
+            <p class="text-muted">Premio: ${grupo.premio}</p>
+          </div>
+          <div>${pillSorteo}</div>
+        </div>
+
+        ${ganadorHtml}
+
+        <p class="resumen-linea"><strong>Números:</strong></p>
+        <div class="numeros-chips-wrap">${chipsHtml}</div>
+
+        <p class="resumen-linea">
+          ${
+            badges.length
+              ? badges.join(' ')
+              : '<span class="text-muted">Sin estado registrado</span>'
+          }
+        </p>
+
+        <div class="cta cta-mis-numeros">
+          <a href="sorteo.html?id=${grupo.sorteo_id}" class="btn btn-primary">
+            Ver sorteo
+          </a>
+        </div>
+      </div>
+    `;
+
+    contenedor.appendChild(card);
+  });
+}
+
+function aplicarFiltro(estado) {
+  const e = norm(estado);
+
+  if (e === 'todos') return __MIS_GRUPOS__;
+
+  if (e === 'activo') {
+    return __MIS_GRUPOS__.filter((g) => norm(g.sorteo_estado) !== 'finalizado');
+  }
+
+  if (e === 'finalizado') {
+    return __MIS_GRUPOS__.filter((g) => norm(g.sorteo_estado) === 'finalizado');
+  }
+
+  // “pendiente”: al menos un número pendiente dentro del sorteo
+  if (e === 'pendiente') {
+    return __MIS_GRUPOS__.filter((g) =>
+      (g.numeros || []).some((n) => norm(n.estado) === 'pendiente')
+    );
+  }
+
+  return __MIS_GRUPOS__;
+}
+
+// ✅ filtros internos sin recargar página (lo usarán tus chips del HTML)
+window.filtrarMisNumeros = (estado) => {
+  renderGrupos(aplicarFiltro(estado));
+};
+
+// ✅ función principal
 export async function cargarMisNumerosDetalle() {
   const token = localStorage.getItem('token');
   const contenedor = document.getElementById('misNumeros');
@@ -39,15 +190,12 @@ export async function cargarMisNumerosDetalle() {
 
   if (!token || !contenedor) return;
 
-  // estado inicial: ocultar bloque vacío y mostrar loading en el grid
   if (emptyBox) emptyBox.classList.add('oculto');
   contenedor.innerHTML = '<p class="loading">Cargando tus participaciones...</p>';
 
   try {
     const res = await fetch(`${API_URL}/api/participante/mis-participaciones`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (!res.ok) {
@@ -59,106 +207,13 @@ export async function cargarMisNumerosDetalle() {
 
     const data = await res.json();
 
-    // === Sin participaciones: mostramos la tarjeta vacía y limpiamos el grid ===
-    if (!Array.isArray(data) || data.length === 0) {
-      contenedor.innerHTML = '';
-      if (emptyBox) emptyBox.classList.remove('oculto');
-      return;
-    }
+    __MIS_ROWS__ = Array.isArray(data) ? data : [];
+    __MIS_GRUPOS__ = agruparPorSorteo(__MIS_ROWS__);
 
-    // si hay datos, nos aseguramos de ocultar el mensaje vacío
-    if (emptyBox) emptyBox.classList.add('oculto');
-
-    // === Agrupar por sorteo_id ===
-    const grupos = {}; // { sorteo_id: { descripcion, premio, numeros: [], aprobados, pendientes, rechazados } }
-
-    data.forEach((p) => {
-      const sorteoId = p.sorteo_id;
-      if (!grupos[sorteoId]) {
-        grupos[sorteoId] = {
-          sorteo_id: sorteoId,
-          descripcion: p.descripcion,
-          premio: p.premio,
-          numeros: [],
-          aprobados: 0,
-          pendientes: 0,
-          rechazados: 0,
-        };
-      }
-
-      const grupo = grupos[sorteoId];
-      grupo.numeros.push(p.numero);
-
-      const estado = (p.estado || '').toLowerCase();
-      if (estado === 'aprobado') grupo.aprobados += 1;
-      else if (estado === 'pendiente') grupo.pendientes += 1;
-      else if (estado) grupo.rechazados += 1;
-    });
-
-    // === Pintar 1 card por sorteo ===
-    contenedor.innerHTML = '';
-
-    Object.values(grupos).forEach((grupo) => {
-      const card = document.createElement('article');
-      card.className = 'sorteo-card';
-
-      const numerosTexto =
-        grupo.numeros && grupo.numeros.length
-          ? grupo.numeros
-              .slice()
-              .sort((a, b) => a - b)
-              .join(', ')
-          : '—';
-
-      const badges = [];
-
-      if (grupo.aprobados) {
-        badges.push(
-          `<span class="badge badge-success">Aprobados: ${grupo.aprobados}</span>`
-        );
-      }
-      if (grupo.pendientes) {
-        badges.push(
-          `<span class="badge badge-warning">Pendientes: ${grupo.pendientes}</span>`
-        );
-      }
-      if (grupo.rechazados) {
-        badges.push(
-          `<span class="badge badge-danger">Rechazados: ${grupo.rechazados}</span>`
-        );
-      }
-
-      card.innerHTML = `
-        <div class="sorteo-content">
-          <h3 class="sorteo-title">${grupo.descripcion}</h3>
-          <p class="text-muted">Premio: ${grupo.premio}</p>
-
-          <p class="resumen-linea">
-            <strong>Números:</strong>
-            <span>${numerosTexto}</span>
-          </p>
-
-          <p class="resumen-linea">
-            ${
-              badges.length
-                ? badges.join(' ')
-                : '<span class="text-muted">Sin estado registrado</span>'
-            }
-          </p>
-
-          <div class="cta cta-mis-numeros">
-            <a href="sorteo.html?id=${grupo.sorteo_id}" class="btn btn-primary">
-              Ver sorteo
-            </a>
-          </div>
-        </div>
-      `;
-
-      contenedor.appendChild(card);
-    });
+       // render inicial en "todos"
+    renderGrupos(__MIS_GRUPOS__);
   } catch (err) {
     console.error(err);
-    contenedor.innerHTML =
-      '<p class="error">Error de conexión al cargar tus números.</p>';
+    contenedor.innerHTML = '<p class="error">Error de conexión al cargar tus números.</p>';
   }
 }

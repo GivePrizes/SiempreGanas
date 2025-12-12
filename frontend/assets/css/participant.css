@@ -805,3 +805,24 @@
 .info-accordion li {
   margin-bottom: 0.25rem;
 }
+/* =============================
+   Chips de estado para números
+   ============================= */
+
+.num-chip{
+  box-shadow: 0 6px 16px rgba(0,0,0,.35);
+}
+
+.num-chip small{
+  font-size:.72rem;
+  opacity:.85;
+}
+
+.chip-ok{ border-color: rgba(34,197,94,.40); }
+.chip-warn{ border-color: rgba(251,191,36,.40); }
+.chip-bad{ border-color: rgba(244,63,94,.40); }
+
+.chip-winner{
+  background: rgba(251,191,36,.18);
+  border-color: rgba(251,191,36,.55);
+}
