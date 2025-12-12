@@ -1,9 +1,14 @@
 // assets/js/admin/ruleta.js
 
 // URL fija al APP-SERVICE en producción
-const API_URL = window.API_URL
-  ? `${window.API_URL}`
-  : 'https://app-service-phi.vercel.app/api';
+
+// Se asume que frontend/assets/js/config.js ya fue cargado y definió window.API_URL
+const API_URL = (window.API_URL || 'https://app-service-phi.vercel.app').replace(/\/$/, '');
+
+// Endpoint base de API
+//Helper para llamadas a API
+const API = `${API_URL}/api`;
+
 
 
 // ID de sorteo desde la URL: ruleta.html?sorteo=123 o ?sorteoId=123
@@ -119,7 +124,7 @@ async function fetchRuletaInfo() {
   if (!sorteoId) return;
 
   try {
-    const res = await fetch(`${API_URL}/sorteos/${sorteoId}/ruleta-info`, {
+    const res = await fetch(`${API}/sorteos/${sorteoId}/ruleta-info`, {
       headers: token
         ? {
             Authorization: `Bearer ${token}`,
@@ -146,7 +151,7 @@ async function fetchRuletaParticipantes() {
 
   try {
     const res = await fetch(
-      `${API_URL}/sorteos/${sorteoId}/ruleta-participantes`,
+      `${API}/sorteos/${sorteoId}/ruleta-participantes`,
       {
         headers: token
           ? {
@@ -335,7 +340,7 @@ async function programarRuleta() {
 
   try {
     const res = await fetch(
-      `${API_URL}/sorteos/${sorteoId}/programar-ruleta`,
+      `${API}/sorteos/${sorteoId}/programar-ruleta`,
       {
         method: 'POST',
         headers: {
@@ -386,7 +391,7 @@ async function girarRuleta() {
   let res, data;
   try {
     res = await fetch(
-      `${API_URL}/sorteos/${sorteoId}/realizar-ruleta`,
+      `${API}/sorteos/${sorteoId}/realizar-ruleta`,
       {
         method: 'POST',
         headers: token
