@@ -492,3 +492,9 @@
 .toast.hidden {
   display: none;
 }
+
+.mini-estado{
+  font-size: .82rem;
+  opacity: .75;
+  margin-bottom: .5rem;
+}

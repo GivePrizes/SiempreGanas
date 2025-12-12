@@ -20,45 +20,33 @@ function agruparComprobantesPorSorteo(comprobantes) {
   return Array.from(mapa.values());
 }
 
-// 👇 EXPORTAMOS la función para que index.js la pueda importar
-export async function cargarComprobantes() {
+// ✅ NUEVO: estado para evitar parpadeo
+let yaPintoAlgo = false;
+let ultimoHTML = '';
+
+// ✅ NUEVO: mini “actualizando…” sin borrar el contenedor
+function setMiniEstado(texto) {
   const contenedor = document.getElementById('comprobantes');
-  if (contenedor) {
-    contenedor.innerHTML = '<p class="loading">Cargando comprobantes...</p>';
+  if (!contenedor) return;
+
+  // lo ponemos dentro del mismo contenedor (arriba)
+  let el = contenedor.querySelector('.mini-estado');
+  if (!el) {
+    el = document.createElement('div');
+    el.className = 'mini-estado';
+    contenedor.prepend(el);
   }
 
-  const token = localStorage.getItem('token');
-  const res = await fetch(`${API_URL}/api/admin/comprobantes`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  el.textContent = texto || '';
+  el.style.display = texto ? 'block' : 'none';
+}
 
-  if (res.status === 401 || res.status === 403) {
-    if (contenedor) {
-      contenedor.innerHTML =
-        '<p>No tienes permisos o tu sesión expiró. Vuelve a iniciar sesión.</p>';
-    }
-    console.warn('No autorizado en /api/admin/comprobantes');
-    return;
-  }
-
-  if (!res.ok) {
-    console.error('Error al cargar comprobantes:', res.status);
-    if (contenedor) {
-      contenedor.innerHTML = '<p>Error al cargar comprobantes.</p>';
-    }
-    return;
-  }
-
-  const data = await res.json();
-
-  const grupos = agruparComprobantesPorSorteo(data);
-
+function construirHTML(grupos) {
   if (!grupos.length) {
-    contenedor.innerHTML = '<p>¡No hay pendientes! 🎉</p>';
-    return;
+    return '<p>¡No hay pendientes! 🎉</p>';
   }
 
-  contenedor.innerHTML = grupos
+  return grupos
     .map((grupo) => {
       const items = grupo.comprobantes
         .map(
@@ -95,6 +83,62 @@ export async function cargarComprobantes() {
       `;
     })
     .join('');
+}
+
+// 👇 EXPORTAMOS la función para que index.js la pueda importar
+export async function cargarComprobantes() {
+  const contenedor = document.getElementById('comprobantes');
+  if (!contenedor) return;
+
+  // ✅ Primera carga: igual que antes (no cambia nada)
+  if (!yaPintoAlgo) {
+    contenedor.innerHTML = '<p class="loading">Cargando comprobantes...</p>';
+  } else {
+    // ✅ Refrescos: NO borrar contenido (evita salto)
+    setMiniEstado('Actualizando…');
+  }
+
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${API_URL}/api/admin/comprobantes`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  // quitamos mini estado si existía
+  setMiniEstado('');
+
+  if (res.status === 401 || res.status === 403) {
+    contenedor.innerHTML =
+      '<p>No tienes permisos o tu sesión expiró. Vuelve a iniciar sesión.</p>';
+    yaPintoAlgo = true;
+    ultimoHTML = contenedor.innerHTML;
+    console.warn('No autorizado en /api/admin/comprobantes');
+    return;
+  }
+
+  if (!res.ok) {
+    console.error('Error al cargar comprobantes:', res.status);
+
+    // ✅ Si ya había algo pintado, no lo borres por un error de refresh
+    if (!yaPintoAlgo) {
+      contenedor.innerHTML = '<p>Error al cargar comprobantes.</p>';
+      ultimoHTML = contenedor.innerHTML;
+    }
+    yaPintoAlgo = true;
+    return;
+  }
+
+  const data = await res.json();
+  const grupos = agruparComprobantesPorSorteo(data);
+
+  const nuevoHTML = construirHTML(grupos);
+
+  // ✅ Clave anti-parpadeo: solo reemplazar si cambió el HTML
+  if (nuevoHTML !== ultimoHTML) {
+    contenedor.innerHTML = nuevoHTML;
+    ultimoHTML = nuevoHTML;
+  }
+
+  yaPintoAlgo = true;
 }
 
 // Estas dos funciones se usan desde el HTML generado con onclick="..."
