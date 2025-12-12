@@ -1,13 +1,9 @@
 // assets/js/participante/index-mis.js
 import { cargarMisNumerosDetalle } from './misNumeros.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  // 1) Carga inicial
-  cargarMisNumerosDetalle();
+const chips = document.querySelectorAll('.chip-filtro');
 
-  // 2) Filtros (chips)
-  const chips = document.querySelectorAll('.chip-filtro');
-
+function setupFiltros() {
   chips.forEach((chip) => {
     chip.addEventListener('click', () => {
       const estado = chip.getAttribute('data-estado') || 'todos';
@@ -15,8 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
       chips.forEach((c) => c.classList.remove('chip-filtro--activo'));
       chip.classList.add('chip-filtro--activo');
 
-      // ✅ Filtra interno (sin recargar)
+      // Filtra sin recargar (usa el window.filtrarMisNumeros del misNumeros.js)
       window.filtrarMisNumeros?.(estado);
     });
   });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  setupFiltros();
+  cargarMisNumerosDetalle(); // carga y render inicial (Todos)
 });

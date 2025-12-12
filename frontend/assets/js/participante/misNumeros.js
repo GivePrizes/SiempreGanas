@@ -55,7 +55,6 @@ function agruparPorSorteo(rows) {
     else if (estado === 'rechazado') g.rechazados += 1;
   });
 
-  // ordenar números dentro del grupo
   return Object.values(grupos).map((g) => {
     g.numeros = (g.numeros || []).slice().sort((a, b) => a.numero - b.numero);
     return g;
@@ -135,11 +134,7 @@ function renderGrupos(grupos) {
         <div class="numeros-chips-wrap">${chipsHtml}</div>
 
         <p class="resumen-linea">
-          ${
-            badges.length
-              ? badges.join(' ')
-              : '<span class="text-muted">Sin estado registrado</span>'
-          }
+          ${badges.length ? badges.join(' ') : '<span class="text-muted">Sin estado registrado</span>'}
         </p>
 
         <div class="cta cta-mis-numeros">
@@ -177,12 +172,43 @@ function aplicarFiltro(estado) {
   return __MIS_GRUPOS__;
 }
 
-// ✅ filtros internos sin recargar página (lo usarán tus chips del HTML)
+// ✅ filtros internos sin recargar página (lo llaman tus chips)
 window.filtrarMisNumeros = (estado) => {
   renderGrupos(aplicarFiltro(estado));
 };
 
-// ✅ función principal
+// ------------------------------
+// ✅ RESUMEN (dashboard)
+// ------------------------------
+export async function cargarMisNumerosResumen() {
+  const token = localStorage.getItem('token');
+  const stat = document.getElementById('statMisNumeros');
+
+  if (!token || !stat) return;
+
+  try {
+    const res = await fetch(`${API_URL}/api/participante/mis-participaciones`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) {
+      console.error('Error HTTP en mis-participaciones (resumen):', res.status);
+      stat.textContent = '—';
+      return;
+    }
+
+    const data = await res.json();
+    const totalNumeros = Array.isArray(data) ? data.length : 0;
+    stat.textContent = totalNumeros ? String(totalNumeros) : '0';
+  } catch (err) {
+    console.error(err);
+    stat.textContent = '—';
+  }
+}
+
+// ------------------------------
+// ✅ DETALLE (mis-numeros.html)
+// ------------------------------
 export async function cargarMisNumerosDetalle() {
   const token = localStorage.getItem('token');
   const contenedor = document.getElementById('misNumeros');
@@ -206,14 +232,19 @@ export async function cargarMisNumerosDetalle() {
     }
 
     const data = await res.json();
-
     __MIS_ROWS__ = Array.isArray(data) ? data : [];
     __MIS_GRUPOS__ = agruparPorSorteo(__MIS_ROWS__);
 
-       // render inicial en "todos"
+    if (!__MIS_GRUPOS__.length) {
+      contenedor.innerHTML = '';
+      if (emptyBox) emptyBox.classList.remove('oculto');
+      return;
+    }
+
     renderGrupos(__MIS_GRUPOS__);
   } catch (err) {
     console.error(err);
-    contenedor.innerHTML = '<p class="error">Error de conexión al cargar tus números.</p>';
+    contenedor.innerHTML =
+      '<p class="error">Error de conexión al cargar tus números.</p>';
   }
 }
