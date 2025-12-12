@@ -117,9 +117,11 @@ function renderSorteoCard(s) {
         </p>
 
         <div class="cta">
-          <a href="sorteo.html?id=${s.id}" class="btn btn-primary">
-            Participar ahora
-          </a>
+          ${(estado === 'lleno' || porcentaje >= 100)
+            ? `<button class="btn btn-secondary" disabled>⏳ Esperando ruleta</button>`
+            : `<a href="sorteo.html?id=${s.id}" class="btn btn-primary">Participar ahora</a>`
+          }
+
         </div>
       </div>
     </article>
@@ -158,7 +160,7 @@ async function cargarStatsSorteos() {
     // Contar sorteos activos (según tu modelo)
     const activos = sorteos.filter((s) => {
       const estado = (s.estado || '').toString().toLowerCase();
-      return estado === 'activo' || estado === 'en curso' || estado === '';
+      return ['activo', 'en curso', '', 'lleno'].includes(estado);
     });
 
     if (statSorteos) {
@@ -213,11 +215,11 @@ async function cargarSorteosActivos() {
     // Solo mostrar sorteos disponibles para compra
     const disponibles = sorteos.filter((s) => {
       const estado = (s.estado || '').toString().toLowerCase();
-      if (estado === 'lleno' || estado === 'cerrado' || estado === 'finalizado') {
-        return false;
-      }
+      // mostramos activos + llenos (esperando ruleta)
+      if (estado === 'finalizado') return false; // finalizado sí lo ocultamos aquí
       return true;
     });
+
 
     renderSorteosActivos(disponibles);
   } catch (err) {
