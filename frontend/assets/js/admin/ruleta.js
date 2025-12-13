@@ -271,16 +271,21 @@ function renderRuletaInfo() {
 function iniciarCountdown() {
   if (countdownInterval) clearInterval(countdownInterval);
 
-  if (
-    !ruletaInfo ||
-    !ruletaInfo.ruleta_hora_programada ||
-    !contadorTextoEl
-  ) {
+  if (!ruletaInfo || !ruletaInfo.ruleta_hora_programada || !contadorTextoEl) {
     if (contadorTextoEl) contadorTextoEl.textContent = '--:--:--';
     return;
   }
 
   const target = new Date(ruletaInfo.ruleta_hora_programada).getTime();
+  const overlay = document.getElementById('countdownOverlay');
+  const bigEl = document.getElementById('countdownBig');
+  const motivationalEl = document.getElementById('motivationalMsg');
+  const frases = [
+    "¡Ya casi llega tu momento!",
+    "La suerte está girando contigo…",
+    "Prepárate, el destino se acerca…",
+    "¿Será tu número el elegido?",
+  ];
 
   function actualizar() {
     const now = Date.now();
@@ -291,7 +296,7 @@ function iniciarCountdown() {
       if (btnGirar && ruletaInfo.ruleta_estado === 'programada') {
         btnGirar.disabled = false;
       }
-      //  MUY IMPORTANTE:
+      if (overlay) overlay.style.display = 'none';
       clearInterval(countdownInterval);
       countdownInterval = null;
       return;
@@ -307,6 +312,20 @@ function iniciarCountdown() {
       minutes.toString().padStart(2, '0'),
       seconds.toString().padStart(2, '0'),
     ].join(':');
+
+    // Overlay gigante solo últimos 10 segundos
+    if (totalSeconds <= 10 && overlay && bigEl) {
+      overlay.style.display = 'flex';
+      bigEl.textContent = totalSeconds;
+    } else if (overlay) {
+      overlay.style.display = 'none';
+    }
+
+    // Mensajes motivacionales cada 5 segundos
+    if (motivationalEl && totalSeconds % 5 === 0) {
+      const frase = frases[Math.floor(Math.random() * frases.length)];
+      motivationalEl.textContent = frase;
+    }
   }
 
   actualizar();

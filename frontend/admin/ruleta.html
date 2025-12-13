@@ -9,6 +9,39 @@
   <link rel="stylesheet" href="../assets/css/admin.css">
   <!-- Estilos específicos de la ruleta -->
   <link rel="stylesheet" href="../assets/css/ruleta.css" />
+  <style>
+    /* Overlay para cuenta regresiva */
+    .countdown-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    #countdownBig {
+      font-size: 8rem;
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 30px rgba(250,204,21,0.9);
+    }
+    /* Mensajes motivacionales */
+    .motivational-msg {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--gold);
+      text-align: center;
+      margin-top: 1rem;
+      animation: fadeInOut 2s ease-in-out infinite;
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; }
+      25% { opacity: 1; }
+      75% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
 </head>
 <body class="sg-body">
   <nav class="sg-header">
@@ -38,25 +71,17 @@
         <!-- Columna izquierda: ruleta circular -->
         <div class="ruleta-container">
           <div class="ruleta-circle-wrapper">
-            <!-- Disco que gira -->
-            <div id="ruletaCircle" class="ruleta-circle">
-              <!-- Slices generadas por JS con .ruleta-slice -->
-            </div>
-
-            <!-- Centro de la ruleta -->
+            <div id="ruletaCircle" class="ruleta-circle"></div>
             <div class="ruleta-center">
               <span class="rc-top">Siempre</span>
               <span class="rc-bottom">Ganas</span>
             </div>
-
-            <!-- Puntero fijo arriba -->
             <div class="ruleta-pointer"></div>
           </div>
         </div>
 
         <!-- Columna derecha: información / psicología -->
         <aside class="ruleta-info">
-          <!-- NUEVO: panel estado + contador + modo -->
           <div class="ruleta-estado-admin">
             <p class="mini-sub">Estado de la ruleta</p>
             <div class="ruleta-estado-grid">
@@ -69,9 +94,7 @@
               </div>
               <div>
                 <p class="estado-label">Programada para</p>
-                <p id="horaProgramadaTexto" class="estado-text">
-                  Sin programar
-                </p>
+                <p id="horaProgramadaTexto" class="estado-text">Sin programar</p>
               </div>
               <div>
                 <p class="estado-label">Cuenta regresiva</p>
@@ -84,39 +107,22 @@
             </p>
           </div>
 
-          <!-- 🧠 Bloque de stats persuasivo -->
+          <!-- Mensajes motivacionales -->
+          <p id="motivationalMsg" class="motivational-msg"></p>
+
           <div class="ruleta-mini-stats">
             <h4>Resumen rápido del sorteo</h4>
-            <p>
-              <span class="label">Números totales:</span>
-              <span id="statTotalNumeros">-</span>
-            </p>
-            <p>
-              <span class="label">Números en juego:</span>
-              <span id="statParticipantes">-</span>
-            </p>
-            <p>
-              <span class="label">Probabilidad por número:</span>
-              <span id="statProbMedia">-</span>
-            </p>
+            <p><span class="label">Números totales:</span><span id="statTotalNumeros">-</span></p>
+            <p><span class="label">Números en juego:</span><span id="statParticipantes">-</span></p>
+            <p><span class="label">Probabilidad por número:</span><span id="statProbMedia">-</span></p>
           </div>
 
           <div class="ruleta-actions">
-            <button id="btnGirar" class="btn-gold btn-girar">
-              🎰 GIRAR RULETA
-            </button>
-
-            <!-- NUEVO: botón para mostrar/ocultar panel de programación -->
-            <button id="btnProgramar" class="btn-secondary">
-              ⏱ Programar ruleta
-            </button>
-
-            <p class="ruleta-hint">
-              Este giro es definitivo. El ganador quedará registrado en el sistema.
-            </p>
+            <button id="btnGirar" class="btn-gold btn-girar">🎰 GIRAR RULETA</button>
+            <button id="btnProgramar" class="btn-secondary">⏱ Programar ruleta</button>
+            <p class="ruleta-hint">Este giro es definitivo. El ganador quedará registrado en el sistema.</p>
           </div>
 
-          <!-- NUEVO: panel para programar ruleta -->
           <div id="panelProgramar" class="programar-panel" style="display:none;">
             <span>Programar para:</span>
             <select id="selectPreset">
@@ -125,30 +131,23 @@
               <option value="60">En 1 hora</option>
               <option value="custom">Fecha/hora personalizada</option>
             </select>
-
-            <input
-              type="datetime-local"
-              id="inputFechaCustom"
-              class="programar-input"
-              style="display:none;"
-            />
-
-            <button id="btnConfirmProgramar" class="btn-gold btn-sm">
-              Guardar programación
-            </button>
+            <input type="datetime-local" id="inputFechaCustom" class="programar-input" style="display:none;" />
+            <button id="btnConfirmProgramar" class="btn-gold btn-sm">Guardar programación</button>
           </div>
 
           <div id="resultadoRuleta" class="resultado-ruleta">
-            <!-- Resultado dinámico: lo llena JS -->
             Aún no se ha realizado la ruleta para este sorteo.
           </div>
-
           <div id="topBuyerInfo" class="ruleta-hint"></div>
         </aside>
-
       </section>
     </section>
   </main>
+
+  <!-- Overlay de cuenta regresiva -->
+  <div id="countdownOverlay" class="countdown-overlay">
+    <span id="countdownBig">10</span>
+  </div>
 
   <!-- Scripts -->
   <script src="../assets/js/config.js"></script>

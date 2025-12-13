@@ -423,3 +423,46 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================
+   Overlay cuenta regresiva grande
+   ============================ */
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none; /* se activa en JS */
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+#countdownBig {
+  font-size: 8rem;
+  font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(250,204,21,0.9);
+  animation: pulseBig 1s ease-in-out infinite;
+}
+@keyframes pulseBig {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* ============================
+   Mensajes motivacionales
+   ============================ */
+.motivational-msg {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--gold);
+  text-align: center;
+  margin-top: 1rem;
+  animation: fadeInOut 2s ease-in-out infinite;
+}
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  25% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
