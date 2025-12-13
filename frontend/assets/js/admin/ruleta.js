@@ -237,6 +237,18 @@ function renderRuletaInfo() {
   } = ruletaInfo;
 
   // ... (todo lo que ya tienes igual hasta Top buyer)
+  // 👉 Aquí pintas la hora programada en local
+  if (horaProgramadaTextoEl) {
+    if (ruleta_hora_programada) {
+      const fechaLocal = new Date(ruleta_hora_programada).toLocaleString(
+        'es-CO',
+        { timeZone: 'America/Bogota', hour12: false }
+      );
+      horaProgramadaTextoEl.textContent = fechaLocal;
+    } else {
+      horaProgramadaTextoEl.textContent = 'Sin programar';
+    }
+  }
 
   // Botón girar según si ya se puede
   if (btnGirar) btnGirar.disabled = !puedeGirarAhora();
