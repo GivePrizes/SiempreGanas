@@ -11,7 +11,7 @@
 <body>
   <div class="main-container">
 
-    <!-- HEADER CON ENFOQUE EMOCIONAL + SEGURIDAD -->
+    <!-- HEADER: emoción + confianza -->
     <header class="dashboard-header">
       <div>
         <h2 id="tituloSorteo">Cargando sorteo...</h2>
@@ -19,31 +19,21 @@
           Estás a unos pasos de asegurar tus números y tu lugar en la ruleta 🎰
         </p>
 
-        <!-- micro-bloque de confianza -->
         <div class="confianza-strip">
           ✅ Números reservados al enviar tu comprobante &nbsp;•&nbsp;
-          🔒 Proceso validado por administradores &nbsp;•&nbsp;
+          🔒 Validación manual por administradores &nbsp;•&nbsp;
           🎁 Siempre recibes un producto digital
         </div>
-
       </div>
+
       <div>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          onclick="location.href='dashboard.html'">
+        <button type="button" class="btn btn-secondary" onclick="location.href='dashboard.html'">
           ⬅ Ver otros sorteos
         </button>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          onclick="location.href='mis-numeros.html'">
+        <button type="button" class="btn btn-secondary" onclick="location.href='mis-numeros.html'">
           🎟 Mis números
         </button>
-        <button
-          type="button"
-          class="btn btn-danger"
-          onclick="logout()">
+        <button type="button" class="btn btn-danger" onclick="logout()">
           Salir
         </button>
       </div>
@@ -51,50 +41,41 @@
 
     <!-- LAYOUT DOS COLUMNAS -->
     <section class="sorteo-detalle-layout">
-      <!-- Columna izquierda: info general del sorteo -->
+
+      <!-- IZQUIERDA: contexto + pago + progreso -->
       <div class="sorteo-detalle-main">
         <h2 id="tituloPremio">Premio</h2>
 
-        <!-- Mensaje persuasivo corto -->
         <p class="section-description">
-          Este sorteo te da acceso a un <strong>producto digital real</strong> y a una
-          <strong>oportunidad extra</strong> en la ruleta Siempre Ganas. No es solo suerte:
+          Este sorteo te da acceso a un <strong>producto digital real</strong> y una
+          <strong>oportunidad extra</strong> en la ruleta. No es solo suerte:
           cada número que eliges te devuelve valor.
         </p>
 
         <div class="sorteo-data">
-          <p>
-            🎁 <strong>Premio principal:</strong>
-            <span id="textoPremio">—</span>
-          </p>
-          <p>
-            💸 <strong>Precio por número:</strong>
-            <span id="textoPrecio">—</span>
-          </p>
-          <p>
-            🔢 <strong>Cantidad total de números:</strong>
-            <span id="textoCantidad">—</span>
-          </p>
+          <p>🎁 <strong>Premio principal:</strong> <span id="textoPremio">—</span></p>
+          <p>💸 <strong>Precio por número:</strong> <span id="textoPrecio">—</span></p>
+          <p>🔢 <strong>Cantidad total de números:</strong> <span id="textoCantidad">—</span></p>
         </div>
 
-        <!-- Método de pago destacado (en acordeón) -->
-        <details class="info-accordion" open>
+        <!-- PASO 1: PAGO (abierto) -->
+        <details class="info-accordion"">
           <summary>
-            <span>💳 Paga tus números por Nequi</span>
-            <span class="pago-nequi-badge">Paso 1</span>
+            <span>💳 Paso 1 · Paga por Nequi</span>
+            <span class="pago-nequi-badge">1</span>
           </summary>
 
           <div class="pago-nequi-card" style="margin-top:.6rem;">
             <div class="pago-nequi-header">
               <div>
-                <p class="pago-nequi-subtitle" style="margin:0;">
+                <p class="pago-nequi-title" style="margin:0;">Paga tus números por Nequi</p>
+                <p class="pago-nequi-subtitle" style="margin:.2rem 0 0;">
                   Asegura tu lugar en la ruleta en menos de 1 minuto ⚡
                 </p>
               </div>
             </div>
 
             <div class="pago-nequi-main">
-              <!-- Datos Nequi -->
               <div class="pago-nequi-datos">
                 <p class="pago-nequi-label">Número Nequi</p>
                 <p class="pago-nequi-value pago-nequi-value--big">3045538465</p>
@@ -102,25 +83,19 @@
                 <p class="pago-nequi-label">Titular</p>
                 <p class="pago-nequi-value">Jen** Por***</p>
 
-                <button
-                  type="button"
-                  class="btn btn-primary btn-nequi-copy"
-                  onclick="copiarNequi()"
-                >
+                <button type="button" class="btn btn-primary btn-nequi-copy" onclick="copiarNequi()">
                   📋 Copiar número de Nequi
                 </button>
               </div>
 
-              <!-- Pasos -->
               <div class="pago-nequi-steps">
                 <ol>
                   <li>Elige tus números y mira el total a pagar.</li>
-                  <li>Envía el pago a Nequi con la nota <strong>“Sorteo + tu nombre”</strong>.</li>
-                  <li>Haz una captura clara del comprobante y súbelo en esta página.</li>
+                  <li>Envía el pago con la nota <strong>“Sorteo + tu nombre”</strong>.</li>
+                  <li>Haz captura clara del comprobante y súbelo aquí.</li>
                 </ol>
                 <p class="pago-nequi-seguro">
-                  🛡️ Tu pago es revisado manualmente para mantener el sorteo
-                  <strong>100% transparente</strong>.
+                  🛡️ Revisión manual para mantener el sorteo <strong>100% transparente</strong>.
                 </p>
               </div>
             </div>
@@ -131,134 +106,110 @@
           </div>
         </details>
 
-
-
-
-        <!-- Progreso de ocupación (urgencia visual) -->
+        <!-- PROGRESO (urgencia suave) -->
         <div class="progress-wrapper">
           <div class="progress-container">
             <div id="progressFill" class="progress-bar"></div>
           </div>
-          <p class="progress-text" id="textoProgreso">
-            Cargando ocupación...
-          </p>
+          <p class="progress-text" id="textoProgreso">Cargando ocupación...</p>
           <p class="text-muted progress-tip-text">
             Tip: los mejores números se van rápido. Si te gusta uno, resérvalo antes de que se ocupe.
           </p>
-
         </div>
 
-        <!-- Sección educativa + persuasiva -->
+        <!-- EDUCACIÓN (cerrado, para no saturar) -->
         <div class="sorteo-steps">
+          <details class="info-accordion">
+            <summary>✅ Cómo asegurar tus números en 4 pasos</summary>
+            <ol>
+              <li><strong>Explora la cuadricula</strong> y toca tus números favoritos.</li>
+              <li><strong>Revisa el resumen</strong> para ver el total.</li>
+              <li><strong>Realiza el pago</strong> y toma captura clara del comprobante.</li>
+              <li><strong>Sube y confirma</strong>: quedan <strong>pendientes</strong> hasta validación.</li>
+            </ol>
+          </details>
 
-        <!-- Acordeón 1: pasos -->
-        <details class="info-accordion" >
-          <summary>Cómo asegurar tus números en 4 pasos</summary>
-          <ol>
-            <li><strong>Explora la cuadrícula</strong> y toca tus números favoritos.</li>
-            <li><strong>Revisa el resumen</strong> para ver cuántos números llevas y el total a pagar.</li>
-            <li><strong>Realiza el pago</strong> por el valor total y toma una captura clara del comprobante.</li>
-            <li>
-              <strong>Sube tu comprobante y confirma</strong>: tus números quedarán reservados como
-              <strong>pendientes</strong> hasta ser validados por un administrador.
-            </li>
-          </ol>
-        </details>
-
-        <!-- Acordeón 2: por qué gusta el formato -->
-        <details class="info-accordion">
-          <summary>¿Por qué a la gente le gusta este formato?</summary>
-          <ul>
-            <li>
-              <strong>Doble beneficio:</strong> siempre recibes un producto digital, ganes o no en la ruleta.
-            </li>
-            <li>
-              <strong>Emoción controlada:</strong> ves en tiempo real cuántos números quedan y tu probabilidad
-              mejora al comprar más.
-            </li>
-            <li>
-              <strong>Transparencia total:</strong> todos los números ocupados se muestran y la ruleta se hace
-              cuando el sorteo se llena.
-            </li>
-          </ul>
-        </details>
-
+          <details class="info-accordion">
+            <summary>✨ ¿Por qué a la gente le gusta este formato?</summary>
+            <ul>
+              <li><strong>Doble beneficio:</strong> recibes un producto digital, ganes o no.</li>
+              <li><strong>Emoción controlada:</strong> ves avance y decides con calma.</li>
+              <li><strong>Transparencia:</strong> números ocupados visibles + ruleta al llenarse.</li>
+            </ul>
+          </details>
+        </div>
       </div>
 
-
-
-      <!-- Columna derecha: selección de números + comprobante -->
+      <!-- DERECHA: selección + (PASO 2) comprobante + confirmación -->
       <aside class="sorteo-detalle-side">
-        <!-- Tarjeta de selección de números -->
+
         <div class="sorteo-numeros-card">
           <div class="sorteo-numeros-header">
             <h3>Elige tus números</h3>
             <p class="text-muted">
-              Toca para seleccionar. Máximo <span id="maxNumerosTexto">5</span> por compra.  
-              Puedes volver luego por más si quieres aumentar tus chances.
+              Toca para seleccionar. Máximo <span id="maxNumerosTexto">5</span> por compra.
+              Puedes volver luego por más.
             </p>
           </div>
-          <div id="gridNumeros" class="numeros-grid">
-            <!-- Números generados por JS -->
-          </div>
+          <div id="gridNumeros" class="numeros-grid"></div>
         </div>
 
-        <!-- Tarjeta de resumen de compra + comprobante -->
-        <div class="sorteo-compra-card" style="margin-top:14px;">
-          <h3>Resumen de tu compra</h3>
-          <p class="resumen-linea">
-            <strong>Números seleccionados:</strong>
-            <span id="resumenNumeros">Ninguno todavía</span>
-          </p>
-          <p class="resumen-linea">
-            <strong>Total a pagar:</strong>
-            <span id="resumenTotal">$0</span>
-          </p>
-          <p class="text-muted help-text">
-            Elige primero los números que más te gusten. No se enviará nada hasta que subas tu comprobante.
-          </p>
+        <!-- PASO 2: COMPROBANTE + CONFIRMAR -->
+        <details class="info-accordion" open style="margin-top:14px;">
+          <summary>
+            <span>🧾 Paso 2 · Sube tu comprobante y confirma</span>
+            <span class="pago-nequi-badge">2</span>
+          </summary>
 
+          <div class="sorteo-compra-card" style="margin-top:10px;">
+            <h3>Resumen de tu compra</h3>
 
-          <div class="comprobante-upload">
-            <label for="inputComprobante">📷 Sube tu comprobante de pago</label>
-            <p class="text-muted">
-              Asegúrate de que se vea <strong>monto, fecha y referencia</strong>.  
-              Esto ayuda a que tu participación sea aprobada más rápido.
+            <p class="resumen-linea">
+              <strong>Números seleccionados:</strong>
+              <span id="resumenNumeros">Ninguno todavía</span>
             </p>
-            <input type="file" id="inputComprobante" accept="image/*" />
-            <div id="previewComprobante" class="comprobante-preview oculto">
-              <p class="comprobante-preview-title">Vista previa del comprobante:</p>
-              <img id="imgPreview" alt="Comprobante" />
+            <p class="resumen-linea">
+              <strong>Total a pagar:</strong>
+              <span id="resumenTotal">$0</span>
+            </p>
+
+            <p class="text-muted help-text">
+              Elige primero tus números. No se envía nada hasta que subas el comprobante.
+            </p>
+
+            <div class="comprobante-upload">
+              <label for="inputComprobante">📷 Sube tu comprobante de pago</label>
+              <p class="text-muted">
+                Debe verse <strong>monto, fecha y referencia</strong> para aprobar más rápido.
+              </p>
+              <input type="file" id="inputComprobante" accept="image/*" />
+              <div id="previewComprobante" class="comprobante-preview oculto">
+                <p class="comprobante-preview-title">Vista previa del comprobante:</p>
+                <img id="imgPreview" alt="Comprobante" />
+              </div>
             </div>
+
+            <button id="btnConfirmar" class="btn btn-primary btn-full-width">
+              Confirmar participación
+            </button>
+
+            <p class="text-muted help-text">
+              Al confirmar, tus números quedan <strong>pendientes</strong>.  
+              Cuando un administrador apruebe, tu participación queda <strong>activa</strong>.
+            </p>
+
+            <p class="text-muted footnote-text">
+              Si el sorteo se llena mientras estás aquí, tus números siguen respetados si enviaste el comprobante correctamente.
+            </p>
           </div>
+        </details>
 
-          <button
-            id="btnConfirmar"
-            class="btn btn-primary btn-full-width">
-            Confirmar participación
-          </button>
-
-
-          <p class="text-muted help-text">
-            Al confirmar, tus números quedan en estado
-            <strong>pendiente de validación</strong>.  
-            Cuando un administrador apruebe tu comprobante, tu participación quedará <strong>activa</strong>.
-          </p>
-
-          <p class="text-muted footnote-text">
-            Si el sorteo se llena mientras estás aquí, tus números siguen respetados siempre que hayas enviado
-            el comprobante correctamente.
-          </p>
-
-        </div>
       </aside>
     </section>
   </div>
 
-  <!-- Toast -->
   <div id="toast" class="toast hidden">Mensaje</div>
 
-  <!-- Scripts -->
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script type="module" src="../assets/js/participante/sorteo-detalle.js"></script>
