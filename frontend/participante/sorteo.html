@@ -77,54 +77,60 @@
           </p>
         </div>
 
-        <!-- Método de pago destacado -->
-        <div class="pago-nequi-card">
-          <div class="pago-nequi-header">
+        <!-- Método de pago destacado (en acordeón) -->
+        <details class="info-accordion" open>
+          <summary>
+            <span>💳 Paga tus números por Nequi</span>
             <span class="pago-nequi-badge">Paso 1</span>
-            <div>
-              <p class="pago-nequi-title">Paga tus números por Nequi</p>
-              <p class="pago-nequi-subtitle">
-                Asegura tu lugar en la ruleta en menos de 1 minuto ⚡
-              </p>
-            </div>
-          </div>
+          </summary>
 
-          <div class="pago-nequi-main">
-            <!-- Datos Nequi -->
-            <div class="pago-nequi-datos">
-              <p class="pago-nequi-label">Número Nequi</p>
-              <p class="pago-nequi-value pago-nequi-value--big">3045538465</p>
-
-              <p class="pago-nequi-label">Titular</p>
-              <p class="pago-nequi-value">Jen** Por***</p>
-
-              <button
-                type="button"
-                class="btn btn-primary btn-nequi-copy"
-                onclick="copiarNequi()"
-              >
-                📋 Copiar número de Nequi
-              </button>
+          <div class="pago-nequi-card" style="margin-top:.6rem;">
+            <div class="pago-nequi-header">
+              <div>
+                <p class="pago-nequi-subtitle" style="margin:0;">
+                  Asegura tu lugar en la ruleta en menos de 1 minuto ⚡
+                </p>
+              </div>
             </div>
 
-            <!-- Pasos suaves y acogedores -->
-            <div class="pago-nequi-steps">
-              <ol>
-                <li>Elige tus números y mira el total a pagar.</li>
-                <li>Envía el pago a Nequi con la nota <strong>“Sorteo + tu nombre”</strong>.</li>
-                <li>Haz una captura clara del comprobante y súbelo en esta página.</li>
-              </ol>
-              <p class="pago-nequi-seguro">
-                🛡️ Tu pago es revisado manualmente para mantener el sorteo
-                <strong>100% transparente</strong>.
-              </p>
+            <div class="pago-nequi-main">
+              <!-- Datos Nequi -->
+              <div class="pago-nequi-datos">
+                <p class="pago-nequi-label">Número Nequi</p>
+                <p class="pago-nequi-value pago-nequi-value--big">3045538465</p>
+
+                <p class="pago-nequi-label">Titular</p>
+                <p class="pago-nequi-value">Jen** Por***</p>
+
+                <button
+                  type="button"
+                  class="btn btn-primary btn-nequi-copy"
+                  onclick="copiarNequi()"
+                >
+                  📋 Copiar número de Nequi
+                </button>
+              </div>
+
+              <!-- Pasos -->
+              <div class="pago-nequi-steps">
+                <ol>
+                  <li>Elige tus números y mira el total a pagar.</li>
+                  <li>Envía el pago a Nequi con la nota <strong>“Sorteo + tu nombre”</strong>.</li>
+                  <li>Haz una captura clara del comprobante y súbelo en esta página.</li>
+                </ol>
+                <p class="pago-nequi-seguro">
+                  🛡️ Tu pago es revisado manualmente para mantener el sorteo
+                  <strong>100% transparente</strong>.
+                </p>
+              </div>
+            </div>
+
+            <div class="pago-nequi-footer">
+              💡 Tip: si te gustan ciertos números, págalos apenas los elijas para que nadie más los tome.
             </div>
           </div>
+        </details>
 
-          <div class="pago-nequi-footer">
-            💡 Tip: si te gustan ciertos números, págalos apenas los elijas para que nadie más los tome.
-          </div>
-        </div>
 
 
 
@@ -146,7 +152,7 @@
         <div class="sorteo-steps">
 
         <!-- Acordeón 1: pasos -->
-        <details class="info-accordion">
+        <details class="info-accordion" >
           <summary>Cómo asegurar tus números en 4 pasos</summary>
           <ol>
             <li><strong>Explora la cuadrícula</strong> y toca tus números favoritos.</li>
