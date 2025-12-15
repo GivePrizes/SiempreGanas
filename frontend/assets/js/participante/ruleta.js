@@ -1,9 +1,7 @@
 // assets/js/participante/ruleta.js
 
-// API base
-const API_URL = (window.API_URL || 'https://app-service-phi.vercel.app').replace(/\/$/, '');
-const API = `${API_URL}/api`;
-
+// API base (usar la global definida en config.js)
+const API = `${window.API_URL.replace(/\/$/, '')}/api`;
 // sorteoId
 const params = new URLSearchParams(window.location.search);
 const sorteoIdParam = params.get('sorteo') || params.get('sorteoId');
