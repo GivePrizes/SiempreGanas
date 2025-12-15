@@ -236,7 +236,30 @@ function renderRuletaInfo() {
     cantidad_numeros,
   } = ruletaInfo;
 
-  // ... (todo lo que ya tienes igual hasta Top buyer)
+  // 👉 Actualizar estado visual (texto + punto)
+  const estadoTextoEl = document.getElementById('estadoTexto');
+  const estadoDotEl = document.getElementById('estadoDot');
+
+  if (estadoTextoEl && estadoDotEl) {
+    estadoTextoEl.textContent = ruleta_estado;
+
+    // limpiar clases previas
+    estadoDotEl.classList.remove(
+      'estado-no_programada',
+      'estado-programada',
+      'estado-finalizada'
+    );
+
+    // asignar clase según estado
+    if (ruleta_estado === 'programada') {
+      estadoDotEl.classList.add('estado-programada');
+    } else if (ruleta_estado === 'finalizada') {
+      estadoDotEl.classList.add('estado-finalizada');
+    } else {
+      estadoDotEl.classList.add('estado-no_programada');
+    }
+  }
+
   // 👉 Aquí pintas la hora programada en local
   if (horaProgramadaTextoEl) {
     if (ruleta_hora_programada) {
@@ -253,7 +276,7 @@ function renderRuletaInfo() {
   // Botón girar según si ya se puede
   if (btnGirar) btnGirar.disabled = !puedeGirarAhora();
 
-  //  si la ruleta ya está finalizada, paramos polling + contador y deshabilitamos el botón
+  // si la ruleta ya está finalizada, paramos polling + contador y deshabilitamos el botón
   if (ruleta_estado === 'finalizada') {
     if (pollingInterval) {
       clearInterval(pollingInterval);
