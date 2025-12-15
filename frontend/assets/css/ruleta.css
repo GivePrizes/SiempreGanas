@@ -475,14 +475,3 @@
   margin-right: 6px;
 }
 
-.estado-no_programada {
-  background-color: red;
-}
-
-.estado-programada {
-  background-color: green;
-}
-
-.estado-finalizada {
-  background-color: orange;
-}

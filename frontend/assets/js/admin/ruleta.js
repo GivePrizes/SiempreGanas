@@ -54,8 +54,11 @@ let pollingInterval = null;
 
 // Helpers de auth
 const token = localStorage.getItem('token');
-const user = JSON.parse(localStorage.getItem('user') || '{}');
 
+const user = JSON.parse(localStorage.getItem('user') || '{}');
+if (!token || user.rol !== 'admin') {
+  location.href = '../login.html'; // ajusta la ruta según tu estructura
+}
 // ==========================
 // 1) Validar y early checks
 // ==========================
@@ -68,10 +71,6 @@ if (!sorteoId) {
   if (btnGirar) btnGirar.disabled = true;
 }
 
-if (!token || user.rol !== 'admin') {
-  // No redirijo inmediatamente para que puedas depurar, pero esto está protegido en backend
-  console.warn('Advertencia: usuario no admin o sin token.');
-}
 
 // ==========================
 // 2) Construir ruleta visual

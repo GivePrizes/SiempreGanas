@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sala de Juego </title>
+
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <link rel="stylesheet" href="../assets/css/participant.css">
+  <link rel="stylesheet" href="../assets/css/ruleta.css">
+</head>
+
+<body>
+  <div class="main-container">
+
+    <header class="dashboard-header">
+      <div>
+        <h2 id="tituloSorteo">Sala de ruleta</h2>
+        <p id="subtituloSorteo" class="text-muted">
+          Aquí verás, la cuenta regresiva y el resultado oficial.
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-secondary" onclick="location.href='dashboard.html'">Volver</button>
+      </div>
+
+      <!-- ✅ Audio real -->
+      <audio id="winSound" src="../assets/sounds/win.mp3" preload="auto"></audio>
+    </header>
+
+    <!-- Estado + contador -->
+    <section class="card glass">
+      <div class="ruleta-status-row">
+        <div class="estado-badge">
+          <span id="estadoDot" class="estado-dot estado-no_programada"></span>
+          <span id="estadoTexto">cargando...</span>
+        </div>
+
+        <div class="ruleta-meta">
+          <div class="meta-item">
+            <span class="meta-label">Hora</span>
+            <span id="horaProgramadaTexto" class="meta-value">--</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Cuenta regresiva</span>
+            <span id="contadorTexto" class="meta-value">--:--:--</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="countdownOverlay" class="countdown-overlay" style="display:none;">
+        <div class="countdown-big" id="countdownBig">10</div>
+        <div class="countdown-msg" id="motivationalMsg">Prepárate…</div>
+      </div>
+    </section>
+
+    <!-- Mis números -->
+    <section class="card glass">
+      <h3 style="margin:0 0 .5rem 0;">🎟️ Mis números en este sorteo</h3>
+      <p class="text-muted" style="margin:0 0 .75rem 0;">
+        Si uno de tus números sale, lo verás marcado aquí.
+      </p>
+
+      <!-- ✅ ÚNICO misNumerosWrap -->
+      <div id="misNumerosWrap" class="chips-wrap">
+        <span class="text-muted">Cargando tus números...</span>
+      </div>
+    </section>
+
+    <!-- Ruleta -->
+    <section class="card glass">
+      <h3 style="margin:0 0 .5rem 0;">🎰 Ruleta</h3>
+      <p class="text-muted" id="ruletaHint" style="margin:0 0 .75rem 0;">
+        La ruleta se mostrará cuando el admin la programe.
+      </p>
+
+      <div class="ruleta-container">
+        <div class="ruleta-pointer"></div>
+        <div class="ruleta-circle" id="ruletaCircle"></div>
+      </div>
+
+      <div id="resultadoRuleta" class="resultado-ruleta" style="margin-top:1rem;"></div>
+    </section>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/participante/ruleta.js"></script>
+</body>
+</html>

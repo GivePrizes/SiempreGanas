@@ -117,12 +117,13 @@ function renderSorteoCard(s) {
         </p>
 
         <div class="cta">
-          ${(estado === 'lleno' || porcentaje >= 100)
-            ? `<button class="btn btn-secondary" disabled>⏳ Esperando ruleta</button>`
-            : `<a href="sorteo.html?id=${s.id}" class="btn btn-primary">Participar ahora</a>`
+          ${
+            (estado === 'lleno' || porcentaje >= 100)
+              ? `<a class="btn btn-secondary" href="ruleta.html?sorteo=${s.id}">🎰 Ver ruleta</a>`
+              : `<a href="sorteo.html?id=${s.id}" class="btn btn-primary">Participar ahora</a>`
           }
-
         </div>
+
       </div>
     </article>
   `;

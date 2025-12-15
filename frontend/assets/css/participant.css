@@ -823,8 +823,52 @@
 .chip-warn{ border-color: rgba(251,191,36,.40); }
 .chip-bad{ border-color: rgba(244,63,94,.40); }
 
-.chip-winner{
-  background: rgba(251,191,36,.18);
-  border-color: rgba(251,191,36,.55);
+
+
+
+/* Chips de números del participante (ruleta) */
+.chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
+
+.chip {
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.3px;
+  user-select: none;
+}
+
+.chip-ganador {
+  border-color: rgba(255, 215, 0, 0.8);
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.25);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.25),
+    rgba(255, 215, 0, 0.08)
+  );
+}
+/*=============================
+   Animaciones de ganador
+   ============================= */
+.ruleta-slice.ganador .slice-num {
+  transform: translateX(-50%) scale(1.05);
+  filter: drop-shadow(0 0 10px rgba(255,215,0,.65));
+}
+
+.resultado-ruleta.ganador-texto {
+  animation: popWin 0.35s ease both;
+}
+
+@keyframes popWin {
+  from { transform: scale(.98); opacity: .7; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+
 
