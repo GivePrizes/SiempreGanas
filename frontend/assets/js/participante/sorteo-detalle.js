@@ -62,7 +62,31 @@ function actualizarResumen() {
     const total = seleccionados.length * precioNumero;
     resumenTotal.textContent = `$${total.toLocaleString('es-CO')}`;
   }
+
+  actualizarEstadoConfirmar();
+
 }
+
+// habilitar/deshabilitar botón confirmar según selección y comprobante
+function actualizarEstadoConfirmar() {
+  if (!btnConfirmar) return;
+
+  // Si el sorteo está lleno, se mantiene bloqueado
+  if (sorteoActual && (sorteoActual.estado === 'lleno')) {
+    btnConfirmar.disabled = true;
+    btnConfirmar.textContent = 'Cupo lleno';
+    return;
+  }
+
+  const file = inputComprobante?.files?.[0];
+  const listo = (seleccionados.length > 0) && !!file;
+
+  btnConfirmar.disabled = !listo;
+  btnConfirmar.textContent = listo
+    ? 'Confirmar participación'
+    : 'Selecciona números y sube comprobante';
+}
+
 
 function renderNumeros() {
   if (!sorteoActual || !gridNumeros) return;
@@ -93,6 +117,34 @@ function renderNumeros() {
 
     gridNumeros.appendChild(div);
   }
+
+  actualizarBloqueoPorMaximo();
+
+}
+
+
+function actualizarBloqueoPorMaximo() {
+  if (!gridNumeros) return;
+
+  const maxAlcanzado = seleccionados.length >= MAX_NUMEROS_POR_COMPRA;
+
+  // Recorremos todos los números pintados
+  gridNumeros.querySelectorAll('.numero-bola').forEach((el) => {
+    const n = Number(el.dataset.numero);
+
+    const ocupado = el.classList.contains('numero-bola--ocupado');
+    const seleccionado = el.classList.contains('numero-bola--seleccionado');
+
+    // Si está ocupado, no tocamos nada
+    if (ocupado) return;
+
+    // Si se alcanzó el max, apagamos los NO seleccionados
+    if (maxAlcanzado && !seleccionado) {
+      el.classList.add('numero-bola--bloqueado');
+    } else {
+      el.classList.remove('numero-bola--bloqueado');
+    }
+  });
 }
 
 
@@ -244,11 +296,13 @@ if (inputComprobante) {
       _currentObjectUrl = null;
     }
 
-    if (!file) {
-      previewComprobante.classList.add('oculto');
-      imgPreview.src = '';
-      return;
-    }
+  if (!file) {
+    previewComprobante.classList.add('oculto');
+    imgPreview.src = '';
+    actualizarEstadoConfirmar();
+    return;
+  }
+
 
     // Validaciones básicas: tipo y tamaño
     if (!file.type || !file.type.startsWith('image/')) {
@@ -273,6 +327,8 @@ if (inputComprobante) {
     _currentObjectUrl = url;
     imgPreview.src = url;
     previewComprobante.classList.remove('oculto');
+    actualizarEstadoConfirmar();
+
   });
 }
 

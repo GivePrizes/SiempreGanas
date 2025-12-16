@@ -7,42 +7,9 @@
 
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
-  <!-- Estilos específicos de la ruleta -->
   <link rel="stylesheet" href="../assets/css/ruleta.css" />
-  <style>
-    /* Overlay para cuenta regresiva */
-    .countdown-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-    #countdownBig {
-      font-size: 8rem;
-      font-weight: 900;
-      color: var(--gold);
-      text-shadow: 0 0 30px rgba(250,204,21,0.9);
-    }
-    /* Mensajes motivacionales */
-    .motivational-msg {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--gold);
-      text-align: center;
-      margin-top: 1rem;
-      animation: fadeInOut 2s ease-in-out infinite;
-    }
-    @keyframes fadeInOut {
-      0% { opacity: 0; }
-      25% { opacity: 1; }
-      75% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-  </style>
 </head>
+
 <body class="sg-body">
   <nav class="sg-header">
     <div class="sg-brand">
@@ -52,6 +19,7 @@
         <p class="sg-hero-sub mini-sub">El momento de la verdad ✨</p>
       </div>
     </div>
+
     <div class="sg-actions">
       <button onclick="location.href='panel.html'" class="btn-gold">⬅ Volver al panel</button>
       <button onclick="logout()" class="btn-red">Salir</button>
@@ -60,6 +28,7 @@
 
   <main class="sg-main">
     <section class="sg-card ruleta-card">
+
       <header class="ruleta-header">
         <h2 class="sg-hero-title" id="tituloSorteo">Cargando sorteo...</h2>
         <p class="sg-hero-sub" id="subtituloSorteo">
@@ -68,22 +37,25 @@
       </header>
 
       <section class="ruleta-layout">
-        <!-- Columna izquierda: ruleta circular -->
+        <!-- IZQUIERDA: RULETA -->
         <div class="ruleta-container">
           <div class="ruleta-circle-wrapper">
             <div id="ruletaCircle" class="ruleta-circle"></div>
+
             <div class="ruleta-center">
               <span class="rc-top">Siempre</span>
               <span class="rc-bottom">Ganas</span>
             </div>
+
             <div class="ruleta-pointer"></div>
           </div>
         </div>
 
-        <!-- Columna derecha: información / psicología -->
+        <!-- DERECHA: PANEL -->
         <aside class="ruleta-info">
           <div class="ruleta-estado-admin">
             <p class="mini-sub">Estado de la ruleta</p>
+
             <div class="ruleta-estado-grid">
               <div>
                 <p class="estado-label">Estado</p>
@@ -92,18 +64,20 @@
                   <span id="estadoTexto">no_programada</span>
                 </div>
               </div>
+
               <div>
                 <p class="estado-label">Programada para</p>
                 <p id="horaProgramadaTexto" class="estado-text">Sin programar</p>
               </div>
+
               <div>
                 <p class="estado-label">Cuenta regresiva</p>
                 <p id="contadorTexto" class="contador contador-small">--:--:--</p>
               </div>
             </div>
+
             <p class="estado-label">
-              Modo de sorteo:
-              <strong id="modoSorteoTexto">ALEATORIO</strong>
+              Modo de sorteo: <strong id="modoSorteoTexto">ALEATORIO</strong>
             </p>
           </div>
 
@@ -131,6 +105,7 @@
               <option value="60">En 1 hora</option>
               <option value="custom">Fecha/hora personalizada</option>
             </select>
+
             <input type="datetime-local" id="inputFechaCustom" class="programar-input" style="display:none;" />
             <button id="btnConfirmProgramar" class="btn-gold btn-sm">Guardar programación</button>
           </div>
@@ -138,18 +113,19 @@
           <div id="resultadoRuleta" class="resultado-ruleta">
             Aún no se ha realizado la ruleta para este sorteo.
           </div>
+
           <div id="topBuyerInfo" class="ruleta-hint"></div>
         </aside>
       </section>
     </section>
   </main>
 
-  <!-- Overlay de cuenta regresiva -->
-  <div id="countdownOverlay" class="countdown-overlay">
-    <span id="countdownBig">10</span>
+  <!-- Overlay cuenta regresiva (lo controla tu JS) -->
+  <div id="countdownOverlay" class="countdown-overlay" style="display:none;">
+    <div class="countdown-big" id="countdownBig">10</div>
+    <div class="countdown-msg" id="countdownMsg">Prepárate…</div>
   </div>
 
-  <!-- Scripts -->
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script type="module" src="../assets/js/admin/ruleta.js"></script>

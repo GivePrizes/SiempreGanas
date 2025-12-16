@@ -46,11 +46,10 @@
       <div class="sorteo-detalle-main">
         <h2 id="tituloPremio">Premio</h2>
 
-        <p class="section-description">
-          Este sorteo te da acceso a un <strong>producto digital real</strong> y una
-          <strong>oportunidad extra</strong> en la ruleta. No es solo suerte:
-          cada número que eliges te devuelve valor.
+        <p class="text-muted micro-lead">
+          ✅ Incluye producto digital + entrada a la ruleta
         </p>
+
 
         <div class="sorteo-data">
           <p>🎁 <strong>Premio principal:</strong> <span id="textoPremio">—</span></p>
@@ -59,7 +58,7 @@
         </div>
 
         <!-- PASO 1: PAGO (abierto) -->
-        <details class="info-accordion"">
+        <details class="info-accordion">
           <summary>
             <span>💳 Paso 1 · Paga por Nequi</span>
             <span class="pago-nequi-badge">1</span>
@@ -140,51 +139,55 @@
         </div>
       </div>
 
-      <!-- DERECHA: selección + (PASO 2) comprobante + confirmación -->
+      <!-- DERECHA: selección + comprobante + confirmación -->
       <aside class="sorteo-detalle-side">
 
+        <!-- Selección -->
         <div class="sorteo-numeros-card">
           <div class="sorteo-numeros-header">
             <h3>Elige tus números</h3>
-            <p class="text-muted">
-              Toca para seleccionar. Máximo <span id="maxNumerosTexto">5</span> por compra.
-              Puedes volver luego por más.
+
+            <!-- microcopy corto (no cansa) -->
+            <p class="text-muted microhint">
+              Máx. <strong><span id="maxNumerosTexto">5</span></strong> por compra
             </p>
           </div>
+
           <div id="gridNumeros" class="numeros-grid"></div>
+
+          <!-- resumen compacto (sin párrafos) -->
+          <div class="mini-resumen-compra">
+            <div class="mini-resumen-row">
+              <span class="mini-label">Selección</span>
+              <strong id="resumenNumeros">Ninguno todavía</strong>
+            </div>
+
+            <div class="mini-resumen-row">
+              <span class="mini-label">Total</span>
+              <strong id="resumenTotal">$0</strong>
+            </div>
+          </div>
         </div>
 
-        <!-- PASO 2: COMPROBANTE + CONFIRMAR -->
+        <!-- Confirmación -->
         <details class="info-accordion" open style="margin-top:14px;">
           <summary>
-            <span>🧾 Paso 2 · Sube tu comprobante y confirma</span>
+            <span>🧾 Subir comprobante</span>
             <span class="pago-nequi-badge">2</span>
           </summary>
 
           <div class="sorteo-compra-card" style="margin-top:10px;">
-            <h3>Resumen de tu compra</h3>
-
-            <p class="resumen-linea">
-              <strong>Números seleccionados:</strong>
-              <span id="resumenNumeros">Ninguno todavía</span>
-            </p>
-            <p class="resumen-linea">
-              <strong>Total a pagar:</strong>
-              <span id="resumenTotal">$0</span>
-            </p>
-
-            <p class="text-muted help-text">
-              Elige primero tus números. No se envía nada hasta que subas el comprobante.
-            </p>
 
             <div class="comprobante-upload">
-              <label for="inputComprobante">📷 Sube tu comprobante de pago</label>
-              <p class="text-muted">
-                Debe verse <strong>monto, fecha y referencia</strong> para aprobar más rápido.
+              <label for="inputComprobante">Comprobante de pago</label>
+              <p class="text-muted microhint">
+                Que se vea <strong>monto</strong> y <strong>referencia</strong>.
               </p>
+
               <input type="file" id="inputComprobante" accept="image/*" />
+
               <div id="previewComprobante" class="comprobante-preview oculto">
-                <p class="comprobante-preview-title">Vista previa del comprobante:</p>
+                <p class="comprobante-preview-title">Vista previa:</p>
                 <img id="imgPreview" alt="Comprobante" />
               </div>
             </div>
@@ -193,18 +196,19 @@
               Confirmar participación
             </button>
 
-            <p class="text-muted help-text">
-              Al confirmar, tus números quedan <strong>pendientes</strong>.  
-              Cuando un administrador apruebe, tu participación queda <strong>activa</strong>.
-            </p>
+            <!-- ayuda plegable para no saturar -->
+            <details class="mini-ayuda">
+              <summary>¿Qué pasa después?</summary>
+              <p class="text-muted">
+                Tus números quedan <strong>pendientes</strong> hasta revisión. Al aprobar, quedan <strong>activos</strong>.
+              </p>
+            </details>
 
-            <p class="text-muted footnote-text">
-              Si el sorteo se llena mientras estás aquí, tus números siguen respetados si enviaste el comprobante correctamente.
-            </p>
           </div>
         </details>
 
       </aside>
+
     </section>
   </div>
 

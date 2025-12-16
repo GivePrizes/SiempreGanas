@@ -226,3 +226,44 @@ select {
   min-height: 14px;
   color: #ff9a9a; /* rojito suave */
 }
+
+/* =============================
+   WhatsApp flotante (Dashboard)
+   ============================= */
+.whatsapp-float-dashboard{
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  width: 44px;
+  height: 44px;
+  background-color: #25d366;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+  z-index: 9000;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.whatsapp-float-dashboard:hover{
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.7);
+}
+
+.whatsapp-float-dashboard img{
+  width: 22px;
+  height: 22px;
+  filter: brightness(0) invert(1);
+}
+
+@media (max-width: 600px){
+  .whatsapp-float-dashboard{
+    width: 48px;
+    height: 48px;
+  }
+  .whatsapp-float-dashboard img{
+    width: 24px;
+    height: 24px;
+  }
+}

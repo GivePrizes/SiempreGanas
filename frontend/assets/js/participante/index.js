@@ -147,7 +147,7 @@ function renderSorteosActivos(lista) {
 
 async function cargarStatsSorteos() {
   const statSorteos = document.getElementById('statSorteosActivos');
-  const statProxima = document.getElementById('statProximaRuleta');
+  
 
   if (!statSorteos && !statProxima) return;
 

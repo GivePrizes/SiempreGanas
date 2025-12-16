@@ -119,24 +119,71 @@ function construirRuleta(participants) {
 // 3) Llamadas a backend
 // ==========================
 
+const WINNER_CACHE_KEY = sorteoId ? `ruleta_admin_ganador_${sorteoId}` : null;
+
+function cacheWinnerIfFinal(data) {
+  if (!WINNER_CACHE_KEY) return;
+
+  if (data?.ruleta_estado === 'finalizada' && (data?.numero_ganador || data?.ganador)) {
+    localStorage.setItem(
+      WINNER_CACHE_KEY,
+      JSON.stringify({
+        numero_ganador: data.numero_ganador ?? null,
+        ganador: data.ganador ?? null,
+      })
+    );
+  }
+}
+
+function applyWinnerFromCache(data) {
+  if (!WINNER_CACHE_KEY) return data;
+  const cached = localStorage.getItem(WINNER_CACHE_KEY);
+  if (!cached) return data;
+
+  try {
+    const parsed = JSON.parse(cached);
+    return {
+      ...data,
+      numero_ganador: data?.numero_ganador ?? parsed.numero_ganador,
+      ganador: data?.ganador ?? parsed.ganador,
+      ruleta_estado: data?.ruleta_estado ?? (parsed.numero_ganador ? 'finalizada' : data?.ruleta_estado),
+    };
+  } catch {
+    return data;
+  }
+}
+
+function resaltarSliceGanador(numeroGanador) {
+  if (!ruletaCircle || !numeroGanador) return;
+
+  const slices = Array.from(ruletaCircle.querySelectorAll('.ruleta-slice'));
+  slices.forEach(s => s.classList.remove('ganador'));
+
+  const idx = participantes.findIndex(p => p.numero === numeroGanador);
+  if (idx >= 0 && slices[idx]) slices[idx].classList.add('ganador');
+}
+
+
 async function fetchRuletaInfo() {
   if (!sorteoId) return;
 
   try {
     const res = await fetch(`${API}/sorteos/${sorteoId}/ruleta-info`, {
-      headers: token
-        ? {
-            Authorization: `Bearer ${token}`,
-          }
-        : {},
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
 
-    const data = await res.json();
+    const dataRaw = await res.json();
 
     if (!res.ok) {
-      console.error('Error ruleta-info:', data);
+      console.error('Error ruleta-info:', dataRaw);
       return;
     }
+
+    // ✅ completa con cache si backend a veces no manda ganador
+    const data = applyWinnerFromCache(dataRaw);
+
+    // ✅ si ya finalizó, guarda en cache
+    cacheWinnerIfFinal(data);
 
     ruletaInfo = data;
     renderRuletaInfo();
@@ -145,20 +192,14 @@ async function fetchRuletaInfo() {
   }
 }
 
+
 async function fetchRuletaParticipantes() {
   if (!sorteoId) return;
 
   try {
-    const res = await fetch(
-      `${API}/sorteos/${sorteoId}/ruleta-participantes`,
-      {
-        headers: token
-          ? {
-              Authorization: `Bearer ${token}`,
-            }
-          : {},
-      }
-    );
+    const res = await fetch(`${API}/sorteos/${sorteoId}/ruleta-participantes`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
 
     const data = await res.json();
 
@@ -170,9 +211,7 @@ async function fetchRuletaParticipantes() {
     // Normalizamos para conservar nombre_corto que usa la animación
     participantes = (data.participantes || []).map((p) => ({
       ...p,
-      nombre_corto: p.nombre
-        ? p.nombre.split(' ')[0]
-        : `Usuario ${p.usuario_id}`,
+      nombre_corto: p.nombre ? p.nombre.split(' ')[0] : `Usuario ${p.usuario_id}`,
     }));
 
     // Stats básicos
@@ -197,7 +236,15 @@ async function fetchRuletaParticipantes() {
       return;
     }
 
+    // ✅ 1) Construir la ruleta primero (crea los slices)
     construirRuleta(participantes);
+
+    // ✅ 2) Si ya está finalizada, ahora sí resaltar el slice ganador
+    if (ruletaInfo?.ruleta_estado === 'finalizada' && ruletaInfo?.numero_ganador) {
+      resaltarSliceGanador(ruletaInfo.numero_ganador);
+    }
+
+    // Botón girar según si ya se puede
     if (btnGirar && ruletaInfo) {
       btnGirar.disabled = !puedeGirarAhora();
     }
@@ -205,6 +252,7 @@ async function fetchRuletaParticipantes() {
     console.error('Error fetchRuletaParticipantes:', err);
   }
 }
+
 
 // ==========================
 // 4) Render estado / contador
@@ -235,21 +283,16 @@ function renderRuletaInfo() {
     cantidad_numeros,
   } = ruletaInfo;
 
-  // 👉 Actualizar estado visual (texto + punto)
-  const estadoTextoEl = document.getElementById('estadoTexto');
-  const estadoDotEl = document.getElementById('estadoDot');
-
+  // Estado (texto + punto)
   if (estadoTextoEl && estadoDotEl) {
     estadoTextoEl.textContent = ruleta_estado;
 
-    // limpiar clases previas
     estadoDotEl.classList.remove(
       'estado-no_programada',
       'estado-programada',
       'estado-finalizada'
     );
 
-    // asignar clase según estado
     if (ruleta_estado === 'programada') {
       estadoDotEl.classList.add('estado-programada');
     } else if (ruleta_estado === 'finalizada') {
@@ -259,14 +302,13 @@ function renderRuletaInfo() {
     }
   }
 
-  // 👉 Aquí pintas la hora programada en local
+  // Hora programada
   if (horaProgramadaTextoEl) {
     if (ruleta_hora_programada) {
-      const fechaLocal = new Date(ruleta_hora_programada).toLocaleString(
+      horaProgramadaTextoEl.textContent = new Date(ruleta_hora_programada).toLocaleString(
         'es-CO',
         { timeZone: 'America/Bogota', hour12: false }
       );
-      horaProgramadaTextoEl.textContent = fechaLocal;
     } else {
       horaProgramadaTextoEl.textContent = 'Sin programar';
     }
@@ -275,8 +317,9 @@ function renderRuletaInfo() {
   // Botón girar según si ya se puede
   if (btnGirar) btnGirar.disabled = !puedeGirarAhora();
 
-  // si la ruleta ya está finalizada, paramos polling + contador y deshabilitamos el botón
+  //  FINALIZADA
   if (ruleta_estado === 'finalizada') {
+    // parar polling/contador
     if (pollingInterval) {
       clearInterval(pollingInterval);
       pollingInterval = null;
@@ -285,18 +328,43 @@ function renderRuletaInfo() {
       clearInterval(countdownInterval);
       countdownInterval = null;
     }
-    if (btnGirar) {
-      btnGirar.disabled = true;
+
+    if (btnGirar) btnGirar.disabled = true;
+    if (contadorTextoEl) contadorTextoEl.textContent = '00:00:00';
+
+    //  Pintar resultado final SIEMPRE (aunque recargues)
+    if (resultadoRuleta) {
+      if (numero_ganador) {
+        const nombreCorto = ganador?.nombre ? ganador.nombre.split(' ')[0] : 'Ganador';
+        resultadoRuleta.innerHTML =
+          `✅ Número ganador: <strong>#${numero_ganador}</strong> — <strong>${nombreCorto}</strong>`;
+      } else {
+        resultadoRuleta.innerHTML = `✅ Ruleta finalizada.`;
+      }
     }
-    if (contadorTextoEl) {
-      contadorTextoEl.textContent = '00:00:00';
+
+    //  Asegurar que existan slices antes de resaltar
+    if (
+      ruletaCircle &&
+      !ruletaCircle.querySelector('.ruleta-slice') &&
+      Array.isArray(participantes) &&
+      participantes.length
+    ) {
+      construirRuleta(participantes);
     }
-    return; // ya no iniciamos de nuevo el countdown
+
+    //  Resaltar slice ganador sin volver a girar
+    if (numero_ganador) {
+      resaltarSliceGanador(numero_ganador);
+    }
+
+    return; // no countdown
   }
 
   // Si no está finalizada, mantenemos el contador activo
   iniciarCountdown();
 }
+
 
 
 // ==========================
