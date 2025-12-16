@@ -80,6 +80,13 @@ select {
 .p-2 { padding: 0.5rem; }
 .p-3 { padding: 1rem; }
 
+/* Utility: ocultar elementos */
+.hidden,
+.oculto {
+  display: none !important;
+}
+
+
 .btn {
   display: inline-flex;
   align-items: center;

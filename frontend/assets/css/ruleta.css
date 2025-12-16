@@ -1,4 +1,6 @@
-/* assets/css/ruleta.css */
+/* =========================
+   ADMIN ONLY
+   ========================= */
 
 /* Card general de la sección de ruleta */
 .ruleta-card {
@@ -39,136 +41,6 @@
   .ruleta-layout {
     grid-template-columns: 1fr;
   }
-}
-
-/* ==============
-   RULETA CIRCULAR
-   ============== */
-
-.ruleta-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.ruleta-circle-wrapper {
-  position: relative;
-  width: min(380px, 80vw);
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Disco que gira */
-.ruleta-circle {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 4px solid var(--gold);
-  box-shadow:
-    0 18px 40px rgba(0,0,0,0.8),
-    0 0 0 6px rgba(15,23,42,0.9);
-  background:
-    radial-gradient(circle at 15% 0%, rgba(250, 204, 21, 0.25), transparent 55%),
-    radial-gradient(circle at 85% 100%, rgba(56, 189, 248, 0.2), transparent 55%),
-    radial-gradient(circle at top, #020617, #020617);
-  transform: rotate(0deg);
-  transition: transform 4.5s cubic-bezier(0.17, 0.89, 0.32, 1.28);
-}
-
-/* Rebanadas (slices) de la ruleta */
-.ruleta-slice {
-  position: absolute;
-  width: 50%;
-  height: 50%;
-  top: 0;
-  left: 50%;
-  transform-origin: 0% 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 10px;
-  color: #f9fafb;
-  font-size: 0.7rem;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.9);
-  box-sizing: border-box;
-}
-
-/* Número dentro del slice */
-.ruleta-slice .slice-num {
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* Colores alternos para las rebanadas */
-.ruleta-slice:nth-child(odd) {
-  background: linear-gradient(
-    to bottom,
-    rgba(250, 204, 21, 0.9),
-    rgba(250, 204, 21, 0.4)
-  );
-  color: #0f172a;
-}
-
-.ruleta-slice:nth-child(even) {
-  background: linear-gradient(
-    to bottom,
-    rgba(56, 189, 248, 0.9),
-    rgba(56, 189, 248, 0.4)
-  );
-}
-
-/* Centro de la ruleta */
-.ruleta-center {
-  position: absolute;
-  width: 34%;
-  height: 34%;
-  border-radius: 50%;
-  background: radial-gradient(circle at top, #020617, #020617);
-  border: 3px solid var(--gold);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 3;
-  box-shadow:
-    0 0 18px rgba(15,23,42,0.9),
-    inset 0 0 12px rgba(148,163,184,0.4);
-}
-
-.ruleta-center span {
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: #e5e7eb;
-}
-
-.ruleta-center .rc-top {
-  font-weight: 500;
-}
-
-.ruleta-center .rc-bottom {
-  font-weight: 800;
-  color: var(--gold);
-}
-
-/* Puntero superior (flecha fija) */
-.ruleta-pointer {
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 14px solid transparent;
-  border-right: 14px solid transparent;
-  border-bottom: 26px solid var(--gold);
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
-  z-index: 4;
 }
 
 /* =================
@@ -232,8 +104,7 @@
   opacity: 0.9;
 }
 
-
-/* Acciones de la ruleta */
+/* Acciones de la ruleta (admin) */
 .ruleta-actions {
   margin-top: 0.75rem;
   display: flex;
@@ -249,60 +120,11 @@
   letter-spacing: 0.11em;
 }
 
-/* Texto psicológico debajo del botón */
+/* Texto psicológico debajo del botón (admin) */
 .ruleta-hint {
   font-size: 0.8rem;
   opacity: 0.85;
   color: var(--muted);
-}
-
-/* Resultado final */
-.resultado-ruleta {
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.9rem;
-  background: rgba(15, 23, 42, 0.88);
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  font-size: 0.95rem;
-}
-
-.resultado-ruleta strong {
-  font-size: 1.12rem;
-  color: var(--gold);
-}
-
-/* Animación suave de “latido” para el texto ganador */
-.resultado-ruleta.ganador-texto {
-  animation: winnerPulse 1s ease-in-out 2;
-}
-
-@keyframes winnerPulse {
-  0%   { transform: scale(1);   box-shadow: 0 0 0 rgba(250, 204, 21, 0.0); }
-  50%  { transform: scale(1.03); box-shadow: 0 0 24px rgba(250, 204, 21, 0.6); }
-  100% { transform: scale(1);   box-shadow: 0 0 0 rgba(250, 204, 21, 0.0); }
-}
-
-/* Responsive fino para móviles */
-@media (max-width: 640px) {
-  .ruleta-header h2 {
-    font-size: 1.35rem;
-  }
-}
-
-/* Efecto especial para slice ganador */
-.ruleta-slice.ganador {
-  box-shadow: 0 0 26px rgba(250, 204, 21, 0.9);
-  filter: brightness(1.1);
-}
-
-/* Opcional: si son muchísimos participantes el triángulo se ve muy fino,
-   esto ayuda a que visualmente se vea más agradable */
-.ruleta-slice {
-  padding-right: 8px;
-}
-
-.ruleta-slice .slice-num {
-  white-space: nowrap;
 }
 
 /* ============================
@@ -345,31 +167,12 @@
   font-size: 0.75rem;
 }
 
-.estado-dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-}
-
-/* Colores según estado */
-.estado-no_programada {
-  background-color: #6b7280;
-}
-
-.estado-programada {
-  background-color: #38bdf8;
-}
-
-.estado-finalizada {
-  background-color: #22c55e;
-}
-
 /* Contador reutiliza la clase existente .contador */
 .contador-small {
   font-size: 0.95rem;
 }
 
-/* Panel de programación */
+/* Panel de programación (admin) */
 .programar-panel {
   margin-top: 0.75rem;
   padding: 0.7rem 0.9rem;
@@ -411,67 +214,78 @@
   transform: translateY(-1px);
 }
 
-/* Versión pequeña del botón */
+/* Versión pequeña del botón (admin) */
 .btn-sm {
   font-size: 0.8rem;
   padding: 0.4rem 0.9rem;
 }
 
-/* Ajuste responsive del panel estado */
+/* Ajuste responsive del panel estado (admin) */
 @media (max-width: 900px) {
   .ruleta-estado-grid {
     grid-template-columns: 1fr;
   }
 }
 
-/* ============================
-   Overlay cuenta regresiva grande
-   ============================ */
-.countdown-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  display: none; /* se activa en JS */
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-#countdownBig {
-  font-size: 8rem;
-  font-weight: 900;
-  color: var(--gold);
-  text-shadow: 0 0 30px rgba(250,204,21,0.9);
-  animation: pulseBig 1s ease-in-out infinite;
-}
-@keyframes pulseBig {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.08); }
-  100% { transform: scale(1); }
+/* ====== MEJORAS VISIBILIDAD NÚMEROS EN LA RULETA ====== */
+
+/* 1) Dale más contraste real a cada slice */
+.ruleta-slice {
+  /* sube un poquito el padding para separar del borde */
+  padding-right: 12px;
+
+  /* sombra más fuerte para texto */
+  text-shadow:
+    0 2px 6px rgba(0,0,0,0.95),
+    0 0 10px rgba(0,0,0,0.55);
 }
 
-/* ============================
-   Mensajes motivacionales
-   ============================ */
-.motivational-msg {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--gold);
-  text-align: center;
-  margin-top: 1rem;
-  animation: fadeInOut 2s ease-in-out infinite;
-}
-@keyframes fadeInOut {
-  0% { opacity: 0; }
-  25% { opacity: 1; }
-  75% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.estado-dot {
+/* 2) Estilo del número: fondo tipo “chip” para que siempre destaque */
+.ruleta-slice .slice-num {
   display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+
+  font-weight: 900;
+  letter-spacing: 0.08em;
+
+  /* fondo oscuro premium */
+  background: rgba(2, 6, 23, 0.75);
+  border: 1px solid rgba(250, 204, 21, 0.55);
+
+  /* que no se rompa */
+  white-space: nowrap;
+
+  /* mejora legibilidad */
+  line-height: 1.1;
+}
+
+/* 3) Cuando el slice sea “odd” (amarillo), mantén el número en blanco */
+.ruleta-slice:nth-child(odd) .slice-num {
+  color: #f9fafb;
+}
+
+/* 4) Cuando el slice sea “even” (azul), mantén el número en blanco */
+.ruleta-slice:nth-child(even) .slice-num {
+  color: #f9fafb;
+}
+
+/* 5) Si hay muchos participantes, agranda un pelín el wrapper en desktop */
+.ruleta-circle-wrapper {
+  width: min(440px, 86vw);
+}
+
+/* 6) Y en móviles, evita que se vea micro */
+@media (max-width: 420px) {
+  .ruleta-circle-wrapper {
+    width: min(360px, 92vw);
+  }
+  .ruleta-slice {
+    padding-right: 10px;
+  }
+  .ruleta-slice .slice-num {
+    padding: 2px 6px;
+    font-size: 0.72rem; /* el chip escala mejor que el texto suelto */
+  }
 }
 
