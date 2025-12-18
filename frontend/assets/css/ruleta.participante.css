@@ -14,20 +14,35 @@
   justify-content:center;
 }
 
-/* Puntero superior (flecha fija) */
-.ruleta-pointer {
-  position: absolute;
-  top: -6px;
+.ruleta-pointer{
+  position:absolute;
+  top: -14px;
   left: 50%;
   transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 14px solid transparent;
-  border-right: 14px solid transparent;
-  border-bottom: 26px solid var(--gold);
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
-  z-index: 4;
+  width:0;
+  height:0;
+
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-top: 32px solid var(--gold);  /* <-- antes era border-bottom */
+
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.75));
+  z-index: 6;
 }
+
+.ruleta-pointer::after{
+  content:"";
+  position:absolute;
+  left:-12px;
+  top:-28px; /* ojo: cambia porque ahora es border-top */
+  width:0;
+  height:0;
+
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 24px solid rgba(2,6,23,.95);
+}
+
 
 /* Disco que gira */
 .ruleta-circle {
