@@ -108,7 +108,7 @@ function construirRuleta(participants) {
     const mostrarLabel = index % pasoLabel === 0;
 
     slice.innerHTML = mostrarLabel
-      ? `<span class="slice-num">#${p.numero}</span>`
+      ? `<span class="slice-num">${p.numero}</span>`
       : '';
 
     ruletaCircle.appendChild(slice);
@@ -337,10 +337,23 @@ function renderRuletaInfo() {
       if (numero_ganador) {
         const nombreCorto = ganador?.nombre ? ganador.nombre.split(' ')[0] : 'Ganador';
         resultadoRuleta.innerHTML =
-          `✅ Número ganador: <strong>#${numero_ganador}</strong> — <strong>${nombreCorto}</strong>`;
+          `✅ Número ganador: <strong>${numero_ganador}</strong> — <strong>${nombreCorto}</strong>`;
       } else {
         resultadoRuleta.innerHTML = `✅ Ruleta finalizada.`;
       }
+    }
+
+    // ✅ GANADOR FLOTANTE (premium)
+    const wf = document.getElementById('winnerFloat');
+    const wfNum = document.getElementById('winnerFloatNumero');
+    const wfName = document.getElementById('winnerFloatNombre');
+
+    if (wf && numero_ganador) {
+      wf.classList.remove('oculto');
+      wf.classList.add('winner-float--show');
+
+      if (wfNum) wfNum.textContent = `N° ${numero_ganador}`; // sin "#"
+      if (wfName) wfName.textContent = ganador?.nombre ? ganador.nombre.split(' ')[0] : 'Ganador';
     }
 
     //  Asegurar que existan slices antes de resaltar
@@ -364,6 +377,7 @@ function renderRuletaInfo() {
   // Si no está finalizada, mantenemos el contador activo
   iniciarCountdown();
 }
+
 
 
 

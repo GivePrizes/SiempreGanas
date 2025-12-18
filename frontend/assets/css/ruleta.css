@@ -105,6 +105,10 @@
 }
 
 /* SLICES */
+/* ======================
+   NÚMEROS RULETA – ADMIN (PC)
+   ====================== */
+
 .ruleta-slice{
   position:absolute;
   width:50%;
@@ -112,16 +116,42 @@
   top:0;
   left:50%;
   transform-origin: 0% 100%;
+
   display:flex;
   align-items:center;
-  justify-content:center; /* <-- antes era flex-end */
+  justify-content:flex-end;
+
+  /* posición premium cerca del borde */
+  padding-right: 22px;
+
   box-sizing:border-box;
 
-  /* legibilidad */
   text-shadow:
-    0 2px 6px rgba(0,0,0,0.95),
-    0 0 10px rgba(0,0,0,0.55);
+    0 2px 6px rgba(0,0,0,.95),
+    0 0 10px rgba(0,0,0,.6);
 }
+
+/* Etiqueta del número */
+.ruleta-slice .slice-num{
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+
+  padding: 5px 10px;
+  border-radius: 999px;
+
+  background: rgba(2, 6, 23, 0.65);
+  border: 1px solid rgba(255,215,0,.45);
+
+  color: #fff;
+
+  backdrop-filter: blur(6px);
+
+  box-shadow:
+    0 12px 24px rgba(0,0,0,.45),
+    inset 0 0 0 1px rgba(255,255,255,.08);
+}
+
 
 /* Colores alternos (puedes cambiar después) */
 .ruleta-slice:nth-child(odd){
@@ -131,16 +161,7 @@
   background: linear-gradient(to bottom, rgba(56, 189, 248, 0.90), rgba(56, 189, 248, 0.35));
 }
 
-/* número tipo “chip” */
-.ruleta-slice .slice-num{
-  font-size: 0.85rem;   /* tamaño más pequeño */
-  padding: 2px 6px;
-  background: rgba(2, 6, 23, 0.65);
-  border: 1px solid rgba(250, 204, 21, 0.45);
-  border-radius: 6px;   /* menos redondeado si quieres */
-  color:#fff;
-  text-align:center;
-}
+
 
 /* Slice ganador */
 .ruleta-slice.ganador{
@@ -309,4 +330,100 @@
   .ruleta-circle{ border-width: 9px; }
   .ruleta-slice{ padding-right: 10px; }
   .ruleta-slice .slice-num{ padding: 2px 6px; font-size: 0.72rem; }
+}
+
+/* =========================
+   GANADOR FLOTANTE (ADMIN)
+   ========================= */
+
+.winner-float{
+  position: absolute;
+  left: 50%;
+  top: 14px;                 /* flota cerca del aro sin tocar el puntero */
+  transform: translateX(-50%);
+  z-index: 7;                /* sobre puntero (6) y centro (5) */
+  pointer-events: none;
+}
+
+/* Pastilla principal */
+.winner-float__pill{
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+
+  padding: .48rem .8rem;
+  border-radius: 999px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(2,6,23,.82),
+    rgba(2,6,23,.65)
+  );
+
+  border: 1px solid rgba(255,215,0,.38);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.65),
+    inset 0 0 0 1px rgba(255,255,255,.06);
+}
+
+/* Etiqueta pequeña */
+.winner-float__label{
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.85);
+  opacity: .95;
+}
+
+/* Número ganador (sin #, protagonista elegante) */
+.winner-float__num{
+  font-size: .95rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+  color: var(--gold);
+
+  text-shadow:
+    0 2px 12px rgba(255,215,0,.35),
+    0 0 18px rgba(255,215,0,.15);
+}
+
+/* Nombre corto del ganador */
+.winner-float__name{
+  font-size: .85rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.92);
+
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Aparición suave, sin exagerar */
+.winner-float.winner-float--show .winner-float__pill{
+  animation: winnerPop .32s cubic-bezier(.25,.9,.3,1.15) both;
+}
+
+@keyframes winnerPop{
+  from {
+    transform: translateY(-6px) scale(.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Ajuste móvil (aunque admin sea PC, por seguridad) */
+@media (max-width: 420px){
+  .winner-float{ top: 10px; }
+  .winner-float__pill{ padding: .38rem .65rem; gap: .45rem; }
+  .winner-float__num{ font-size: .9rem; }
+  .winner-float__name{ max-width: 120px; }
 }

@@ -42,6 +42,15 @@
           <div class="ruleta-circle-wrapper">
             <div id="ruletaCircle" class="ruleta-circle"></div>
 
+            <!-- ✅ Ganador flotante (aparece solo cuando finaliza) -->
+            <div id="winnerFloat" class="winner-float oculto" aria-live="polite">
+              <div class="winner-float__pill">
+                <span class="winner-float__label">GANADOR</span>
+                <span id="winnerFloatNumero" class="winner-float__num">—</span>
+                <span id="winnerFloatNombre" class="winner-float__name">—</span>
+              </div>
+            </div>
+
             <div class="ruleta-center">
               <span class="rc-top">Siempre</span>
               <span class="rc-bottom">Ganas</span>
