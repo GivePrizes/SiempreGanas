@@ -1,51 +1,58 @@
-/*css/common.css*/
-
-/*
- * Common base styles for the Sorteo platform.
- *
- * This file declares CSS variables for colour palette, typography and
- * basic element resets. It is imported by both the admin and participant
- * stylesheets to ensure a consistent foundation across the application.
- */
+/* ===============================
+   COMMON BASE STYLES — SIEMPRE GANAS
+   =============================== */
 
 :root {
-  /* Colour palette inspired by luxury and trustworthiness. Using dark
-     backgrounds helps focus attention on content and calls to action,
-     while the gold accent colour conveys premium quality and draws the
-     eye to important details.
-  */
+  /* 🎨 Colores (lujo + confianza) */
   --colour-background: #0b0b0f;
   --colour-surface: #15151f;
   --colour-surface-alt: #111118;
   --colour-border: #333646;
+
   --colour-primary: #ffd700;
   --colour-primary-hover: #ffea7a;
+
   --colour-secondary: #2e2e3a;
   --colour-secondary-hover: #3b3b49;
+
   --colour-danger: #d32f2f;
   --colour-danger-hover: #f44336;
+
   --colour-text: #f5f5f5;
   --colour-muted: #777;
-  --colour-progress-bg: #252736;
-  --colour-progress-bar: hsl(240, 30%, 51%);
+
   --gold: #ffd700;
   --muted: #777;
 
-  /* Typography */
-  --font-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* 🧠 Tipografía */
+  --font-base: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-size-base: 16px;
   --font-size-small: 0.875rem;
   --font-size-large: 1.25rem;
+
+  /* 🧱 Layout */
+  --radius-sm: 0.45rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+
+  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.55);
+  --shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.75);
 }
 
-/* Reset */
-*, *::before, *::after {
+/* ===============================
+   RESET
+   =============================== */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   font-family: var(--font-base);
   font-size: var(--font-size-base);
@@ -67,47 +74,103 @@ select {
   font-size: inherit;
 }
 
-/* Utility classes */
+/* ===============================
+   UTILIDADES
+   =============================== */
+
 .text-center { text-align: center; }
 .text-right { text-align: right; }
-.mb-1 { margin-bottom: 0.25rem; }
-.mb-2 { margin-bottom: 0.5rem; }
-.mb-3 { margin-bottom: 1rem; }
-.mt-1 { margin-top: 0.25rem; }
-.mt-2 { margin-top: 0.5rem; }
-.mt-3 { margin-top: 1rem; }
-.p-1 { padding: 0.25rem; }
-.p-2 { padding: 0.5rem; }
-.p-3 { padding: 1rem; }
 
-/* Utility: ocultar elementos */
+.text-muted {
+  color: var(--colour-muted);
+}
+
 .hidden,
 .oculto {
   display: none !important;
 }
 
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+
+/* ===============================
+   INPUTS (GLOBAL PREMIUM)
+   =============================== */
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 0.7rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background-color: rgba(17, 17, 24, 0.9);
+  color: var(--colour-text);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: rgba(255, 215, 0, 0.55);
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.12);
+}
+
+/* Estados de validación */
+.input-error {
+  border-color: #ff4d4d !important;
+  box-shadow: 0 0 0 3px rgba(255, 77, 77, 0.15);
+}
+
+.input-ok {
+  border-color: #2ecc71 !important;
+  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.15);
+}
+
+/* ===============================
+   BOTONES
+   =============================== */
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
-  border-radius: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: var(--radius-md);
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  transition: background-color 0.2s ease, transform 0.08s ease, box-shadow 0.08s ease;
 }
 
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* Primario (oro) */
 .btn-primary {
   background-color: var(--colour-primary);
   color: #000;
+  box-shadow: 0 6px 18px rgba(255, 215, 0, 0.35);
 }
 
 .btn-primary:hover {
   background-color: var(--colour-primary-hover);
+  box-shadow: 0 10px 28px rgba(255, 215, 0, 0.45);
 }
 
+/* Secundario */
 .btn-secondary {
   background-color: var(--colour-secondary);
   color: var(--colour-text);
@@ -117,6 +180,7 @@ select {
   background-color: var(--colour-secondary-hover);
 }
 
+/* Peligro */
 .btn-danger {
   background-color: var(--colour-danger);
   color: #fff;
@@ -126,12 +190,16 @@ select {
   background-color: var(--colour-danger-hover);
 }
 
-/* Card component used across both admin and participant interfaces */
+/* ===============================
+   CARDS
+   =============================== */
+
 .card {
   background-color: var(--colour-surface);
-  border-radius: 0.6rem;
+  border-radius: var(--radius-lg);
   padding: 1.25rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .card-title {
@@ -140,33 +208,28 @@ select {
   margin-bottom: 0.75rem;
 }
 
-.icon {
-  display: inline-flex;
-  align-items: center;
-  margin-right: 0.35rem;
+/* Glass effect (opcional) */
+.card.glass {
+  background: linear-gradient(
+    180deg,
+    rgba(21, 21, 31, 0.9),
+    rgba(17, 17, 24, 0.85)
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-.icon img,
-.icon svg {
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.35rem;
-}
+/* ===============================
+   BADGES / ESTADOS
+   =============================== */
 
-/* Text muted reutilizable */
-.text-muted {
-  color: var(--colour-muted);
-}
-
-/* Badges para estados (aprobado, pendiente, rechazado, etc.) */
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 0.1rem 0.45rem;
+  padding: 0.15rem 0.55rem;
   border-radius: 999px;
   font-size: var(--font-size-small);
-  font-weight: 600;
-  margin-right: 0.35rem;
+  font-weight: 700;
 }
 
 .badge-success {
@@ -184,7 +247,10 @@ select {
   color: #ff9a9a;
 }
 
-/* Toast básico */
+/* ===============================
+   TOAST
+   =============================== */
+
 .toast {
   position: fixed;
   left: 50%;
@@ -193,77 +259,57 @@ select {
   background-color: var(--colour-surface);
   color: var(--colour-text);
   padding: 0.75rem 1.25rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+  border-radius: 0.9rem;
+  box-shadow: var(--shadow-strong);
   font-size: 0.9rem;
   z-index: 9999;
 }
 
-.toast.hidden {
-  display: none;
-}
+/* ===============================
+   ERRORES FORM
+   =============================== */
 
-
-/* Form validation styles */
 .error-msg {
   font-size: 12px;
   margin-top: 2px;
   min-height: 14px;
+  color: #ff9a9a;
 }
 
-.input-error {
-  border: 1px solid #ff4d4d !important;
-}
+/* ===============================
+   WHATSAPP FLOAT (DASHBOARD)
+   =============================== */
 
-.input-ok {
-  border: 1px solid #2ecc71 !important;
-}
-
-/* Specific colors for error messages */
-.error-msg {
-  font-size: 12px;
-  margin-top: 2px;
-  min-height: 14px;
-  color: #ff9a9a; /* rojito suave */
-}
-
-/* =============================
-   WhatsApp flotante (Dashboard)
-   ============================= */
-.whatsapp-float-dashboard{
+.whatsapp-float-dashboard {
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   background-color: #25d366;
   border-radius: 999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
   z-index: 9000;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.whatsapp-float-dashboard:hover{
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.7);
+.whatsapp-float-dashboard:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.8);
 }
 
-.whatsapp-float-dashboard img{
+.whatsapp-float-dashboard img {
   width: 22px;
   height: 22px;
   filter: brightness(0) invert(1);
 }
 
-@media (max-width: 600px){
-  .whatsapp-float-dashboard{
-    width: 48px;
-    height: 48px;
-  }
-  .whatsapp-float-dashboard img{
-    width: 24px;
-    height: 24px;
+@media (max-width: 600px) {
+  .whatsapp-float-dashboard {
+    width: 50px;
+    height: 50px;
   }
 }

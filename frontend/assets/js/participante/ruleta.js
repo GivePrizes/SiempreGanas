@@ -1,7 +1,8 @@
 // assets/js/participante/ruleta.js
 
 // API base (usar la global definida en config.js)
-const API = `${window.API_URL.replace(/\/$/, '')}/api`;
+const API = `${(window.API_URL || 'https://app-service-phi.vercel.app').replace(/\/$/, '')}/api`;
+
 // sorteoId
 const params = new URLSearchParams(window.location.search);
 const sorteoIdParam = params.get('sorteo') || params.get('sorteoId');
@@ -23,11 +24,20 @@ const ruletaHint = document.getElementById('ruletaHint');
 const misNumerosWrap = document.getElementById('misNumerosWrap');
 const winSoundEl = document.getElementById('winSound');
 
+// Winner float (PARTICIPANTE)
+const winnerFloat = document.getElementById('winnerFloat');
+const winnerFloatNumero = document.getElementById('winnerFloatNumero');
+const winnerFloatNombre = document.getElementById('winnerFloatNombre');
+
 // Auth
 const token = localStorage.getItem('token');
 if (!token) {
   const redirect = encodeURIComponent(`participante/ruleta.html?sorteo=${sorteoIdParam || ''}`);
   location.href = `../login.html?redirect=${redirect}`;
+}
+
+function authHeaders() {
+  return { Authorization: `Bearer ${token}` };
 }
 
 // Estado
@@ -48,7 +58,11 @@ let alreadyCelebrated = sessionStorage.getItem(celebrationKey) === '1';
 let audioUnlocked = false;
 function unlockAudioOnce() {
   if (audioUnlocked) return;
-  if (!winSoundEl) return;
+  if (!winSoundEl) {
+    audioUnlocked = true;
+    return;
+  }
+
   // Intento silencioso para “desbloquear”
   winSoundEl.volume = 0;
   winSoundEl.play()
@@ -59,17 +73,13 @@ function unlockAudioOnce() {
       audioUnlocked = true;
     })
     .catch(() => {
-      // Si falla, igual marcamos al primer gesto (y reintentamos al celebrar)
       audioUnlocked = true;
-      if (winSoundEl) winSoundEl.volume = 1;
+      winSoundEl.volume = 1;
     });
 }
+
 window.addEventListener('click', unlockAudioOnce, { once: true });
 window.addEventListener('touchstart', unlockAudioOnce, { once: true });
-
-function authHeaders() {
-  return { Authorization: `Bearer ${token}` };
-}
 
 // ==========================
 // Helpers UI
@@ -104,9 +114,20 @@ function marcarGanadorEnMisNumeros(numeroGanador) {
   if (chip) chip.classList.add('chip-ganador');
 }
 
+function showWinnerFloat(numeroGanador, nombreGanador) {
+  if (!winnerFloat || !winnerFloatNumero || !winnerFloatNombre) return;
+  if (!numeroGanador) return;
+
+  winnerFloatNumero.textContent = `N° ${String(numeroGanador).padStart(2, '0')}`; // sin "#"
+  winnerFloatNombre.textContent = nombreGanador || 'Ganador';
+
+  winnerFloat.classList.remove('oculto');
+  winnerFloat.classList.add('winner-float--show');
+}
+
 // ==========================
 // Ruleta visual (estética)
-// - Muestra SOLO tus números (como querías)
+// - Muestra SOLO tus números
 // ==========================
 function construirRuletaDesdeMisNumeros(numeros) {
   if (!ruletaCircle) return;
@@ -133,7 +154,9 @@ function construirRuletaDesdeMisNumeros(numeros) {
     slice.style.transform = `rotate(${anguloInicio}deg) skewY(${90 - anguloSlice}deg)`;
 
     const mostrarLabel = index % pasoLabel === 0;
-    slice.innerHTML = mostrarLabel ? `<span class="slice-num">#${numero}</span>` : '';
+
+    // label visual (si quieres sin "#", cámbialo aquí)
+    slice.innerHTML = mostrarLabel ? `<span class="slice-num">${String(numero).padStart(2, '0')}</span>` : '';
 
     ruletaCircle.appendChild(slice);
   });
@@ -203,61 +226,102 @@ function renderRuletaInfo() {
     ganador,
   } = ruletaInfo;
 
-  if (tituloSorteo) tituloSorteo.textContent = descripcion ? `🎰 ${descripcion}` : 'Sala de ruleta';
-  if (subtituloSorteo) subtituloSorteo.textContent = premio ? `Premio: ${premio}` : 'Resultado oficial y verificado.';
-
-  setEstadoBadge(ruleta_estado);
-
-  if (horaProgramadaTextoEl) {
-    if (ruleta_hora_programada) {
-      horaProgramadaTextoEl.textContent = new Date(ruleta_hora_programada).toLocaleString(
-        'es-CO',
-        { timeZone: 'America/Bogota', hour12: false }
-      );
-    } else {
-      horaProgramadaTextoEl.textContent = 'Sin programar';
-    }
+  // Reset ganador flotante si aún no finaliza
+  if (winnerFloat) {
+    winnerFloat.classList.add('oculto');
+    winnerFloat.classList.remove('winner-float--show');
   }
 
+  // Títulos
+  if (tituloSorteo) {
+    tituloSorteo.textContent = descripcion
+      ? `🎰 ${descripcion}`
+      : 'Sala de ruleta';
+  }
+
+  if (subtituloSorteo) {
+    subtituloSorteo.textContent = premio
+      ? `Premio: ${premio}`
+      : 'Resultado oficial y verificado.';
+  }
+
+  // Estado visual
+  setEstadoBadge(ruleta_estado);
+
+  // Hora programada
+  if (horaProgramadaTextoEl) {
+    horaProgramadaTextoEl.textContent = ruleta_hora_programada
+      ? new Date(ruleta_hora_programada).toLocaleString('es-CO', {
+          timeZone: 'America/Bogota',
+          hour12: false,
+        })
+      : 'Sin programar';
+  }
+
+  // Hint al usuario
   if (ruletaHint) {
     if (ruleta_estado === 'no_programada') {
-      ruletaHint.textContent = 'El sorteo está completo. El admin programará la ruleta pronto.';
+      ruletaHint.textContent =
+        'El sorteo está completo. El admin programará la ruleta pronto.';
     } else if (ruleta_estado === 'programada') {
-      ruletaHint.textContent = 'Quédate aquí: cuando llegue la hora, verás el resultado premium.';
+      ruletaHint.textContent =
+        'Quédate aquí: cuando llegue la hora, verás el resultado premium.';
     } else {
       ruletaHint.textContent = 'Resultado oficial registrado.';
     }
   }
 
-  // ✅ Finalizada: mostrar ganador + celebrar 1 vez
-  if (ruleta_estado === 'finalizada' && numero_ganador) {
-    const nombreCorto = ganador?.nombre ? ganador.nombre.split(' ')[0] : 'Ganador';
+  // ==========================
+  // FINALIZADA
+  // ==========================
+  if (ruleta_estado === 'finalizada' && numero_ganador != null) {
+    const numeroGanadorNum = Number(numero_ganador);
+    const nombreCorto = ganador?.nombre
+      ? ganador.nombre.split(' ')[0]
+      : 'Ganador';
 
+    // Resultado principal
     if (resultadoRuleta) {
-      resultadoRuleta.innerHTML = `✅ Número ganador: <strong>#${numero_ganador}</strong> — <strong>${nombreCorto}</strong>`;
+      resultadoRuleta.innerHTML =
+        `✅ Número ganador: <strong>#${String(numeroGanadorNum).padStart(2, '0')}</strong>` +
+        ` — <strong>${nombreCorto}</strong>`;
     }
 
-    // resaltar si es tuyo
-    marcarGanadorEnMisNumeros(numero_ganador);
+    // Ganador flotante premium
+    showWinnerFloat(numeroGanadorNum, nombreCorto);
 
-    // celebrar 1 vez
-    celebrarGanadorOnce(numero_ganador);
+    // Resaltar si es tu número
+    marcarGanadorEnMisNumeros(numeroGanadorNum);
 
-    // parar contador (polling lo puedes dejar o parar; yo lo paro para estabilidad)
+    // Celebración (solo una vez)
+    celebrarGanadorOnce(numeroGanadorNum);
+
+    // Detener timers
     stopCountdown();
 
     if (pollingInterval) {
       clearInterval(pollingInterval);
       pollingInterval = null;
     }
-    if (contadorTextoEl) contadorTextoEl.textContent = '00:00:00';
+
+    if (refreshMisNumerosInterval) {
+      clearInterval(refreshMisNumerosInterval);
+      refreshMisNumerosInterval = null;
+    }
+
+    if (contadorTextoEl) {
+      contadorTextoEl.textContent = '00:00:00';
+    }
 
     return;
   }
 
-  // Si no está finalizada, mantener countdown (solo si programada)
+  // ==========================
+  // NO FINALIZADA → countdown
+  // ==========================
   iniciarCountdown();
 }
+
 
 function iniciarCountdown() {
   stopCountdown();
@@ -338,7 +402,7 @@ function celebrarGanadorOnce(numeroGanador) {
   alreadyCelebrated = true;
   sessionStorage.setItem(celebrationKey, '1');
 
-  // 1) mini spin (1–2 vueltas) SOLO estética (no “cae” exacto en ganador)
+  // 1) mini spin (1–2 vueltas) SOLO estética
   miniSpin();
 
   // 2) confetti
@@ -355,9 +419,7 @@ function celebrarGanadorOnce(numeroGanador) {
       try {
         winSoundEl.currentTime = 0;
         winSoundEl.volume = 1;
-        winSoundEl.play().catch(() => {
-          // Si el navegador lo bloquea, no rompemos nada.
-        });
+        winSoundEl.play().catch(() => {});
       } catch (_) {}
     }
   }, 500);
@@ -381,13 +443,12 @@ function miniSpin() {
   // transición suave
   ruletaCircle.style.transition = 'transform 1.25s cubic-bezier(.1,.9,.2,1)';
   const vueltas = 1 + Math.floor(Math.random() * 2); // 1–2
-  const extra = Math.floor(Math.random() * 120);     // un toque random
+  const extra = Math.floor(Math.random() * 120);
   const destino = rotacionActual + vueltas * 360 + extra;
 
   ruletaCircle.style.transform = `rotate(${destino}deg)`;
   rotacionActual = destino;
 
-  // limpiar transition para futuras rotaciones si recargas datos
   setTimeout(() => {
     if (!ruletaCircle) return;
     ruletaCircle.style.transition = '';
@@ -396,8 +457,7 @@ function miniSpin() {
 
 function resaltarSliceGanador(numeroGanador) {
   if (!ruletaCircle) return;
-  const total = misNumeros.length;
-  if (!total) return;
+  if (!Array.isArray(misNumeros) || !misNumeros.length) return;
 
   const idx = misNumeros.findIndex((n) => n === numeroGanador);
   if (idx < 0) return;
@@ -427,4 +487,4 @@ async function init() {
   refreshMisNumerosInterval = setInterval(fetchMisNumeros, 10000);
 }
 
-init();
+document.addEventListener('DOMContentLoaded', init);

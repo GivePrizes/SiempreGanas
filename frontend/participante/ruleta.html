@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sala de Juego </title>
+  <title>Sala de Juego</title>
 
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/participant.css">
   <link rel="stylesheet" href="../assets/css/ruleta.participante.css">
-
 </head>
 
 <body>
@@ -50,6 +49,7 @@
         </div>
       </div>
 
+      <!-- Overlay últimos 10s -->
       <div id="countdownOverlay" class="countdown-overlay" style="display:none;">
         <div class="countdown-big" id="countdownBig">10</div>
         <div class="countdown-msg" id="motivationalMsg">Prepárate…</div>
@@ -63,7 +63,6 @@
         Si uno de tus números sale, lo verás marcado aquí.
       </p>
 
-      <!-- ✅ ÚNICO misNumerosWrap -->
       <div id="misNumerosWrap" class="chips-wrap">
         <span class="text-muted">Cargando tus números...</span>
       </div>
@@ -79,6 +78,15 @@
       <div class="ruleta-container">
         <div class="ruleta-pointer"></div>
         <div class="ruleta-circle" id="ruletaCircle"></div>
+
+        <!-- ✅ Ganador flotante (mejor aquí adentro para que el absolute funcione) -->
+        <div id="winnerFloat" class="winner-float winner-float--participant oculto" aria-live="polite">
+          <div class="winner-float__pill">
+            <span class="winner-float__label">GANADOR</span>
+            <span id="winnerFloatNumero" class="winner-float__num">—</span>
+            <span id="winnerFloatNombre" class="winner-float__name">—</span>
+          </div>
+        </div>
       </div>
 
       <div id="resultadoRuleta" class="resultado-ruleta" style="margin-top:1rem;"></div>
@@ -87,8 +95,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
   <script src="../assets/js/config.js"></script>
-  <script src="../assets/js/participante/ruleta.js"></script>
+  <script type="module" src="../assets/js/participante/ruleta.js"></script>
 </body>
 </html>

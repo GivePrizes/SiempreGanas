@@ -5,78 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Siempre Gana — Acceso</title>
 
-  <!-- NUEVOS CSS MODULARES -->
   <link rel="stylesheet" href="assets/css/common.css">
   <link rel="stylesheet" href="assets/css/participant.css">
 
   <style>
     /* Ajustes específicos del login */
-    .auth-wrapper {
+    .auth-wrapper{
       max-width: 460px;
       margin: 50px auto;
       text-align: center;
+      padding: 0 14px;
     }
 
-    .auth-logo {
-      font-size: 40px;
-      font-weight: 800;
-      color: var(--color-primary);
-      margin-bottom: 4px;
+    /* ✅ bloque logo premium */
+    .login-brand{
+      display:flex;
+      justify-content:center;
+      margin: 0 0 14px 0;
+    }
+    .login-brand__img{
+      width: min(520px, 96%);
+      height: auto;
+      display:block;
+      filter: drop-shadow(0 18px 40px rgba(0,0,0,.55));
+      opacity: .98;
+      image-rendering: -webkit-optimize-contrast;
     }
 
-    .auth-card {
-      background: var(--color-card);
+    /* (Opcional) quita tu SG de texto porque ya está en la imagen */
+    .auth-logo{ display:none; }
+
+    .auth-card{
+      background: var(--colour-surface);
       padding: 22px 24px;
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-soft);
-      border: 1px solid rgba(255,255,255,0.05);
-      margin-top: 22px;
-    }
-
-    .auth-card h3 {
-      margin-bottom: 18px;
-      color: var(--color-primary);
-    }
-
-    .auth-field {
-      margin-bottom: 14px;
+      border-radius: 0.8rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-top: 18px;
       text-align: left;
     }
 
-    .auth-field label {
+    .auth-card h3{
+      margin-bottom: 18px;
+      color: var(--colour-primary);
+      text-align: center;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-size: 1rem;
+    }
+
+    .auth-field{ margin-bottom: 14px; }
+    .auth-field label{
       font-size: 13px;
-      color: var(--color-text-main);
+      color: var(--colour-text);
       margin-bottom: 4px;
-      display: block;
+      display:block;
+      opacity: .9;
     }
 
-    .auth-field input {
+    .auth-field input{
       width: 100%;
+      background: rgba(17,17,24,.9);
+      border: 1px solid rgba(148,163,184,.25);
+      color: var(--colour-text);
+      border-radius: .6rem;
+      padding: .7rem .75rem;
+      outline: none;
+    }
+    .auth-field input:focus{
+      border-color: rgba(255,215,0,.55);
+      box-shadow: 0 0 0 3px rgba(255,215,0,.12);
     }
 
-    .switch-link {
+    .switch-link{
       margin-top: 12px;
       font-size: 13px;
-      color: var(--color-primary-soft);
+      color: rgba(255,215,0,.85);
       cursor: pointer;
+      text-align:center;
     }
-
-    .switch-link:hover {
-      text-decoration: underline;
-    }
-
-    .hidden {
-      display: none;
-    }
+    .switch-link:hover{ text-decoration: underline; }
   </style>
 </head>
-<body>
 
+<body>
   <div class="auth-wrapper">
-    
-    <div class="auth-logo">SG</div>
-    <h1 style="margin:0; color:white;">Siempre Gana</h1>
-    <p class="text-muted">Lo que nadie esperaba</p>
+
+    <!-- ✅ IMAGEN LOGO -->
+    <div class="login-brand">
+      <img
+        src="assets/imagenes/ChatGPT Image 18 dic 2025, 02_26_26 p.m..png"
+        alt="Siempre Ganas"
+        class="login-brand__img"
+      />
+    </div>
 
     <!-- LOGIN -->
     <section id="loginForm" class="auth-card">
@@ -146,7 +168,6 @@
 
   </div>
 
-  <!-- LÓGICA EXISTENTE -->
   <script src="assets/js/config.js"></script>
   <script src="assets/js/auth.js"></script>
 
@@ -161,6 +182,5 @@
       document.getElementById("loginForm").classList.remove("hidden");
     }
   </script>
-
 </body>
 </html>

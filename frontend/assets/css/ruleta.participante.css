@@ -21,11 +21,9 @@
   transform: translateX(-50%);
   width:0;
   height:0;
-
   border-left: 16px solid transparent;
   border-right: 16px solid transparent;
-  border-top: 32px solid var(--gold);  /* <-- antes era border-bottom */
-
+  border-top: 32px solid var(--gold); /* punta hacia abajo */
   filter: drop-shadow(0 6px 10px rgba(0,0,0,.75));
   z-index: 6;
 }
@@ -34,14 +32,14 @@
   content:"";
   position:absolute;
   left:-12px;
-  top:-28px; /* ojo: cambia porque ahora es border-top */
+  top:-28px; /* SUBE el triángulo interno para que quede dentro */
   width:0;
   height:0;
-
   border-left: 12px solid transparent;
   border-right: 12px solid transparent;
-  border-top: 24px solid rgba(2,6,23,.95);
+  border-top: 24px solid rgba(2,6,23,.95); /* MISMA dirección (hacia abajo) */
 }
+
 
 
 /* Disco que gira */
@@ -208,4 +206,95 @@
    ========================= */
 @media (max-width: 640px) {
   #countdownBig { font-size: 6rem; }
+}
+
+
+/* =========================
+   GANADOR FLOTANTE (PARTICIPANTE)
+   ========================= */
+
+.winner-float{
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  transform: translateX(-50%);
+  z-index: 7;
+  pointer-events: none;
+}
+
+.winner-float__pill{
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+
+  padding: .46rem .78rem;
+  border-radius: 999px;
+
+  background: linear-gradient(180deg, rgba(2,6,23,.78), rgba(2,6,23,.62));
+  border: 1px solid rgba(255,215,0,.30);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 16px 34px rgba(0,0,0,.55),
+    inset 0 0 0 1px rgba(255,255,255,.06);
+}
+
+/* etiqueta mini */
+.winner-float__label{
+  font-size: .66rem;
+  font-weight: 900;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.82);
+}
+
+/* número (protagonista, sin #) */
+.winner-float__num{
+  font-size: .92rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+  color: var(--gold, #facc15);
+  text-shadow: 0 2px 12px rgba(255,215,0,.28);
+}
+
+/* nombre */
+.winner-float__name{
+  font-size: .84rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.92);
+
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* animación de aparición */
+.winner-float.winner-float--show .winner-float__pill{
+  animation: winnerPopUser .30s cubic-bezier(.25,.9,.3,1.15) both;
+}
+
+@keyframes winnerPopUser{
+  from { transform: translateY(-6px) scale(.96); opacity: 0; }
+  to   { transform: translateY(0)   scale(1);   opacity: 1; }
+}
+
+/* ✅ Ajuste PARTICIPANTE: en pantallas pequeñas mejor abajo para no tapar puntero */
+.winner-float--participant{
+  top: 14px; /* desktop */
+}
+
+@media (max-width: 520px){
+  .winner-float--participant{
+    top: auto;
+    bottom: 14px;            /* móvil: abajo, más cómodo */
+    transform: translateX(-50%);
+  }
+  .winner-float__pill{
+    padding: .42rem .68rem;
+    gap: .45rem;
+  }
+  .winner-float__name{ max-width: 120px; }
 }
