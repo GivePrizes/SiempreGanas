@@ -42,14 +42,14 @@
       <section class="card cuentas-toolbar">
         <div class="toolbar-row">
           <div class="toolbar-left">
-            <label class="label">Buscar</label>
+            <label class="label" for="q">Buscar</label>
             <input id="q" class="input" placeholder="Nombre, correo, teléfono, número, sorteo..." />
           </div>
 
           <div class="toolbar-right">
-            <button class="chip active" data-filter="todos">Todos</button>
-            <button class="chip" data-filter="pendiente">Pendientes</button>
-            <button class="chip" data-filter="entregada">Entregadas</button>
+            <button class="chip active" data-filter="todos" type="button">Todos</button>
+            <button class="chip" data-filter="pendiente" type="button">Pendientes</button>
+            <button class="chip" data-filter="entregada" type="button">Entregadas</button>
           </div>
         </div>
 
@@ -86,8 +86,11 @@
 
   <div id="toast" class="toast hidden">Acción realizada</div>
 
+  <!-- Base -->
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
-  <script type="module" src="../assets/js/admin/cuentas-sorteo.js"></script>
+
+  <!-- ✅ Entry point del micro-módulo -->
+  <script type="module" src="../assets/js/admin/cuentas-sorteo/index.js"></script>
 </body>
 </html>
