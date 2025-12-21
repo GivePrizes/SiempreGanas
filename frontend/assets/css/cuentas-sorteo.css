@@ -1,0 +1,226 @@
+/* assets/css/cuentas-sorteo.css */
+/* Estilos aislados para el módulo "Entrega de cuentas" */
+
+.cuentas-toolbar .toolbar-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.toolbar-left {
+  min-width: 260px;
+  flex: 1;
+}
+
+.label {
+  display: block;
+  font-size: 12px;
+  opacity: .8;
+  margin-bottom: 6px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: inherit;
+  outline: none;
+}
+
+.input:focus {
+  border-color: rgba(255,255,255,.22);
+}
+
+.toolbar-right {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  padding: 10px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  opacity: .9;
+}
+
+.chip.active {
+  border-color: rgba(255,255,255,.28);
+  background: rgba(255,255,255,.08);
+  opacity: 1;
+}
+
+.mini-note {
+  margin-top: 10px;
+  font-size: 12px;
+  opacity: .75;
+}
+
+.acordeon {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ac-item {
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255,255,255,.03);
+}
+
+.ac-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ac-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ac-title strong {
+  font-size: 15px;
+}
+
+.ac-title span {
+  font-size: 12px;
+  opacity: .8;
+}
+
+.ac-badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.badge {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  opacity: .9;
+}
+
+.badge.pendiente {
+  border-color: rgba(255, 214, 0, .25);
+}
+
+.badge.entregada {
+  border-color: rgba(0, 255, 170, .18);
+}
+
+.ac-body {
+  display: none;
+  padding: 12px 14px 14px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.ac-item.open .ac-body {
+  display: block;
+}
+
+.users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.08);
+  flex-wrap: wrap;
+}
+
+.user-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 260px;
+  flex: 1;
+}
+
+.user-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.user-meta {
+  font-size: 12px;
+  opacity: .8;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.numbers {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  opacity: .9;
+}
+
+.user-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-mini {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  cursor: pointer;
+  font-size: 13px;
+  color: inherit;
+}
+
+.btn-mini.primary {
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.08);
+}
+
+.btn-mini:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.empty {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px dashed rgba(255,255,255,.14);
+  opacity: .85;
+}
+
+.empty-title {
+  font-weight: 700;
+}
+
+.empty-sub {
+  font-size: 13px;
+  opacity: .85;
+  margin-top: 6px;
+}
+
+.hidden { display: none; }

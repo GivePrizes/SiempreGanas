@@ -3,6 +3,7 @@ import { cargarComprobantes } from './comprobantes.js';
 import { cargarStats } from './stats.js';
 import { cargarGraficos } from './graficos.js';
 import { cargarSorteosAdmin } from './sorteos-admin.js';
+import { hasPerm } from './permisos.js';
 
 // Al cargar el panel admin, verificamos que haya token y que sea admin
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,15 +16,38 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Inicializar módulos
-  cargarComprobantes();
-  setInterval(cargarComprobantes, 10000); // refresco suave
+  // ✅ Permisos
+  const puedePagos = hasPerm('pagos:aprobar');
+  const puedeCuentas = hasPerm('cuentas:gestionar');
 
-  cargarStats();
-  setInterval(cargarStats, 15000);
+  // ✅ Si es admin SOLO de cuentas, lo mandamos a su panel dedicado
+  if (puedeCuentas && !puedePagos) {
+    location.href = 'cuentas-sorteo.html';
+    return;
+  }
 
-  cargarGraficos();
+  // ✅ Si NO tiene pagos: ocultamos bloques y NO llamamos endpoints de pagos (evita 403 spam)
+  if (!puedePagos) {
+    const bloqueComprobantes = document.getElementById('bloqueComprobantes');
+    if (bloqueComprobantes) bloqueComprobantes.style.display = 'none';
 
+    const bloqueStats = document.getElementById('bloqueStats');
+    if (bloqueStats) bloqueStats.style.display = 'none';
+
+    const bloqueGraficos = document.getElementById('bloqueGraficos');
+    if (bloqueGraficos) bloqueGraficos.style.display = 'none';
+  } else {
+    // ✅ Admin pagos: carga normal
+    cargarComprobantes();
+    setInterval(cargarComprobantes, 10000);
+
+    cargarStats();
+    setInterval(cargarStats, 15000);
+
+    cargarGraficos();
+  }
+
+  // ✅ Sorteos (solo lectura) para admins que vean este panel
   cargarSorteosAdmin();
   setInterval(cargarSorteosAdmin, 20000);
 });
