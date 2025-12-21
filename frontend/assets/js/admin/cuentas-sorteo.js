@@ -49,7 +49,7 @@ function guardAdmin() {
 }
 
 /**
- * Normaliza respuesta del backend a un formato estable:
+ * ✅ Normaliza respuesta del backend a un formato estable:
  * [
  *  {
  *    sorteo_id,
@@ -63,14 +63,59 @@ function guardAdmin() {
  *  }
  * ]
  *
- * NOTA: Como no tengo tu response exacta, lo hago tolerante:
- * - Si el backend ya manda {sorteo_id, descripcion, usuarios:[...]} -> perfecto
- * - Si manda un array plano de filas -> lo agrupamos
+ * SOPORTA:
+ * - Forma del backend actual: { sorteoId, descripcion, resumen, participantes[] }
+ * - Forma agrupada vieja: { usuarios/users[] }
+ * - Forma plana: filas
  */
 function normalize(data) {
   if (!Array.isArray(data)) return [];
 
-  // Caso A: ya viene agrupado por sorteo
+  // ✅ CASO 1 (TU BACKEND REAL): viene por sorteos con participantes
+  const looksBackendNew =
+    data.length > 0 &&
+    (data[0].participantes || data[0].resumen || data[0].sorteoId);
+
+  if (looksBackendNew) {
+    return data.map(s => {
+      const participantesRaw = s.participantes || [];
+      const usuarios = participantesRaw.map(p => ({
+        usuario_id: p.usuarioId ?? p.usuario_id ?? p.id ?? p.user_id,
+        nombre: p.nombre ?? p.usuario_nombre ?? p.name ?? 'Sin nombre',
+        email: p.email ?? p.usuario_email ?? '',
+        telefono: p.telefono ?? p.usuario_telefono ?? '',
+        numeros: Array.isArray(p.numeros)
+          ? p.numeros
+          : (typeof p.numeros === 'string'
+              ? p.numeros.split(',').map(x => x.trim()).filter(Boolean)
+              : []),
+        // 👇 IMPORTANTE: backend usa entregaEstado
+        estado: p.entregaEstado ?? p.entrega_estado ?? p.estado ?? 'pendiente',
+      }));
+
+      // ✅ si backend trae resumen, úsalo (más fiable)
+      const pendientes =
+        (s.resumen && Number.isFinite(s.resumen.pendientes))
+          ? s.resumen.pendientes
+          : usuarios.filter(x => x.estado === 'pendiente').length;
+
+      const entregadas =
+        (s.resumen && Number.isFinite(s.resumen.entregadas))
+          ? s.resumen.entregadas
+          : usuarios.filter(x => x.estado === 'entregada').length;
+
+      return {
+        sorteo_id: s.sorteoId ?? s.sorteo_id ?? s.id,
+        sorteo_titulo: s.descripcion ?? s.sorteo_titulo ?? s.titulo ?? `Sorteo #${s.sorteoId ?? s.sorteo_id ?? s.id}`,
+        sorteo_premio: s.premio ?? s.sorteo_premio ?? '',
+        pendientes,
+        entregadas,
+        usuarios,
+      };
+    }).sort((a, b) => (b.pendientes - a.pendientes));
+  }
+
+  // Caso 2: ya viene agrupado por sorteo (usuarios/users)
   const looksGrouped = data.length > 0 && (data[0].usuarios || data[0].users);
   if (looksGrouped) {
     return data.map(s => {
@@ -80,7 +125,11 @@ function normalize(data) {
         nombre: u.nombre ?? u.usuario ?? u.name ?? 'Sin nombre',
         email: u.email ?? '',
         telefono: u.telefono ?? u.phone ?? '',
-        numeros: Array.isArray(u.numeros) ? u.numeros : (typeof u.numeros === 'string' ? u.numeros.split(',').map(x => x.trim()).filter(Boolean) : []),
+        numeros: Array.isArray(u.numeros)
+          ? u.numeros
+          : (typeof u.numeros === 'string'
+              ? u.numeros.split(',').map(x => x.trim()).filter(Boolean)
+              : []),
         estado: u.estado ?? u.estado_entrega ?? u.entrega_estado ?? 'pendiente',
       }));
 
@@ -98,7 +147,7 @@ function normalize(data) {
     });
   }
 
-  // Caso B: viene plano (filas). Agrupar por sorteo_id
+  // Caso 3: viene plano (filas). Agrupar por sorteo_id
   const map = new Map();
   for (const row of data) {
     const sorteo_id = row.sorteo_id ?? row.id_sorteo ?? row.sorteoId;
@@ -124,7 +173,7 @@ function normalize(data) {
       numeros: Array.isArray(row.numeros)
         ? row.numeros
         : (row.numero ? [String(row.numero)] : (typeof row.numeros === 'string' ? row.numeros.split(',').map(x => x.trim()).filter(Boolean) : [])),
-      estado: row.estado ?? row.estado_entrega ?? 'pendiente',
+      estado: row.entrega_estado ?? row.estado ?? row.estado_entrega ?? 'pendiente',
     };
 
     item.usuarios.push(u);
@@ -136,30 +185,20 @@ function normalize(data) {
     return { ...s, pendientes, entregadas };
   });
 
-  // Orden sugerido: más pendientes arriba
   out.sort((a, b) => (b.pendientes - a.pendientes));
   return out;
 }
 
 function sanitizePhone(raw) {
   if (!raw) return '';
-  // deja solo dígitos
   let digits = String(raw).replace(/\D/g, '');
   if (!digits) return '';
-
-  // si ya viene con 57 y tiene longitud > 10, lo dejamos
   if (digits.startsWith('57')) return digits;
-
-  // si viene como 3XXXXXXXXX (10 dígitos CO), prefija 57
   if (digits.length === 10) return `57${digits}`;
-
-  // si viene con 0 o +57 raro, normaliza
-  if (digits.length > 10 && digits.endsWith(digits.slice(-10))) {
+  if (digits.length > 10) {
     const last10 = digits.slice(-10);
-    return `57${last10}`;
+    if (last10.length === 10) return `57${last10}`;
   }
-
-  // fallback: lo devuelvo como esté
   return digits;
 }
 
@@ -202,12 +241,10 @@ function render() {
   elEmpty.classList.add('hidden');
 
   for (const sorteo of data) {
-    // Filtra usuarios por estado + query
     const usersFiltered = (sorteo.usuarios || [])
       .filter(matchesFilterUser)
       .filter(u => matchesQuery(sorteo, u));
 
-    // Si un sorteo queda vacío por filtro/busqueda, lo ocultamos
     if (usersFiltered.length === 0) continue;
 
     const isOpen = state.open.has(String(sorteo.sorteo_id));
@@ -221,7 +258,7 @@ function render() {
       const k = String(sorteo.sorteo_id);
       if (state.open.has(k)) state.open.delete(k);
       else state.open.add(k);
-      render(); // re-render para mostrar/ocultar body
+      render();
     });
 
     const title = document.createElement('div');
@@ -275,7 +312,6 @@ function render() {
       const right = document.createElement('div');
       right.className = 'user-right';
 
-      // WhatsApp
       const btnWA = document.createElement('a');
       btnWA.className = 'btn-mini';
       btnWA.textContent = 'WhatsApp';
@@ -288,7 +324,6 @@ function render() {
         btnWA.style.pointerEvents = 'none';
       }
 
-      // Email
       const btnMail = document.createElement('a');
       btnMail.className = 'btn-mini';
       btnMail.textContent = 'Email';
@@ -299,7 +334,6 @@ function render() {
         btnMail.style.pointerEvents = 'none';
       }
 
-      // Entregada
       const btnEntregar = document.createElement('button');
       btnEntregar.className = 'btn-mini primary';
       btnEntregar.textContent = (u.estado === 'entregada') ? 'Entregada ✅' : 'Marcar entregada';
@@ -313,7 +347,7 @@ function render() {
         try {
           await marcarEntregada(sorteo.sorteo_id, u.usuario_id);
           toast('Marcado como entregada ✅');
-          await refresh(true); // refresco suave
+          await refresh(true);
         } catch (err) {
           console.error(err);
           toast('No se pudo marcar. Revisa permisos.');
@@ -340,7 +374,6 @@ function render() {
     elAcordeon.appendChild(item);
   }
 
-  // Si por filtros/busqueda no quedó nada visible:
   if (!elAcordeon.children.length) {
     elEmpty.classList.remove('hidden');
   } else {
@@ -354,16 +387,22 @@ async function fetchSorteosCuentas() {
     headers: { Authorization: `Bearer ${token}` }
   });
 
-  if (res.status === 403) {
-    throw new Error('Forbidden: no autorizado');
-  }
+  if (res.status === 403) throw new Error('Forbidden: no autorizado');
   if (!res.ok) {
     const txt = await res.text().catch(() => '');
     throw new Error(`Error ${res.status}: ${txt}`);
   }
 
-  const data = await res.json();
-  return normalize(data);
+  const raw = await res.json();
+
+  // ✅ importante: normalizamos con soporte a participantes/resumen
+  const normalized = normalize(raw);
+
+  // DEBUG rápido (puedes comentar luego)
+  console.log('[CUENTAS] RAW:', raw);
+  console.log('[CUENTAS] NORMALIZED:', normalized);
+
+  return normalized;
 }
 
 async function marcarEntregada(sorteoId, usuarioId) {
@@ -381,11 +420,6 @@ async function marcarEntregada(sorteoId, usuarioId) {
   return res.json();
 }
 
-/**
- * refresh suave:
- * - conserva acordeones abiertos
- * - no hace “saltos”
- */
 async function refresh(silent = false) {
   const prevScroll = window.scrollY;
 
@@ -408,13 +442,11 @@ async function refresh(silent = false) {
 }
 
 function setupFilters() {
-  // buscador
-  elQ.addEventListener('input', () => {
+  elQ?.addEventListener('input', () => {
     state.q = elQ.value || '';
     render();
   });
 
-  // chips
   const chips = document.querySelectorAll('.chip');
   chips.forEach(chip => {
     chip.addEventListener('click', () => {
@@ -425,7 +457,6 @@ function setupFilters() {
     });
   });
 
-  // refrescar manual
   btnRefrescar?.addEventListener('click', () => refresh(false));
 }
 
@@ -435,11 +466,9 @@ async function init() {
   setupFilters();
   await refresh(false);
 
-  // auto refresh suave
   setInterval(() => refresh(true), REFRESH_MS);
 }
 
-// start
 init().catch(err => {
   console.error(err);
   toast('Error cargando cuentas. Revisa el servicio.');
