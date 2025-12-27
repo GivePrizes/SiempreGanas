@@ -29,3 +29,11 @@ export async function cargarCuentas() {
 
   renderAcordeon(data);
 }
+
+// ✅ Ejecutar al cargar la página + botón refrescar
+document.addEventListener('DOMContentLoaded', () => {
+  cargarCuentas();
+
+  const btn = document.getElementById('btnRefrescar');
+  if (btn) btn.addEventListener('click', cargarCuentas);
+});
