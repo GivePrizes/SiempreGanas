@@ -1,5 +1,5 @@
 export function renderAcordeon(sorteos) {
-  const cont = document.getElementById('acordeonCuentas');
+  const cont = document.getElementById('acordeonSorteos');
   if (!cont) return;
 
   cont.innerHTML = '';
