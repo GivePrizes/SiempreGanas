@@ -43,6 +43,7 @@ function authHeaders() {
 // Estado
 let ruletaInfo = null;
 let misNumeros = [];
+let microMoveDone = false;
 
 let countdownInterval = null;
 let pollingInterval = null;
@@ -165,6 +166,56 @@ function construirRuletaDesdeMisNumeros(numeros) {
   ruletaCircle.style.transform = `rotate(${rotacionActual}deg)`;
 }
 
+
+function spinToWinnerIfPossible(numeroGanador) {
+  if (!ruletaCircle) return;
+
+  const num = Number(numeroGanador);
+  if (!Number.isFinite(num)) return;
+
+  // La ruleta del participante SOLO tiene misNumeros
+  const total = misNumeros.length;
+  if (!total) return;
+
+  const idx = misNumeros.findIndex(n => Number(n) === num);
+
+  // Si el ganador NO está en misNumeros, no podemos alinear un slice inexistente.
+  if (idx < 0) {
+    // Igual metemos adrenalina: un mini spin y listo (sin prometer que "cae" en el ganador)
+    const vueltas = 3 + Math.floor(Math.random() * 2); // 3–4 vueltas
+    const destino = rotacionActual + vueltas * 360 + (40 + Math.random() * 80);
+    ruletaCircle.style.transition = 'transform 2200ms cubic-bezier(.12,.9,.12,1)';
+    // forzar reflow para que la transición aplique
+    void ruletaCircle.offsetHeight;
+    ruletaCircle.style.transform = `rotate(${destino}deg)`;
+    rotacionActual = destino;
+    return;
+  }
+
+  // ✅ Giro determinístico al slice ganador (centro del slice al puntero)
+  const anguloSlice = 360 / total;
+  const anguloCentro = idx * anguloSlice + anguloSlice / 2;
+
+  // Más adrenalina: más vueltas + micro variación casi imperceptible
+  const vueltasExtra = 6 + Math.floor(Math.random() * 3); // 6–8 vueltas
+  const jitter = (Math.random() * 2 - 1) * (anguloSlice * 0.08); // ±8% de un slice
+  const destino = rotacionActual + vueltasExtra * 360 + (360 - anguloCentro) + jitter;
+
+  // Transición “premium”
+  ruletaCircle.style.transition = 'transform 4800ms cubic-bezier(.12,.9,.12,1)';
+  void ruletaCircle.offsetHeight;
+  ruletaCircle.style.transform = `rotate(${destino}deg)`;
+  rotacionActual = destino;
+
+  // Cuando termina, marcamos visualmente el slice ganador (si quieres)
+  setTimeout(() => {
+    const slices = Array.from(ruletaCircle.querySelectorAll('.ruleta-slice'));
+    slices.forEach(el => el.classList.remove('ganador'));
+    if (slices[idx]) slices[idx].classList.add('ganador');
+  }, 4900);
+}
+
+
 // ==========================
 // Fetchers
 // ==========================
@@ -263,13 +314,27 @@ function renderRuletaInfo() {
     if (ruleta_estado === 'no_programada') {
       ruletaHint.textContent =
         'El sorteo está completo. El admin programará la ruleta pronto.';
+
     } else if (ruleta_estado === 'programada') {
       ruletaHint.textContent =
         'Quédate aquí: cuando llegue la hora, verás el resultado premium.';
+
+    if (ruletaCircle && !microMoveDone) {
+      microMoveDone = true;
+      ruletaCircle.style.transition = 'transform 900ms ease';
+      ruletaCircle.style.transform = `rotate(${rotacionActual + 25}deg)`;
+      rotacionActual += 25;
+
+      // permitir otro micro-move después de unos segundos (opcional)
+      setTimeout(() => { microMoveDone = false; }, 4000);
+    }
+
+
     } else {
       ruletaHint.textContent = 'Resultado oficial registrado.';
     }
   }
+
 
   // ==========================
   // FINALIZADA
@@ -292,6 +357,10 @@ function renderRuletaInfo() {
 
     // Resaltar si es tu número
     marcarGanadorEnMisNumeros(numeroGanadorNum);
+
+    // : hacer que la ruleta “caiga” (si aplica) en el ganador
+    // (si el ganador está en misNumeros, clava el slice; si no, hace spin corto estético)
+    spinToWinnerIfPossible(numeroGanadorNum);
 
     // Celebración (solo una vez)
     celebrarGanadorOnce(numeroGanadorNum);
