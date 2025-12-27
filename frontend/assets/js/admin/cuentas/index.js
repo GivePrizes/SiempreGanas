@@ -1,4 +1,5 @@
 import { renderAcordeon } from './render.js';
+
 const API_URL = window.API_URL || '';
 
 export async function cargarCuentas() {
@@ -9,12 +10,11 @@ export async function cargarCuentas() {
     headers: { Authorization: `Bearer ${token}` }
   });
 
-  const raw = await r.json();
-  renderAcordeon(raw);
-}
+  if (!r.ok) {
+    console.error('Error cargando cuentas:', r.status);
+    return;
+  }
 
-document.addEventListener('DOMContentLoaded', () => {
-  cargarCuentas();
-  const btn = document.getElementById('btnRefrescar');
-  if (btn) btn.addEventListener('click', cargarCuentas);
-});
+  const raw = await r.json();
+  renderAcordeon(raw); // ✅ DIRECTO
+}
