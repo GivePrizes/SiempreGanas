@@ -24,10 +24,14 @@ const ruletaHint = document.getElementById('ruletaHint');
 const misNumerosWrap = document.getElementById('misNumerosWrap');
 const winSoundEl = document.getElementById('winSound');
 
+
 // Winner float (PARTICIPANTE)
 const winnerFloat = document.getElementById('winnerFloat');
 const winnerFloatNumero = document.getElementById('winnerFloatNumero');
 const winnerFloatNombre = document.getElementById('winnerFloatNombre');
+// Número ganador grande en el centro de la ruleta
+const numeroGanadorOverlay = document.getElementById('numeroGanadorOverlay');
+const numeroGanadorBig = document.getElementById('numeroGanadorBig');
 
 // Auth
 const token = localStorage.getItem('token');
@@ -48,6 +52,8 @@ let microMoveDone = false;
 let countdownInterval = null;
 let pollingInterval = null;
 let refreshMisNumerosInterval = null;
+let spinLocked = false; // evita giros dobles cuando ya se mostró el resultado
+
 
 let rotacionActual = 0;
 
@@ -162,6 +168,8 @@ function construirRuletaDesdeMisNumeros(numeros) {
     ruletaCircle.appendChild(slice);
   });
 
+
+
   // mantener rotación actual
   ruletaCircle.style.transform = `rotate(${rotacionActual}deg)`;
 }
@@ -169,6 +177,8 @@ function construirRuletaDesdeMisNumeros(numeros) {
 
 function spinToWinnerIfPossible(numeroGanador) {
   if (!ruletaCircle) return;
+  if (spinLocked) return;
+
 
   const num = Number(numeroGanador);
   if (!Number.isFinite(num)) return;
@@ -178,12 +188,15 @@ function spinToWinnerIfPossible(numeroGanador) {
   if (!total) return;
 
   const idx = misNumeros.findIndex(n => Number(n) === num);
+  
 
   // Si el ganador NO está en misNumeros, no podemos alinear un slice inexistente.
   if (idx < 0) {
     // Igual metemos adrenalina: un mini spin y listo (sin prometer que "cae" en el ganador)
     const vueltas = 3 + Math.floor(Math.random() * 2); // 3–4 vueltas
     const destino = rotacionActual + vueltas * 360 + (40 + Math.random() * 80);
+    // transición “premium”
+    spinLocked = true;
     ruletaCircle.style.transition = 'transform 2200ms cubic-bezier(.12,.9,.12,1)';
     // forzar reflow para que la transición aplique
     void ruletaCircle.offsetHeight;
@@ -199,6 +212,8 @@ function spinToWinnerIfPossible(numeroGanador) {
   // Más adrenalina: más vueltas + micro variación casi imperceptible
   const vueltasExtra = 6 + Math.floor(Math.random() * 3); // 6–8 vueltas
   const jitter = (Math.random() * 2 - 1) * (anguloSlice * 0.08); // ±8% de un slice
+  
+  spinLocked = true;
   const destino = rotacionActual + vueltasExtra * 360 + (360 - anguloCentro) + jitter;
 
   // Transición “premium”
@@ -283,6 +298,11 @@ function renderRuletaInfo() {
     winnerFloat.classList.remove('winner-float--show');
   }
 
+  // Si no está finalizada, ocultamos overlay del número ganador
+  if (numeroGanadorOverlay) {
+    numeroGanadorOverlay.classList.add('oculto');
+  }
+
   // Títulos
   if (tituloSorteo) {
     tituloSorteo.textContent = descripcion
@@ -319,31 +339,36 @@ function renderRuletaInfo() {
       ruletaHint.textContent =
         'Quédate aquí: cuando llegue la hora, verás el resultado premium.';
 
-    if (ruletaCircle && !microMoveDone) {
-      microMoveDone = true;
-      ruletaCircle.style.transition = 'transform 900ms ease';
-      ruletaCircle.style.transform = `rotate(${rotacionActual + 25}deg)`;
-      rotacionActual += 25;
+      if (ruletaCircle && !microMoveDone) {
+        microMoveDone = true;
+        ruletaCircle.style.transition = 'transform 900ms ease';
+        ruletaCircle.style.transform = `rotate(${rotacionActual + 25}deg)`;
+        rotacionActual += 25;
 
-      // permitir otro micro-move después de unos segundos (opcional)
-      setTimeout(() => { microMoveDone = false; }, 4000);
-    }
-
+        setTimeout(() => { microMoveDone = false; }, 4000);
+      }
 
     } else {
       ruletaHint.textContent = 'Resultado oficial registrado.';
     }
   }
 
-
   // ==========================
   // FINALIZADA
   // ==========================
   if (ruleta_estado === 'finalizada' && numero_ganador != null) {
+    microMoveDone = false;
+
     const numeroGanadorNum = Number(numero_ganador);
     const nombreCorto = ganador?.nombre
       ? ganador.nombre.split(' ')[0]
       : 'Ganador';
+
+    // 🔥 Mostrar número ganador grande EN la ruleta
+    if (numeroGanadorOverlay && numeroGanadorBig) {
+      numeroGanadorBig.textContent = String(numeroGanadorNum).padStart(2, '0');
+      numeroGanadorOverlay.classList.remove('oculto');
+    }
 
     // Resultado principal
     if (resultadoRuleta) {
@@ -358,11 +383,12 @@ function renderRuletaInfo() {
     // Resaltar si es tu número
     marcarGanadorEnMisNumeros(numeroGanadorNum);
 
-    // : hacer que la ruleta “caiga” (si aplica) en el ganador
-    // (si el ganador está en misNumeros, clava el slice; si no, hace spin corto estético)
-    spinToWinnerIfPossible(numeroGanadorNum);
+    //  Giro SOLO una vez (spinLocked lo bloquea)
+    if (!spinLocked) {
+      spinToWinnerIfPossible(numeroGanadorNum);
+    }
 
-    // Celebración (solo una vez)
+    // Celebración SOLO una vez (alreadyCelebrated lo bloquea)
     celebrarGanadorOnce(numeroGanadorNum);
 
     // Detener timers
@@ -385,11 +411,13 @@ function renderRuletaInfo() {
     return;
   }
 
+
   // ==========================
   // NO FINALIZADA → countdown
   // ==========================
   iniciarCountdown();
 }
+
 
 
 function iniciarCountdown() {
@@ -471,8 +499,11 @@ function celebrarGanadorOnce(numeroGanador) {
   alreadyCelebrated = true;
   sessionStorage.setItem(celebrationKey, '1');
 
-  // 1) mini spin (1–2 vueltas) SOLO estética
-  miniSpin();
+  // 1) mini spin SOLO si NO hicimos giro al ganador
+  if (!spinLocked) {
+    miniSpin();
+  }
+
 
   // 2) confetti
   setTimeout(() => {
