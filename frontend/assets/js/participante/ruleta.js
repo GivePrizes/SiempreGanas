@@ -36,7 +36,7 @@ const numeroGanadorBig = document.getElementById('numeroGanadorBig');
 // Auth
 const token = localStorage.getItem('token');
 if (!token) {
-  const redirect = encodeURIComponent(`participante/ruleta.html?sorteo=${sorteoIdParam || ''}`);
+  const redirect = encodeURIComponent(`participante/ruleta-live.html?sorteo=${sorteoIdParam || ''}`);
   location.href = `../login.html?redirect=${redirect}`;
 }
 

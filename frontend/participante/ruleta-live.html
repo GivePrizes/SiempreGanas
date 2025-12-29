@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ruleta en vivo — Siempre Ganas</title>
+
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <link rel="stylesheet" href="../assets/css/ruleta-live.css">
+</head>
+
+<body>
+  <main class="wrap">
+    <header class="top">
+      <div>
+        <h1 class="title">Ruleta en vivo</h1>
+        <p id="subtitle" class="muted">Conectando…</p>
+      </div>
+      <div id="badgeEstado" class="badge">—</div>
+    </header>
+
+    <!-- Countdown -->
+    <section class="card" id="countdownCard">
+      <div class="countdownRow">
+        <div>
+          <div class="label">FALTAN</div>
+          <div id="countdown" class="countdown">--:--</div>
+        </div>
+
+        <div class="progress" aria-label="Progreso hacia la ruleta">
+          <div id="progressBar" class="progressBar"></div>
+        </div>
+      </div>
+
+      <p class="muted small" id="countdownHint">—</p>
+    </section>
+
+    <!-- Wheel -->
+    <section class="card wheelCard">
+      <div class="wheelWrap">
+        <div class="pointer" aria-hidden="true"></div>
+        <canvas id="wheel" width="520" height="520" aria-label="Ruleta"></canvas>
+      </div>
+
+      <div id="result" class="result hidden" aria-live="polite"></div>
+    </section>
+
+    <!-- Overlay 3-2-1 -->
+    <div id="overlay" class="overlay hidden" aria-hidden="true">
+      <div id="overlayNum" class="overlayNum">3</div>
+    </div>
+  </main>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/participante/ruleta-live.js"></script>
+    <!-- 🔊 Sonido ganador -->
+  <audio id="audioWin" src="../assets/sound/sonidoWin.mp3" preload="auto"></audio>
+
+</body>
+</html>
