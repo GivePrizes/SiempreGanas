@@ -50,7 +50,7 @@ export async function cargarSorteosAdmin() {
         }
 
         const btnRuleta = lleno
-          ? `<button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">
+          ? `<button class="btn btn-secondary btn-sm" onclick="location.href='ruleta-live.html?sorteo=${s.id}'">
                🎰 Lanzar ruleta
              </button>`
           : '';
