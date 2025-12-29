@@ -11,6 +11,16 @@ const authHeaders = () => ({
   "Authorization": `Bearer ${token}`,
 });
 
+const btnBack = document.getElementById("btnBack");
+if (btnBack) {
+  btnBack.addEventListener("click", () => {
+    // vuelve a donde venía o al dashboard
+    if (document.referrer) history.back();
+    else location.href = "dashboard.html";
+  });
+}
+
+
 const params = new URLSearchParams(location.search);
 const sorteoId = params.get("sorteo") || params.get("sorteoId");
 
@@ -32,6 +42,30 @@ let programadaPara = null; // Date
 let numeroGanador = null;
 
 let serverSkewMs = 0; // si luego agregas serverTime a ruleta-info, se usa
+let audioPrimed = false;
+function primeAudioOnce() {
+  if (!audioWin || audioPrimed) return;
+  audioPrimed = true;
+
+  // Intento de habilitar audio en móviles (requiere gesto del usuario)
+  audioWin.volume = 0;
+  const p = audioWin.play();
+  if (p && typeof p.then === "function") {
+    p.then(() => {
+      audioWin.pause();
+      audioWin.currentTime = 0;
+      audioWin.volume = 1;
+    }).catch(() => {
+      audioWin.volume = 1;
+    });
+  } else {
+    audioWin.volume = 1;
+  }
+}
+
+// Se activa al primer click/toque del usuario
+window.addEventListener("pointerdown", primeAudioOnce, { once: true });
+
 
 let segments = []; // [{numero:1}, ...]
 let wheelAngle = 0; // rad
@@ -154,15 +188,15 @@ function showResult(ganadorNombre){
     ? `✅ Resultado oficial: ${num} — ${ganadorNombre}`
     : `✅ Resultado oficial: ${num}`;
 
-  // 🔊 reproducir sonido ganador
   if (audioWin) {
     audioWin.currentTime = 0;
-    audioWin.play().catch(() => {
-      // autoplay bloqueado (normal en algunos navegadores)
-      // no hacemos nada, el sistema sigue funcionando
-    });
+    audioWin.volume = 1;
+    audioWin.play().catch(() => {});
   }
 }
+// =========================
+// SPINNING LOGIC
+// =========================
 
 
 // Gira hasta el ganador (sin inventarlo)
@@ -347,11 +381,11 @@ function tick(){
         // si aparece ganador y no hemos girado
         if (!didSpin && estado === "finalizada" && numeroGanador) {
           // si no hay snapshot, igual se puede animar con segmentos actuales
-          didSpin = true;
-          if (!did321) { did321 = true; await show321(); }
-          spinToWinner(numeroGanador);
-          const ganadorNombre = data?.ganador?.nombre || null;
-          showResult(ganadorNombre);
+            if (!did321) { did321 = true; await show321(); }
+            didSpin = true;
+            spinToWinner(numeroGanador);
+            const ganadorNombre = data?.ganador?.nombre || null;
+            showResult(ganadorNombre);
         }
 
         // si cambia ganador (poco probable), re-anima
