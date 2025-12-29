@@ -1,4 +1,16 @@
-const API_URL = window.API_URL || "";
+const apiBase = (window.API_URL || '').replace(/\/$/, '');
+const token = localStorage.getItem('token') || '';
+
+if (!token) {
+  // si no hay sesión, manda al login
+  location.href = '../login.html';
+}
+
+const authHeaders = () => ({
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${token}`,
+});
+
 const params = new URLSearchParams(location.search);
 const sorteoId = params.get("sorteo") || params.get("sorteoId");
 
@@ -197,24 +209,24 @@ function spinToWinner(winnerNumero){
 // FETCH (ruleta-info + numeros)
 // =========================
 async function fetchRuletaInfo(){
-  const res = await fetch(`${API_URL}/api/sorteos/${sorteoId}/ruleta-info`, {
-    headers: { "Content-Type":"application/json" }
+  const res = await fetch(`${apiBase}/api/sorteos/${sorteoId}/ruleta-info`, {
+    headers: authHeaders()
   });
+
   if(!res.ok) throw new Error("No se pudo cargar ruleta-info");
   const data = await res.json();
 
-  // Si luego aplicas el parche y llega serverTime
   if (data.serverTime) {
     serverSkewMs = new Date(data.serverTime).getTime() - Date.now();
   }
 
   estado = data.ruleta_estado || "no_programada";
   programadaPara = data.ruleta_hora_programada ? new Date(data.ruleta_hora_programada) : null;
-  numeroGanador =
-  (data.ruleta_log && data.ruleta_log.ganador_numero != null)
-    ? data.ruleta_log.ganador_numero
-    : (data.numero_ganador ?? null);
 
+  numeroGanador =
+    (data.ruleta_log && data.ruleta_log.ganador_numero != null)
+      ? data.ruleta_log.ganador_numero
+      : (data.numero_ganador ?? null);
 
   setEstadoBadge(safeUpper(estado));
 
@@ -224,44 +236,42 @@ async function fetchRuletaInfo(){
     estado === "finalizada" ? "Ruleta finalizada. Resultado oficial registrado." :
     "Actualizando…";
 
-  // 1) Si llega ruleta_log con snapshot (cuando finalizada), úsalo
+  // snapshot oficial si existe
   if (data.ruleta_log && Array.isArray(data.ruleta_log.participantes) && data.ruleta_log.participantes.length){
     segments = data.ruleta_log.participantes
       .filter(p => p && p.numero != null)
-      .map(p => ({ numero: p.numero }));
+      .map(p => ({ numero: Number(p.numero) }))
+      .sort((a,b) => a.numero - b.numero);
   }
 
   drawWheel();
 
-  // Si finalizada y hay ganador, animar una sola vez
+  // si ya está finalizada, animar UNA sola vez
   if (estado === "finalizada" && numeroGanador && !didSpin && segments.length){
+    const ganadorNombre = data?.ganador?.nombre || null;
+
+    if (!did321) { did321 = true; await show321(); }
+
     didSpin = true;
     spinToWinner(numeroGanador);
-
-    // mostrar resultado (si backend manda ganador.nombre)
-    const ganadorNombre = data?.ganador?.nombre || null;
-    // overlay 3,2,1 opcional (más show)
-    if (!did321) {
-      did321 = true;
-      await show321();
-    }
     showResult(ganadorNombre);
   }
 
   return data;
 }
 
+
 async function fetchNumerosSiHaceFalta(){
   if (segments.length) return;
 
-  const res = await fetch(`${API_URL}/api/sorteos/${sorteoId}/ruleta-numeros`, {
-    headers: { "Content-Type":"application/json" }
-  });
+  const res = await fetch(`${apiBase}/api/sorteos/${sorteoId}/ruleta-numeros`, {
+    headers: authHeaders()
+    });
   if(!res.ok) throw new Error("No se pudo cargar ruleta-numeros");
   const data = await res.json();
 
   const nums = Array.isArray(data.numeros) ? data.numeros : [];
-  segments = nums.map(n => ({ numero: n }));
+  segments = nums.map(n => ({ numero: Number(n) })).sort((a,b)=>a.numero-b.numero);
   drawWheel();
 }
 
