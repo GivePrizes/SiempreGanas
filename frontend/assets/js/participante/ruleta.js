@@ -586,15 +586,11 @@ async function init() {
 
   // refrescar mis números cada 10s (por si aprueban mientras miras)
   refreshMisNumerosInterval = setInterval(fetchMisNumeros, 10000);
+
+  
+  // ✅ chat aquí (1 sola vez)
+  if (sorteoId && token) initChat({ sorteoId, token });
 }
 
 document.addEventListener('DOMContentLoaded', init);
 
-// ==========================
-// Chat integration.
-// ==========================
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (sorteoId && token) initChat({ sorteoId, token });
-});
