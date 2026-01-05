@@ -28,6 +28,10 @@ const imgPreview = document.getElementById('imgPreview');
 
 const btnConfirmar = document.getElementById('btnConfirmar');
 const toast = document.getElementById('toast');
+const misNumerosEnSorteoCard = document.getElementById('misNumerosEnSorteoCard');
+const misNumerosEnSorteoTexto = document.getElementById('misNumerosEnSorteoTexto');
+const misNumerosEnSorteoChips = document.getElementById('misNumerosEnSorteoChips');
+
 
 let sorteoActual = null;
 let numerosOcupados = [];
@@ -210,6 +214,48 @@ function fileToBase64(file) {
   });
 }
 
+// --- cargar mis números en este sorteo ---
+async function cargarMisNumerosDelSorteo() {
+  const token = localStorage.getItem('token');
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  if (!token || !user.id) return;
+  if (!sorteoId) return;
+
+  if (!misNumerosEnSorteoCard || !misNumerosEnSorteoTexto || !misNumerosEnSorteoChips) return;
+
+  try {
+    const res = await fetch(
+      `${API_URL}/api/participante/mis-numeros?sorteoId=${encodeURIComponent(sorteoId)}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+    const nums = Array.isArray(data?.numeros) ? data.numeros : [];
+
+    if (nums.length === 0) {
+      misNumerosEnSorteoCard.style.display = 'none';
+      return;
+    }
+
+    misNumerosEnSorteoCard.style.display = 'block';
+    nums.sort((a, b) => Number(a) - Number(b));
+
+    misNumerosEnSorteoTexto.textContent = `Aprobados: ${nums.length} número(s)`;
+
+    misNumerosEnSorteoChips.innerHTML = nums.map(n => `
+      <span class="chip-numero">#${n}</span>
+    `).join('');
+
+  } catch (err) {
+    console.warn('Error cargando mis números del sorteo:', err);
+  }
+}
+
+
+
 // --- cargar sorteo desde backend ---
 async function cargarSorteo() {
   const token = localStorage.getItem('token');
@@ -273,6 +319,7 @@ async function cargarSorteo() {
         'Este sorteo ya está lleno. La ruleta puede activarse en cualquier momento.';
       if (btnConfirmar) {
         btnConfirmar.disabled = true;
+        await cargarMisNumerosDelSorteo();
         btnConfirmar.textContent = 'Cupo lleno';
       }
     }
@@ -429,4 +476,8 @@ if (btnConfirmar) {
 }
 
 // --- init ---
-document.addEventListener('DOMContentLoaded', cargarSorteo);
+document.addEventListener('DOMContentLoaded', () => {
+  cargarSorteo();
+  cargarMisNumerosDelSorteo();
+});
+

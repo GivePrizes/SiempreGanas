@@ -5,7 +5,7 @@ const API_URL  = 'https://app-service-phi.vercel.app';
 const AUTH_URL = 'https://siempregana-auth-service.vercel.app';
 
 // Chat Service (por ahora local; cuando lo despliegues cambias esta URL)
-const CHAT_URL = 'http://127.0.0.1:3005';
+const CHAT_URL = 'https://chat-service-six.vercel.app';
 
 // Supabase (para Realtime en el frontend)
 const SUPABASE_URL = 'https://TU-PROYECTO.supabase.co';
