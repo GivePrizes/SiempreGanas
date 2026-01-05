@@ -330,3 +330,92 @@
 .numero-ganador.oculto{
   display:none;
 }
+
+
+/* ===== CHAT ===== */
+.chat-card{
+  margin-top:16px;
+  padding:14px;
+  border-radius:16px;
+  background: rgba(15, 23, 42, 0.85);
+  border:1px solid rgba(148, 163, 184, 0.25);
+  backdrop-filter: blur(8px);
+}
+.chat-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.chat-head h3{ margin:0; font-size:1.05rem; }
+.muted{ opacity:.8; font-size:.85rem; margin:.25rem 0 0; }
+
+.chat-filters{ display:flex; gap:8px; margin:10px 0; flex-wrap:wrap; }
+.chip{
+  border:1px solid rgba(148,163,184,.25);
+  background: rgba(2,6,23,.35);
+  color:#e5e7eb;
+  padding:6px 10px;
+  border-radius:999px;
+  cursor:pointer;
+  font-size:.82rem;
+}
+.chip-active{ border-color: rgba(250,204,21,.65); }
+
+.chat-body{
+  height: 280px;
+  overflow:auto;
+  padding:10px;
+  border-radius:12px;
+  background: rgba(2,6,23,.35);
+  border:1px solid rgba(148,163,184,.18);
+}
+.chat-row{ margin:8px 0; }
+.chat-meta{ display:flex; gap:8px; align-items:baseline; font-size:.78rem; opacity:.85; }
+.chat-bubble{
+  margin-top:4px;
+  padding:10px 12px;
+  border-radius:14px;
+  background: rgba(30,41,59,.65);
+  border:1px solid rgba(148,163,184,.18);
+  line-height:1.25rem;
+  word-break:break-word;
+}
+.chat-row.mine .chat-bubble{
+  background: rgba(59,130,246,.20);
+  border-color: rgba(59,130,246,.25);
+}
+.chat-row.system .chat-bubble{
+  background: rgba(250,204,21,.12);
+  border-color: rgba(250,204,21,.28);
+}
+.chat-compose{
+  display:flex; gap:10px; margin-top:10px;
+}
+.chat-compose input{
+  flex:1;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(148,163,184,.25);
+  background: rgba(2,6,23,.35);
+  color:#e5e7eb;
+}
+.chat-compose button{
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid rgba(250,204,21,.35);
+  background: rgba(250,204,21,.18);
+  color:#fff;
+  cursor:pointer;
+}
+.chat-compose button:disabled{ opacity:.55; cursor:not-allowed; }
+.chat-new{
+  width:100%;
+  margin:10px 0 0;
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid rgba(59,130,246,.25);
+  background: rgba(59,130,246,.14);
+  color:#e5e7eb;
+  cursor:pointer;
+}
+.hidden{ display:none; }
+.chat-sound{ display:flex; gap:6px; align-items:center; font-size:.85rem; opacity:.9; }
+

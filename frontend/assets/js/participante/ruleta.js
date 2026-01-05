@@ -588,3 +588,12 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// ==========================
+// Chat integration.
+// ==========================
+import { initChat } from '../chat/index.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (sorteoId && token) initChat({ sorteoId, token });
+});

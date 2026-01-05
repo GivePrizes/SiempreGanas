@@ -96,6 +96,39 @@
       <div id="resultadoRuleta" class="resultado-ruleta" style="margin-top:1rem;"></div>
     </section>
 
+    <!-- Chat -->
+     <section class="chat-card">
+      <div class="chat-head">
+        <div>
+          <h3>Chat en vivo</h3>
+          <p class="muted">Solo participantes pueden escribir. Todos pueden leer.</p>
+        </div>
+
+        <label class="chat-sound">
+          <input type="checkbox" id="chatSoundToggle">
+          <span>Sonido</span>
+        </label>
+      </div>
+
+      <div class="chat-filters" id="chatFilters">
+        <button class="chip chip-active" data-filter="all">Todos</button>
+        <button class="chip" data-filter="system">Sistema</button>
+        <button class="chip" data-filter="mine">Míos</button>
+      </div>
+
+      <div class="chat-body" id="chatBody"></div>
+
+      <button class="chat-new hidden" id="chatNewBtn">Nuevos mensajes ↓</button>
+
+      <div class="chat-compose">
+        <input id="chatInput" maxlength="120" placeholder="Escribe algo… (120 máx)" />
+        <button id="chatSend">Enviar</button>
+      </div>
+
+      <div class="chat-hint muted" id="chatHint"></div>
+    </section>
+
+
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
