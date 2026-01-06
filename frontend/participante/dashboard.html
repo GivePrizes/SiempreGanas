@@ -13,41 +13,45 @@
   <div class="main-container">
 
     <!-- HEADER / BIENVENENIDA -->
-    <header class="dashboard-header">
-      <div>
-        <h2 id="tituloBienvenida">Hola 👋</h2>
-        <p id="subtituloBienvenida" class="text-muted">
+    <header class="app-topbar">
+      <div class="app-topbar-left">
+        <h2 id="tituloBienvenida" class="app-title">Hola 👋</h2>
+        <p id="subtituloBienvenida" class="app-subtitle">
           Elige tus números, sube tu comprobante y deja que la ruleta haga su magia.
         </p>
       </div>
-      <div>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          onclick="location.href='mis-numeros.html'">
+
+      <div class="app-topbar-actions">
+        <button type="button" class="btn btn-ghost" onclick="location.href='mis-numeros.html'">
           🎟 Mis números
         </button>
-        <button
-          type="button"
-          class="btn btn-danger"
-          onclick="logout()">
-          Salir
+
+        <button type="button" class="btn btn-icon" onclick="logout()" aria-label="Salir" title="Salir">
+          ⎋
         </button>
       </div>
     </header>
 
+
     <!-- 📊 RESUMEN RÁPIDO -->
-    <section class="dashboard-summary">
-      <div class="summary-card">
-        <div class="summary-label">Sorteos activos</div>
-        <div class="summary-value" id="statSorteosActivos">—</div>
+    <section class="stats-row">
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Sorteos activos</span>
+          <span class="stat-ico">🎯</span>
+        </div>
+        <div class="stat-value" id="statSorteosActivos">—</div>
       </div>
-      <div class="summary-card">
-        <div class="summary-label">Números comprados</div>
-        <div class="summary-value" id="statMisNumeros">—</div>
+
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">Números comprados</span>
+          <span class="stat-ico">🎟</span>
+        </div>
+        <div class="stat-value" id="statNumerosComprados">—</div>
       </div>
-      
     </section>
+
 
     <!-- 🎯 SORTEOS DISPONIBLES -->
     <section class="sorteos-section">

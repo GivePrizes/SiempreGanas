@@ -1118,3 +1118,77 @@
     grid-template-columns: repeat(7, 1fr);
   }
 }
+
+
+/* Dashboard app-like */
+.app-topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.app-title{
+  font-size: 1.35rem;
+  margin: 0;
+}
+.app-subtitle{
+  margin: 4px 0 0;
+  color: var(--colour-muted);
+  font-size: .92rem;
+}
+
+.app-topbar-actions{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+
+/* Stats row */
+.stats-row{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0 20px;
+}
+
+.stat-card{
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.35);
+}
+
+.stat-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color: rgba(255,255,255,.72);
+  font-size: .85rem;
+}
+
+.stat-value{
+  margin-top: 8px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: .3px;
+}
+
+/* Mobile */
+@media (max-width: 768px){
+  .app-topbar{
+    flex-direction: column;
+  }
+  .app-topbar-actions{
+    width:100%;
+  }
+  .app-topbar-actions .btn.btn-ghost{
+    flex:1;
+    justify-content:center;
+  }
+}
+/*=============================
+   Fin participante.css
+   ============================= */
