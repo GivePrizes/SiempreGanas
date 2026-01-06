@@ -300,8 +300,24 @@
   }
 }
 
-/* Mantengo el comportamiento app-like del botón y un ajuste ligero para pantallas pequeñas
-   (si necesitas más cambios móviles, dime exactamente qué prefieres). */
+/* En móvil: acciones en una fila ordenada */
+@media (max-width: 768px){
+  .header-actions{
+    width:100%;
+    justify-content:flex-start;
+    gap:8px;
+  }
+  .header-actions .btn{
+    height: 42px;
+  }
+  .header-actions .btn.btn-primary{
+    flex: 1;              /* Mis números se vuelve el “principal” */
+    justify-content:center;
+  }
+  .header-actions .btn.btn-ghost{
+    flex: 0 0 auto;
+  }
+}
 
 /* =============================
    Resumen rápido del dashboard
