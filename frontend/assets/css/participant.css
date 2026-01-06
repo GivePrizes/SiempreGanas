@@ -1189,6 +1189,15 @@
     justify-content:center;
   }
 }
+
+.stat-hint{
+  display:block;
+  margin-top:2px;
+  font-size:.72rem;
+  color: var(--colour-muted);
+  line-height:1.2;
+}
+
 /*=============================
    Fin participante.css
    ============================= */

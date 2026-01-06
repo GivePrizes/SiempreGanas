@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Siempre Gana — Mis sorteos</title>
 
-  <!-- CSS modular nuevo -->
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/participant.css">
 </head>
@@ -17,7 +16,7 @@
       <div class="app-topbar-left">
         <h2 id="tituloBienvenida" class="app-title">Hola 👋</h2>
         <p id="subtituloBienvenida" class="app-subtitle">
-          Elige tus números, sube tu comprobante y deja que la ruleta haga su magia.
+          Adquiere tus números, sube tu comprobante y espera la dinámica.
         </p>
       </div>
 
@@ -32,7 +31,6 @@
       </div>
     </header>
 
-
     <!-- 📊 RESUMEN RÁPIDO -->
     <section class="stats-row">
       <div class="stat-card">
@@ -45,23 +43,22 @@
 
       <div class="stat-card">
         <div class="stat-top">
-          <span class="stat-label">Números comprados</span>
+          <span class="stat-label">Números adquiridos</span>
+          <small class="stat-hint">Cada 20 → 1 adicional</small>
           <span class="stat-ico">🎟</span>
         </div>
         <div class="stat-value" id="statNumerosComprados">—</div>
       </div>
     </section>
 
-
     <!-- 🎯 SORTEOS DISPONIBLES -->
     <section class="sorteos-section">
       <h2>🎯 Sorteos disponibles</h2>
       <p class="section-description">
-        Cada número que compras es tu acceso al producto digital <strong>y</strong> a la ruleta.
-        Cuando se llenen todos los números, el sorteo se activa en vivo.
+        Cada número que adquieres incluye acceso a un producto digital <strong>y</strong> a la dinámica.
+        Cuando se completen los cupos, se activa la ruleta en vivo.
       </p>
 
-      <!-- Aquí el JS pinta las tarjetas de sorteos -->
       <div id="sorteosActivos" class="sorteos-grid">
         <!-- tarjetas generadas por ../assets/js/participante/index.js -->
       </div>
@@ -69,8 +66,6 @@
 
   </div>
 
-
-  <!-- WhatsApp flotante (solo Dashboard) -->
   <a
     href="https://wa.me/573171688514?text=Hola%20Siempre%20Ganas,%20necesito%20ayuda%20con%20un%20sorteo%20🎯"
     class="whatsapp-float-dashboard"
@@ -83,8 +78,6 @@
     />
   </a>
 
-
-  <!-- Scripts existentes (no tocar) -->
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script type="module" src="../assets/js/participante/index.js"></script>
