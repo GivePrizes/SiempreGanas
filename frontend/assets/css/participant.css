@@ -207,7 +207,11 @@
 }
 
 /* Header de dashboard / mis números */
-.dashboard-header {
+/* Flex para alinear título y botón */
+/*============================= */
+/*   Header de dashboard / mis números
+   ============================= */ 
+.dashboard-header {  
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -218,8 +222,53 @@
   font-size: 1.6rem;
 }
 
-.dashboard-header .btn {
-  margin-left: 0.5rem;
+/* Header actions: premium y compacto */
+.header-actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+}
+
+/* Botón tipo “ghost” (secundario premium) */
+.btn.btn-ghost{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.92);
+}
+
+/* Botón icono para salir */
+.btn.btn-icon{
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.92);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* En móvil: acciones en una fila ordenada */
+@media (max-width: 768px){
+  .header-actions{
+    width:100%;
+    justify-content:flex-start;
+    gap:8px;
+  }
+  .header-actions .btn{
+    height: 42px;
+  }
+  .header-actions .btn.btn-primary{
+    flex: 1;              /* Mis números se vuelve el “principal” */
+    justify-content:center;
+  }
+  .header-actions .btn.btn-ghost{
+    flex: 0 0 auto;
+  }
 }
 
 /* =============================
