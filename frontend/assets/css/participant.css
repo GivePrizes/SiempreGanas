@@ -240,16 +240,64 @@
 
 /* Botón icono para salir */
 .btn.btn-icon{
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  border-radius: 14px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.10);
-  color: rgba(255,255,255,0.92);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255,215,0,0.10), rgba(255,255,255,0.03));
+  border: 1px solid rgba(255,215,0,0.18);
+  color: rgba(255,255,255,0.98);
   display:flex;
   align-items:center;
   justify-content:center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45), inset 0 -2px 0 rgba(0,0,0,0.12);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  position: relative;
+  overflow: visible;
+}
+
+/* Tooltip label to clarify action (appears on hover/focus) */
+.btn.btn-icon::after{
+  content: "Salir";
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 10px);
+  transform: translateY(-50%) translateX(6px);
+  background: rgba(0,0,0,0.80);
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+}
+
+.btn.btn-icon:hover,
+.btn.btn-icon:focus-visible{
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(255,215,0,0.08), 0 6px 20px rgba(0,0,0,0.5);
+  border-color: rgba(255,215,0,0.9);
+}
+
+.btn.btn-icon:hover::after,
+.btn.btn-icon:focus-visible::after{
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Make touch target larger on small screens */
+@media (max-width: 768px){
+  .btn.btn-icon{
+    min-width: 48px;
+    min-height: 48px;
+    border-radius: 14px;
+  }
+  .btn.btn-icon::after{
+    right: calc(100% + 6px);
+  }
 }
 
 /* En móvil: acciones en una fila ordenada */
