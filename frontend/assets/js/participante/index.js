@@ -79,7 +79,7 @@ function renderSorteoCard(s) {
       ? `Ya se ha vendido el ${porcentaje}% del sorteo. Todavía tienes buena oportunidad.`
       : porcentaje < 100
       ? `Quedan pocos números. El sorteo está a un paso de la ruleta.`
-      : 'Sorteo lleno. Espera la ruleta 🎰';
+      : ' lleno. Espera la ruleta 🎰';
 
   return `
     <article class="sorteo-card">
@@ -230,10 +230,45 @@ async function cargarSorteosActivos() {
   }
 }
 
+
+function actualizarBonusDinamico(totalNumeros) {
+  const el = document.getElementById('bonusHint');
+  if (!el) return;
+
+  const step = 20;
+  const total = Number(totalNumeros) || 0;
+
+  const bonos = Math.floor(total / step);
+  const resto = total % step;
+  const faltan = (resto === 0) ? 0 : (step - resto);
+
+  if (bonos <= 0) {
+    el.textContent = `Bonus: te faltan ${faltan} para 1 cuenta digital`;
+    return;
+  }
+
+  if (faltan === 0) {
+    el.textContent = `✅ Bonus disponible: cuenta digital (${bonos})`;
+  } else {
+    el.textContent = `✅ Bonus: ${bonos} cuenta(s) • faltan ${faltan} para la siguiente`;
+  }
+}
+
+
 // Inicialización
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   setBienvenida();
   cargarStatsSorteos();
-  cargarMisNumerosResumen();
+
+  // Espera a que cargue el resumen (si es async y devuelve promesa)
+  await cargarMisNumerosResumen();
+
+  // Lee el total ya pintado en pantalla
+  const elTotal = document.getElementById('statNumerosComprados');
+  const total = Number((elTotal?.textContent || '0').replace(/[^\d]/g, '')) || 0;
+
+  actualizarBonusDinamico(total);
+
   cargarSorteosActivos();
 });
+

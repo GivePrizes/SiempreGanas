@@ -184,7 +184,7 @@ export async function cargarMisNumerosResumen() {
   const token = localStorage.getItem('token');
   const stat = document.getElementById('statMisNumeros');
 
-  if (!token || !stat) return;
+  if (!token) return { totalNumeros: 0 };
 
   try {
     const res = await fetch(`${API_URL}/api/participante/mis-participaciones`, {
@@ -193,18 +193,26 @@ export async function cargarMisNumerosResumen() {
 
     if (!res.ok) {
       console.error('Error HTTP en mis-participaciones (resumen):', res.status);
-      stat.textContent = '—';
-      return;
+      if (stat) stat.textContent = '—';
+      return { totalNumeros: 0 };
     }
 
     const data = await res.json();
     const totalNumeros = Array.isArray(data) ? data.length : 0;
-    stat.textContent = totalNumeros ? String(totalNumeros) : '0';
+
+    if (stat) {
+      stat.textContent = String(totalNumeros);
+    }
+
+    //  CLAVE: devolver el total
+    return { totalNumeros };
   } catch (err) {
     console.error(err);
-    stat.textContent = '—';
+    if (stat) stat.textContent = '—';
+    return { totalNumeros: 0 };
   }
 }
+
 
 // ------------------------------
 // ✅ DETALLE (mis-numeros.html)
