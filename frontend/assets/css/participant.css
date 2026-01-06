@@ -306,16 +306,61 @@
     width:100%;
     justify-content:flex-start;
     gap:8px;
+    padding: 0 6px;
   }
+
+  /* Ensure buttons are easy to tap on mobile */
   .header-actions .btn{
-    height: 42px;
-  }
-  .header-actions .btn.btn-primary{
-    flex: 1;              /* Mis números se vuelve el “principal” */
+    min-height: 44px;
+    height: 44px;
+    padding: 0 12px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    display:inline-flex;
+    align-items:center;
     justify-content:center;
   }
+
+  /* Make primary action expand to take available width */
+  .header-actions .btn.btn-primary{
+    flex: 1 1 auto;              /* Mis números se vuelve el “principal” */
+    min-width: 0;                /* allow shrinking inside flex container */
+    justify-content:center;
+  }
+
   .header-actions .btn.btn-ghost{
     flex: 0 0 auto;
+  }
+
+  /* Tooltip labels are not useful on touch devices — hide them */
+  .btn.btn-icon::after{
+    display: none;
+  }
+
+  /* Slightly increase icon button target on small screens */
+  .btn.btn-icon{
+    min-width: 48px;
+    min-height: 48px;
+    border-radius: 14px;
+    padding: 0;
+  }
+
+  /* If the header is narrow, force actions to wrap to multiple rows */
+  .header-actions{
+    flex-wrap: wrap;
+  }
+
+  /* Very small screens: stack ghost/icon beside primary with clear spacing */
+  @media (max-width: 420px) {
+    .header-actions .btn.btn-primary{
+      order: 2;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .header-actions .btn.btn-ghost,
+    .header-actions .btn.btn-icon{
+      order: 1;
+    }
   }
 }
 
