@@ -7,16 +7,19 @@ export async function fetchMessages({ sorteoId, limit = 50, cursor = null }) {
   if (cursor?.beforeCreatedAt) params.set('beforeCreatedAt', cursor.beforeCreatedAt);
   if (cursor?.beforeId) params.set('beforeId', cursor.beforeId);
 
-  const res = await fetch(`${base}/api/chat/${sorteoId}?${params}`);
+  const res = await fetch(`${base}/chat/${sorteoId}?${params}`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json(); // { messages, nextCursor }
+  return res.json();
 }
 
 export async function postMessage({ sorteoId, token, mensaje }) {
   const base = getChatBaseUrl();
-  const res = await fetch(`${base}/api/chat/${sorteoId}`, {
+  const res = await fetch(`${base}/chat/${sorteoId}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
     body: JSON.stringify({ mensaje }),
   });
   const data = await res.json().catch(() => ({}));
