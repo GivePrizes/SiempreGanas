@@ -481,31 +481,3 @@ document.addEventListener('DOMContentLoaded', () => {
   cargarMisNumerosDelSorteo();
 });
 
-// Importa el chat (type="module" en HTML ya lo permite)
-import { initChat } from '../chat/index.js';
-
-// Dentro de cargarSorteo, al final (después de renderNumeros() y actualizarResumen())
-async function cargarSorteo() {
-  // ... tu código actual completo ...
-
-  // Al final, después de cargar sorteoActual y renderizar
-  const token = localStorage.getItem('token');
-
-  if (token && sorteoId) {
-    const chatContainer = document.getElementById('chatContainer');
-    if (chatContainer) {
-      chatContainer.style.display = 'block'; // muestra el chat
-      try {
-        initChat({ sorteoId, token });
-      } catch (err) {
-        console.error('Error inicializando chat:', err);
-        document.getElementById('chatHint').textContent = 'Error al cargar chat';
-      }
-    }
-  } else {
-    const hint = document.getElementById('chatHint');
-    if (hint) {
-      hint.textContent = token ? 'Sorteo no válido' : 'Inicia sesión para chatear';
-    }
-  }
-}
