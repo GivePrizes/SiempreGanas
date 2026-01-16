@@ -1,6 +1,7 @@
 // frontend/assets/js/chat/config.js
 
 export function getChatBaseUrl() {
+  // Asegúrate que esto no tenga paréntesis, corchetes o markdown
   return "https://chat-service-theta.vercel.app/api";
 }
 

@@ -7,6 +7,7 @@ export async function fetchMessages({ sorteoId, limit = 50, cursor = null }) {
   if (cursor?.beforeCreatedAt) params.set('beforeCreatedAt', cursor.beforeCreatedAt);
   if (cursor?.beforeId) params.set('beforeId', cursor.beforeId);
 
+  // Llamada a la ruta correcta:
   const res = await fetch(`${base}/chat/${sorteoId}?${params}`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
@@ -20,7 +21,7 @@ export async function postMessage({ sorteoId, token, mensaje }) {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     },
-    body: JSON.stringify({ mensaje }),
+    body: JSON.stringify({ mensaje })
   });
   const data = await res.json().catch(() => ({}));
   return { ok: res.ok, status: res.status, data };
