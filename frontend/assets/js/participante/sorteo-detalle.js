@@ -1,8 +1,10 @@
 // assets/js/participante/sorteo-detalle.js
 
 const API_URL = window.API_URL || ''; // viene de config.js
+// IMPORTANTE: el chat usa módulos ES
+import { initChat } from '../chat/index.js';
 
-
+// obtener sorteoId de la URL
 const params = new URLSearchParams(window.location.search);
 const sorteoId = params.get('id');
 
@@ -326,8 +328,29 @@ async function cargarSorteo() {
 
     renderNumeros();
     actualizarResumen();
+
+    // === INICIALIZA CHAT AQUÍ (al final del try) ===
+    if (token && sorteoId) {
+      const chatContainer = document.getElementById('chatContainer');
+      if (chatContainer) {
+        chatContainer.style.display = 'block'; // muestra el chat
+        try {
+          initChat({ sorteoId, token });
+          console.log('Chat iniciado OK para sorteo:', sorteoId);
+        } catch (err) {
+          console.error('Error iniciando chat:', err);
+          document.getElementById('chatHint').textContent = 'Error al cargar chat – recarga página';
+        }
+      }
+    } else {
+      const hint = document.getElementById('chatHint');
+      if (hint) {
+        hint.textContent = token ? 'Sorteo no válido' : 'Inicia sesión para chatear';
+      }
+    }
+
   } catch (err) {
-    console.error(err);
+    console.error('Error cargando sorteo:', err);
     tituloSorteo.textContent = 'Error de conexión al cargar el sorteo.';
   }
 }
