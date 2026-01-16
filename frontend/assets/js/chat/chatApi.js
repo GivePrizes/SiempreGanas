@@ -1,14 +1,13 @@
 // frontend/assets/js/chat/chatApi.js
-import { getChatBaseUrl } from './config.js';
+import { getChatEndpoint } from './config.js';
 
 export async function fetchMessages({ sorteoId, limit = 50, cursor = null }) {
-  const base = getChatBaseUrl(); // ya termina en /chat
   const params = new URLSearchParams({ limit: String(limit) });
   if (cursor?.beforeCreatedAt) params.set('beforeCreatedAt', cursor.beforeCreatedAt);
   if (cursor?.beforeId) params.set('beforeId', cursor.beforeId);
 
   try {
-    const res = await fetch(`${base}/${sorteoId}?${params.toString()}`);
+    const res = await fetch(`${getChatEndpoint(sorteoId)}?${params.toString()}`);
     if (!res.ok) {
       throw new Error(`HTTP ${res.status} - ${res.statusText}`);
     }
@@ -20,9 +19,8 @@ export async function fetchMessages({ sorteoId, limit = 50, cursor = null }) {
 }
 
 export async function postMessage({ sorteoId, token, mensaje }) {
-  const base = getChatBaseUrl(); // ya termina en /chat
   try {
-    const res = await fetch(`${base}/${sorteoId}`, {
+    const res = await fetch(getChatEndpoint(sorteoId), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

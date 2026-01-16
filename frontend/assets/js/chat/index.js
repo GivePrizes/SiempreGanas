@@ -5,8 +5,12 @@ import { createChatStore } from './store.js';
 import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js';
 import { getChatEndpoint } from './config.js';
 
-function usuarioIdFromToken(token){
-  try { return JSON.parse(atob(token.split('.')[1]))?.id ?? null; } catch { return null; }
+function usuarioIdFromToken(token) {
+  try {
+    return JSON.parse(atob(token.split('.')[1]))?.id ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export async function initChat({ sorteoId, token }) {
