@@ -3,6 +3,7 @@ import { fetchMessages, postMessage } from './chatApi.js';
 import { createRealtimeClient, subscribeToSorteoInserts } from './realtime.js';
 import { createChatStore } from './store.js';
 import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js';
+import { getChatEndpoint } from './config.js';
 
 function usuarioIdFromToken(token){
   try { return JSON.parse(atob(token.split('.')[1]))?.id ?? null; } catch { return null; }
@@ -66,13 +67,13 @@ export async function initChat({ sorteoId, token }) {
 
   // 0) CHEQUEO DE PERMISO (POST vacío como prueba)
   try {
-    const testResp = await fetch(`${CHAT_SERVICE_URL}/${sorteoId}`, {
+    const testResp = await fetch(getChatEndpoint(sorteoId), {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ mensaje: '' }) // vacío para no insertar nada
+      body: JSON.stringify({ mensaje: '' })
     });
 
     if (testResp.status === 403) {
