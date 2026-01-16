@@ -9,6 +9,10 @@ function usuarioIdFromToken(token){
 }
 
 export async function initChat({ sorteoId, token }) {
+  if (!sorteoId || !token) {
+    console.warn('initChat: falta sorteoId o token');
+    return;
+  }
   const myUsuarioId = usuarioIdFromToken(token);
 
   const bodyEl    = document.getElementById('chatBody');

@@ -1198,6 +1198,25 @@
   line-height:1.2;
 }
 
+
+.chat-card {
+  background: #111;
+  border-radius: 8px;
+  padding: 1rem;
+}
+.chat-messages {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+.chat-input-wrap {
+  display: flex;
+  gap: 0.5rem;
+}
+.chat-hint {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
 /*=============================
    Fin participante.css
    ============================= */
