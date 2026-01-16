@@ -11,15 +11,29 @@ function usuarioIdFromToken(token){
 export async function initChat({ sorteoId, token }) {
   const myUsuarioId = usuarioIdFromToken(token);
 
-  const bodyEl = document.getElementById('chatBody');
-  const inputEl = document.getElementById('chatInput');
-  const sendEl = document.getElementById('chatSend');
-  const hintEl = document.getElementById('chatHint');
+  const bodyEl    = document.getElementById('chatBody');
+  const inputEl   = document.getElementById('chatInput');
+  const sendEl    = document.getElementById('chatSend');
+  const hintEl    = document.getElementById('chatHint');
   const filtersEl = document.getElementById('chatFilters');
-  const newBtnEl = document.getElementById('chatNewBtn');
+  const newBtnEl  = document.getElementById('chatNewBtn');
 
   const store = createChatStore({ myUsuarioId });
   let pendingNew = 0;
+
+  let puedeEscribir = false; // por defecto no, hasta confirmar
+
+  // Función para actualizar UI según permiso
+  function updateChatPermission() {
+    if (inputEl)  inputEl.disabled  = !puedeEscribir;
+    if (sendEl)   sendEl.disabled   = !puedeEscribir;
+    if (hintEl) {
+      hintEl.textContent = puedeEscribir
+        ? 'Escribe tu mensaje... (máx. 120 caracteres)'
+        : '🔒 Solo participantes con número aprobado pueden escribir. ¡Compra uno!';
+      hintEl.style.color = puedeEscribir ? '#ccc' : '#ff6b6b';
+    }
+  }
 
   function rerender({ keepBottom = true } = {}) {
     const atBottom = isBottom(bodyEl);
@@ -37,7 +51,7 @@ export async function initChat({ sorteoId, token }) {
 
   bindFilters({
     rootEl: filtersEl,
-    onChange: (f) => { store.setFilter(f); rerender({ keepBottom:false }); }
+    onChange: (f) => { store.setFilter(f); rerender({ keepBottom: false }); }
   });
 
   newBtnEl?.addEventListener('click', () => {
@@ -46,16 +60,39 @@ export async function initChat({ sorteoId, token }) {
     newBtnEl.classList.add('hidden');
   });
 
-  // 1) HISTORIAL por chat-service
+  // 0) CHEQUEO DE PERMISO (POST vacío como prueba)
+  try {
+    const testResp = await fetch(`${CHAT_SERVICE_URL}/${sorteoId}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ mensaje: '' }) // vacío para no insertar nada
+    });
+
+    if (testResp.status === 403) {
+      puedeEscribir = false;
+    } else if (testResp.ok || testResp.status === 400) { // 400 por validación vacía es OK
+      puedeEscribir = true;
+    }
+  } catch (err) {
+    console.warn('No se pudo verificar permiso de chat', err);
+    puedeEscribir = false; // conservador
+  }
+
+  updateChatPermission();
+
+  // 1) HISTORIAL
   try {
     const data = await fetchMessages({ sorteoId, limit: 50 });
     store.upsertMany(data.messages || []);
-    rerender({ keepBottom:true });
+    rerender({ keepBottom: true });
   } catch {
     if (hintEl) hintEl.textContent = 'No se pudo cargar el historial del chat.';
   }
 
-  // 2) LIVE por Realtime (con fallback a polling)
+  // 2) LIVE (Realtime + fallback polling)
   let unsub = null;
   try {
     const supabase = await createRealtimeClient();
@@ -66,21 +103,20 @@ export async function initChat({ sorteoId, token }) {
         const atBottom = isBottom(bodyEl);
         store.upsertMany([m]);
         if (!atBottom) pendingNew += 1;
-        rerender({ keepBottom:true });
+        rerender({ keepBottom: true });
       }
     });
   } catch {
-    // fallback: polling liviano
     setInterval(async () => {
       try {
         const data = await fetchMessages({ sorteoId, limit: 30 });
         store.upsertMany(data.messages || []);
-        rerender({ keepBottom:true });
+        rerender({ keepBottom: true });
       } catch {}
     }, 3000);
   }
 
-  // 3) SEND por chat-service (respeta 429)
+  // 3) SEND (ya protegido por backend)
   async function send() {
     const msg = (inputEl?.value || '').trim();
     if (!msg || !sendEl) return;
@@ -105,7 +141,6 @@ export async function initChat({ sorteoId, token }) {
 
     if (inputEl) inputEl.value = '';
     sendEl.disabled = false;
-    // No añadimos manual; llega por Realtime
   }
 
   sendEl?.addEventListener('click', send);
