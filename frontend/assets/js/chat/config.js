@@ -18,6 +18,8 @@ export function getSupabaseConfig() {
 }
 
 // Helper recomendado
+// frontend/assets/js/chat/config.js
 export function getChatEndpoint(sorteoId) {
-  return `${getChatBaseUrl()}/chat/${sorteoId}`;
+  const base = 'https://chat-service-six.vercel.app/api/chat';
+  return `${base}/${sorteoId}`;
 }
