@@ -5,7 +5,7 @@ export function getChatBaseUrl() {
   return (
     window.CHAT_URL ||
     import.meta.env.VITE_CHAT_SERVICE_URL ||
-    "https://chat-service-theta.vercel.app"
+    "https://chat-service-theta.vercel.app/api"
   );
 }
 
