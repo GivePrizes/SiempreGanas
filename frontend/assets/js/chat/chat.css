@@ -1,72 +1,75 @@
 /* ===============================
-   CHAT CONTAINER
+   CHAT BASE
 =============================== */
 
-#chatBody {
+#chat {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 12px;
+  height: 100%;
+  background: #0f172a;
+  color: #e5e7eb;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.chat-body {
+  flex: 1;
   overflow-y: auto;
+  padding: 12px;
   scroll-behavior: smooth;
 }
 
 /* ===============================
-   CHAT ROW
+   MENSAJES
 =============================== */
 
 .chat-row {
-  max-width: 80%;
-  animation: fadeIn 0.2s ease-out;
+  margin-bottom: 10px;
+  animation: fadeIn 0.15s ease-out;
 }
 
 .chat-row.mine {
-  align-self: flex-end;
+  text-align: right;
 }
 
 .chat-row.system {
-  align-self: center;
   text-align: center;
-  opacity: 0.9;
 }
 
-/* ===============================
-   META (NOMBRE + HORA)
-=============================== */
-
 .chat-meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
   font-size: 12px;
   margin-bottom: 2px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.chat-row.mine .chat-meta {
+  justify-content: flex-end;
 }
 
 .chat-meta .muted {
   color: #9ca3af;
-  font-size: 11px;
 }
 
-/* ===============================
-   BURBUJA
-=============================== */
-
 .chat-bubble {
+  display: inline-block;
+  max-width: 75%;
   padding: 8px 12px;
-  border-radius: 12px;
-  background: #1f2937;
-  color: #f9fafb;
+  border-radius: 14px;
+  background: #1e293b;
   word-break: break-word;
-  line-height: 1.35;
 }
 
 .chat-row.mine .chat-bubble {
   background: #2563eb;
+  color: #fff;
 }
 
 .chat-row.system .chat-bubble {
-  background: #111827;
-  color: #fbbf24;
+  background: #78350f;
+  color: #fde68a;
+  font-style: italic;
+  font-size: 13px;
 }
 
 /* ===============================
@@ -74,23 +77,19 @@
 =============================== */
 
 .chat-row.pop {
-  animation: popIn 0.25s ease-out;
+  animation: popIn 0.18s ease-out;
 }
 
 @keyframes popIn {
   from {
     transform: scale(0.96);
-    opacity: 0;
+    opacity: 0.6;
   }
   to {
     transform: scale(1);
     opacity: 1;
   }
 }
-
-/* ===============================
-   FADE IN GENERAL
-=============================== */
 
 @keyframes fadeIn {
   from {
@@ -100,3 +99,84 @@
     opacity: 1;
   }
 }
+
+/* ===============================
+   INPUT
+=============================== */
+
+.chat-input {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid #1e293b;
+  background: #020617;
+}
+
+#chatInput {
+  flex: 1;
+  background: #020617;
+  color: #e5e7eb;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+#chatInput:disabled {
+  opacity: 0.5;
+}
+
+#chatSend {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+#chatSend:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===============================
+   HINTS & NEW BUTTON
+=============================== */
+
+.chat-hint {
+  font-size: 12px;
+  padding: 4px 12px;
+  min-height: 18px;
+}
+
+.chat-new {
+  position: sticky;
+  bottom: 70px;
+  margin: 0 auto 6px;
+  background: #020617;
+  color: #60a5fa;
+  border: 1px solid #1e293b;
+  border-radius: 20px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ===============================
+   SCROLL BAR (SUAVE)
+=============================== */
+
+.chat-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+.chat-body::-webkit-scrollbar-track {
+  background: #0f172a;
+}   

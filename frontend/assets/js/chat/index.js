@@ -22,10 +22,7 @@ function usuarioIdFromToken(token) {
 =============================== */
 
 export async function initChat({ sorteoId, token }) {
-  if (!sorteoId || !token) {
-    console.warn('initChat: falta sorteoId o token');
-    return;
-  }
+  if (!sorteoId || !token) return;
 
   const myUsuarioId = usuarioIdFromToken(token);
 
@@ -47,13 +44,18 @@ export async function initChat({ sorteoId, token }) {
   =============================== */
 
   function updateChatPermission() {
-    if (inputEl) inputEl.disabled = !puedeEscribir;
-    if (sendEl) sendEl.disabled = !puedeEscribir;
-    if (hintEl) {
-      hintEl.textContent = puedeEscribir
-        ? 'Escribe tu mensaje... (máx. 120 caracteres)'
-        : '🔒 Solo participantes con número aprobado pueden escribir. ¡Compra uno!';
-      hintEl.style.color = puedeEscribir ? '#ccc' : '#ff6b6b';
+    inputEl.disabled = !puedeEscribir;
+    sendEl.disabled = !puedeEscribir;
+
+    if (!hintEl) return;
+
+    if (puedeEscribir) {
+      hintEl.textContent = 'Escribe tu mensaje... (máx. 120 caracteres)';
+      hintEl.style.color = '#ccc';
+    } else {
+      hintEl.textContent =
+        '🔒 Solo participantes con número aprobado pueden escribir.';
+      hintEl.style.color = '#ff6b6b';
     }
   }
 
@@ -83,21 +85,16 @@ export async function initChat({ sorteoId, token }) {
   function addOptimisticMessage(text) {
     const tempId = `tmp-${Date.now()}-${Math.random()}`;
 
-    const msg = {
+    store.upsertMany([{
       id: tempId,
       mensaje: text,
       is_system: false,
       created_at: new Date().toISOString(),
-      usuario: {
-        id: myUsuarioId,
-        nombre: 'Tú'
-      },
+      usuario: { id: myUsuarioId, nombre: 'Tú' },
       _optimistic: true
-    };
+    }]);
 
-    store.upsertMany([msg]);
     rerender({ keepBottom: true });
-
     return tempId;
   }
 
@@ -105,55 +102,44 @@ export async function initChat({ sorteoId, token }) {
     store.removeOptimistic?.(myUsuarioId, realMsg.mensaje);
   }
 
-  //===============================
-  // Append message (realtime)
-  //===============================
+  /* ===============================
+     Append realtime message
+  =============================== */
+
   function appendMessage(m) {
-    if (!m) return;
+    if (!m || store.has(m.id)) return;
 
-    // 1️⃣ Evitar duplicados (realtime / optimista)
-    if (store.has(m.id)) return;
-
-    // 2️⃣ Si el mensaje real es mío → elimina el optimista
     if (Number(m.usuario?.id) === Number(myUsuarioId)) {
       replaceOptimistic(m);
     }
 
     const atBottom = isBottom(bodyEl);
-
-    // 3️⃣ Guardar mensaje
     store.upsertMany([m]);
 
-    // 4️⃣ Render
     renderMessages({
       containerEl: bodyEl,
       messages: store.getFiltered(),
       myUsuarioId
     });
 
-    // 5️⃣ Sonido suave SOLO si no es mío
     if (!m.is_system && Number(m.usuario?.id) !== Number(myUsuarioId)) {
       playPing?.();
     }
 
-    // 6️⃣ Animación sutil al nuevo mensaje
     setTimeout(() => {
-      const last = bodyEl.querySelector('.chat-row:last-child');
-      last?.classList.add('pop');
+      bodyEl.querySelector('.chat-row:last-child')?.classList.add('pop');
     }, 10);
 
-    // 7️⃣ Scroll inteligente + contador
     if (atBottom) {
       toBottom(bodyEl);
       pendingNew = 0;
       newBtnEl?.classList.add('hidden');
     } else {
-      pendingNew += 1;
+      pendingNew++;
       newBtnEl?.classList.remove('hidden');
       newBtnEl.textContent = `Nuevos mensajes (${pendingNew}) ↓`;
     }
   }
-
 
   /* ===============================
      Filters & buttons
@@ -161,7 +147,7 @@ export async function initChat({ sorteoId, token }) {
 
   bindFilters({
     rootEl: filtersEl,
-    onChange: (f) => {
+    onChange: f => {
       store.setFilter(f);
       rerender({ keepBottom: false });
     }
@@ -174,24 +160,20 @@ export async function initChat({ sorteoId, token }) {
   });
 
   /* ===============================
-     0) CHECK PERMISO
+     0) CHECK PERMISSION
   =============================== */
 
   try {
-    const testResp = await fetch(getChatEndpoint(sorteoId), {
+    const resp = await fetch(getChatEndpoint(sorteoId), {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ mensaje: '' })
     });
 
-    if (testResp.status === 403) {
-      puedeEscribir = false;
-    } else if (testResp.ok || testResp.status === 400) {
-      puedeEscribir = true;
-    }
+    puedeEscribir = resp.ok || resp.status === 400;
   } catch {
     puedeEscribir = false;
   }
@@ -199,7 +181,7 @@ export async function initChat({ sorteoId, token }) {
   updateChatPermission();
 
   /* ===============================
-     1) HISTORIAL
+     1) HISTORY
   =============================== */
 
   try {
@@ -207,7 +189,7 @@ export async function initChat({ sorteoId, token }) {
     store.upsertMany(data.messages || []);
     rerender({ keepBottom: true });
   } catch {
-    if (hintEl) hintEl.textContent = 'No se pudo cargar el historial del chat.';
+    hintEl.textContent = 'No se pudo cargar el chat.';
   }
 
   /* ===============================
@@ -216,29 +198,25 @@ export async function initChat({ sorteoId, token }) {
 
   try {
     const supabase = await createRealtimeClient();
-
     unsub = subscribeToSorteoInserts({
       supabase,
       sorteoId,
-      onInsert: (m) => appendMessage(m)
+      onInsert: appendMessage
     });
-  } catch (err) {
-    console.error('Realtime no disponible', err);
-  }
+  } catch {}
 
   /* ===============================
-     3) SEND (CHAT REAL)
+     3) SEND
   =============================== */
 
   async function send() {
-    const text = (inputEl?.value || '').trim();
-    if (!text || !sendEl) return;
+    const text = inputEl.value.trim();
+    if (!text || inputEl.disabled) return;
 
     inputEl.value = '';
     sendEl.disabled = true;
-    if (hintEl) hintEl.textContent = '';
+    hintEl.textContent = '';
 
-    // 🟢 Mostrar inmediatamente
     const tempId = addOptimisticMessage(text);
 
     const { ok, status, data } = await postMessage({
@@ -247,32 +225,56 @@ export async function initChat({ sorteoId, token }) {
       mensaje: text
     });
 
-    // 🔴 Error → quitar mensaje optimista
     if (!ok) {
       store.remove(tempId);
       rerender({ keepBottom: true });
-      sendEl.disabled = false;
 
-      if (status === 429 && hintEl) {
-        const s = data?.remainingSeconds ?? 15;
-        hintEl.textContent = `Espera ${s}s para volver a enviar.`;
+      // 🔇 MUTE
+      if (status === 403 && data?.remainingSeconds) {
+        const mins = Math.ceil(data.remainingSeconds / 60);
+        hintEl.textContent = `🔇 Estás silenciado por ${mins} min`;
+        hintEl.style.color = '#f87171';
+
+        inputEl.disabled = true;
+        sendEl.disabled = true;
+
+        setTimeout(() => {
+          if (!puedeEscribir) return;
+          inputEl.disabled = false;
+          sendEl.disabled = false;
+          hintEl.textContent = '';
+          hintEl.style.color = '';
+        }, data.remainingSeconds * 1000);
+
+        return;
       }
 
+      // 🔒 NO PERMISO
+      if (status === 403) {
+        hintEl.textContent =
+          '🔒 No tienes permiso para escribir en este chat';
+        hintEl.style.color = '#ff6b6b';
+      }
+
+      // ⏱️ COOLDOWN
+      if (status === 429) {
+        hintEl.textContent =
+          `Espera ${data?.remainingSeconds ?? 15}s para volver a enviar.`;
+      }
+
+      sendEl.disabled = false;
       return;
     }
 
-    // 🟢 OK → realtime se encargará
     sendEl.disabled = false;
   }
 
-  sendEl?.addEventListener('click', send);
-  inputEl?.addEventListener('keydown', (e) => {
+  sendEl.addEventListener('click', send);
+  inputEl.addEventListener('keydown', e => {
     if (e.key === 'Enter') send();
   });
 
   window.addEventListener('beforeunload', () => {
-    try {
-      unsub?.();
-    } catch {}
+    unsub?.();
   });
 }
