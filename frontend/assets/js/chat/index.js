@@ -18,6 +18,7 @@ export async function initChat({ sorteoId, token }) {
     console.warn('initChat: falta sorteoId o token');
     return;
   }
+
   const myUsuarioId = usuarioIdFromToken(token);
 
   const bodyEl    = document.getElementById('chatBody');
@@ -29,13 +30,16 @@ export async function initChat({ sorteoId, token }) {
 
   const store = createChatStore({ myUsuarioId });
   let pendingNew = 0;
+  let puedeEscribir = false;
+  let unsub = null;
 
-  let puedeEscribir = false; // por defecto no, hasta confirmar
+  /* ===============================
+     UI helpers
+  =============================== */
 
-  // Función para actualizar UI según permiso
   function updateChatPermission() {
-    if (inputEl)  inputEl.disabled  = !puedeEscribir;
-    if (sendEl)   sendEl.disabled   = !puedeEscribir;
+    if (inputEl) inputEl.disabled = !puedeEscribir;
+    if (sendEl) sendEl.disabled = !puedeEscribir;
     if (hintEl) {
       hintEl.textContent = puedeEscribir
         ? 'Escribe tu mensaje... (máx. 120 caracteres)'
@@ -46,7 +50,11 @@ export async function initChat({ sorteoId, token }) {
 
   function rerender({ keepBottom = true } = {}) {
     const atBottom = isBottom(bodyEl);
-    renderMessages({ containerEl: bodyEl, messages: store.getFiltered(), myUsuarioId });
+    renderMessages({
+      containerEl: bodyEl,
+      messages: store.getFiltered(),
+      myUsuarioId
+    });
 
     if (keepBottom && atBottom) {
       toBottom(bodyEl);
@@ -58,9 +66,39 @@ export async function initChat({ sorteoId, token }) {
     }
   }
 
+  function appendMessage(m) {
+    if (!m || store.has(m.id)) return;
+
+    const atBottom = isBottom(bodyEl);
+    store.upsertMany([m]);
+
+    renderMessages({
+      containerEl: bodyEl,
+      messages: store.getFiltered(),
+      myUsuarioId
+    });
+
+    if (atBottom) {
+      toBottom(bodyEl);
+      pendingNew = 0;
+      newBtnEl?.classList.add('hidden');
+    } else {
+      pendingNew += 1;
+      newBtnEl?.classList.remove('hidden');
+      newBtnEl.textContent = `Nuevos mensajes (${pendingNew}) ↓`;
+    }
+  }
+
+  /* ===============================
+     Filters & buttons
+  =============================== */
+
   bindFilters({
     rootEl: filtersEl,
-    onChange: (f) => { store.setFilter(f); rerender({ keepBottom: false }); }
+    onChange: (f) => {
+      store.setFilter(f);
+      rerender({ keepBottom: false });
+    }
   });
 
   newBtnEl?.addEventListener('click', () => {
@@ -69,7 +107,10 @@ export async function initChat({ sorteoId, token }) {
     newBtnEl.classList.add('hidden');
   });
 
-  // 0) CHEQUEO DE PERMISO (POST vacío como prueba)
+  /* ===============================
+     0) CHECK PERMISO DE ESCRITURA
+  =============================== */
+
   try {
     const testResp = await fetch(getChatEndpoint(sorteoId), {
       method: 'POST',
@@ -82,17 +123,20 @@ export async function initChat({ sorteoId, token }) {
 
     if (testResp.status === 403) {
       puedeEscribir = false;
-    } else if (testResp.ok || testResp.status === 400) { // 400 por validación vacía es OK
+    } else if (testResp.ok || testResp.status === 400) {
       puedeEscribir = true;
     }
   } catch (err) {
     console.warn('No se pudo verificar permiso de chat', err);
-    puedeEscribir = false; // conservador
+    puedeEscribir = false;
   }
 
   updateChatPermission();
 
-  // 1) HISTORIAL
+  /* ===============================
+     1) HISTORIAL
+  =============================== */
+
   try {
     const data = await fetchMessages({ sorteoId, limit: 50 });
     store.upsertMany(data.messages || []);
@@ -101,31 +145,31 @@ export async function initChat({ sorteoId, token }) {
     if (hintEl) hintEl.textContent = 'No se pudo cargar el historial del chat.';
   }
 
-  // 2) LIVE (Realtime + fallback polling)
-  let unsub = null;
+  /* ===============================
+     2) REALTIME (CHAT REAL)
+  =============================== */
+
   try {
     const supabase = await createRealtimeClient();
+
     unsub = subscribeToSorteoInserts({
       supabase,
       sorteoId,
       onInsert: (m) => {
-        const atBottom = isBottom(bodyEl);
-        store.upsertMany([m]);
-        if (!atBottom) pendingNew += 1;
-        rerender({ keepBottom: true });
+        appendMessage(m);
       }
     });
-  } catch {
-    setInterval(async () => {
-      try {
-        const data = await fetchMessages({ sorteoId, limit: 30 });
-        store.upsertMany(data.messages || []);
-        rerender({ keepBottom: true });
-      } catch {}
-    }, 3000);
+  } catch (err) {
+    console.error('Realtime no disponible', err);
+    if (hintEl) {
+      hintEl.textContent = '⚠️ Chat en modo limitado. Recarga si no ves mensajes nuevos.';
+    }
   }
 
-  // 3) SEND (ya protegido por backend)
+  /* ===============================
+     3) SEND
+  =============================== */
+
   async function send() {
     const msg = (inputEl?.value || '').trim();
     if (!msg || !sendEl) return;
@@ -133,17 +177,26 @@ export async function initChat({ sorteoId, token }) {
     sendEl.disabled = true;
     if (hintEl) hintEl.textContent = '';
 
-    const { ok, status, data } = await postMessage({ sorteoId, token, mensaje: msg });
+    const { ok, status, data } = await postMessage({
+      sorteoId,
+      token,
+      mensaje: msg
+    });
 
     if (status === 429) {
       const s = data?.remainingSeconds ?? 15;
       if (hintEl) hintEl.textContent = `Espera ${s}s para volver a enviar.`;
-      setTimeout(() => { sendEl.disabled = false; }, s * 1000);
+      setTimeout(() => {
+        sendEl.disabled = false;
+      }, s * 1000);
       return;
     }
 
     if (!ok) {
-      if (hintEl) hintEl.textContent = data?.message || data?.error || 'No se pudo enviar.';
+      if (hintEl) {
+        hintEl.textContent =
+          data?.message || data?.error || 'No se pudo enviar.';
+      }
       sendEl.disabled = false;
       return;
     }
@@ -153,7 +206,13 @@ export async function initChat({ sorteoId, token }) {
   }
 
   sendEl?.addEventListener('click', send);
-  inputEl?.addEventListener('keydown', (e) => { if (e.key === 'Enter') send(); });
+  inputEl?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') send();
+  });
 
-  window.addEventListener('beforeunload', () => { try { unsub?.(); } catch {} });
+  window.addEventListener('beforeunload', () => {
+    try {
+      unsub?.();
+    } catch {}
+  });
 }
