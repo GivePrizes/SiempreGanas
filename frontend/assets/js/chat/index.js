@@ -5,6 +5,10 @@ import { createChatStore } from './store.js';
 import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js';
 import { getChatEndpoint } from './config.js';
 
+/* ===============================
+   Utils
+=============================== */
+
 function usuarioIdFromToken(token) {
   try {
     return JSON.parse(atob(token.split('.')[1]))?.id ?? null;
@@ -12,6 +16,10 @@ function usuarioIdFromToken(token) {
     return null;
   }
 }
+
+/* ===============================
+   Init
+=============================== */
 
 export async function initChat({ sorteoId, token }) {
   if (!sorteoId || !token) {
@@ -29,6 +37,7 @@ export async function initChat({ sorteoId, token }) {
   const newBtnEl  = document.getElementById('chatNewBtn');
 
   const store = createChatStore({ myUsuarioId });
+
   let pendingNew = 0;
   let puedeEscribir = false;
   let unsub = null;
@@ -50,6 +59,7 @@ export async function initChat({ sorteoId, token }) {
 
   function rerender({ keepBottom = true } = {}) {
     const atBottom = isBottom(bodyEl);
+
     renderMessages({
       containerEl: bodyEl,
       messages: store.getFiltered(),
@@ -66,8 +76,45 @@ export async function initChat({ sorteoId, token }) {
     }
   }
 
+  /* ===============================
+     Optimistic UI
+  =============================== */
+
+  function addOptimisticMessage(text) {
+    const tempId = `tmp-${Date.now()}-${Math.random()}`;
+
+    const msg = {
+      id: tempId,
+      mensaje: text,
+      is_system: false,
+      created_at: new Date().toISOString(),
+      usuario: {
+        id: myUsuarioId,
+        nombre: 'Tú'
+      },
+      _optimistic: true
+    };
+
+    store.upsertMany([msg]);
+    rerender({ keepBottom: true });
+
+    return tempId;
+  }
+
+  function replaceOptimistic(realMsg) {
+    store.removeOptimistic?.(myUsuarioId, realMsg.mensaje);
+  }
+
   function appendMessage(m) {
-    if (!m || store.has(m.id)) return;
+    if (!m) return;
+
+    // Evitar duplicados
+    if (store.has(m.id)) return;
+
+    // Si es mío, elimina el optimista
+    if (Number(m.usuario?.id) === Number(myUsuarioId)) {
+      replaceOptimistic(m);
+    }
 
     const atBottom = isBottom(bodyEl);
     store.upsertMany([m]);
@@ -108,7 +155,7 @@ export async function initChat({ sorteoId, token }) {
   });
 
   /* ===============================
-     0) CHECK PERMISO DE ESCRITURA
+     0) CHECK PERMISO
   =============================== */
 
   try {
@@ -126,8 +173,7 @@ export async function initChat({ sorteoId, token }) {
     } else if (testResp.ok || testResp.status === 400) {
       puedeEscribir = true;
     }
-  } catch (err) {
-    console.warn('No se pudo verificar permiso de chat', err);
+  } catch {
     puedeEscribir = false;
   }
 
@@ -146,7 +192,7 @@ export async function initChat({ sorteoId, token }) {
   }
 
   /* ===============================
-     2) REALTIME (CHAT REAL)
+     2) REALTIME
   =============================== */
 
   try {
@@ -155,53 +201,48 @@ export async function initChat({ sorteoId, token }) {
     unsub = subscribeToSorteoInserts({
       supabase,
       sorteoId,
-      onInsert: (m) => {
-        appendMessage(m);
-      }
+      onInsert: (m) => appendMessage(m)
     });
   } catch (err) {
     console.error('Realtime no disponible', err);
-    if (hintEl) {
-      hintEl.textContent = '⚠️ Chat en modo limitado. Recarga si no ves mensajes nuevos.';
-    }
   }
 
   /* ===============================
-     3) SEND
+     3) SEND (CHAT REAL)
   =============================== */
 
   async function send() {
-    const msg = (inputEl?.value || '').trim();
-    if (!msg || !sendEl) return;
+    const text = (inputEl?.value || '').trim();
+    if (!text || !sendEl) return;
 
+    inputEl.value = '';
     sendEl.disabled = true;
     if (hintEl) hintEl.textContent = '';
+
+    // 🟢 Mostrar inmediatamente
+    const tempId = addOptimisticMessage(text);
 
     const { ok, status, data } = await postMessage({
       sorteoId,
       token,
-      mensaje: msg
+      mensaje: text
     });
 
-    if (status === 429) {
-      const s = data?.remainingSeconds ?? 15;
-      if (hintEl) hintEl.textContent = `Espera ${s}s para volver a enviar.`;
-      setTimeout(() => {
-        sendEl.disabled = false;
-      }, s * 1000);
-      return;
-    }
-
+    // 🔴 Error → quitar mensaje optimista
     if (!ok) {
-      if (hintEl) {
-        hintEl.textContent =
-          data?.message || data?.error || 'No se pudo enviar.';
-      }
+      store.remove(tempId);
+      rerender({ keepBottom: true });
       sendEl.disabled = false;
+
+      if (status === 429 && hintEl) {
+        const s = data?.remainingSeconds ?? 15;
+        hintEl.textContent = `Espera ${s}s para volver a enviar.`;
+      }
+
       return;
     }
 
-    if (inputEl) inputEl.value = '';
+    // 🟢 OK → realtime se encargará
     sendEl.disabled = false;
   }
 
