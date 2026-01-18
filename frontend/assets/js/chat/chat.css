@@ -1,0 +1,102 @@
+/* ===============================
+   CHAT CONTAINER
+=============================== */
+
+#chatBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+/* ===============================
+   CHAT ROW
+=============================== */
+
+.chat-row {
+  max-width: 80%;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.chat-row.mine {
+  align-self: flex-end;
+}
+
+.chat-row.system {
+  align-self: center;
+  text-align: center;
+  opacity: 0.9;
+}
+
+/* ===============================
+   META (NOMBRE + HORA)
+=============================== */
+
+.chat-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.chat-meta .muted {
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+/* ===============================
+   BURBUJA
+=============================== */
+
+.chat-bubble {
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #1f2937;
+  color: #f9fafb;
+  word-break: break-word;
+  line-height: 1.35;
+}
+
+.chat-row.mine .chat-bubble {
+  background: #2563eb;
+}
+
+.chat-row.system .chat-bubble {
+  background: #111827;
+  color: #fbbf24;
+}
+
+/* ===============================
+   ANIMACIÓN NUEVO MENSAJE
+=============================== */
+
+.chat-row.pop {
+  animation: popIn 0.25s ease-out;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ===============================
+   FADE IN GENERAL
+=============================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

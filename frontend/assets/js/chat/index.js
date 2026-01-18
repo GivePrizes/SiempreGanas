@@ -105,26 +105,44 @@ export async function initChat({ sorteoId, token }) {
     store.removeOptimistic?.(myUsuarioId, realMsg.mensaje);
   }
 
+  //===============================
+  // Append message (realtime)
+  //===============================
   function appendMessage(m) {
     if (!m) return;
 
-    // Evitar duplicados
+    // 1️⃣ Evitar duplicados (realtime / optimista)
     if (store.has(m.id)) return;
 
-    // Si es mío, elimina el optimista
+    // 2️⃣ Si el mensaje real es mío → elimina el optimista
     if (Number(m.usuario?.id) === Number(myUsuarioId)) {
       replaceOptimistic(m);
     }
 
     const atBottom = isBottom(bodyEl);
+
+    // 3️⃣ Guardar mensaje
     store.upsertMany([m]);
 
+    // 4️⃣ Render
     renderMessages({
       containerEl: bodyEl,
       messages: store.getFiltered(),
       myUsuarioId
     });
 
+    // 5️⃣ Sonido suave SOLO si no es mío
+    if (!m.is_system && Number(m.usuario?.id) !== Number(myUsuarioId)) {
+      playPing?.();
+    }
+
+    // 6️⃣ Animación sutil al nuevo mensaje
+    setTimeout(() => {
+      const last = bodyEl.querySelector('.chat-row:last-child');
+      last?.classList.add('pop');
+    }, 10);
+
+    // 7️⃣ Scroll inteligente + contador
     if (atBottom) {
       toBottom(bodyEl);
       pendingNew = 0;
@@ -135,6 +153,7 @@ export async function initChat({ sorteoId, token }) {
       newBtnEl.textContent = `Nuevos mensajes (${pendingNew}) ↓`;
     }
   }
+
 
   /* ===============================
      Filters & buttons
