@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siempre Gana — Sorteo Admin</title>
+
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <link rel="stylesheet" href="../assets/js/chat/chat.css">
+  <link rel="stylesheet" href="../assets/js/chat/chat-admin.css">
+</head>
+<body class="admin-body">
+  <div class="admin-wrapper">
+
+    <header class="admin-header">
+      <h1>Detalle del sorteo (Admin)</h1>
+      <button onclick="location.href='panel.html'" class="btn btn-secondary">← Volver al panel</button>
+    </header>
+
+    <main class="admin-main">
+      <!-- Aquí pondrás los datos del sorteo -->
+      <section class="card">
+        <h2 id="tituloSorteo">Cargando sorteo...</h2>
+        <p id="subtituloSorteo" class="text-muted">Detalles del sorteo para administración.</p>
+      </section>
+
+      <!-- Bloque de chat admin -->
+      <section class="card" style="margin-top:18px;">
+        <div class="card-title-row">
+          <h2>💬 Chat de Administración</h2>
+          <p class="text-muted">Comunicación en tiempo real con los participantes y control de moderación.</p>
+        </div>
+
+        <div id="adminChatContainer" class="chat-card admin-chat">
+          <div id="adminChatBody" class="chat-messages"></div>
+          <div class="chat-input-wrap">
+            <input id="adminChatInput" placeholder="Mensaje global o moderación...">
+            <button id="adminChatSend">Enviar</button>
+          </div>
+          <p id="adminChatHint"></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+
+  <script type="module">
+    import { initAdminChat } from '../assets/js/chat/adminChat.js';
+
+    const params = new URLSearchParams(window.location.search);
+    const sorteoId = params.get('id'); // el ID viene por la URL
+    const token = localStorage.getItem('jwt');
+
+    if (token && sorteoId) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.rol === 'admin') {
+        initAdminChat({ sorteoId, token });
+      } else {
+        document.getElementById('adminChatHint').textContent = 'Tu rol no es admin.';
+      }
+    } else {
+      document.getElementById('adminChatHint').textContent = 'Inicia sesión para usar el chat.';
+    }
+  </script>
+</body>
+</html>

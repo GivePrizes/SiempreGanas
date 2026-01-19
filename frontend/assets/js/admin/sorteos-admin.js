@@ -1,5 +1,3 @@
-// assets/js/admin/sorteos-admin.js
-
 const API_URL = window.API_URL || '';
 
 export async function cargarSorteosAdmin() {
@@ -86,6 +84,9 @@ export async function cargarSorteosAdmin() {
                 <button class="btn btn-danger btn-sm" onclick="eliminarSorteo(${s.id})">
                   🗑 Eliminar
                 </button>
+                <button class="btn btn-primary btn-sm" onclick="verDetalleSorteo(${s.id})">
+                  👁 Ver detalle
+                </button>
               </div>
             </div>
           </article>
@@ -137,6 +138,12 @@ async function eliminarSorteo(id) {
   }
 }
 
+// 🌟 Función para VER DETALLE sorteo (nuevo)
+function verDetalleSorteo(id) {
+  location.href = `sorteo-detalle.html?id=${id}`;
+}
+
 // Hacemos accesibles las funciones desde el HTML inline
 window.editarSorteo = editarSorteo;
 window.eliminarSorteo = eliminarSorteo;
+window.verDetalleSorteo = verDetalleSorteo;
