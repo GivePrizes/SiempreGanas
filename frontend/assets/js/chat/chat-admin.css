@@ -4,11 +4,11 @@
 #adminChatContainer {
   display: flex;
   flex-direction: column;
-  background: #fff8e1;
-  color: #333;
+  background: #1e1e1e;
+  color: #e0e0e0;
   font-family: system-ui, -apple-system, sans-serif;
   border-radius: 8px;
-  border: 2px solid #ff9800;
+  border: 2px solid #3b82f6;
 }
 
 /* ===============================
@@ -19,7 +19,7 @@
   overflow-y: auto;
   padding: 12px;
   scroll-behavior: smooth;
-  background: #fff3e0;
+  background: #121212;
   border-radius: 6px;
 }
 
@@ -27,11 +27,11 @@
   width: 6px;
 }
 #adminChatBody::-webkit-scrollbar-thumb {
-  background: #ffb74d;
+  background: #3b82f6;
   border-radius: 4px;
 }
 #adminChatBody::-webkit-scrollbar-track {
-  background: #fff3e0;
+  background: #1a1a1a;
 }
 
 /* ===============================
@@ -42,16 +42,16 @@
 }
 
 .chat-row.admin .chat-bubble {
-  background: #ffe0b2;
-  color: #333;
-  border-left: 4px solid #f57c00;
+  background: #2a2a2a;
+  color: #e0e0e0;
+  border-left: 4px solid #3b82f6;
   font-weight: 500;
 }
 
 /* Mensajes de sistema */
 .chat-row.system .chat-bubble {
-  background: #ffcc80;
-  color: #5d4037;
+  background: #374151;
+  color: #9ca3af;
   font-style: italic;
   font-size: 13px;
 }
@@ -75,19 +75,19 @@
 }
 
 .actions .mute-btn {
-  background: #f87171;
+  background: #dc2626;
   color: #fff;
 }
 .actions .mute-btn:hover {
-  background: #ef4444;
+  background: #b91c1c;
 }
 
 .actions .delete-btn {
-  background: #9ca3af;
+  background: #6b7280;
   color: #fff;
 }
 .actions .delete-btn:hover {
-  background: #6b7280;
+  background: #4b5563;
 }
 
 .actions .state-btn {
@@ -103,9 +103,9 @@
 ================================ */
 #adminChatInput {
   flex: 1;
-  background: #fff3e0;
-  color: #333;
-  border: 1px solid #ffb74d;
+  background: #1f2937;
+  color: #f3f4f6;
+  border: 1px solid #3b82f6;
   border-radius: 8px;
   padding: 8px;
   transition: border-color 0.2s ease;
@@ -113,11 +113,11 @@
 
 #adminChatInput:focus {
   outline: none;
-  border-color: #f57c00;
+  border-color: #60a5fa;
 }
 
 #adminChatSend {
-  background: #f57c00;
+  background: #3b82f6;
   color: white;
   border: none;
   border-radius: 8px;
@@ -142,5 +142,5 @@
   font-size: 12px;
   padding: 4px 12px;
   min-height: 18px;
-  color: #f57c00;
+  color: #60a5fa;
 }
