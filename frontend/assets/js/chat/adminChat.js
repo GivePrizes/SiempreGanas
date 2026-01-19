@@ -88,15 +88,24 @@ export async function initAdminChat({ sorteoId, token }) {
     inputEl.value = '';
     sendEl.disabled = true;
 
-    const { ok } = await sendMessage({
-        sorteoId,
-        token,          // solo se usa si no es admin
-        mensaje: text,
-        is_system: true // ✅ fuerza el uso de /system con x-internal-key
-    });
+    try {
+        const res = await fetch(`${window.API_URL}/api/admin/chat/${sorteoId}/system`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}` // JWT del admin
+        },
+        body: JSON.stringify({ mensaje: text })
+        });
 
-    if (!ok) {
+        const data = await res.json();
+        if (!res.ok) {
         hintEl.textContent = 'Error enviando mensaje admin';
+        hintEl.style.color = '#f87171';
+        }
+    } catch (err) {
+        console.error("Error en envío admin:", err);
+        hintEl.textContent = 'Error interno al enviar mensaje';
         hintEl.style.color = '#f87171';
     }
 
