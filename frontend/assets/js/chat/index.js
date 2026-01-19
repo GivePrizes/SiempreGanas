@@ -160,20 +160,18 @@ export async function initChat({ sorteoId, token }) {
   });
 
   /* ===============================
-     0) CHECK PERMISSION
+    0) CHECK PERMISSION
   =============================== */
-
   try {
     const resp = await fetch(getChatEndpoint(sorteoId), {
-      method: 'POST',
+      method: 'GET', // 👈 en vez de POST
       headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ mensaje: '' })
+        Authorization: `Bearer ${token}`
+      }
     });
 
-    puedeEscribir = resp.ok || resp.status === 400;
+    // si responde 200, el usuario puede escribir
+    puedeEscribir = resp.ok;
   } catch {
     puedeEscribir = false;
   }
@@ -181,9 +179,8 @@ export async function initChat({ sorteoId, token }) {
   updateChatPermission();
 
   /* ===============================
-     1) HISTORY
+    1) HISTORY
   =============================== */
-
   try {
     const data = await fetchMessages({ sorteoId, limit: 50 });
     store.upsertMany(data.messages || []);

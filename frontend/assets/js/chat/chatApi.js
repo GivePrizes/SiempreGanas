@@ -25,22 +25,38 @@ export async function fetchMessages({ sorteoId, limit = 50, cursor = null }) {
    Post mensaje normal (usuario)
 ================================ */
 export async function postMessage({ sorteoId, token, mensaje }) {
-  try {
-    const res = await fetch(getChatEndpoint(sorteoId), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ mensaje: mensaje.trim() })
-    });
+  const payloads = [
+    { mensaje: mensaje.trim() },
+    { texto: mensaje.trim() },
+    { content: mensaje.trim() }
+  ];
 
-    const data = await res.json().catch(() => ({}));
-    return { ok: res.ok, status: res.status, data };
-  } catch (err) {
-    console.error('postMessage error:', err);
-    return { ok: false, status: 0, data: { error: err.message } };
+  for (const payload of payloads) {
+    try {
+      const res = await fetch(getChatEndpoint(sorteoId), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        console.log("✅ postMessage enviado con formato:", payload);
+        return { ok: true, status: res.status, data };
+      } else {
+        console.warn("❌ Falló con formato:", payload, "status:", res.status);
+      }
+    } catch (err) {
+      console.error("postMessage error con payload", payload, err);
+    }
   }
+
+  // Si ninguno funcionó
+  return { ok: false, status: 400, data: { error: "Ningún formato aceptado" } };
 }
 
 /* ===============================
