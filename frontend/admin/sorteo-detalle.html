@@ -23,6 +23,7 @@
       <section class="card">
         <h2 id="tituloSorteo">Cargando sorteo...</h2>
         <p id="subtituloSorteo" class="text-muted">Detalles del sorteo para administración.</p>
+        <p id="estadoSorteo" class="text-muted"></p>
       </section>
 
       <!-- Bloque de chat admin -->
@@ -53,7 +54,7 @@
     const API_URL = window.API_URL || '';
     const params = new URLSearchParams(window.location.search);
     const sorteoId = params.get('id'); // el ID viene por la URL
-    const token = localStorage.getItem('jwt');
+    const token = localStorage.getItem('token'); // ✅ corregido: usar "token"
 
     console.log('Sorteo ID:', sorteoId);
 
@@ -67,7 +68,8 @@
 
         if (res.ok) {
           document.getElementById('tituloSorteo').textContent = data.descripcion;
-          document.getElementById('subtituloSorteo').textContent = `Premio: ${data.premio}`;
+          document.getElementById('subtituloSorteo').textContent = `Premio: ${data.premio} · Ocupación: ${data.ocupados}/${data.cantidad_numeros}`;
+          document.getElementById('estadoSorteo').textContent = `Estado: ${data.estado}`;
         } else {
           document.getElementById('tituloSorteo').textContent = 'Error cargando sorteo';
         }
@@ -77,7 +79,7 @@
       }
     }
 
-    //  Inicializar chat admin si el rol es correcto
+    // Inicializar chat admin si el rol es correcto
     if (token && sorteoId) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));

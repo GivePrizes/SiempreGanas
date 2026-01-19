@@ -64,29 +64,20 @@ export async function initAdminChat({ sorteoId, token }) {
     }, 10);
   }
 
-  /* ===============================
-     History
-  =============================== */
-  try {
+    /* ===============================
+    History
+    ================================ */
+    try {
     const data = await fetchMessages({ sorteoId, limit: 50 });
+    console.log('Historial recibido:', data);
     store.upsertMany(data.messages || []);
     renderAdminMessages();
-  } catch {
+    } catch (err) {
+    console.error('Error cargando historial:', err);
     hintEl.textContent = 'No se pudo cargar el chat de admin.';
-  }
+    }
 
-  /* ===============================
-     Realtime
-  =============================== */
-  try {
-    const supabase = await createRealtimeClient();
-    unsub = subscribeToSorteoInserts({
-      supabase,
-      sorteoId,
-      onInsert: appendMessage
-    });
-  } catch {}
-
+  
   /* ===============================
      Send mensaje global
   =============================== */
