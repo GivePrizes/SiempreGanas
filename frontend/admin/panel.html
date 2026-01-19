@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Siempre Gana — Panel Admin</title>
 
-  <!-- SOLO los CSS nuevos del sistema -->
+  <!-- CSS del sistema -->
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
   <link rel="stylesheet" href="../assets/js/chat/chat.css">
-
+  <link rel="stylesheet" href="../assets/js/chat/chat-admin.css"><!-- nuevo -->
 </head>
 <body class="admin-body">
   <div class="admin-wrapper">
@@ -62,7 +62,6 @@
           </div>
         </div>
 
-        <!-- El JS admin/index.js llena este contenedor -->
         <div id="comprobantes" class="table-wrapper">
           <!-- Aquí se inyectan las tarjetas o filas de comprobantes -->
         </div>
@@ -83,7 +82,6 @@
           </div>
         </div>
 
-        <!-- El JS admin/index.js usa este contenedor -->
         <div id="sorteosAdmin" class="table-wrapper">
           <!-- Aquí se listan los sorteos (cards o tabla) -->
         </div>
@@ -142,16 +140,48 @@
         </div>
       </section>
 
+      <!-- 💬 CHAT ADMIN -->
+      <section class="card" style="margin-top:18px;">
+        <div class="card-title-row">
+          <h2>💬 Chat de Administración</h2>
+          <p class="text-muted">Comunicación en tiempo real con los participantes y control de moderación.</p>
+        </div>
+
+        <div id="adminChatContainer" class="chat-card admin-chat">
+          <div id="adminChatBody" class="chat-messages"></div>
+          <div class="chat-input-wrap">
+            <input id="adminChatInput" placeholder="Mensaje global o moderación...">
+            <button id="adminChatSend">Enviar</button>
+          </div>
+          <p id="adminChatHint"></p>
+        </div>
+      </section>
+
     </main>
   </div>
 
   <!-- Toast de feedback -->
   <div id="toast" class="toast hidden">Acción realizada</div>
 
-  <!-- Scripts existentes (NO tocar) -->
+  <!-- Scripts existentes -->
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" src="../assets/js/admin/index.js"></script>
+
+  <!-- Script del chat admin -->
+  <script type="module">
+    import { initAdminChat } from '../assets/js/chat/adminChat.js';
+
+    const sorteoId = window.currentSorteoId; // asegúrate de definirlo en tu app
+    const token = localStorage.getItem('jwt');
+
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.rol === 'admin') {
+        initAdminChat({ sorteoId, token });
+      }
+    }
+  </script>
 </body>
 </html>
