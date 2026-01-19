@@ -19,7 +19,7 @@
     </header>
 
     <main class="admin-main">
-      <!-- Aquí pondrás los datos del sorteo -->
+      <!-- Datos del sorteo -->
       <section class="card">
         <h2 id="tituloSorteo">Cargando sorteo...</h2>
         <p id="subtituloSorteo" class="text-muted">Detalles del sorteo para administración.</p>
@@ -50,16 +50,48 @@
   <script type="module">
     import { initAdminChat } from '../assets/js/chat/adminChat.js';
 
+    const API_URL = window.API_URL || '';
     const params = new URLSearchParams(window.location.search);
     const sorteoId = params.get('id'); // el ID viene por la URL
     const token = localStorage.getItem('jwt');
 
+    console.log('Sorteo ID:', sorteoId);
+
+    // ✅ Cargar datos del sorteo y mostrarlos en la interfaz
+    async function cargarDetalleSorteo() {
+      try {
+        const res = await fetch(`${API_URL}/api/sorteos/${sorteoId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          document.getElementById('tituloSorteo').textContent = data.descripcion;
+          document.getElementById('subtituloSorteo').textContent = `Premio: ${data.premio}`;
+        } else {
+          document.getElementById('tituloSorteo').textContent = 'Error cargando sorteo';
+        }
+      } catch (err) {
+        console.error('Error al cargar detalle del sorteo:', err);
+        document.getElementById('tituloSorteo').textContent = 'Error de conexión';
+      }
+    }
+
+    //  Inicializar chat admin si el rol es correcto
     if (token && sorteoId) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      if (payload.rol === 'admin') {
-        initAdminChat({ sorteoId, token });
-      } else {
-        document.getElementById('adminChatHint').textContent = 'Tu rol no es admin.';
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        console.log('Payload JWT:', payload);
+
+        if (payload.rol === 'admin') {
+          cargarDetalleSorteo();
+          initAdminChat({ sorteoId, token });
+        } else {
+          document.getElementById('adminChatHint').textContent = 'Tu rol no es admin.';
+        }
+      } catch (err) {
+        console.error('Error leyendo el token:', err);
+        document.getElementById('adminChatHint').textContent = 'Token inválido.';
       }
     } else {
       document.getElementById('adminChatHint').textContent = 'Inicia sesión para usar el chat.';
