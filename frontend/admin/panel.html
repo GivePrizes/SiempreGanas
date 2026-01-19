@@ -170,17 +170,27 @@
   <script type="module" src="../assets/js/admin/index.js"></script>
 
   <!-- Script del chat admin -->
+  <script>
+    // Define el sorteo actual (puedes obtenerlo dinámicamente)
+    window.currentSorteoId = '1'; // ejemplo: ID 1
+  </script>
+
   <script type="module">
     import { initAdminChat } from '../assets/js/chat/adminChat.js';
 
-    const sorteoId = window.currentSorteoId; // asegúrate de definirlo en tu app
+    const sorteoId = window.currentSorteoId;
     const token = localStorage.getItem('jwt');
 
     if (token) {
       const payload = JSON.parse(atob(token.split('.')[1]));
+      console.log('Payload JWT:', payload); // debug
       if (payload.rol === 'admin') {
         initAdminChat({ sorteoId, token });
+      } else {
+        document.getElementById('adminChatHint').textContent = 'Tu rol no es admin, no puedes usar este chat.';
       }
+    } else {
+      document.getElementById('adminChatHint').textContent = 'Inicia sesión para usar el chat admin.';
     }
   </script>
 </body>
