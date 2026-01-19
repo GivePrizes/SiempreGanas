@@ -48,16 +48,25 @@ export async function postMessage({ sorteoId, token, mensaje }) {
 ================================ */
 export async function sendMessage({ sorteoId, token, mensaje, is_system = false }) {
   try {
-    const endpoint = is_system 
-      ? `${getChatEndpoint(sorteoId)}/system` 
+    const endpoint = is_system
+      ? `${getChatEndpoint(sorteoId)}/system`
       : getChatEndpoint(sorteoId);
+
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+
+    if (is_system) {
+      // Mensaje global: usar clave interna
+      headers['x-internal-key'] = window.INTERNAL_API_KEY || import.meta.env.VITE_INTERNAL_API_KEY;
+    } else {
+      // Mensaje normal: usar JWT
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     const res = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
+      headers,
       body: JSON.stringify({ mensaje: mensaje.trim() })
     });
 

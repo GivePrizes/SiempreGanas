@@ -144,3 +144,27 @@
   min-height: 18px;
   color: #60a5fa;
 }
+
+
+/* ===============================
+   MENSAJES DE SISTEMA (GLOBAL)
+================================ */
+.chat-row.system {
+  text-align: center; /* Centrado para destacar */
+}
+
+.chat-row.system .chat-bubble {
+  background: linear-gradient(135deg, #2563eb, #3b82f6); /* Azul degradado */
+  color: #ffffff; /* Texto blanco para contraste */
+  font-style: italic;
+  font-weight: 600;
+  font-size: 14px;
+  border: 2px solid #60a5fa; /* Borde azul claro */
+  border-radius: 6px;
+  padding: 8px 12px;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.6); /* Glow azul */
+  display: inline-block;
+  max-width: 80%;
+  margin: 6px auto; /* Centrado horizontal */
+}
+

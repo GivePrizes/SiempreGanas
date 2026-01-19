@@ -78,10 +78,10 @@ export async function initAdminChat({ sorteoId, token }) {
     }
 
   
-  /* ===============================
-     Send mensaje global
-  =============================== */
-  async function send() {
+    /* ===============================
+    Send mensaje global
+    ================================ */
+    async function send() {
     const text = inputEl.value.trim();
     if (!text) return;
 
@@ -89,24 +89,19 @@ export async function initAdminChat({ sorteoId, token }) {
     sendEl.disabled = true;
 
     const { ok } = await sendMessage({
-      sorteoId,
-      token,
-      mensaje: text,
-      is_system: true
+        sorteoId,
+        token,          // solo se usa si no es admin
+        mensaje: text,
+        is_system: true // ✅ fuerza el uso de /system con x-internal-key
     });
 
     if (!ok) {
-      hintEl.textContent = 'Error enviando mensaje admin';
-      hintEl.style.color = '#f87171';
+        hintEl.textContent = 'Error enviando mensaje admin';
+        hintEl.style.color = '#f87171';
     }
 
     sendEl.disabled = false;
-  }
-
-  sendEl.addEventListener('click', send);
-  inputEl.addEventListener('keydown', e => {
-    if (e.key === 'Enter') send();
-  });
+    }
 
   /* ===============================
      Moderación: delegar eventos

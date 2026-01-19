@@ -1,11 +1,11 @@
 // frontend/assets/js/chat/config.js
 
 export function getChatBaseUrl() {
-  // Retorna la URL base del Chat Service (sin /chat)
+  // Solo la raíz del servicio, sin /api/chat
   return (
     window.CHAT_URL ||
     import.meta.env.VITE_CHAT_SERVICE_URL ||
-    "https://chat-service-theta.vercel.app/api/chat"
+    "https://chat-service-theta.vercel.app"
   );
 }
 
@@ -22,8 +22,16 @@ export function getSupabaseConfig() {
   };
 }
 
-// Helper recomendado
+// Endpoint de chat para un sorteo
 export function getChatEndpoint(sorteoId) {
-  const base = `${getChatBaseUrl()}/api/chat`;
-  return `${base}/${sorteoId}`;
+  return `${getChatBaseUrl()}/api/chat/${sorteoId}`;
+}
+
+// Clave interna para mensajes de sistema (admin)
+export function getInternalApiKey() {
+  return (
+    window.INTERNAL_API_KEY ||
+    import.meta.env.VITE_INTERNAL_API_KEY ||
+    ""
+  );
 }
