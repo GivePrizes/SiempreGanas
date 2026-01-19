@@ -342,3 +342,19 @@ select:focus {
     height: 24px;
   }
 }
+
+
+.btn {
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}

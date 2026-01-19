@@ -387,3 +387,19 @@ button.btn-mini:disabled{
   color: var(--muted);
   background: rgba(255,255,255,.02);
 }
+
+
+.acordeon-content {
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.25s ease;
+}
+
+.acordeon-content.closed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.acordeon-content.open {
+  max-height: 1200px; /* grande */
+  opacity: 1;
+}

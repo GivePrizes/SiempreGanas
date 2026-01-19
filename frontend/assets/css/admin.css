@@ -498,3 +498,16 @@
   opacity: .75;
   margin-bottom: .5rem;
 }
+
+
+.card,
+.acordeon-item,
+.table-wrapper > * {
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.card {
+  will-change: transform, opacity;
+}
