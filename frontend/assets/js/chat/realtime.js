@@ -1,21 +1,8 @@
 // frontend/assets/js/chat/realtime.js
-import { getSupabaseConfig } from './config.js';
+import { getSupabaseClient } from './supabaseClient.js';
 
-export async function createRealtimeClient() {
-  const { url, anonKey } = getSupabaseConfig();
-  if (!url || !anonKey) throw new Error('Falta SUPABASE_URL / SUPABASE_ANON_KEY');
-
-  const { createClient } = await import(
-    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-  );
-
-  return createClient(url, anonKey, {
-    realtime: { params: { eventsPerSecond: 10 } }
-  });
-}
-
-export function subscribeToSorteoInserts({ supabase, sorteoId, onInsert }) {
-  if (!sorteoId) throw new Error('sorteoId requerido');
+export async function subscribeToSorteoInserts({ sorteoId, onInsert }) {
+  const supabase = await getSupabaseClient();
 
   const channel = supabase
     .channel(`chat_sorteo_${sorteoId}`)
@@ -31,13 +18,7 @@ export function subscribeToSorteoInserts({ supabase, sorteoId, onInsert }) {
         onInsert(payload.new);
       }
     )
-    .subscribe((status) => {
-      if (status === 'SUBSCRIBED') {
-        console.log('🟢 Realtime conectado');
-      }
-    });
+    .subscribe();
 
-  return () => {
-    supabase.removeChannel(channel);
-  };
+  return () => supabase.removeChannel(channel);
 }

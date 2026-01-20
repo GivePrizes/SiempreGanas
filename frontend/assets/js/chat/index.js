@@ -1,9 +1,9 @@
 // frontend/assets/js/chat/index.js
 import { fetchMessages, postMessage } from './chatApi.js';
-import { createRealtimeClient, subscribeToSorteoInserts } from './realtime.js';
 import { createChatStore } from './store.js';
 import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js';
 import { getChatEndpoint } from './config.js';
+import { subscribeToSorteoInserts } from './realtime.js';
 
 /* ===============================
    Utils
@@ -189,18 +189,20 @@ export async function initChat({ sorteoId, token }) {
     hintEl.textContent = 'No se pudo cargar el chat.';
   }
 
+
   /* ===============================
-     2) REALTIME
+    2) REALTIME
   =============================== */
 
   try {
-    const supabase = await createRealtimeClient();
-    unsub = subscribeToSorteoInserts({
-      supabase,
+    unsub = await subscribeToSorteoInserts({
       sorteoId,
       onInsert: appendMessage
     });
-  } catch {}
+  } catch (e) {
+    console.error('❌ Error realtime', e);
+  }
+
 
   /* ===============================
      3) SEND
