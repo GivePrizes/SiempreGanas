@@ -59,6 +59,7 @@ export async function initChat({ sorteoId, token }) {
     }
   }
 
+
   function rerender({ keepBottom = true } = {}) {
     const atBottom = isBottom(bodyEl);
 
@@ -77,6 +78,18 @@ export async function initChat({ sorteoId, token }) {
       newBtnEl.textContent = `Nuevos mensajes (${pendingNew}) ↓`;
     }
   }
+
+  /* ===============================
+      Sound
+  =============================== */
+  function playPing() {
+    try {
+      const audio = new Audio('/assets/sound/new-notification-SG.mp3');
+      audio.volume = 0.4;
+      audio.play();
+    } catch (e) {}
+  }
+
 
   /* ===============================
      Optimistic UI
