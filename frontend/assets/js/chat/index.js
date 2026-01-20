@@ -137,15 +137,21 @@ export async function initChat({ sorteoId, token }) {
   function appendMessage(m) {
     if (!m || store.has(m.id)) return;
 
-    const msgUserId = getMensajeUsuarioId(m);
+    // 🔥 NORMALIZAR MENSAJE REALTIME
+    const mensaje = {
+      ...m,
+      usuario: {
+        id: m.usuario_id,
+        nombre: m.usuario_id === myUsuarioId ? 'Tú' : 'Usuario'
+      }
+    };
 
-    // 👇 Si el mensaje es mío, reemplaza el optimista
-    if (Number(msgUserId) === Number(myUsuarioId)) {
-      replaceOptimistic(m);
+    if (Number(mensaje.usuario.id) === Number(myUsuarioId)) {
+      replaceOptimistic(mensaje);
     }
 
     const atBottom = isBottom(bodyEl);
-    store.upsertMany([m]);
+    store.upsertMany([mensaje]);
 
     renderMessages({
       containerEl: bodyEl,
@@ -153,8 +159,7 @@ export async function initChat({ sorteoId, token }) {
       myUsuarioId
     });
 
-    // 🔔 Sonido SOLO si NO es mío
-    if (!m.is_system && Number(msgUserId) !== Number(myUsuarioId)) {
+    if (!mensaje.is_system && Number(mensaje.usuario.id) !== Number(myUsuarioId)) {
       playPing();
     }
 
@@ -172,6 +177,7 @@ export async function initChat({ sorteoId, token }) {
       newBtnEl.textContent = `Nuevos mensajes (${pendingNew}) ↓`;
     }
   }
+
 
   /* ===============================
      Filters & buttons
