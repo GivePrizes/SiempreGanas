@@ -1,9 +1,14 @@
-// frontend/assets/js/chat/store.js
 export function createChatStore({ myUsuarioId }) {
   const byId = new Map();
   let filter = 'all';
 
-  function upsertMany(list = []) { list.forEach(m => m?.id && byId.set(m.id, m)); }
+  function upsertMany(list = []) {
+    list.forEach(m => m?.id && byId.set(m.id, m));
+  }
+
+  function has(id) {
+    return byId.has(id);
+  }
 
   function getAllSorted() {
     return [...byId.values()].sort((a, b) => {
@@ -21,5 +26,11 @@ export function createChatStore({ myUsuarioId }) {
     return all;
   }
 
-  return { upsertMany, getFiltered, setFilter: (f)=>filter=f, getFilter: ()=>filter };
+  return {
+    upsertMany,
+    has,
+    getFiltered,
+    setFilter: (f) => filter = f,
+    getFilter: () => filter
+  };
 }
