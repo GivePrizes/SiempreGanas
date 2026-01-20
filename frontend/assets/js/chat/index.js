@@ -38,6 +38,7 @@ export async function initChat({ sorteoId, token }) {
   let pendingNew = 0;
   let puedeEscribir = false;
   let unsub = null;
+  let soundEnabled = false;
 
   /* ===============================
      UI helpers
@@ -83,11 +84,12 @@ export async function initChat({ sorteoId, token }) {
       Sound
   =============================== */
   function playPing() {
+    if (!soundEnabled) return;
     try {
       const audio = new Audio('/assets/sound/new-notification-SG.mp3');
       audio.volume = 0.4;
       audio.play();
-    } catch (e) {}
+    } catch {}
   }
 
 
@@ -112,8 +114,12 @@ export async function initChat({ sorteoId, token }) {
   }
 
   function replaceOptimistic(realMsg) {
-    store.removeOptimistic?.(myUsuarioId, realMsg.mensaje);
+    store.removeOptimisticByUserAndText(
+      myUsuarioId,
+      realMsg.mensaje
+    );
   }
+
 
   /* ===============================
      Append realtime message
@@ -122,7 +128,7 @@ export async function initChat({ sorteoId, token }) {
   function appendMessage(m) {
     if (!m || store.has(m.id)) return;
 
-    if (Number(m.usuario?.id) === Number(myUsuarioId)) {
+    if (Number(m.usuario_id) === Number(myUsuarioId)) {
       replaceOptimistic(m);
     }
 
@@ -135,7 +141,7 @@ export async function initChat({ sorteoId, token }) {
       myUsuarioId
     });
 
-    if (!m.is_system && Number(m.usuario?.id) !== Number(myUsuarioId)) {
+    if (!m.is_system && Number(m.usuario_id) !== Number(myUsuarioId)) {
       playPing?.();
     }
 
@@ -285,6 +291,21 @@ export async function initChat({ sorteoId, token }) {
   inputEl.addEventListener('keydown', e => {
     if (e.key === 'Enter') send();
   });
+  window.addEventListener(
+    'click',
+    () => {
+      soundEnabled = true;
+    },
+    { once: true }
+  );
+
+  window.addEventListener(
+    'keydown',
+    () => {
+      soundEnabled = true;
+    },
+    { once: true }
+  );
 
   window.addEventListener('beforeunload', () => {
     unsub?.();

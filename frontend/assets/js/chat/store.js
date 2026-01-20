@@ -26,11 +26,36 @@ export function createChatStore({ myUsuarioId }) {
     return all;
   }
 
+  function removeOptimisticByUserAndText(usuarioId, mensaje) {
+    for (const [id, m] of byId.entries()) {
+      if (
+        m._optimistic &&
+        Number(m.usuario?.id) === Number(usuarioId) &&
+        m.mensaje === mensaje
+      ) {
+        byId.delete(id);
+        break;
+      }
+    }
+  }
+
+  // Remove by id
+  function remove(id) {
+    byId.delete(id);
+  }
+
+
+
   return {
     upsertMany,
     has,
+    remove,
+    removeOptimisticByUserAndText,
     getFiltered,
+
     setFilter: (f) => filter = f,
     getFilter: () => filter
   };
+
+  
 }
