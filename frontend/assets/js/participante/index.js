@@ -1,6 +1,7 @@
 // assets/js/participante/index.js
 
 import { cargarMisNumerosResumen } from './misNumeros.js';
+import { cargarProgresoBono } from '../bonus.js';
 
 const API_URL = window.API_URL || ''; // viene de config.js
 
@@ -327,3 +328,6 @@ function renderBono(data) {
 }
 
 
+document.addEventListener('DOMContentLoaded', () => {
+  cargarProgresoBono();
+});
