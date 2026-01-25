@@ -1174,29 +1174,31 @@
 
 
 /* =============================
-   Bono mini (fidelidad discreta)
+   Bonus mini (discreto, app-like)
    ============================= */
 
 .bonus-mini{
   margin-top: 10px;
   padding: 8px 10px;
-  border-radius: 12px;
-  background: rgba(255,215,0,0.08);
-  border: 1px dashed rgba(255,215,0,0.35);
-  font-size: .8rem;
-  color: rgba(255,255,255,.85);
+  border-radius: 10px;
+
+  background: rgba(255,255,255,0.03);
+  border: 1px dashed rgba(255,255,255,0.10);
+
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.78);
 }
 
 .bonus-mini strong{
-  color: #ffd700;
-  font-weight: 700;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
 }
 
 .bonus-mini-bar{
   margin-top: 6px;
   height: 6px;
   border-radius: 999px;
-  background: rgba(255,255,255,.12);
+  background: rgba(255,255,255,0.08);
   overflow: hidden;
 }
 
@@ -1206,11 +1208,24 @@
   width: 0%;
   background: linear-gradient(
     90deg,
-    #ffd700,
-    #ffef9a
+    rgba(255,215,0,0.65),
+    rgba(255,215,0,0.9)
   );
-  transition: width .4s ease;
+  transition: width .35s ease;
 }
+
+/* Mobile: aún más compacto */
+@media (max-width: 480px){
+  .bonus-mini{
+    font-size: 0.74rem;
+    padding: 7px 9px;
+  }
+
+  .bonus-mini-bar{
+    height: 5px;
+  }
+}
+
 
 
 /* Mobile */
