@@ -653,11 +653,7 @@
   opacity: 0.9;
 }
 
-/* Tip debajo de la barra de progreso */
-.progress-tip-text {
-  font-size: 0.8rem;
-  margin-top: 0.25rem;
-}
+
 
 /* =============================
    Bloque "¿Por qué a la gente le gusta este formato?"
@@ -1176,6 +1172,47 @@
   letter-spacing: .3px;
 }
 
+
+/* =============================
+   Bono mini (fidelidad discreta)
+   ============================= */
+
+.bonus-mini{
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(255,215,0,0.08);
+  border: 1px dashed rgba(255,215,0,0.35);
+  font-size: .8rem;
+  color: rgba(255,255,255,.85);
+}
+
+.bonus-mini strong{
+  color: #ffd700;
+  font-weight: 700;
+}
+
+.bonus-mini-bar{
+  margin-top: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.12);
+  overflow: hidden;
+}
+
+.bonus-mini-bar span{
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(
+    90deg,
+    #ffd700,
+    #ffef9a
+  );
+  transition: width .4s ease;
+}
+
+
 /* Mobile */
 @media (max-width: 768px){
   .app-topbar{
@@ -1216,32 +1253,6 @@
 .chat-hint {
   font-size: 0.9rem;
   margin-top: 0.5rem;
-}
-
-/* 🎁 Bono de fidelidad */
-.bonus-box {
-  background: linear-gradient(135deg, #1f2937, #111827);
-  color: #fff;
-  padding: 16px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,.25);
-  margin: 20px 0;
-}
-
-.bonus-bar {
-  width: 100%;
-  height: 12px;
-  background: #374151;
-  border-radius: 999px;
-  overflow: hidden;
-  margin-top: 12px;
-}
-
-#bonus-progress {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #22c55e, #4ade80);
-  transition: width .6s ease;
 }
 
 /*=============================

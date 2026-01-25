@@ -11,7 +11,7 @@
 <body>
   <div class="main-container">
 
-    <!-- HEADER / BIENVENENIDA -->
+    <!-- HEADER / BIENVENIDA -->
     <header class="app-topbar">
       <div class="app-topbar-left">
         <h2 id="tituloBienvenida" class="app-title">Hola 👋</h2>
@@ -33,6 +33,8 @@
 
     <!-- 📊 RESUMEN RÁPIDO -->
     <section class="stats-row">
+
+      <!-- Sorteos activos -->
       <div class="stat-card">
         <div class="stat-top">
           <span class="stat-label">Sorteos activos</span>
@@ -41,27 +43,26 @@
         <div class="stat-value" id="statSorteosActivos">—</div>
       </div>
 
+      <!-- Números adquiridos + BONO -->
       <div class="stat-card">
         <div class="stat-top">
           <span class="stat-label">Números adquiridos</span>
-          <small class="stat-hint" id="bonusHint">Bonus: cuenta digital cada 20</small>
-
           <span class="stat-ico">🎟</span>
         </div>
+
         <div class="stat-value" id="statNumerosComprados">—</div>
+
+        <!-- 🎁 MINI BONUS (APP-LIKE) -->
+        <div class="bonus-mini">
+          🎁 <strong>Bono fidelidad</strong>: 14 / 20 números
+          <div class="bonus-mini-bar">
+            <span style="width:70%"></span>
+          </div>
+        </div>
+
       </div>
+
     </section>
-
-    <!-- 🎁 BONO DE FIDELIDAD -->
-    <section id="bonus-box" class="bonus-box" style="display:none">
-      <h3>🎁 Bono de fidelidad</h3>
-      <p id="bonus-text"></p>
-
-      <div class="bonus-bar">
-        <div id="bonus-progress"></div>
-      </div>
-    </section>
-
 
     <!-- 🎯 SORTEOS DISPONIBLES -->
     <section class="sorteos-section">
@@ -78,6 +79,7 @@
 
   </div>
 
+  <!-- WhatsApp -->
   <a
     href="https://wa.me/573171688514?text=Hola%20Siempre%20Ganas,%20necesito%20ayuda%20con%20un%20sorteo%20🎯"
     class="whatsapp-float-dashboard"
