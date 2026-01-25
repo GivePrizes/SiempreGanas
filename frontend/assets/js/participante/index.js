@@ -259,6 +259,7 @@ function actualizarBonusDinamico(totalNumeros) {
 document.addEventListener('DOMContentLoaded', async () => {
   setBienvenida();
   cargarStatsSorteos();
+  cargarProgresoBono();
 
   // Espera a que cargue el resumen (si es async y devuelve promesa)
   await cargarMisNumerosResumen();
@@ -271,4 +272,58 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   cargarSorteosActivos();
 });
+
+
+// ================================
+// 🎁 BONO DE FIDELIDAD
+// ================================
+async function cargarProgresoBono() {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const res = await fetch('/api/bonus/progreso', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+    renderBono(data);
+  } catch (err) {
+    console.error('Error cargando bono:', err);
+  }
+}
+
+function renderBono(data) {
+  const box = document.getElementById('bonus-box');
+  const text = document.getElementById('bonus-text');
+  const bar = document.getElementById('bonus-progress');
+
+  if (!box || !text || !bar) return;
+
+  box.style.display = 'block';
+
+  const porcentaje = Math.min(
+    (data.total_aprobados / data.bonus_objetivo) * 100,
+    100
+  );
+
+  bar.style.width = `${porcentaje}%`;
+
+  if (data.bonus_entregado) {
+    text.innerHTML = `
+      ✅ <strong>Bono desbloqueado</strong><br>
+      Te enviaremos tu cuenta <strong>GRATIS</strong> por WhatsApp 📲
+    `;
+  } else {
+    text.innerHTML = `
+      Has completado <strong>${data.total_aprobados}</strong> de ${data.bonus_objetivo}<br>
+      🔥 Te faltan <strong>${data.faltan}</strong> para tu cuenta <strong>GRATIS</strong>
+    `;
+  }
+}
+
 
