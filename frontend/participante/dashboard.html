@@ -40,7 +40,7 @@
           <span class="stat-label">Sorteos activos</span>
           <span class="stat-ico">🎯</span>
         </div>
-        <div class="stat-value" id="statSorteosActivos">—</div>
+        <div class="stat-value" id="statSorteosActivos" style="opacity: 0.5; transition: opacity 0.3s ease;">0</div>
       </div>
 
       <!-- Números adquiridos + BONO -->
@@ -50,16 +50,15 @@
           <span class="stat-ico">🎟</span>
         </div>
 
-        <div class="stat-value" id="statNumerosComprados">—</div>
+        <div class="stat-value" id="statNumerosComprados" style="opacity: 0.5; transition: opacity 0.3s ease;">0</div>
 
-          <!-- BONUS dinámico -->
-          <div class="bonus-mini" id="bonusMini" hidden>
-            <div id="bonusMiniText"></div>
-            <div class="bonus-mini-bar">
-              <span id="bonusMiniBar"></span>
-            </div>
+        <!-- BONUS dinámico: se muestra solo si hay datos -->
+        <div class="bonus-mini" id="bonusMini" hidden>
+          <div id="bonusMiniText"></div>
+          <div class="bonus-mini-bar">
+            <span id="bonusMiniBar"></span>
           </div>
-
+        </div>
 
       </div>
 

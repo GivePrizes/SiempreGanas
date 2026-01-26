@@ -99,9 +99,15 @@ async function cargarStatsSorteos() {
   try {
     const res = await fetch(`${API_URL}/api/sorteos`);
     const data = await res.json();
-    el.textContent = data.filter(s => s.estado !== 'finalizado').length;
+    const count = data.filter(s => s.estado !== 'finalizado').length;
+    el.textContent = String(count);
+    el.style.opacity = '1';
   } catch {
-    el.textContent = '—';
+    // Error: mostrar 0 atenuado, no guión
+    if (el) {
+      el.textContent = '0';
+      el.style.opacity = '0.5';
+    }
   }
 }
 

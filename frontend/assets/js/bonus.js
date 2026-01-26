@@ -32,15 +32,15 @@ export async function cargarProgresoBono() {
  * Renderiza el bono de fidelidad en el dashboard
  */
 function renderBono(data) {
-  const box  = document.getElementById('bonus-box');
-  const text = document.getElementById('bonus-text');
-  const bar  = document.getElementById('bonus-progress');
+  const box  = document.getElementById('bonusMini');
+  const text = document.getElementById('bonusMiniText');
+  const bar  = document.getElementById('bonusMiniBar');
 
   // Si el dashboard no tiene bono, salimos sin romper nada
   if (!box || !text || !bar) return;
 
   // 🔓 Mostrar el bloque (HTML viene oculto)
-  box.style.display = 'block';
+  box.removeAttribute('hidden');
 
   const objetivo = Number(data.bonus_objetivo || 0);
   const aprobados = Number(data.total_aprobados || 0);
@@ -54,14 +54,14 @@ function renderBono(data) {
   if (data.bonus_entregado) {
     text.innerHTML = `
       ✅ <strong>Bono desbloqueado</strong><br>
-      Te enviaremos tu cuenta <strong>GRATIS</strong> por WhatsApp.
+      <span style="font-size:.85em; opacity:.9;">Te enviaremos tu cuenta GRATIS por WhatsApp</span>
     `;
   } else {
     const faltan = Number(data.faltan ?? Math.max(objetivo - aprobados, 0));
 
     text.innerHTML = `
-      Has completado <strong>${aprobados}</strong> de ${objetivo}<br>
-      🔥 Te faltan <strong>${faltan}</strong> para tu cuenta <strong>GRATIS</strong>
+      🎁 <strong>Te faltan ${faltan}</strong><br>
+      <span style="font-size:.85em; opacity:.9;">para tu cuenta GRATIS</span>
     `;
   }
 }

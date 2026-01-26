@@ -182,7 +182,7 @@ window.filtrarMisNumeros = (estado) => {
 // ------------------------------
 export async function cargarMisNumerosResumen() {
   const token = localStorage.getItem('token');
-  const stat = document.getElementById('statMisNumeros');
+  const stat = document.getElementById('statNumerosComprados');
 
   if (!token) return { totalNumeros: 0 };
 
@@ -193,7 +193,8 @@ export async function cargarMisNumerosResumen() {
 
     if (!res.ok) {
       console.error('Error HTTP en mis-participaciones (resumen):', res.status);
-      if (stat) stat.textContent = '—';
+      // No mostrar guión, solo ocultar
+      if (stat) stat.style.opacity = '0.5';
       return { totalNumeros: 0 };
     }
 
@@ -202,13 +203,15 @@ export async function cargarMisNumerosResumen() {
 
     if (stat) {
       stat.textContent = String(totalNumeros);
+      stat.style.opacity = '1';
     }
 
     //  CLAVE: devolver el total
     return { totalNumeros };
   } catch (err) {
     console.error(err);
-    if (stat) stat.textContent = '—';
+    // No mostrar guión, solo ocultar el contenido
+    if (stat) stat.style.opacity = '0.5';
     return { totalNumeros: 0 };
   }
 }
