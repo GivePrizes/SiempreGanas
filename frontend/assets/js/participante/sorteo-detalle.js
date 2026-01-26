@@ -106,12 +106,15 @@ function renderNumeros() {
 
     // clase base de la bolita
     div.className = 'numero-bola';
-    div.textContent = n.toString();
+    // Formato visual: 001, 002... si >= 100; sino 01, 02...
+    const padding = total >= 100 ? 3 : 2;
+    div.textContent = String(n).padStart(padding, '0');
     div.dataset.numero = n;
 
     if (ocupado) {
       // estilo de número ya vendido / ocupado
       div.classList.add('numero-bola--ocupado');
+      div.setAttribute('aria-disabled', 'true');
     } else {
       // si ese número ya está en "seleccionados", marcarlo
       if (seleccionados.includes(n)) {
@@ -147,8 +150,10 @@ function actualizarBloqueoPorMaximo() {
     // Si se alcanzó el max, apagamos los NO seleccionados
     if (maxAlcanzado && !seleccionado) {
       el.classList.add('numero-bola--bloqueado');
+      el.setAttribute('aria-disabled', 'true');
     } else {
       el.classList.remove('numero-bola--bloqueado');
+      el.removeAttribute('aria-disabled');
     }
   });
 }
