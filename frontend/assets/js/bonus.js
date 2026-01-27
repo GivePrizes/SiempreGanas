@@ -54,14 +54,20 @@ function renderBono(data) {
   if (data.bonus_entregado) {
     text.innerHTML = `
       ✅ <strong>Bono desbloqueado</strong><br>
-      <span style="font-size:.85em; opacity:.9;">Te enviaremos tu cuenta GRATIS por WhatsApp</span>
+      <span style="font-size:.85em; opacity:.9;">
+        Tienes ${aprobados} de ${objetivo} números aprobados<br>
+        Te enviaremos tu cuenta GRATIS por WhatsApp
+      </span>
     `;
   } else {
     const faltan = Number(data.faltan ?? Math.max(objetivo - aprobados, 0));
 
     text.innerHTML = `
       🎁 <strong>Te faltan ${faltan}</strong><br>
-      <span style="font-size:.85em; opacity:.9;">para tu cuenta GRATIS</span>
+      <span style="font-size:.85em; opacity:.9;">
+        Tienes ${aprobados} de ${objetivo} números aprobados<br>
+        para tu cuenta GRATIS
+      </span>
     `;
   }
 }
