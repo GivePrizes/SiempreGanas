@@ -72,11 +72,8 @@ export async function sendMessage({ sorteoId, token, mensaje, is_system = false 
       'Content-Type': 'application/json'
     };
 
-    if (is_system) {
-      // Mensaje global: usar clave interna
-      headers['x-internal-key'] = window.INTERNAL_API_KEY || import.meta.env.VITE_INTERNAL_API_KEY;
-    } else {
-      // Mensaje normal: usar JWT
+    // Para admin: usar JWT token
+    if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
