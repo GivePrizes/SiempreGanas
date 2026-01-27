@@ -5,7 +5,7 @@ import {
   getUserState, 
   fetchMessages 
 } from './chatApi.js';
-import { createRealtimeClient, subscribeToSorteoInserts } from './realtime.js';
+import { subscribeToSorteoInserts } from './realtime.js';
 import { createChatStore } from './store.js';
 import { renderMessages, isBottom, toBottom } from './ui.js';
 
@@ -75,6 +75,18 @@ export async function initAdminChat({ sorteoId, token }) {
     } catch (err) {
     console.error('Error cargando historial:', err);
     hintEl.textContent = 'No se pudo cargar el chat de admin.';
+    }
+
+    /* ===============================
+    Realtime subscription
+    ================================ */
+    try {
+      unsub = await subscribeToSorteoInserts({
+        sorteoId,
+        onInsert: appendMessage
+      });
+    } catch (e) {
+      console.error('❌ Error realtime admin:', e);
     }
 
   
