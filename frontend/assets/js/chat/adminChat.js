@@ -114,8 +114,8 @@ export async function initAdminChat({ sorteoId, token }) {
     renderAdminMessages();
 
     try {
-      // Intentar primero con el endpoint admin (si está disponible)
-      let res = await fetch(`${window.API_URL}/api/admin/chat/${sorteoId}/message`, {
+      // Enviar directamente al chat-service con JWT del admin
+      const res = await fetch(`https://chat-service-theta.vercel.app/api/chat/${sorteoId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,19 +123,6 @@ export async function initAdminChat({ sorteoId, token }) {
         },
         body: JSON.stringify({ mensaje: text })
       });
-
-      // Si falla el endpoint admin (404), intentar directo con el chat-service
-      if (res.status === 404) {
-        console.warn('Endpoint admin no disponible, intentando directo...');
-        res = await fetch(`https://chat-service-theta.vercel.app/api/chat/${sorteoId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({ mensaje: text })
-        });
-      }
 
       const data = await res.json().catch(() => ({}));
 
@@ -146,14 +133,14 @@ export async function initAdminChat({ sorteoId, token }) {
           hintEl.textContent = '';
         }, 2000);
       } else {
-        hintEl.textContent = data.error || 'Error enviando mensaje (se muestra localmente)';
-        hintEl.style.color = '#fbbf24';
+        hintEl.textContent = data.error || data.message || 'Error enviando mensaje';
+        hintEl.style.color = '#f87171';
         console.error('Error response:', res.status, data);
       }
     } catch (err) {
       console.error("Error en envío admin:", err);
-      hintEl.textContent = 'Error interno (mensaje mostrado localmente)';
-      hintEl.style.color = '#fbbf24';
+      hintEl.textContent = 'Error interno al enviar mensaje';
+      hintEl.style.color = '#f87171';
     }
 
     sendEl.disabled = false;
