@@ -99,25 +99,31 @@ export async function initAdminChat({ sorteoId, token }) {
 
     inputEl.value = '';
     sendEl.disabled = true;
+    hintEl.textContent = 'Enviando...';
 
     try {
-      const { ok, status, data } = await sendMessage({
-        sorteoId,
-        token,
-        mensaje: text,
-        is_system: false
+      // Usar el endpoint admin que no valida cupo
+      const res = await fetch(`${window.API_URL}/api/admin/chat/${sorteoId}/message`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ mensaje: text })
       });
 
-      if (!ok) {
-        hintEl.textContent = 'Error enviando mensaje admin';
-        hintEl.style.color = '#f87171';
-        console.error('Error response:', status, data);
-      } else {
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
         hintEl.textContent = 'Mensaje enviado';
         hintEl.style.color = '#86efac';
         setTimeout(() => {
           hintEl.textContent = '';
         }, 2000);
+      } else {
+        hintEl.textContent = data.error || 'Error enviando mensaje';
+        hintEl.style.color = '#f87171';
+        console.error('Error response:', res.status, data);
       }
     } catch (err) {
       console.error("Error en envío admin:", err);
