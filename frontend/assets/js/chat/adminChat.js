@@ -101,24 +101,28 @@ export async function initAdminChat({ sorteoId, token }) {
     sendEl.disabled = true;
 
     try {
-        const res = await fetch(`${window.API_URL}/api/admin/chat/${sorteoId}/system`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}` // JWT del admin
-        },
-        body: JSON.stringify({ mensaje: text })
-        });
+      const { ok, status, data } = await sendMessage({
+        sorteoId,
+        token,
+        mensaje: text,
+        is_system: true
+      });
 
-        const data = await res.json();
-        if (!res.ok) {
+      if (!ok) {
         hintEl.textContent = 'Error enviando mensaje admin';
         hintEl.style.color = '#f87171';
-        }
+        console.error('Error response:', status, data);
+      } else {
+        hintEl.textContent = 'Mensaje enviado';
+        hintEl.style.color = '#86efac';
+        setTimeout(() => {
+          hintEl.textContent = '';
+        }, 2000);
+      }
     } catch (err) {
-        console.error("Error en envío admin:", err);
-        hintEl.textContent = 'Error interno al enviar mensaje';
-        hintEl.style.color = '#f87171';
+      console.error("Error en envío admin:", err);
+      hintEl.textContent = 'Error interno al enviar mensaje';
+      hintEl.style.color = '#f87171';
     }
 
     sendEl.disabled = false;
@@ -150,6 +154,17 @@ export async function initAdminChat({ sorteoId, token }) {
       if (resp.ok) {
         alert(`Estado usuario ${usuarioId}: ${resp.data.isMuted ? 'Silenciado' : 'Activo'}`);
       }
+    }
+  });
+
+  /* ===============================
+     Event listeners: Send button & Enter key
+  ================================ */
+  sendEl.addEventListener('click', send);
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      send();
     }
   });
 
