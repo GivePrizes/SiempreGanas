@@ -105,7 +105,7 @@ export async function initAdminChat({ sorteoId, token }) {
         sorteoId,
         token,
         mensaje: text,
-        is_system: true
+        is_system: false
       });
 
       if (!ok) {
