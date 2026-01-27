@@ -160,11 +160,16 @@
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 0 14px;
+  padding: 8px 14px;
   cursor: pointer;
   transition:
     transform 0.15s ease,
     opacity 0.15s ease;
+  min-width: 80px;
+  height: 38px;
+  font-size: 14px;
+  font-weight: 500;
+  flex-shrink: 0;
 }
 
 #chatSend:hover:not(:disabled) {
