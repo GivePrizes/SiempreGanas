@@ -7,7 +7,7 @@ import {
   getUserState, 
   fetchMessages 
 } from './chatApi.js';
-import { createRealtimeClient, subscribeToSorteoInserts } from './realtime.js';
+
 import { createChatStore } from './store.js';
 import { renderMessages, isBottom, toBottom } from './ui.js';
 
