@@ -1,3 +1,4 @@
+//chat/index.js
 import { fetchMessages, postMessage } from './chatApi.js';
 import { createChatStore } from './store.js';
 import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js';
@@ -9,16 +10,10 @@ import { subscribeToSorteoInserts } from './realtime.js';
 =============================== */
 
 /**
- * Extrae el usuario_id SIN IMPORTAR
- * si viene como:
- *  - m.usuario_id        (Realtime)
- *  - m.usuario.id       (History / API)
- *
- * 👉 ESTA FUNCIÓN ES LA CLAVE DEL FIX
+ * 
+ * @param {*} token 
+ * @returns 
  */
-function getMensajeUsuarioId(m) {
-  return m?.usuario_id ?? m?.usuario?.id ?? null;
-}
 
 function usuarioIdFromToken(token) {
   try {
@@ -197,22 +192,10 @@ export async function initChat({ sorteoId, token }) {
     newBtnEl.classList.add('hidden');
   });
 
-  /* ===============================
-    0) CHECK PERMISSION
-  =============================== */
-
-  try {
-    const resp = await fetch(getChatEndpoint(sorteoId), {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    puedeEscribir = resp.ok;
-  } catch {
-    puedeEscribir = false;
-  }
-
+  // Por defecto permitimos escribir
+  puedeEscribir = true;
   updateChatPermission();
+
 
   /* ===============================
     1) HISTORY
@@ -247,10 +230,19 @@ export async function initChat({ sorteoId, token }) {
     const text = inputEl.value.trim();
     if (!text || inputEl.disabled) return;
 
-    inputEl.value = '';
     sendEl.disabled = true;
     hintEl.textContent = '';
 
+    //  chequeo previo
+    if (!puedeEscribir) {
+      hintEl.textContent = '🔒 No tienes permiso para escribir.';
+      sendEl.disabled = false;
+      return;
+    }
+
+    inputEl.value = '';
+
+    //  SOLO aquí optimistic UI
     addOptimisticMessage(text);
 
     const { ok, status, data } = await postMessage({
@@ -260,7 +252,19 @@ export async function initChat({ sorteoId, token }) {
     });
 
     if (!ok) {
-      // manejo de errores intacto
+      // rollback visual implícito (realtime no llegará)
+      if (status === 403 && data?.code === 'participation_required') {
+        hintEl.textContent = '🔒 Debes tener un número aprobado para escribir.';
+        puedeEscribir = false;
+        updateChatPermission();
+      } else if (status === 403 && data?.error?.includes('silenciado')) {
+        hintEl.textContent = '🔇 Estás silenciado temporalmente.';
+      } else if (status === 429) {
+        hintEl.textContent = data?.error || 'Espera antes de enviar otro mensaje.';
+      } else {
+        hintEl.textContent = 'Error enviando mensaje.';
+      }
+
       sendEl.disabled = false;
       return;
     }
@@ -268,16 +272,27 @@ export async function initChat({ sorteoId, token }) {
     sendEl.disabled = false;
   }
 
+
   sendEl.addEventListener('click', send);
+
   inputEl.addEventListener('keydown', e => {
-    if (e.key === 'Enter') send();
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
   });
 
-  // 🔊 habilita sonido tras interacción real
-  window.addEventListener('click', () => soundEnabled = true, { once: true });
-  window.addEventListener('keydown', () => soundEnabled = true, { once: true });
+  // 🔊 sonido
+  window.addEventListener('click', () => {
+    soundEnabled = true;
+  }, { once: true });
+
+  window.addEventListener('keydown', () => {
+    soundEnabled = true;
+  }, { once: true });
 
   window.addEventListener('beforeunload', () => {
     unsub?.();
   });
-}
+  }
+
