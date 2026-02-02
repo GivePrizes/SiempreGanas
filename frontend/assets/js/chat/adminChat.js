@@ -55,16 +55,14 @@ export async function initAdminChat({ sorteoId, token }) {
   /* ===============================
      Append realtime message
   =============================== */
-  function appendMessage(m) {
-    if (!m || store.has(m.id)) return;
-    store.upsertMany([m]);
-    renderAdminMessages();
+  function appendMessage(msg) {  // Desde suscripción en tiempo real
+    store.upsert(msg);              // Agrega o actualiza el mensaje en el store
+    renderAdminMessages();      // Re-renderiza la UI
+  }   // appendMessage
+  
 
-    // Animación visual
-    setTimeout(() => {
-      bodyEl.querySelector('.chat-row:last-child')?.classList.add('pop');
-    }, 10);
-  }
+  /* ===============================  
+
 
     /* ===============================
     History
@@ -113,6 +111,19 @@ export async function initAdminChat({ sorteoId, token }) {
 
     sendEl.disabled = false;
     }
+
+
+      /* ===============================
+        Eventos de envío
+      =============================== */
+      sendEl.addEventListener('click', send);
+
+      inputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          send();
+        }
+      });
 
   /* ===============================
      Moderación: delegar eventos
