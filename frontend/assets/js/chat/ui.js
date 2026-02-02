@@ -76,41 +76,27 @@ export function bindFilters({ rootEl, onChange }) {
 
 //--------------------------------------------------
 // Render principal del chat
-export function renderMessages({ containerEl, messages, myUsuarioId }) {
+export function renderMessages({
+  containerEl,
+  messages,
+  myUsuarioId,
+  renderActions
+}) {
   if (!containerEl) return;
 
   containerEl.innerHTML = messages
     .map(m => {
-      // Estados
       const isSystem = !!m.is_system;
       const isMine = Number(m.usuario?.id) === Number(myUsuarioId);
 
-      // Clases visuales
       const cls = [
         'chat-row',
         isSystem ? 'system' : '',
         isMine ? 'mine' : '',
         m.pinned ? 'pinned' : '',
         m.deleted ? 'deleted' : ''
-      ]
-        .filter(Boolean)
-        .join(' ');
+      ].filter(Boolean).join(' ');
 
-      // Nombre corto (psicología: lectura rápida)
-      const firstName =
-        m.usuario?.nombre?.split(' ')[0] || 'Usuario';
-
-      // ADMIN / SISTEMA
-      const authorHTML = isSystem
-        ? `<span class="badge-admin">ADMIN</span> ${esc(firstName)}`
-        : esc(firstName);
-
-      // Color consistente por usuario
-      const nameColor = isSystem
-        ? '#f59e0b'
-        : colorFromUserId(m.usuario?.id);
-
-      // Mensaje eliminado
       if (m.deleted) {
         return `
           <div class="${cls}">
@@ -124,8 +110,8 @@ export function renderMessages({ containerEl, messages, myUsuarioId }) {
       return `
         <div class="${cls}">
           <div class="chat-meta">
-            <strong class="chat-author" style="color:${nameColor}">
-              ${authorHTML}
+            <strong class="chat-author">
+              ${esc(m.usuario?.nombre || 'Usuario')}
             </strong>
             <span class="chat-time">
               ${m.created_at ? time(m.created_at) : ''}
@@ -135,11 +121,20 @@ export function renderMessages({ containerEl, messages, myUsuarioId }) {
           <div class="chat-bubble">
             ${esc(m.mensaje || '')}
           </div>
+
+          ${
+            typeof renderActions === 'function'
+              ? `<div class="chat-actions">
+                   ${renderActions(m)}
+                 </div>`
+              : ''
+          }
         </div>
       `;
     })
     .join('');
 }
+
 
 //--------------------------------------------------
 // Scroll helpers (clave para sensación realtime)
