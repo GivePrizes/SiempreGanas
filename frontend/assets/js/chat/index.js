@@ -252,17 +252,29 @@ export async function initChat({ sorteoId, token }) {
     });
 
     if (!ok) {
-      // rollback visual implícito (realtime no llegará)
+      // rollback visual (realtime no llegará)
+      store.removeOptimisticByUserAndText(myUsuarioId, text);
+
+      const errText = String(data?.message || data?.error || '').toLowerCase();
+
       if (status === 403 && data?.code === 'participation_required') {
-        hintEl.textContent = '🔒 Debes tener un número aprobado para escribir.';
+        hintEl.textContent = '🔒 Solo participantes con número aprobado pueden escribir.';
         puedeEscribir = false;
         updateChatPermission();
-      } else if (status === 403 && data?.error?.includes('silenciado')) {
-        hintEl.textContent = '🔇 Estás silenciado temporalmente.';
+        hintEl.style.color = '#ff6b6b';
+      } else if (status === 403 && errText.includes('silenc')) {
+        hintEl.textContent = data?.message || data?.error || 'Has sido silenciado.';
+        hintEl.style.color = '#f87171';
       } else if (status === 429) {
-        hintEl.textContent = data?.error || 'Espera antes de enviar otro mensaje.';
+        hintEl.textContent = data?.error || 'Demasiadas peticiones. Espera unos segundos.';
+        hintEl.style.color = '#f59e0b';
+      } else if (status === 404) {
+        hintEl.textContent = 'Chat no disponible.';
+        hintEl.style.color = '#f87171';
       } else {
-        hintEl.textContent = 'Error enviando mensaje.';
+        console.error('postMessage failed', status, data);
+        hintEl.textContent = data?.error || 'Error enviando mensaje.';
+        hintEl.style.color = '#f87171';
       }
 
       sendEl.disabled = false;

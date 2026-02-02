@@ -1,11 +1,11 @@
 // Admin Chat JS
 // Requiere: chatApi.js, store.js, ui.js
-import { 
-  sendMessage, 
-  muteUser, 
-  deleteMessage, 
-  getUserState, 
-  fetchMessages 
+import {
+  postMessage,
+  muteUser,
+  deleteMessage,
+  getUserState,
+  fetchMessages
 } from './chatApi.js';
 
 import { createChatStore } from './store.js';
@@ -83,7 +83,8 @@ export async function initAdminChat({ sorteoId, token }) {
   }
 
   /* ===============================
-     Enviar mensaje de sistema (ADMIN)
+     Enviar mensaje (ADMIN)
+     IMPORTANTE: los admins envían por la misma ruta de usuario usando su JWT.
   =============================== */
   async function send() {
     const text = inputEl.value.trim();
@@ -91,33 +92,32 @@ export async function initAdminChat({ sorteoId, token }) {
 
     inputEl.value = '';
     sendEl.disabled = true;
+    hintEl.textContent = '';
 
-    try {
-      const res = await fetch(
-        `${window.API_URL}/api/admin/chat/${sorteoId}/system`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({ mensaje: text })
-        }
-      );
+    const { ok, status, data } = await postMessage({ sorteoId, token, mensaje: text });
 
-      const data = await res.json();
-      if (!res.ok) {
-        hintEl.textContent = data?.error || 'Error enviando mensaje admin';
+    if (!ok) {
+      if (status === 403 && data?.code === 'participation_required') {
+        hintEl.textContent = '🔒 Solo participantes con número aprobado pueden escribir.';
+        hintEl.style.color = '#ff6b6b';
+      } else if (status === 403 && (data?.message || '').toLowerCase().includes('silenc')) {
+        hintEl.textContent = data?.message || 'Has sido silenciado.';
+        hintEl.style.color = '#f87171';
+      } else if (status === 429) {
+        hintEl.textContent = 'Demasiadas peticiones. Espera unos segundos.';
+        hintEl.style.color = '#f59e0b';
+      } else if (status === 404) {
+        hintEl.textContent = 'Chat no disponible.';
+        hintEl.style.color = '#f87171';
+      } else {
+        console.error('postMessage failed', status, data);
+        hintEl.textContent = data?.error || 'Error enviando mensaje';
         hintEl.style.color = '#f87171';
       }
-    } catch (err) {
-      console.error('Error en envío admin:', err);
-      hintEl.textContent = 'Error interno al enviar mensaje';
-      hintEl.style.color = '#f87171';
     }
 
     sendEl.disabled = false;
-  }
+  } 
 
   /* ===============================
      Eventos de envío
