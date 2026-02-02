@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Siempre Ganas — Elige tus números y entra a la ruleta</title>
+
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <link rel="stylesheet" href="../assets/css/participant.css">
+  <link rel="stylesheet" href="../assets/js/chat/chat.css">
+
+
+</head>
+<body>
+  <div class="main-container">
+
+    <!-- HEADER: emoción + confianza -->
+    <header class="dashboard-header">
+      <div>
+        <h2 id="tituloSorteo">Cargando sorteo...</h2>
+        <p id="subtituloSorteo" class="text-muted">
+          Estás a unos pasos de asegurar tus números y tu lugar en la ruleta 🎰
+        </p>
+
+        <div class="confianza-strip">
+          ✅ Números reservados al enviar tu comprobante &nbsp;•&nbsp;
+          🔒 Validación manual por administradores &nbsp;•&nbsp;
+          🎁 Siempre recibes un producto digital
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="btn btn-ghost" onclick="location.href='dashboard.html'">
+          ← Sorteos
+        </button>
+
+        <button type="button" class="btn btn-primary" onclick="location.href='mis-numeros.html'">
+          🎟 Mis números
+        </button>
+
+        <button type="button" class="btn btn-icon" onclick="logout()" aria-label="Salir" title="Salir">
+          ⎋
+        </button>
+      </div>
+
+    </header>
+
+    <!-- INFORMACIÓN DEL PREMIO -->
+    <div style="padding: 0 1rem; margin-bottom: 1.5rem;">
+        <h2 id="tituloPremio">Premio</h2>
+
+        <p class="text-muted micro-lead">
+          ✅ Incluye producto digital + entrada a la ruleta
+        </p>
+
+
+        <div class="sorteo-data">
+          <p>🎁 <strong>Premio principal:</strong> <span id="textoPremio">—</span></p>
+          <p>💸 <strong>Precio por número:</strong> <span id="textoPrecio">—</span></p>
+          <p>🔢 <strong>Cantidad total de números:</strong> <span id="textoCantidad">—</span></p>
+        </div>
+
+        <!-- PROGRESO (urgencia suave) -->
+        <div class="progress-wrapper">
+          <div class="progress-container">
+            <div id="progressFill" class="progress-bar"></div>
+          </div>
+          <p class="progress-text" id="textoProgreso">Cargando ocupación...</p>
+          <p class="text-muted progress-tip-text">
+            Tip: los mejores números se van rápido. Si te gusta uno, resérvalo antes de que se ocupe.
+          </p>
+        </div>
+
+        <!-- EDUCACIÓN (cerrado, para no saturar) -->
+        <div class="sorteo-steps hide-on-mobile">
+          <details class="info-accordion">
+            <summary>✅ Cómo asegurar tus números en 4 pasos</summary>
+            <ol>
+              <li><strong>Explora la cuadricula</strong> y toca tus números favoritos.</li>
+              <li><strong>Revisa el resumen</strong> para ver el total.</li>
+              <li><strong>Realiza el pago</strong> y toma captura clara del comprobante.</li>
+              <li><strong>Sube y confirma</strong>: quedan <strong>pendientes</strong> hasta validación.</li>
+            </ol>
+          </details>
+
+          <details class="info-accordion">
+            <summary>✨ ¿Por qué a la gente le gusta este formato?</summary>
+            <ul>
+              <li><strong>Doble beneficio:</strong> recibes un producto digital, ganes o no.</li>
+              <li><strong>Emoción controlada:</strong> ves avance y decides con calma.</li>
+              <li><strong>Transparencia:</strong> números ocupados visibles + ruleta al llenarse.</li>
+            </ul>
+          </details>
+        </div>
+
+        <!-- LINEAR 3-STEP FLOW -->
+        <section class="sorteo-detalle-layout">
+
+          <!-- PASO 1: ELIGE NÚMEROS -->
+          <details class="info-accordion">
+            <summary>
+              <span>🎯 Paso 1 · Elige tus números</span>
+              <span class="pago-nequi-badge">1</span>
+            </summary>
+
+            <div class="sorteo-numeros-card" style="margin-top: 10px;">
+
+              <!-- Mis números en este sorteo -->
+              <div id="misNumerosEnSorteoCard" style="margin-bottom:14px; display:none;">
+                <div class="sorteo-numeros-header">
+                  <h3>🎟 Mis números en este sorteo</h3>
+                  <p class="text-muted microhint" id="misNumerosEnSorteoTexto">Cargando...</p>
+                </div>
+                <div id="misNumerosEnSorteoChips" class="numeros-chips-wrap"></div>
+              </div>
+
+              <div class="sorteo-numeros-header">
+                <h3>Elige tus números</h3>
+                <p class="text-muted microhint">
+                  Máx. <strong><span id="maxNumerosTexto">5</span></strong> por compra
+                </p>
+              </div>
+
+              <!-- Números en cuadrícula -->
+              <div class="numeros-scroll">
+                <div id="gridNumeros" class="numeros-grid"></div>
+              </div>
+
+              <!-- resumen compacto -->
+              <div class="mini-resumen-compra">
+                <div class="mini-resumen-row">
+                  <span class="mini-label">Selección</span>
+                  <strong id="resumenNumeros">Ninguno todavía</strong>
+                </div>
+
+                <div class="mini-resumen-row">
+                  <span class="mini-label">Total</span>
+                  <strong id="resumenTotal">$0</strong>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- PASO 2: PAGO -->
+          <details class="info-accordion">
+            <summary>
+              <span>💳 Paso 2 · Paga por Nequi</span>
+              <span class="pago-nequi-badge">2</span>
+            </summary>
+
+            <div class="pago-nequi-card" style="margin-top:.6rem;">
+              <div class="pago-nequi-header">
+                <div>
+                  <p class="pago-nequi-title" style="margin:0;">Paga tus números por Nequi</p>
+                  <p class="pago-nequi-subtitle" style="margin:.2rem 0 0;">
+                    Asegura tu lugar en la ruleta en menos de 1 minuto ⚡
+                  </p>
+                </div>
+              </div>
+
+              <div class="pago-nequi-main">
+                <div class="pago-nequi-datos">
+                  <p class="pago-nequi-label">Número Nequi</p>
+                  <p class="pago-nequi-value pago-nequi-value--big">3045538465</p>
+
+                  <p class="pago-nequi-label">Titular</p>
+                  <p class="pago-nequi-value">Jen** Por***</p>
+
+                  <button type="button" class="btn btn-primary btn-nequi-copy" onclick="copiarNequi()">
+                    📋 Copiar número de Nequi
+                  </button>
+                </div>
+
+                <div class="pago-nequi-steps">
+                  <ol>
+                    <li>Elige tus números y mira el total a pagar.</li>
+                    <li>Envía el pago con la nota <strong>"Sorteo + tu nombre"</strong>.</li>
+                    <li>Haz captura clara del comprobante y súbelo aquí.</li>
+                  </ol>
+                  <p class="pago-nequi-seguro">
+                    🛡️ Revisión manual para mantener el sorteo <strong>100% transparente</strong>.
+                  </p>
+                </div>
+              </div>
+
+              <div class="pago-nequi-footer">
+                💡 Tip: si te gustan ciertos números, págalos apenas los elijas para que nadie más los tome.
+              </div>
+            </div>
+          </details>
+
+          <!-- PASO 3: COMPROBANTE -->
+          <details class="info-accordion">
+            <summary>
+              <span>🧾 Paso 3 · Subir comprobante</span>
+              <span class="pago-nequi-badge">3</span>
+            </summary>
+
+            <div class="sorteo-compra-card" style="margin-top:10px;">
+
+              <div class="comprobante-upload">
+                <label for="inputComprobante">Comprobante de pago</label>
+                <p class="text-muted microhint">
+                  Que se vea <strong>monto</strong> y <strong>referencia</strong>.
+                </p>
+
+                <input type="file" id="inputComprobante" accept="image/*" />
+
+                <div id="previewComprobante" class="comprobante-preview oculto">
+                  <p class="comprobante-preview-title">Vista previa:</p>
+                  <img id="imgPreview" alt="Comprobante" />
+                </div>
+              </div>
+
+              <button id="btnConfirmar" class="btn btn-primary btn-full-width">
+                Confirmar participación
+              </button>
+
+              <!-- ayuda plegable para no saturar -->
+              <details class="mini-ayuda">
+                <summary>¿Qué pasa después?</summary>
+                <p class="text-muted">
+                  Tus números quedan <strong>pendientes</strong> hasta revisión. Al aprobar, quedan <strong>activos</strong>.
+                </p>
+              </details>
+
+            </div>
+          </details>
+
+        </section>
+
+        <!-- CHAT AT BOTTOM -->
+        <div id="chatContainer" class="chat-card" style="margin-top: 1.5rem; display: none; border: 1px solid #444; border-radius: 8px; padding: 1rem; background: #1a1a1a;">
+          <div class="chat-header">
+            <h3>💬 Chat del sorteo</h3>
+            <p class="text-muted microhint" style="margin: 0.5rem 0;">Solo participantes pueden escribir</p>
+          </div>
+          <div id="chatBody" class="chat-messages" style="height: 250px; overflow-y: auto; margin-bottom: 1rem; padding: 0.5rem; background: #222; border-radius: 6px;"></div>
+          <div class="chat-input-wrap" style="display: flex; gap: 0.5rem;">
+            <input id="chatInput" type="text" placeholder="Escribe aquí..." maxlength="120" style="flex: 1; padding: 0.8rem; border-radius: 6px; border: 1px solid #555; background: #111; color: #fff;">
+            <button id="chatSend" class="btn btn-primary" style="padding: 0.8rem 1.2rem;">Enviar</button>
+          </div>
+          <p id="chatHint" class="text-muted chat-hint" style="margin-top: 0.5rem; font-size: 0.9rem;"></p>
+        </div>
+
+    </div>
+
+  </div>
+
+  <div id="toast" class="toast hidden">Mensaje</div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script type="module" src="../assets/js/participante/sorteo-detalle.js"></script>
+</body>
+</html>

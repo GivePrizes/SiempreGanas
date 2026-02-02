@@ -1,0 +1,421 @@
+/* assets/css/ruleta.participante.css */
+
+/* =========================
+   RULETA (PARTICIPANTE)
+   ========================= */
+
+.ruleta-container{
+  position: relative;
+  width: min(320px, 92vw);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.ruleta-pointer{
+  position:absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width:0;
+  height:0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-top: 32px solid var(--gold); /* punta hacia abajo */
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.75));
+  z-index: 6;
+}
+
+.ruleta-pointer::after{
+  content:"";
+  position:absolute;
+  left:-12px;
+  top:-28px; /* SUBE el triángulo interno para que quede dentro */
+  width:0;
+  height:0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 24px solid rgba(2,6,23,.95); /* MISMA dirección (hacia abajo) */
+}
+
+
+
+/* Disco que gira */
+.ruleta-circle {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--gold);
+  box-shadow:
+    0 18px 40px rgba(0,0,0,0.8),
+    0 0 0 6px rgba(15,23,42,0.9);
+  background:
+    radial-gradient(circle at 15% 0%, rgba(250, 204, 21, 0.25), transparent 55%),
+    radial-gradient(circle at 85% 100%, rgba(56, 189, 248, 0.2), transparent 55%),
+    radial-gradient(circle at top, #020617, #020617);
+  transform: rotate(0deg);
+  transition: transform 4.5s cubic-bezier(0.17, 0.89, 0.32, 1.28);
+}
+
+/* Rebanadas (slices) */
+.ruleta-slice {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  top: 0;
+  left: 50%;
+  transform-origin: 0% 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  box-sizing: border-box;
+  color: #f9fafb;
+  font-size: 0.7rem;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.9);
+}
+
+.ruleta-slice .slice-num {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Colores alternos para las rebanadas */
+.ruleta-slice:nth-child(odd) {
+  background: linear-gradient(
+    to bottom,
+    rgba(250, 204, 21, 0.9),
+    rgba(250, 204, 21, 0.4)
+  );
+  color: #0f172a;
+}
+
+.ruleta-slice:nth-child(even) {
+  background: linear-gradient(
+    to bottom,
+    rgba(56, 189, 248, 0.9),
+    rgba(56, 189, 248, 0.4)
+  );
+}
+
+/* Efecto especial para slice ganador */
+.ruleta-slice.ganador {
+  box-shadow: 0 0 26px rgba(250, 204, 21, 0.9);
+  filter: brightness(1.1);
+}
+
+/* =========================
+   RESULTADO
+   ========================= */
+
+.resultado-ruleta {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.9rem;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  font-size: 0.95rem;
+}
+
+.resultado-ruleta strong {
+  font-size: 1.12rem;
+  color: var(--gold);
+}
+
+/* Animación suave de “latido” para el texto ganador */
+.resultado-ruleta.ganador-texto {
+  animation: winnerPulse 1s ease-in-out 2;
+}
+
+@keyframes winnerPulse {
+  0%   { transform: scale(1);   box-shadow: 0 0 0 rgba(250, 204, 21, 0.0); }
+  50%  { transform: scale(1.03); box-shadow: 0 0 24px rgba(250, 204, 21, 0.6); }
+  100% { transform: scale(1);   box-shadow: 0 0 0 rgba(250, 204, 21, 0.0); }
+}
+
+/* =========================
+   ESTADO (DOTS) + COLORES
+   ========================= */
+
+.estado-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+/* Colores según estado */
+.estado-no_programada { background-color: #6b7280; }
+.estado-programada    { background-color: #38bdf8; }
+.estado-finalizada    { background-color: #22c55e; }
+
+/* =========================
+   OVERLAY CUENTA REGRESIVA
+   ========================= */
+
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#countdownBig {
+  font-size: 8rem;
+  font-weight: 900;
+  color: var(--gold);
+  text-shadow: 0 0 30px rgba(250,204,21,0.9);
+  animation: pulseBig 1s ease-in-out infinite;
+}
+
+@keyframes pulseBig {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+/* Si usas #motivationalMsg en el overlay (tu HTML lo usa) */
+#motivationalMsg{
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--gold);
+  text-align: center;
+  margin-top: 1rem;
+  animation: fadeInOut 2s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  25% { opacity: 1; }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* =========================
+   RESPONSIVE FINO
+   ========================= */
+@media (max-width: 640px) {
+  #countdownBig { font-size: 6rem; }
+}
+
+
+/* =========================
+   GANADOR FLOTANTE (PARTICIPANTE)
+   ========================= */
+
+.winner-float{
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  transform: translateX(-50%);
+  z-index: 7;
+  pointer-events: none;
+}
+
+.winner-float__pill{
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+
+  padding: .46rem .78rem;
+  border-radius: 999px;
+
+  background: linear-gradient(180deg, rgba(2,6,23,.78), rgba(2,6,23,.62));
+  border: 1px solid rgba(255,215,0,.30);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 16px 34px rgba(0,0,0,.55),
+    inset 0 0 0 1px rgba(255,255,255,.06);
+}
+
+/* etiqueta mini */
+.winner-float__label{
+  font-size: .66rem;
+  font-weight: 900;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.82);
+}
+
+/* número (protagonista, sin #) */
+.winner-float__num{
+  font-size: .92rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+  color: var(--gold, #facc15);
+  text-shadow: 0 2px 12px rgba(255,215,0,.28);
+}
+
+/* nombre */
+.winner-float__name{
+  font-size: .84rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.92);
+
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* animación de aparición */
+.winner-float.winner-float--show .winner-float__pill{
+  animation: winnerPopUser .30s cubic-bezier(.25,.9,.3,1.15) both;
+}
+
+@keyframes winnerPopUser{
+  from { transform: translateY(-6px) scale(.96); opacity: 0; }
+  to   { transform: translateY(0)   scale(1);   opacity: 1; }
+}
+
+/* ✅ Ajuste PARTICIPANTE: en pantallas pequeñas mejor abajo para no tapar puntero */
+.winner-float--participant{
+  top: 14px; /* desktop */
+}
+
+@media (max-width: 520px){
+  .winner-float--participant{
+    top: auto;
+    bottom: 14px;            /* móvil: abajo, más cómodo */
+    transform: translateX(-50%);
+  }
+  .winner-float__pill{
+    padding: .42rem .68rem;
+    gap: .45rem;
+  }
+  .winner-float__name{ max-width: 120px; }
+}
+.numero-ganador{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  z-index:20;
+}
+
+.numero-ganador span{
+  font-size:64px;
+  font-weight:900;
+  color:#fff;
+  text-shadow:
+    0 0 20px rgba(255,215,0,.8),
+    0 0 40px rgba(255,215,0,.6);
+  background:rgba(0,0,0,.45);
+  border-radius:999px;
+  padding:20px 28px;
+  border:2px solid rgba(255,215,0,.7);
+  animation: popWinner .6s ease-out;
+}
+
+@keyframes popWinner{
+  from{ transform:scale(.6); opacity:0 }
+  to{ transform:scale(1); opacity:1 }
+}
+
+.numero-ganador.oculto{
+  display:none;
+}
+
+
+/* ===== CHAT ===== */
+.chat-card{
+  margin-top:16px;
+  padding:14px;
+  border-radius:16px;
+  background: rgba(15, 23, 42, 0.85);
+  border:1px solid rgba(148, 163, 184, 0.25);
+  backdrop-filter: blur(8px);
+}
+.chat-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.chat-head h3{ margin:0; font-size:1.05rem; }
+.muted{ opacity:.8; font-size:.85rem; margin:.25rem 0 0; }
+
+.chat-filters{ display:flex; gap:8px; margin:10px 0; flex-wrap:wrap; }
+.chip{
+  border:1px solid rgba(148,163,184,.25);
+  background: rgba(2,6,23,.35);
+  color:#e5e7eb;
+  padding:6px 10px;
+  border-radius:999px;
+  cursor:pointer;
+  font-size:.82rem;
+}
+.chip-active{ border-color: rgba(250,204,21,.65); }
+
+.chat-body{
+  height: 280px;
+  overflow:auto;
+  padding:10px;
+  border-radius:12px;
+  background: rgba(2,6,23,.35);
+  border:1px solid rgba(148,163,184,.18);
+}
+.chat-row{ margin:8px 0; }
+.chat-meta{ display:flex; gap:8px; align-items:baseline; font-size:.78rem; opacity:.85; }
+.chat-bubble{
+  margin-top:4px;
+  padding:10px 12px;
+  border-radius:14px;
+  background: rgba(30,41,59,.65);
+  border:1px solid rgba(148,163,184,.18);
+  line-height:1.25rem;
+  word-break:break-word;
+}
+.chat-row.mine .chat-bubble{
+  background: rgba(59,130,246,.20);
+  border-color: rgba(59,130,246,.25);
+}
+.chat-row.system .chat-bubble{
+  background: rgba(250,204,21,.12);
+  border-color: rgba(250,204,21,.28);
+}
+.chat-compose{
+  display:flex; gap:10px; margin-top:10px;
+}
+.chat-compose input{
+  flex:1;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(148,163,184,.25);
+  background: rgba(2,6,23,.35);
+  color:#e5e7eb;
+}
+.chat-compose button{
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid rgba(250,204,21,.35);
+  background: rgba(250,204,21,.18);
+  color:#fff;
+  cursor:pointer;
+}
+.chat-compose button:disabled{ opacity:.55; cursor:not-allowed; }
+.chat-new{
+  width:100%;
+  margin:10px 0 0;
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid rgba(59,130,246,.25);
+  background: rgba(59,130,246,.14);
+  color:#e5e7eb;
+  cursor:pointer;
+}
+.hidden{ display:none; }
+.chat-sound{ display:flex; gap:6px; align-items:center; font-size:.85rem; opacity:.9; }
+
