@@ -1,3 +1,5 @@
+// Admin Chat JS
+// Requiere: chatApi.js, realtime.js, store.js, ui.js
 import { 
   sendMessage, 
   muteUser, 
