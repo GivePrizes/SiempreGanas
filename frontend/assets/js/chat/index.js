@@ -176,7 +176,9 @@ export async function initChat({ sorteoId, token }) {
     } else {
       pendingNew++;
       newBtnEl?.classList.remove('hidden');
-      newBtnEl.textContent = `Nuevos mensajes (${pendingNew}) ↓`;
+      if (newBtnEl) {
+        newBtnEl.textContent = `Nuevos mensajes (${pendingNew}) ↓`;
+      }
     }
   }
 
