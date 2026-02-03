@@ -26,6 +26,20 @@ export async function initAdminChat({ sorteoId, token }) {
   const store = createChatStore({ myUsuarioId: 'admin' });
   let unsub = null; // reservado para realtime futuro
   let canUseChat = true;
+  let soundEnabled = false;
+  let pollId = null;
+
+  /* ===============================
+     Sound
+  =============================== */
+  function playPing() {
+    if (!soundEnabled) return;
+    try {
+      const audio = new Audio('/assets/sound/new-notification-SG.mp3');
+      audio.volume = 0.4;
+      audio.play();
+    } catch {}
+  }
 
   /* ===============================
      Render con acciones de moderación
@@ -69,6 +83,7 @@ export async function initAdminChat({ sorteoId, token }) {
   function appendMessage(msg) {
     store.upsertMany([msg]);
     renderAdminMessages();
+    playPing();
   }
 
   /* ===============================
@@ -96,6 +111,27 @@ export async function initAdminChat({ sorteoId, token }) {
     store.upsertMany(history.data?.messages || []);
     renderAdminMessages();
   }
+
+  /* ===============================
+     Polling simple (3–5s)
+  =============================== */
+  async function pollNewMessages() {
+    if (!canUseChat) return;
+
+    const resp = await fetchMessages({ sorteoId, token, limit: 50 });
+    if (!resp.ok) return;
+
+    const incoming = Array.isArray(resp.data?.messages) ? resp.data.messages : [];
+    const newOnes = incoming.filter(m => m?.id && !store.has(m.id));
+
+    if (newOnes.length === 0) return;
+
+    store.upsertMany(newOnes);
+    renderAdminMessages();
+    playPing();
+  }
+
+  pollId = setInterval(pollNewMessages, 4000);
 
   /* ===============================
      Enviar mensaje (ADMIN)
@@ -137,12 +173,12 @@ export async function initAdminChat({ sorteoId, token }) {
         hintEl.textContent = 'Chat no disponible.';
         hintEl.style.color = '#f87171';
       } else {
-        console.error('postMessage failed', status, data);
         hintEl.textContent = data?.error || 'Error enviando mensaje';
         hintEl.style.color = '#f87171';
       }
     }
 
+    playPing();
     sendEl.disabled = false;
   } 
 
@@ -206,5 +242,15 @@ export async function initAdminChat({ sorteoId, token }) {
 
   window.addEventListener('beforeunload', () => {
     unsub?.();
+    if (pollId) clearInterval(pollId);
   });
+
+  // 🔊 habilitar sonido tras interacción del usuario
+  window.addEventListener('click', () => {
+    soundEnabled = true;
+  }, { once: true });
+
+  window.addEventListener('keydown', () => {
+    soundEnabled = true;
+  }, { once: true });
 }

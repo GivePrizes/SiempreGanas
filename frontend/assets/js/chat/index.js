@@ -27,11 +27,9 @@ function usuarioIdFromToken(token) {
 =============================== */
 
 export async function initChat({ sorteoId, token }) {
-  if (!sorteoId || !token) {console.warn('❌ initChat sin sorteoId o token', { sorteoId, token });
-     return;
-}
-  console.log('🧪 CHAT TOKEN:', token);
-  console.log('🧪 CHAT TOKEN LENGTH:', token.length);
+  if (!sorteoId || !token) {
+    return;
+  }
 
   const myUsuarioId = usuarioIdFromToken(token);
 
@@ -242,8 +240,8 @@ export async function initChat({ sorteoId, token }) {
       sorteoId,
       onInsert: appendMessage
     });
-  } catch (e) {
-    console.error('❌ Error realtime', e);
+  } catch {
+    // Sin realtime
   }
 
   /* ===============================
@@ -305,7 +303,6 @@ export async function initChat({ sorteoId, token }) {
         hintEl.textContent = 'Chat no disponible.';
         hintEl.style.color = '#f87171';
       } else {
-        console.error('postMessage failed', status, data);
         hintEl.textContent = data?.error || 'Error enviando mensaje.';
         hintEl.style.color = '#f87171';
       }

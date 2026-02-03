@@ -38,7 +38,6 @@ export async function fetchMessages({
     const data = await safeJson(res);
     return { ok: res.ok, status: res.status, data, friendlyMessage: friendlyMessage(res.status) };
   } catch (err) {
-    console.error('fetchMessages error:', err);
     return { ok: false, status: 0, data: { error: err.message }, friendlyMessage: '' };
   }
 }
@@ -63,7 +62,6 @@ export async function postMessage({ sorteoId, token, mensaje, isAdmin = false })
     const data = await safeJson(res);
     return { ok: res.ok, status: res.status, data, friendlyMessage: friendlyMessage(res.status) };
   } catch (err) {
-    console.error('postMessage error:', err);
     return { ok: false, status: 0, data: { error: err.message }, friendlyMessage: '' };
   }
 }
@@ -81,7 +79,7 @@ export async function sendMessage({
   isAdmin = false
 }) {
   if (is_system) {
-    console.warn('sendMessage: is_system flag ignored. Sending through regular chat endpoint with JWT.');
+    // is_system se ignora en frontend
   }
 
   // Reutiliza postMessage para asegurar contrato { mensaje } y headers
@@ -105,7 +103,6 @@ export async function muteUser(sorteoId, token, usuarioId, minutes = 10) {
     const data = await safeJson(res);
     return { ok: res.ok, status: res.status, data };
   } catch (err) {
-    console.error('muteUser error:', err);
     return { ok: false, status: 0, data: { error: err.message } };
   }
 }
@@ -125,7 +122,6 @@ export async function deleteMessage(sorteoId, token, messageId) {
     const data = await safeJson(res);
     return { ok: res.ok, status: res.status, data };
   } catch (err) {
-    console.error('deleteMessage error:', err);
     return { ok: false, status: 0, data: { error: err.message } };
   }
 }
@@ -144,7 +140,6 @@ export async function getUserState(sorteoId, token, usuarioId) {
     const data = await safeJson(res);
     return { ok: res.ok, status: res.status, data };
   } catch (err) {
-    console.error('getUserState error:', err);
     return { ok: false, status: 0, data: { error: err.message } };
   }
 }
