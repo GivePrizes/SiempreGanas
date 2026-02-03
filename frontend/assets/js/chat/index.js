@@ -28,7 +28,11 @@ function usuarioIdFromToken(token) {
 =============================== */
 
 export async function initChat({ sorteoId, token }) {
-  if (!sorteoId || !token) return;
+  if (!sorteoId || !token) {console.warn('❌ initChat sin sorteoId o token', { sorteoId, token });
+     return;
+}
+  console.log('🧪 CHAT TOKEN:', token);
+  console.log('🧪 CHAT TOKEN LENGTH:', token.length);
 
   const myUsuarioId = usuarioIdFromToken(token);
 
