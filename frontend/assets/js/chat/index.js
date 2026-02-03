@@ -138,11 +138,15 @@ export async function initChat({ sorteoId, token }) {
     if (!m || store.has(m.id)) return;
 
     // 🔥 NORMALIZAR MENSAJE REALTIME
+    const nombre =
+      m.usuario?.nombre ??
+      (m.usuario_id === myUsuarioId ? 'Tú' : 'Usuario');
+
     const mensaje = {
       ...m,
       usuario: {
         id: m.usuario_id,
-        nombre: m.usuario_id === myUsuarioId ? 'Tú' : 'Usuario'
+        nombre
       }
     };
 
