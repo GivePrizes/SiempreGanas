@@ -38,17 +38,18 @@ export async function initAdminChat({ sorteoId, token }) {
       messages: store.getFiltered(),
       myUsuarioId: 'admin',
       renderActions: (msg) => {
+        const userId = msg?.usuario?.id ?? msg?.usuario_id ?? null;
         // Los botones SOLO para mensajes normales (no sistema)
-        if (!msg.is_system) {
+        if (!msg.is_system && userId) {
           return `
             <span class="actions">
-              <button class="mute-btn" data-user="${msg.usuario.id}">
+              <button class="mute-btn" data-user="${userId}">
                 Silenciar
               </button>
               <button class="delete-btn" data-id="${msg.id}">
                 Eliminar
               </button>
-              <button class="state-btn" data-user="${msg.usuario.id}">
+              <button class="state-btn" data-user="${userId}">
                 Estado
               </button>
             </span>
