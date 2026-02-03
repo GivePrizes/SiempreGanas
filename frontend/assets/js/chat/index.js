@@ -138,6 +138,7 @@ export async function initChat({ sorteoId, token }) {
     if (!m || store.has(m.id)) return;
 
     console.log('payload realtime', m);
+    console.log('payload realtime json', JSON.stringify(m));
 
     // 🔥 NORMALIZAR MENSAJE REALTIME
     const nombre =
