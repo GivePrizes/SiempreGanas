@@ -23,8 +23,9 @@ export function getSupabaseConfig() {
 }
 
 // Endpoint de chat para un sorteo
-export function getChatEndpoint(sorteoId) {
-  return `${getChatBaseUrl()}/api/chat/${sorteoId}`;
+export function getChatEndpoint(sorteoId, { isAdmin = false } = {}) {
+  const base = isAdmin ? '/api/admin/chat' : '/api/chat';
+  return `${getChatBaseUrl()}${base}/${sorteoId}`;
 }
 
 // Clave interna para mensajes de sistema (admin)

@@ -2,7 +2,6 @@
 import { fetchMessages, postMessage } from './chatApi.js';
 import { createChatStore } from './store.js';
 import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js';
-import { getChatEndpoint } from './config.js';
 import { subscribeToSorteoInserts } from './realtime.js';
 
 /* ===============================
@@ -49,18 +48,22 @@ export async function initChat({ sorteoId, token }) {
   let puedeEscribir = false;
   let unsub = null;
   let soundEnabled = false;
+  let canUseChat = true;
 
   /* ===============================
      UI helpers
   =============================== */
 
   function updateChatPermission() {
-    inputEl.disabled = !puedeEscribir;
-    sendEl.disabled = !puedeEscribir;
+    inputEl.disabled = !puedeEscribir || !canUseChat;
+    sendEl.disabled = !puedeEscribir || !canUseChat;
 
     if (!hintEl) return;
 
-    if (puedeEscribir) {
+    if (!canUseChat) {
+      hintEl.textContent = 'Sesión no válida. Inicia sesión nuevamente.';
+      hintEl.style.color = '#f87171';
+    } else if (puedeEscribir) {
       hintEl.textContent = 'Escribe tu mensaje... (máx. 120 caracteres)';
       hintEl.style.color = '#ccc';
     } else {
@@ -205,12 +208,27 @@ export async function initChat({ sorteoId, token }) {
     1) HISTORY
   =============================== */
 
-  try {
-    const data = await fetchMessages({ sorteoId, limit: 50 });
-    store.upsertMany(data.messages || []);
+  const history = await fetchMessages({ sorteoId, token, limit: 50 });
+  if (!history.ok) {
+    if (history.status === 401) {
+      canUseChat = false;
+      updateChatPermission();
+      hintEl.textContent = history.friendlyMessage || 'Sesión expirada. Inicia sesión nuevamente.';
+    } else if (history.status === 403) {
+      hintEl.textContent = history.friendlyMessage || 'No tienes permiso para ver este chat.';
+      hintEl.style.color = '#f87171';
+      puedeEscribir = false;
+      updateChatPermission();
+    } else if (history.status === 429) {
+      hintEl.textContent = history.friendlyMessage || 'Demasiadas peticiones. Espera unos segundos.';
+      hintEl.style.color = '#f59e0b';
+    } else {
+      hintEl.textContent = 'No se pudo cargar el chat.';
+      hintEl.style.color = '#f87171';
+    }
+  } else {
+    store.upsertMany(history.data?.messages || []);
     rerender({ keepBottom: true });
-  } catch {
-    hintEl.textContent = 'No se pudo cargar el chat.';
   }
 
   /* ===============================
@@ -249,10 +267,11 @@ export async function initChat({ sorteoId, token }) {
     //  SOLO aquí optimistic UI
     addOptimisticMessage(text);
 
-    const { ok, status, data } = await postMessage({
+    const { ok, status, data, friendlyMessage } = await postMessage({
       sorteoId,
       token,
-      mensaje: text
+      mensaje: text,
+      isAdmin: false
     });
 
     if (!ok) {
@@ -261,7 +280,12 @@ export async function initChat({ sorteoId, token }) {
 
       const errText = String(data?.message || data?.error || '').toLowerCase();
 
-      if (status === 403 && data?.code === 'participation_required') {
+      if (status === 401) {
+        canUseChat = false;
+        updateChatPermission();
+        hintEl.textContent = friendlyMessage || 'Sesión expirada. Inicia sesión nuevamente.';
+        hintEl.style.color = '#f87171';
+      } else if (status === 403 && data?.code === 'participation_required') {
         hintEl.textContent = '🔒 Solo participantes con número aprobado pueden escribir.';
         puedeEscribir = false;
         updateChatPermission();
@@ -269,8 +293,11 @@ export async function initChat({ sorteoId, token }) {
       } else if (status === 403 && errText.includes('silenc')) {
         hintEl.textContent = data?.message || data?.error || 'Has sido silenciado.';
         hintEl.style.color = '#f87171';
+      } else if (status === 403) {
+        hintEl.textContent = friendlyMessage || 'No tienes permiso para chatear.';
+        hintEl.style.color = '#f87171';
       } else if (status === 429) {
-        hintEl.textContent = data?.error || 'Demasiadas peticiones. Espera unos segundos.';
+        hintEl.textContent = friendlyMessage || data?.error || 'Demasiadas peticiones. Espera unos segundos.';
         hintEl.style.color = '#f59e0b';
       } else if (status === 404) {
         hintEl.textContent = 'Chat no disponible.';
