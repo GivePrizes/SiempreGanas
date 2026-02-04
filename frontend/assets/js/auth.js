@@ -88,16 +88,24 @@ function correoValido(email) {
   return true;
 }
 
+function aliasValido(alias) {
+  if (!alias) return true;
+  if (!/^[a-zA-Z0-9_]{3,20}$/.test(alias)) return false;
+  return true;
+}
+
 // --- Registro ---
 
 async function registro() {
   const nombre   = document.getElementById('regNombre')?.value.trim();
   const email    = document.getElementById('regEmail')?.value.trim();
   const telefono = document.getElementById('regTelefono')?.value.trim();
+  const alias    = document.getElementById('regAlias')?.value.trim();
   const password = document.getElementById('regPass')?.value;
   const confirm  = document.getElementById('regPassConfirm')?.value;
   const termsAccepted = document.getElementById('regTerms')?.checked;
   const errorTerms = document.getElementById('errorTerms') || null;
+  const errorAlias = document.getElementById('errorAlias') || null;
 
   if (!nombreValido(nombre)) {
     return alert("❌ Ingresa tu nombre real (mínimo nombre y apellido).");
@@ -109,6 +117,11 @@ async function registro() {
 
   if (!telefonoValido(telefono)) {
     return alert("❌ Ingresa un número de teléfono válido (mínimo 10 dígitos).");
+  }
+
+  if (!aliasValido(alias)) {
+    if (errorAlias) errorAlias.textContent = 'Nombre público inválido. Usa 3–20 letras, números o _';
+    return alert('❌ Nombre público inválido. Usa 3–20 letras, números o _.');
   }
 
   if (password !== confirm) {
@@ -124,7 +137,7 @@ async function registro() {
     const res = await fetch(`${AUTH_URL}/api/auth/registro`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, telefono, password, terms_accepted: true })
+      body: JSON.stringify({ nombre, email, telefono, alias: alias || null, password, terms_accepted: true })
     });
 
     const data = await res.json();
@@ -154,6 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputNombre   = document.getElementById('regNombre');
   const inputEmail    = document.getElementById('regEmail');
   const inputTelefono = document.getElementById('regTelefono');
+  const inputAlias    = document.getElementById('regAlias');
   const inputPass     = document.getElementById('regPass');
   const inputPass2    = document.getElementById('regPassConfirm');
   const inputTerms    = document.getElementById('regTerms');
@@ -166,6 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorNombre   = document.getElementById('errorNombre') || null;
   const errorEmail    = document.getElementById('errorEmail') || null;
   const errorTelefono = document.getElementById('errorTelefono') || null;
+  const errorAlias    = document.getElementById('errorAlias') || null;
   const errorPass     = document.getElementById('errorPass') || null;
   const errorPass2    = document.getElementById('errorPassConfirm') || null;
   const errorTerms    = document.getElementById('errorTerms') || null;
@@ -217,6 +232,24 @@ document.addEventListener('DOMContentLoaded', () => {
       inputTelefono.classList.remove('input-error');
     }
   });
+
+  if (inputAlias) {
+    inputAlias.addEventListener('input', () => {
+      const valor = inputAlias.value.trim();
+      if (!valor) {
+        if (errorAlias) errorAlias.textContent = '';
+        inputAlias.classList.remove('input-error', 'input-ok');
+      } else if (!aliasValido(valor)) {
+        if (errorAlias) errorAlias.textContent = '3–20 letras, números o _';
+        inputAlias.classList.add('input-error');
+        inputAlias.classList.remove('input-ok');
+      } else {
+        if (errorAlias) errorAlias.textContent = '✓ Nombre público válido';
+        inputAlias.classList.add('input-ok');
+        inputAlias.classList.remove('input-error');
+      }
+    });
+  }
 
   inputPass.addEventListener('input', () => {
     const valor = inputPass.value;

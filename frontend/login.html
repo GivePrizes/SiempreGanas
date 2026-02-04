@@ -375,6 +375,13 @@
         </div>
 
         <div class="auth-field">
+          <label for="regAlias">Nombre público (opcional)</label>
+          <input type="text" id="regAlias" placeholder="Tu nombre en la sala" autocomplete="nickname">
+          <small class="text-muted" style="display:block; margin-top:4px; font-size:12px;">3–20, letras/números/_</small>
+          <small id="errorAlias" class="error-msg"></small>
+        </div>
+
+        <div class="auth-field">
           <label for="regPass">Contraseña</label>
           <input type="password" id="regPass" placeholder="••••••••" autocomplete="new-password">
           <small id="errorPass" class="error-msg"></small>
