@@ -119,6 +119,105 @@ body{
 
 .hidden{ display:none; }
 
+.salaCard{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.salaHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.salaTitle{
+  margin:0;
+  font-size:16px;
+  letter-spacing:.02em;
+}
+
+.salaBadge{
+  border:1px solid rgba(250,204,21,.35);
+  background:rgba(250,204,21,.12);
+  color:var(--gold);
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.systemFeed{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-height:35vh;
+  overflow:auto;
+  padding:8px;
+  border-radius:12px;
+  background:rgba(0,0,0,.22);
+  border:1px solid rgba(255,255,255,.08);
+  scroll-behavior:smooth;
+}
+
+.systemMsg{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  opacity:.8;
+  animation:fadeInUp .18s ease both;
+  font-size:13px;
+}
+
+.systemMsg:first-child{
+  opacity:1;
+}
+
+.systemAvatar{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.08em;
+  color:var(--gold);
+  background:rgba(250,204,21,.10);
+  border:1px solid rgba(250,204,21,.35);
+  box-shadow:0 8px 18px rgba(0,0,0,.35);
+  flex:0 0 34px;
+}
+
+.systemBubble{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:8px 12px;
+  box-shadow:0 8px 18px rgba(0,0,0,.28);
+  max-width:100%;
+}
+
+.systemMeta{
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.55);
+  margin-bottom:3px;
+}
+
+.systemText{
+  color:var(--text);
+  font-size:13px;
+}
+
+@keyframes fadeInUp{
+  from{ opacity:0; transform:translateY(6px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
 .overlay{
   position:fixed;
   inset:0;

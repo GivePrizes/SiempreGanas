@@ -1,4 +1,14 @@
 // assets/js/participante/ruleta.js
+/**
+ * ⚠️ LEGACY FILE
+ * =========================
+ * Este script corresponde a la ruleta antigua.
+ * NO usa el endpoint /api/sorteos/:id/live.
+ * NO debe manejar eventos en vivo.
+ *
+ * Script oficial:
+ * → assets/js/participante/ruleta-live.js
+ */
 // Código para la página de ruleta del participante
 import { initChat } from '../chat/index.js';
 // API base (usar la global definida en config.js)

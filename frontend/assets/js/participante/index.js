@@ -72,7 +72,7 @@ function renderSorteoCard(s) {
         <div class="cta">
           ${
             porcentaje >= 100
-              ? `<a class="btn btn-secondary" href="ruleta-live.html?sorteo=${s.id}">🎰 Ver ruleta</a>`
+              ? `<a class="btn btn-secondary" href="ruleta-live.html?id=${s.id}">🎰 Ver ruleta</a>`
               : `<a class="btn btn-primary" href="sorteo.html?id=${s.id}">Adquirir acceso</a>`
           }
         </div>

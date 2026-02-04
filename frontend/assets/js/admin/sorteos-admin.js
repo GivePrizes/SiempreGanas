@@ -48,9 +48,14 @@ export async function cargarSorteosAdmin() {
         }
 
         const btnRuleta = lleno
-          ? `<button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">
-               🎰 Lanzar ruleta
-             </button>`
+          ? `<div class="ruleta-actions-admin">
+              <button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">
+                🎰 Lanzar ruleta
+              </button>
+              <button class="btn btn-ghost btn-sm" onclick="window.open('../participante/ruleta-live.html?id=${s.id}', '_blank', 'noopener')">
+                👁 Ver ruleta live
+              </button>
+            </div>`
           : '';
 
         const imagenHtml = s.imagen_url

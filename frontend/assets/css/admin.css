@@ -363,6 +363,13 @@
   color: #fff;
 }
 
+/* Ruleta admin: acciones secundarias */
+.ruleta-actions-admin{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.4rem;
+}
+
 /* =============================
    Comprobantes lista
    ============================= */

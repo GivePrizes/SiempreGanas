@@ -22,7 +22,7 @@ if (btnBack) {
 
 
 const params = new URLSearchParams(location.search);
-const sorteoId = params.get("sorteo") || params.get("sorteoId");
+const sorteoId = params.get("id") || params.get("sorteo") || params.get("sorteoId");
 
 const elSubtitle = document.getElementById("subtitle");
 const elEstado = document.getElementById("badgeEstado");
@@ -33,15 +33,18 @@ const elBar = document.getElementById("progressBar");
 const elOverlay = document.getElementById("overlay");
 const elOverlayNum = document.getElementById("overlayNum");
 const elResult = document.getElementById("result");
+const elSystemFeed = document.getElementById("systemFeed");
 
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 
-let estado = "no_programada";
-let programadaPara = null; // Date
+let estado = "waiting";
+let countdownEndsAtMs = null;
+let countdownStartSeconds = null;
 let numeroGanador = null;
+let ganadorNombre = null;
 
-let serverSkewMs = 0; // si luego agregas serverTime a ruleta-info, se usa
+let serverSkewMs = 0;
 let audioPrimed = false;
 function primeAudioOnce() {
   if (!audioWin || audioPrimed) return;
@@ -70,9 +73,14 @@ window.addEventListener("pointerdown", primeAudioOnce, { once: true });
 let segments = []; // [{numero:1}, ...]
 let wheelAngle = 0; // rad
 let spinning = false;
+let idleSpin = false;
+let idleSpinFrame = null;
 
 let did321 = false;
 let didSpin = false;
+let lastEstado = null;
+let lastCountdownSecond = null;
+const lastSystemKeys = new Set();
 
 function nowServerMs(){
   return Date.now() + (serverSkewMs || 0);
@@ -91,6 +99,24 @@ function setEstadoBadge(txt){
 
 function safeUpper(s){
   return String(s || "").toUpperCase().replaceAll("_"," ");
+}
+
+function pushSystemMessage(text, key){
+  if (!elSystemFeed) return;
+  const k = key || text;
+  if (lastSystemKeys.has(k)) return;
+  lastSystemKeys.add(k);
+
+  const row = document.createElement("div");
+  row.className = "systemMsg";
+  row.innerHTML = `
+    <div class="systemAvatar" aria-hidden="true">SG</div>
+    <div class="systemBubble">
+      <div class="systemMeta">Sistema</div>
+      <div class="systemText">${text}</div>
+    </div>
+  `;
+  elSystemFeed.prepend(row);
 }
 
 // =========================
@@ -188,6 +214,12 @@ function showResult(ganadorNombre){
     ? `✅ Resultado oficial: ${num} — ${ganadorNombre}`
     : `✅ Resultado oficial: ${num}`;
 
+  if (ganadorNombre) {
+    pushSystemMessage(`🎉 Felicitaciones a ${ganadorNombre}`, `win_${ganadorNombre}`);
+  } else if (numeroGanador != null) {
+    pushSystemMessage(`🏆 ¡Tenemos ganador! Número ${num}`, `win_num_${numeroGanador}`);
+  }
+
   if (audioWin) {
     audioWin.currentTime = 0;
     audioWin.volume = 1;
@@ -198,6 +230,24 @@ function showResult(ganadorNombre){
 // SPINNING LOGIC
 // =========================
 
+function startIdleSpin(){
+  if (idleSpin) return;
+  idleSpin = true;
+  const speed = 0.008;
+  const loop = () => {
+    if (!idleSpin) return;
+    wheelAngle += speed;
+    drawWheel();
+    idleSpinFrame = requestAnimationFrame(loop);
+  };
+  idleSpinFrame = requestAnimationFrame(loop);
+}
+
+function stopIdleSpin(){
+  idleSpin = false;
+  if (idleSpinFrame) cancelAnimationFrame(idleSpinFrame);
+  idleSpinFrame = null;
+}
 
 // Gira hasta el ganador (sin inventarlo)
 function spinToWinner(winnerNumero){
@@ -240,55 +290,81 @@ function spinToWinner(winnerNumero){
 }
 
 // =========================
-// FETCH (ruleta-info + numeros)
+// FETCH LIVE STATE
 // =========================
 async function fetchRuletaInfo(){
-  const res = await fetch(`${apiBase}/api/sorteos/${sorteoId}/ruleta-info`, {
+  const res = await fetch(`${apiBase}/api/sorteos/${sorteoId}/live`, {
     headers: authHeaders()
   });
 
-  if(!res.ok) throw new Error("No se pudo cargar ruleta-info");
+  if(!res.ok) throw new Error("No se pudo cargar live");
   const data = await res.json();
 
-  if (data.serverTime) {
-    serverSkewMs = new Date(data.serverTime).getTime() - Date.now();
+  if (data.server_time) {
+    serverSkewMs = new Date(data.server_time).getTime() - Date.now();
   }
 
-  estado = data.ruleta_estado || "no_programada";
-  programadaPara = data.ruleta_hora_programada ? new Date(data.ruleta_hora_programada) : null;
+  estado = data.estado || "waiting";
 
-  numeroGanador =
-    (data.ruleta_log && data.ruleta_log.ganador_numero != null)
-      ? data.ruleta_log.ganador_numero
-      : (data.numero_ganador ?? null);
+  if (estado === "legacy") {
+    estado = "waiting";
+  }
+
+  if (estado === "countdown" && typeof data.countdown_seconds === "number") {
+    const serverMs = data.server_time ? new Date(data.server_time).getTime() : Date.now();
+    countdownEndsAtMs = serverMs + data.countdown_seconds * 1000;
+
+    if (countdownStartSeconds == null || data.countdown_seconds > countdownStartSeconds) {
+      countdownStartSeconds = data.countdown_seconds;
+    }
+  }
+
+  if (estado === "finished") {
+    const ganador = data.ganador ?? null;
+    if (ganador && typeof ganador === "object") {
+      numeroGanador = ganador.numero ?? ganador.numero_ganador ?? null;
+      ganadorNombre = ganador.nombre ?? null;
+    } else if (ganador != null) {
+      numeroGanador = ganador;
+      ganadorNombre = null;
+    }
+  } else {
+    numeroGanador = null;
+    ganadorNombre = null;
+  }
 
   setEstadoBadge(safeUpper(estado));
 
   elSubtitle.textContent =
-    estado === "no_programada" ? "Aún no han programado la ruleta." :
-    estado === "programada" ? "Ruleta programada. Quédate aquí para verla en vivo." :
-    estado === "finalizada" ? "Ruleta finalizada. Resultado oficial registrado." :
+    estado === "waiting" ? "La ruleta aún no ha sido programada." :
+    estado === "countdown" ? "Cuenta regresiva en marcha. Quédate aquí." :
+    estado === "spinning" ? "🎯 La ruleta está girando…" :
+    estado === "finished" ? "🏆 Resultado oficial confirmado." :
     "Actualizando…";
 
-  // snapshot oficial si existe
-  if (data.ruleta_log && Array.isArray(data.ruleta_log.participantes) && data.ruleta_log.participantes.length){
-    segments = data.ruleta_log.participantes
-      .filter(p => p && p.numero != null)
-      .map(p => ({ numero: Number(p.numero) }))
-      .sort((a,b) => a.numero - b.numero);
+  if (lastEstado !== estado) {
+    if (estado === "waiting") {
+      pushSystemMessage("⏳ La ruleta comenzará en breve", "estado_waiting");
+      pushSystemMessage("Prepárate, el sorteo comenzará pronto", "waiting_prep");
+    }
+    if (estado === "countdown") {
+      pushSystemMessage("⏳ La ruleta comienza en breve", "estado_countdown");
+    }
+    if (estado === "spinning") {
+      pushSystemMessage("🎯 ¡La ruleta está girando!", "estado_spinning");
+      pushSystemMessage("🍀 Mucha suerte a todos los participantes", "spinning_luck");
+    }
+    if (estado === "finished") {
+      pushSystemMessage("🏆 Resultado confirmado. ¡Felicidades al ganador!", "estado_finished");
+    }
+    lastEstado = estado;
   }
 
-  drawWheel();
+  if (estado === "spinning") startIdleSpin();
+  else stopIdleSpin();
 
-  // si ya está finalizada, animar UNA sola vez
-  if (estado === "finalizada" && numeroGanador && !didSpin && segments.length){
-    const ganadorNombre = data?.ganador?.nombre || null;
-
-    if (!did321) { did321 = true; await show321(); }
-
-    didSpin = true;
-    spinToWinner(numeroGanador);
-    showResult(ganadorNombre);
+  if (estado !== "finished") {
+    elResult.classList.add("hidden");
   }
 
   return data;
@@ -313,23 +389,37 @@ async function fetchNumerosSiHaceFalta(){
 // COUNTDOWN LOOP
 // =========================
 function tick(){
-  if(!programadaPara){
+  if(estado !== "countdown" || !countdownEndsAtMs){
     elCountdown.textContent = "--:--";
-    elHint.textContent = "Esperando programación del admin…";
+    elHint.textContent = estado === "spinning"
+      ? "🎯 La ruleta está girando…"
+      : estado === "finished"
+        ? "🏆 Ya tenemos ganador"
+        : "Prepárate, el sorteo comenzará pronto";
     elBar.style.width = "0%";
     requestAnimationFrame(tick);
     return;
   }
 
-  const diff = programadaPara.getTime() - nowServerMs();
+  const diff = countdownEndsAtMs - nowServerMs();
 
   if(diff > 0){
     elCountdown.textContent = fmtMMSS(diff);
-    elHint.textContent = "La ruleta iniciará automáticamente al llegar a 00:00.";
+    const secondsLeft = Math.ceil(diff / 1000);
+    elHint.textContent = `⏳ La ruleta comienza en ${secondsLeft} segundos`;
 
-    // progreso visual (solo estético)
-    const pct = Math.max(0, Math.min(100, 100 - (diff / (10 * 60 * 1000)) * 100));
-    elBar.style.width = `${pct}%`;
+    if (secondsLeft <= 5 && secondsLeft > 0 && lastCountdownSecond !== secondsLeft) {
+      pushSystemMessage(`🔥 ${secondsLeft}…`, `count_${secondsLeft}`);
+      lastCountdownSecond = secondsLeft;
+    }
+
+    if (countdownStartSeconds) {
+      const totalMs = countdownStartSeconds * 1000;
+      const pct = Math.max(0, Math.min(100, 100 - (diff / totalMs) * 100));
+      elBar.style.width = `${pct}%`;
+    } else {
+      elBar.style.width = "0%";
+    }
 
     // 3-2-1 en los últimos 3.2s (solo una vez)
     if(diff <= 3200 && !did321){
@@ -339,7 +429,7 @@ function tick(){
 
   } else {
     elCountdown.textContent = "00:00";
-    elHint.textContent = "Iniciando… esperando resultado oficial.";
+    elHint.textContent = "🎯 La ruleta está girando…";
     elBar.style.width = "100%";
   }
 
@@ -373,31 +463,28 @@ function tick(){
 
         const data = await fetchRuletaInfo();
 
-        // si cambia a finalizada, asegúrate de tener segments (ideal snapshot)
-        if ((prevEstado !== "finalizada" && estado === "finalizada") && !segments.length) {
+        if ((prevEstado !== "finished" && estado === "finished") && !segments.length) {
           await fetchNumerosSiHaceFalta();
         }
 
-        // si aparece ganador y no hemos girado
-        if (!didSpin && estado === "finalizada" && numeroGanador) {
-          // si no hay snapshot, igual se puede animar con segmentos actuales
-            if (!did321) { did321 = true; await show321(); }
-            didSpin = true;
-            spinToWinner(numeroGanador);
-            const ganadorNombre = data?.ganador?.nombre || null;
-            showResult(ganadorNombre);
+        if (!didSpin && estado === "finished" && numeroGanador) {
+          if (!did321) { did321 = true; await show321(); }
+          didSpin = true;
+          stopIdleSpin();
+          spinToWinner(numeroGanador);
+          showResult(ganadorNombre);
         }
 
-        // si cambia ganador (poco probable), re-anima
         if (prevGanador && numeroGanador && prevGanador !== numeroGanador && !spinning) {
           didSpin = true;
+          stopIdleSpin();
           spinToWinner(numeroGanador);
         }
 
       } catch(_e){
         // silencioso
       }
-    }, 1500);
+    }, 2500);
 
   }catch(err){
     elSubtitle.textContent = "No se pudo conectar con la ruleta.";
