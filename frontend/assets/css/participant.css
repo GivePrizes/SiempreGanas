@@ -400,6 +400,13 @@
   flex-wrap: wrap;
 }
 
+.btn-back{
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 18px;
+}
+
 .sorteo-card-premium{
   background: linear-gradient(180deg, rgba(21,21,31,0.92), rgba(14,14,22,0.98));
   border: 1px solid rgba(255,215,0,0.15);
@@ -1311,6 +1318,11 @@
   }
   .sorteo-header__actions .btn.btn-primary{
     flex: 1;
+  }
+  .btn-back{
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
   }
 }
 

@@ -111,7 +111,7 @@ export function renderMessages({
         <div class="${cls}">
           <div class="chat-meta">
             <strong class="chat-author">
-              ${esc(m.usuario?.nombre || 'Usuario')}
+              ${esc(m.usuario?.nombre || m.usuario?.alias || 'Usuario')}
             </strong>
             <span class="chat-time">
               ${m.created_at ? time(m.created_at) : ''}
