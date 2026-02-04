@@ -1,23 +1,44 @@
 // frontend/assets/js/chat/chatApi.js
 import { getChatEndpoint } from './config.js';
 
+function safeJson(res) {
+  return res.json().catch(() => ({}));
+}
+
+function friendlyMessage(status) {
+  if (status === 401) return 'Sesión expirada';
+  if (status === 403) return 'No tienes cupo para chatear';
+  if (status === 429) return 'Espera unos segundos';
+  return '';
+}
+
 /* ===============================
    Fetch mensajes (historial)
 ================================ */
-export async function fetchMessages({ sorteoId, limit = 50, cursor = null }) {
+export async function fetchMessages({
+  sorteoId,
+  token,
+  limit = 50,
+  cursor = null
+}) {
   const params = new URLSearchParams({ limit: String(limit) });
   if (cursor?.beforeCreatedAt) params.set('beforeCreatedAt', cursor.beforeCreatedAt);
   if (cursor?.beforeId) params.set('beforeId', cursor.beforeId);
 
   try {
-    const res = await fetch(`${getChatEndpoint(sorteoId)}?${params.toString()}`);
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status} - ${res.statusText}`);
-    }
-    return await res.json();
+    const res = await fetch(
+      `${getChatEndpoint(sorteoId, { isAdmin: false })}?${params.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    const data = await safeJson(res);
+    return { ok: res.ok, status: res.status, data, friendlyMessage: friendlyMessage(res.status) };
   } catch (err) {
-    console.error('fetchMessages error:', err);
-    throw err;
+    return { ok: false, status: 0, data: { error: err.message }, friendlyMessage: '' };
   }
 }
 
@@ -27,38 +48,42 @@ export async function fetchMessages({ sorteoId, limit = 50, cursor = null }) {
    - Usa JWT en Authorization header
    - Devuelve { ok, status, data } para manejo en UI
 ================================ */
-export async function postMessage({ sorteoId, token, mensaje }) {
+export async function postMessage({ sorteoId, token, mensaje, isAdmin = false }) {
   try {
-    const res = await fetch(getChatEndpoint(sorteoId), {
+    const res = await fetch(getChatEndpoint(sorteoId, { isAdmin }), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ mensaje: mensaje.trim() })
+      body: JSON.stringify({ mensaje: String(mensaje || '').trim() })
     });
 
-    const data = await res.json().catch(() => ({}));
-    return { ok: res.ok, status: res.status, data };
+    const data = await safeJson(res);
+    return { ok: res.ok, status: res.status, data, friendlyMessage: friendlyMessage(res.status) };
   } catch (err) {
-    console.error('postMessage error:', err);
-    return { ok: false, status: 0, data: { error: err.message } };
+    return { ok: false, status: 0, data: { error: err.message }, friendlyMessage: '' };
   }
 }
 
 /* ===============================
    Post mensaje global (admin) - WRAPPER
-   El frontend NO debe usar endpoints admin separados (/system).
-   Los admins envían por la misma ruta de usuario usando su JWT.
+   Los admins deben enviar por /api/admin/chat usando su JWT.
    Si se pasa is_system se ignora y se envía por la ruta normal.
 ================================ */
-export async function sendMessage({ sorteoId, token, mensaje, is_system = false }) {
+export async function sendMessage({
+  sorteoId,
+  token,
+  mensaje,
+  is_system = false,
+  isAdmin = false
+}) {
   if (is_system) {
-    console.warn('sendMessage: is_system flag ignored. Sending through regular chat endpoint with JWT.');
+    // is_system se ignora en frontend
   }
 
   // Reutiliza postMessage para asegurar contrato { mensaje } y headers
-  return await postMessage({ sorteoId, token, mensaje });
+  return await postMessage({ sorteoId, token, mensaje, isAdmin });
 }
 
 /* ===============================
@@ -66,7 +91,7 @@ export async function sendMessage({ sorteoId, token, mensaje, is_system = false 
 ================================ */
 export async function muteUser(sorteoId, token, usuarioId, minutes = 10) {
   try {
-    const res = await fetch(`${getChatEndpoint(sorteoId)}/mute`, {
+    const res = await fetch(`${getChatEndpoint(sorteoId, { isAdmin: true })}/mute`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -75,10 +100,9 @@ export async function muteUser(sorteoId, token, usuarioId, minutes = 10) {
       body: JSON.stringify({ usuarioId, minutes })
     });
 
-    const data = await res.json().catch(() => ({}));
+    const data = await safeJson(res);
     return { ok: res.ok, status: res.status, data };
   } catch (err) {
-    console.error('muteUser error:', err);
     return { ok: false, status: 0, data: { error: err.message } };
   }
 }
@@ -88,17 +112,16 @@ export async function muteUser(sorteoId, token, usuarioId, minutes = 10) {
 ================================ */
 export async function deleteMessage(sorteoId, token, messageId) {
   try {
-    const res = await fetch(`${getChatEndpoint(sorteoId)}/${messageId}`, {
+    const res = await fetch(`${getChatEndpoint(sorteoId, { isAdmin: true })}/${messageId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
 
-    const data = await res.json().catch(() => ({}));
+    const data = await safeJson(res);
     return { ok: res.ok, status: res.status, data };
   } catch (err) {
-    console.error('deleteMessage error:', err);
     return { ok: false, status: 0, data: { error: err.message } };
   }
 }
@@ -108,16 +131,15 @@ export async function deleteMessage(sorteoId, token, messageId) {
 ================================ */
 export async function getUserState(sorteoId, token, usuarioId) {
   try {
-    const res = await fetch(`${getChatEndpoint(sorteoId)}/user/${usuarioId}/state`, {
+    const res = await fetch(`${getChatEndpoint(sorteoId, { isAdmin: true })}/user/${usuarioId}/state`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
 
-    const data = await res.json().catch(() => ({}));
+    const data = await safeJson(res);
     return { ok: res.ok, status: res.status, data };
   } catch (err) {
-    console.error('getUserState error:', err);
     return { ok: false, status: 0, data: { error: err.message } };
   }
 }

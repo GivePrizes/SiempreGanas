@@ -341,9 +341,7 @@ async function cargarSorteo() {
         chatContainer.style.display = 'block'; // muestra el chat
         try {
           initChat({ sorteoId, token });
-          console.log('Chat iniciado OK para sorteo:', sorteoId);
         } catch (err) {
-          console.error('Error iniciando chat:', err);
           document.getElementById('chatHint').textContent = 'Error al cargar chat – recarga página';
         }
       }

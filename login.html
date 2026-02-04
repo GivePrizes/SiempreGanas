@@ -188,10 +188,144 @@
 
     .hidden{ display:none !important; }
 
+    /* ===== TERMINOS ===== */
+    .terms-field{
+      margin: 12px 0 6px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,.20);
+      background: rgba(2,6,23,.35);
+    }
+
+    .terms-row{
+      display:flex;
+      align-items:flex-start;
+      gap: 10px;
+      font-size: .88rem;
+      color: rgba(245,245,245,.86);
+    }
+
+    .terms-row input[type="checkbox"]{
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--gold);
+    }
+
+    .terms-link{
+      color: var(--gold);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* ===== MODAL TERMINOS ===== */
+    .terms-modal{
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .terms-modal.hidden{
+      display: none !important;
+    }
+
+    .terms-modal__backdrop{
+      position: absolute;
+      inset: 0;
+      background: rgba(6,6,10,.72);
+      backdrop-filter: blur(6px);
+    }
+
+    .terms-modal__card{
+      position: relative;
+      width: min(720px, 94vw);
+      max-height: 88vh;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid rgba(255,215,0,.22);
+      background:
+        linear-gradient(180deg, rgba(16,16,24,.98), rgba(10,10,16,.98));
+      box-shadow: 0 30px 80px rgba(0,0,0,.65);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .terms-modal__header{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(148,163,184,.18);
+    }
+
+    .terms-modal__header h4{
+      margin: 0;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-size: .85rem;
+      color: var(--gold);
+    }
+
+    .terms-modal__close{
+      background: transparent;
+      border: 1px solid rgba(148,163,184,.25);
+      color: var(--colour-text);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .terms-modal__body{
+      padding: 16px 18px 6px;
+      overflow: auto;
+    }
+
+    .terms-summary{
+      color: rgba(245,245,245,.88);
+      font-size: .95rem;
+      margin-bottom: 12px;
+    }
+
+    .terms-details{
+      border: 1px solid rgba(148,163,184,.18);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(2,6,23,.35);
+    }
+
+    .terms-details summary{
+      cursor: pointer;
+      font-weight: 700;
+      color: rgba(245,245,245,.92);
+      margin-bottom: 6px;
+    }
+
+    .terms-full{
+      color: rgba(245,245,245,.82);
+      font-size: .9rem;
+      line-height: 1.55;
+    }
+
+    .terms-modal__actions{
+      display:flex;
+      gap: 10px;
+      justify-content: flex-end;
+      padding: 14px 18px 18px;
+      border-top: 1px solid rgba(148,163,184,.18);
+      background: rgba(9,9,14,.75);
+    }
+
     /* Ajuste mobile */
     @media (max-width: 420px){
       .auth-card{ padding: 18px 16px; }
       .brand-sub{ font-size: .9rem; }
+      .terms-modal__actions{ flex-direction: column; }
     }
   </style>
 </head>
@@ -272,6 +406,17 @@
           <small id="errorPassConfirm" class="error-msg"></small>
         </div>
 
+        <div class="terms-field">
+          <label class="terms-row">
+            <input type="checkbox" id="regTerms" />
+            <span>
+              Acepto los
+              <span class="terms-link" id="openTermsModal">Términos y Condiciones</span>
+            </span>
+          </label>
+          <small id="errorTerms" class="error-msg"></small>
+        </div>
+
         <button class="btn btn-primary btn-wide" onclick="registro()">
           Registrarme
         </button>
@@ -281,6 +426,37 @@
         </div>
       </section>
 
+    </div>
+  </div>
+
+  <!-- MODAL TERMINOS -->
+  <div id="termsModal" class="terms-modal hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+    <div class="terms-modal__backdrop" data-terms-close></div>
+    <div class="terms-modal__card" role="document">
+      <div class="terms-modal__header">
+        <h4 id="termsTitle">Términos y Condiciones</h4>
+        <button class="terms-modal__close" type="button" data-terms-close aria-label="Cerrar">×</button>
+      </div>
+      <div class="terms-modal__body">
+        <p class="terms-summary">
+          Resumen: Al registrarte confirmas que los datos son reales, aceptas el uso de tu información
+          para gestionar tu cuenta, y entiendes que los resultados y entregas se rigen por las reglas del sorteo.
+        </p>
+        <details class="terms-details">
+          <summary>Leer términos completos</summary>
+          <div class="terms-full">
+            <p>1) Identidad y datos: proporcionas información veraz y autorizas su tratamiento para fines de registro, contacto y verificación.</p>
+            <p>2) Uso del servicio: te comprometes a no usar cuentas duplicadas ni realizar actividades fraudulentas.</p>
+            <p>3) Comunicaciones: podremos enviarte notificaciones operativas relacionadas con tu cuenta o con sorteos.</p>
+            <p>4) Disponibilidad: el acceso puede suspenderse temporalmente por mantenimiento o seguridad.</p>
+            <p>5) Aceptación: al marcar la casilla declaras que leíste y aceptas estos términos.</p>
+          </div>
+        </details>
+      </div>
+      <div class="terms-modal__actions">
+        <button class="btn btn-secondary" type="button" data-terms-close>Cerrar</button>
+        <button class="btn btn-primary" type="button" id="termsAcceptBtn">Aceptar</button>
+      </div>
     </div>
   </div>
 

@@ -96,6 +96,8 @@ async function registro() {
   const telefono = document.getElementById('regTelefono')?.value.trim();
   const password = document.getElementById('regPass')?.value;
   const confirm  = document.getElementById('regPassConfirm')?.value;
+  const termsAccepted = document.getElementById('regTerms')?.checked;
+  const errorTerms = document.getElementById('errorTerms') || null;
 
   if (!nombreValido(nombre)) {
     return alert("❌ Ingresa tu nombre real (mínimo nombre y apellido).");
@@ -113,11 +115,16 @@ async function registro() {
     return alert('❌ Contraseñas no coinciden');
   }
 
+  if (!termsAccepted) {
+    if (errorTerms) errorTerms.textContent = 'Debes aceptar los términos para continuar.';
+    return alert('❌ Debes aceptar los términos y condiciones.');
+  }
+
   try {
     const res = await fetch(`${AUTH_URL}/api/auth/registro`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, telefono, password })
+      body: JSON.stringify({ nombre, email, telefono, password, terms_accepted: true })
     });
 
     const data = await res.json();
@@ -149,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputTelefono = document.getElementById('regTelefono');
   const inputPass     = document.getElementById('regPass');
   const inputPass2    = document.getElementById('regPassConfirm');
+  const inputTerms    = document.getElementById('regTerms');
 
   // Si no estamos en login.html con el formulario de registro, no hacer nada
   if (!inputNombre || !inputEmail || !inputTelefono || !inputPass || !inputPass2) {
@@ -160,6 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorTelefono = document.getElementById('errorTelefono') || null;
   const errorPass     = document.getElementById('errorPass') || null;
   const errorPass2    = document.getElementById('errorPassConfirm') || null;
+  const errorTerms    = document.getElementById('errorTerms') || null;
 
   inputNombre.addEventListener('input', () => {
     const valor = inputNombre.value.trim();
@@ -239,5 +248,55 @@ document.addEventListener('DOMContentLoaded', () => {
       inputPass2.classList.add('input-ok');
       inputPass2.classList.remove('input-error');
     }
+  });
+
+  if (inputTerms) {
+    inputTerms.addEventListener('change', () => {
+      if (!inputTerms.checked) {
+        if (errorTerms) errorTerms.textContent = 'Debes aceptar los términos para continuar.';
+      } else {
+        if (errorTerms) errorTerms.textContent = '';
+      }
+    });
+  }
+
+  // --- Modal términos ---
+  const termsModal = document.getElementById('termsModal');
+  const openTermsBtn = document.getElementById('openTermsModal');
+  const acceptTermsBtn = document.getElementById('termsAcceptBtn');
+
+  const openTermsModal = () => {
+    if (!termsModal) return;
+    termsModal.classList.remove('hidden');
+    termsModal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeTermsModal = () => {
+    if (!termsModal) return;
+    termsModal.classList.add('hidden');
+    termsModal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  if (openTermsBtn) {
+    openTermsBtn.addEventListener('click', openTermsModal);
+  }
+
+  if (termsModal) {
+    const closeBtns = termsModal.querySelectorAll('[data-terms-close]');
+    closeBtns.forEach((btn) => btn.addEventListener('click', closeTermsModal));
+  }
+
+  if (acceptTermsBtn) {
+    acceptTermsBtn.addEventListener('click', () => {
+      if (inputTerms) inputTerms.checked = true;
+      if (errorTerms) errorTerms.textContent = '';
+      closeTermsModal();
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeTermsModal();
   });
 });
