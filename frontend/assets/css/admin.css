@@ -1,0 +1,513 @@
+/* css/admin.css */
+/*
+ * Admin dashboard styling
+ *
+ * Este archivo da estilo al panel de administración de Siempre Gana.
+ * Dark theme, detalles dorados y enfoque en claridad + control.
+ */
+
+/* Ya se incluye common.css desde el HTML con <link>, así que no hace falta importarlo aquí */
+/* @import url('common.css'); */
+
+/* =============================
+   Layout general admin
+   ============================= */
+
+.admin-body {
+  background: radial-gradient(circle at top, #020617, #020617 55%, #020617 100%);
+  color: var(--colour-text);
+  min-height: 100vh;
+}
+
+.admin-wrapper {
+  /* Fixed desktop width centrado */
+  width: 1180px;
+  margin: 2rem auto;
+}
+
+/* =============================
+   Header
+   ============================= */
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--colour-surface);
+  padding: 1rem 1.5rem;
+  border-radius: 0.6rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  margin-bottom: 2rem;
+}
+
+.admin-header-left h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.admin-header-left .admin-subtitle {
+  font-size: var(--font-size-small);
+  color: var(--colour-muted);
+}
+
+/* Pastilla de estado / confianza */
+.admin-status-pill {
+  margin-top: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  font-size: 0.75rem;
+  color: var(--colour-muted);
+}
+
+.admin-status-pill .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background-color: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
+}
+
+.admin-header-right .btn {
+  margin-left: 0.75rem;
+}
+
+/* =============================
+   Main content / Cards genéricas
+   ============================= */
+
+.admin-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Card genérica, reutilizada en todo el panel */
+.card {
+  background-color: var(--colour-surface);
+  border-radius: 0.7rem;
+  padding: 1rem 1.3rem;
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.7);
+}
+
+/* Cabecera de las cards (título + hint derecha) */
+.card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.card-title-right {
+  text-align: right;
+}
+
+.mini-hint {
+  font-size: 0.8rem;
+  color: var(--colour-muted);
+  max-width: 260px;
+}
+
+/* Contenedor para tablas / listados dentro de cards */
+.table-wrapper {
+  margin-top: 0.4rem;
+}
+
+/* =============================
+   Form Layouts
+   ============================= */
+
+.form-card {
+  /* Extends common card styles y espacios para formularios */
+  margin-bottom: 2rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--colour-border);
+  border-radius: 0.4rem;
+  background-color: var(--colour-surface-alt);
+  color: var(--colour-text);
+}
+
+.form-row-inline {
+  display: flex;
+  gap: 1rem;
+}
+
+.form-row-inline > .form-group {
+  flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* =============================
+   Image preview
+   ============================= */
+
+.image-upload {
+  display: flex;
+  flex-direction: column;
+}
+
+.image-upload input[type="file"] {
+  padding: 0.5rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--colour-border);
+  background-color: var(--colour-surface-alt);
+  color: var(--colour-text);
+  margin-bottom: 1rem;
+}
+
+.image-preview {
+  width: 100%;
+  height: 220px;
+  background-color: var(--colour-surface-alt);
+  border: 1px dashed var(--colour-border);
+  border-radius: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--colour-muted);
+  font-size: var(--font-size-small);
+}
+
+.image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0.4rem;
+}
+
+/* =============================
+   Table styles
+   ============================= */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+.table thead {
+  background-color: var(--colour-surface-alt);
+}
+
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--colour-border);
+}
+
+.table th {
+  font-weight: 600;
+  color: var(--colour-primary);
+}
+
+.table tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.table tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* =============================
+   Pagination
+   ============================= */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pagination .page-link {
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.3rem;
+  background-color: var(--colour-surface-alt);
+  color: var(--colour-text);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pagination .page-link:hover,
+.pagination .page-link.active {
+  background-color: var(--colour-primary);
+  color: #000;
+}
+
+/* =============================
+   Card de sorteo dentro del panel admin
+   ============================= */
+
+.sorteo-card-admin {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  background-color: var(--colour-surface);
+  border-radius: 0.7rem;
+  padding: 0.75rem 0.9rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+  margin-bottom: 0.75rem;
+}
+
+.sorteo-admin-image {
+  width: 120px;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  flex-shrink: 0;
+  background-color: var(--colour-surface-alt);
+}
+
+.sorteo-admin-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sorteo-admin-body {
+  flex: 1;
+}
+
+.sorteo-header-admin {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.sorteo-header-admin h3 {
+  font-size: 1rem;
+  margin-right: 0.5rem;
+}
+
+.sorteo-detalle {
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.sorteo-detalle-mini {
+  font-size: 0.8rem;
+  color: var(--colour-muted);
+  margin-top: 0.15rem;
+}
+
+/* Botonera dentro de cada sorteo (Editar / Eliminar / Ruleta) */
+.sorteo-actions-admin {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* Versión pequeña de botones dentro de las tarjetas */
+.btn-sm {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+/* Badges de estado del sorteo */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.badge-success {
+  background-color: #0f9d58; /* verde */
+  color: #000;
+}
+
+.badge-warning {
+  background-color: #f4b400; /* amarillo */
+  color: #000;
+}
+
+.badge-danger {
+  background-color: #d32f2f; /* rojo */
+  color: #fff;
+}
+
+/* =============================
+   Comprobantes lista
+   ============================= */
+
+.comprobante-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.comprobante-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.comprobante-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.5rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.comprobante-item:first-child {
+  border-top: none;
+}
+
+.comprobante-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.comprobante-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+/* =============================
+   Stats rápidas (bloque de abajo)
+   ============================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  border-radius: 0.7rem;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.stat-card h3 {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.stat-card p {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.stat-hint {
+  font-size: 0.75rem;
+  color: var(--colour-muted);
+}
+
+/* Variantes de color */
+.stat-card.gold {
+  background: radial-gradient(circle at top, #facc15, #92400e);
+  color: #111827;
+}
+
+.stat-card.ruby {
+  background: radial-gradient(circle at top, #fb7185, #7f1d1d);
+  color: #f9fafb;
+}
+
+.stat-card.obsidian {
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: #e5e7eb;
+}
+
+/* =============================
+   Charts (visualizaciones)
+   ============================= */
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem;
+}
+
+/* =============================
+   Toast de feedback
+   ============================= */
+
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: rgba(15, 23, 42, 0.96);
+  color: #e5e7eb;
+  padding: 0.6rem 1rem;
+  border-radius: 0.6rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  font-size: 0.85rem;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.hidden {
+  display: none;
+}
+
+.mini-estado{
+  font-size: .82rem;
+  opacity: .75;
+  margin-bottom: .5rem;
+}
+
+
+.card,
+.acordeon-item,
+.table-wrapper > * {
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.card {
+  will-change: transform, opacity;
+}

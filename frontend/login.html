@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Siempre Ganas — Acceso</title>
+
+  <link rel="stylesheet" href="assets/css/common.css">
+  <link rel="stylesheet" href="assets/css/participant.css">
+
+  <style>
+    /* ===== LOGIN LAYOUT PREMIUM ===== */
+    .auth-shell{
+      min-height: 100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 28px 14px;
+    }
+
+    /* Fondo limpio: “premium dark” con glow suave */
+    .auth-shell::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(255,215,0,.08), transparent 60%),
+        radial-gradient(900px 520px at 85% 25%, rgba(56,189,248,.07), transparent 60%),
+        radial-gradient(900px 520px at 55% 95%, rgba(34,197,94,.06), transparent 60%),
+        linear-gradient(180deg, rgba(11,11,15,1), rgba(11,11,15,1));
+      z-index: -1;
+    }
+
+    .auth-wrapper{
+      width: min(460px, 96vw);
+      text-align:center;
+    }
+
+    /* ===== BRAND / LOGO ===== */
+    .brand{
+      display:flex;
+      flex-direction: column;
+      align-items:center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .brand-logo{
+      width: min(520px, 96%);
+      max-width: 520px;
+      height: auto;
+      display:block;
+      border-radius: 18px;
+      filter: drop-shadow(0 18px 50px rgba(0,0,0,.55));
+      opacity: .98;
+    }
+
+    .brand-title{
+      margin: 2px 0 0;
+      font-weight: 900;
+      letter-spacing: .03em;
+    }
+
+    .brand-sub{
+      margin: 0;
+      color: var(--colour-muted);
+      font-size: .95rem;
+    }
+
+    /* ===== CARD ===== */
+    .auth-card{
+      position: relative;
+      padding: 26px 24px;
+      border-radius: 1.2rem;
+      margin-top: 22px;
+      text-align: left;
+
+      /* 🔥 FONDO MEZCLADO CON LA IMAGEN */
+      background:
+        linear-gradient(
+          180deg,
+          rgba(15,15,25,0.88),
+          rgba(10,10,16,0.92)
+        );
+
+      /* efecto cristal */
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+
+      /* borde sutil dorado */
+      border: 1px solid rgba(255,215,0,0.18);
+
+      /* sombra profunda (no tarjeta flotante) */
+      box-shadow:
+        0 25px 60px rgba(0,0,0,.65),
+        inset 0 0 0 1px rgba(255,255,255,.03);
+    }
+
+    .auth-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius: inherit;
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(255,215,0,.08),
+          transparent 60%
+        );
+      pointer-events:none;
+    }
+
+
+
+    .auth-card h3{
+      text-align:center;
+      margin: 0 0 14px 0;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      font-size: .95rem;
+      color: var(--gold);
+    }
+
+    .auth-field{ margin-bottom: 12px; }
+
+    .auth-field label{
+      display:block;
+      font-size: .83rem;
+      margin: 0 0 6px 0;
+      color: rgba(245,245,245,.92);
+    }
+
+    .auth-field input{
+      width: 100%;
+      background: rgba(2,6,23,.55);
+      border: 1px solid rgba(148,163,184,.22);
+      color: var(--colour-text);
+      border-radius: 12px;
+      padding: 12px 12px;
+      outline: none;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+
+    .auth-field input:focus{
+      border-color: rgba(255,215,0,.55);
+      box-shadow: 0 0 0 4px rgba(255,215,0,.12);
+    }
+
+    /* ===== PRIMARY BUTTON ===== */
+    .btn-wide{
+      width:100%;
+      margin-top: 8px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-weight: 900;
+    }
+
+    /* Micro-trust debajo del botón */
+    .trust-row{
+      margin-top: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      color: rgba(245,245,245,.72);
+      font-size: .82rem;
+    }
+
+    .trust-dot{
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(34,197,94,.85);
+      box-shadow: 0 0 0 4px rgba(34,197,94,.12);
+    }
+
+    /* Switch links */
+    .switch-link{
+      margin-top: 12px;
+      font-size: .88rem;
+      color: rgba(255,215,0,.90);
+      cursor:pointer;
+      text-align:center;
+    }
+    .switch-link:hover{ text-decoration: underline; }
+
+    .hidden{ display:none !important; }
+
+    /* ===== TERMINOS ===== */
+    .terms-field{
+      margin: 12px 0 6px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,.20);
+      background: rgba(2,6,23,.35);
+    }
+
+    .terms-row{
+      display:flex;
+      align-items:flex-start;
+      gap: 10px;
+      font-size: .88rem;
+      color: rgba(245,245,245,.86);
+    }
+
+    .terms-row input[type="checkbox"]{
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--gold);
+    }
+
+    .terms-link{
+      color: var(--gold);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* ===== MODAL TERMINOS ===== */
+    .terms-modal{
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .terms-modal.hidden{
+      display: none !important;
+    }
+
+    .terms-modal__backdrop{
+      position: absolute;
+      inset: 0;
+      background: rgba(6,6,10,.72);
+      backdrop-filter: blur(6px);
+    }
+
+    .terms-modal__card{
+      position: relative;
+      width: min(720px, 94vw);
+      max-height: 88vh;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid rgba(255,215,0,.22);
+      background:
+        linear-gradient(180deg, rgba(16,16,24,.98), rgba(10,10,16,.98));
+      box-shadow: 0 30px 80px rgba(0,0,0,.65);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .terms-modal__header{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid rgba(148,163,184,.18);
+    }
+
+    .terms-modal__header h4{
+      margin: 0;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      font-size: .85rem;
+      color: var(--gold);
+    }
+
+    .terms-modal__close{
+      background: transparent;
+      border: 1px solid rgba(148,163,184,.25);
+      color: var(--colour-text);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .terms-modal__body{
+      padding: 16px 18px 6px;
+      overflow: auto;
+    }
+
+    .terms-summary{
+      color: rgba(245,245,245,.88);
+      font-size: .95rem;
+      margin-bottom: 12px;
+    }
+
+    .terms-details{
+      border: 1px solid rgba(148,163,184,.18);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: rgba(2,6,23,.35);
+    }
+
+    .terms-details summary{
+      cursor: pointer;
+      font-weight: 700;
+      color: rgba(245,245,245,.92);
+      margin-bottom: 6px;
+    }
+
+    .terms-full{
+      color: rgba(245,245,245,.82);
+      font-size: .9rem;
+      line-height: 1.55;
+    }
+
+    .terms-modal__actions{
+      display:flex;
+      gap: 10px;
+      justify-content: flex-end;
+      padding: 14px 18px 18px;
+      border-top: 1px solid rgba(148,163,184,.18);
+      background: rgba(9,9,14,.75);
+    }
+
+    /* Ajuste mobile */
+    @media (max-width: 420px){
+      .auth-card{ padding: 18px 16px; }
+      .brand-sub{ font-size: .9rem; }
+      .terms-modal__actions{ flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="auth-shell">
+    <div class="auth-wrapper">
+
+      <!-- BRAND -->
+      <div class="brand">
+        <img
+          src="assets/imagenes/Ima 18 dic 2025, 03_47_54 p.m..png"
+          alt="Siempre Ganas"
+          class="brand-logo"
+        />
+        <p class="brand-sub">Lo que nadie esperaba</p>
+      </div>
+
+      <!-- LOGIN -->
+      <section id="loginForm" class="auth-card">
+        <h3>Iniciar sesión</h3>
+
+        <div class="auth-field">
+          <label for="loginEmail">Correo</label>
+          <input type="email" id="loginEmail" placeholder="usuario@correo.com" autocomplete="email">
+        </div>
+
+        <div class="auth-field">
+          <label for="loginPass">Contraseña</label>
+          <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+
+        <button class="btn btn-primary btn-wide" onclick="login()">
+          Entrar
+        </button>
+
+        <div class="trust-row">
+          <span class="trust-dot"></span>
+          <span>Acceso seguro • Pagos verificados • Resultados oficiales</span>
+        </div>
+
+        <div class="switch-link" onclick="showRegistro()">
+          ¿No tienes cuenta? Registrarse
+        </div>
+      </section>
+
+      <!-- REGISTRO -->
+      <section id="registroForm" class="auth-card hidden" style="margin-top:14px;">
+        <h3>Crear cuenta</h3>
+
+        <div class="auth-field">
+          <label for="regNombre">Nombre completo</label>
+          <input type="text" id="regNombre" placeholder="Nombre y Apellido" autocomplete="name">
+          <small id="errorNombre" class="error-msg"></small>
+        </div>
+
+        <div class="auth-field">
+          <label for="regEmail">Correo</label>
+          <input type="email" id="regEmail" placeholder="email@ejemplo.com" autocomplete="email">
+          <small id="errorEmail" class="error-msg"></small>
+        </div>
+
+        <div class="auth-field">
+          <label for="regTelefono">Teléfono</label>
+          <input type="tel" id="regTelefono" placeholder="+57 3XX XXX XXXX" autocomplete="tel">
+          <small id="errorTelefono" class="error-msg"></small>
+        </div>
+
+        <div class="auth-field">
+          <label for="regPass">Contraseña</label>
+          <input type="password" id="regPass" placeholder="••••••••" autocomplete="new-password">
+          <small id="errorPass" class="error-msg"></small>
+        </div>
+
+        <div class="auth-field">
+          <label for="regPassConfirm">Confirmar contraseña</label>
+          <input type="password" id="regPassConfirm" placeholder="••••••••" autocomplete="new-password">
+          <small id="errorPassConfirm" class="error-msg"></small>
+        </div>
+
+        <div class="terms-field">
+          <label class="terms-row">
+            <input type="checkbox" id="regTerms" />
+            <span>
+              Acepto los
+              <span class="terms-link" id="openTermsModal">Términos y Condiciones</span>
+            </span>
+          </label>
+          <small id="errorTerms" class="error-msg"></small>
+        </div>
+
+        <button class="btn btn-primary btn-wide" onclick="registro()">
+          Registrarme
+        </button>
+
+        <div class="switch-link" onclick="showLogin()">
+          ¿Ya tienes cuenta? Iniciar sesión
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- MODAL TERMINOS -->
+  <div id="termsModal" class="terms-modal hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+    <div class="terms-modal__backdrop" data-terms-close></div>
+    <div class="terms-modal__card" role="document">
+      <div class="terms-modal__header">
+        <h4 id="termsTitle">Términos y Condiciones</h4>
+        <button class="terms-modal__close" type="button" data-terms-close aria-label="Cerrar">×</button>
+      </div>
+      <div class="terms-modal__body">
+        <p class="terms-summary">
+          Resumen: Al registrarte confirmas que los datos son reales, aceptas el uso de tu información
+          para gestionar tu cuenta, y entiendes que los resultados y entregas se rigen por las reglas del sorteo.
+        </p>
+        <details class="terms-details">
+          <summary>Leer términos completos</summary>
+          <div class="terms-full">
+            <p>1) Identidad y datos: proporcionas información veraz y autorizas su tratamiento para fines de registro, contacto y verificación.</p>
+            <p>2) Uso del servicio: te comprometes a no usar cuentas duplicadas ni realizar actividades fraudulentas.</p>
+            <p>3) Comunicaciones: podremos enviarte notificaciones operativas relacionadas con tu cuenta o con sorteos.</p>
+            <p>4) Disponibilidad: el acceso puede suspenderse temporalmente por mantenimiento o seguridad.</p>
+            <p>5) Aceptación: al marcar la casilla declaras que leíste y aceptas estos términos.</p>
+          </div>
+        </details>
+      </div>
+      <div class="terms-modal__actions">
+        <button class="btn btn-secondary" type="button" data-terms-close>Cerrar</button>
+        <button class="btn btn-primary" type="button" id="termsAcceptBtn">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/auth.js"></script>
+
+  <script>
+    function showRegistro() {
+      document.getElementById("loginForm").classList.add("hidden");
+      document.getElementById("registroForm").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showLogin() {
+      document.getElementById("registroForm").classList.add("hidden");
+      document.getElementById("loginForm").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
