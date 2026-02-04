@@ -17,6 +17,7 @@ const textoPremio = document.getElementById('textoPremio');
 const textoPrecio = document.getElementById('textoPrecio');
 const textoCantidad = document.getElementById('textoCantidad');
 const textoProgreso = document.getElementById('textoProgreso');
+const textoCupos = document.getElementById('textoCupos');
 const progressFill = document.getElementById('progressFill');
 const maxNumerosTexto = document.getElementById('maxNumerosTexto');
 
@@ -33,6 +34,11 @@ const toast = document.getElementById('toast');
 const misNumerosEnSorteoCard = document.getElementById('misNumerosEnSorteoCard');
 const misNumerosEnSorteoTexto = document.getElementById('misNumerosEnSorteoTexto');
 const misNumerosEnSorteoChips = document.getElementById('misNumerosEnSorteoChips');
+const estadoNoParticipante = document.getElementById('estadoNoParticipante');
+const btnMisNumeros = document.getElementById('btnMisNumeros');
+const chatInput = document.getElementById('chatInput');
+const chatSend = document.getElementById('chatSend');
+const chatHint = document.getElementById('chatHint');
 
 
 let sorteoActual = null;
@@ -243,11 +249,21 @@ async function cargarMisNumerosDelSorteo() {
     const nums = Array.isArray(data?.numeros) ? data.numeros : [];
 
     if (nums.length === 0) {
-      misNumerosEnSorteoCard.style.display = 'none';
+      if (misNumerosEnSorteoCard) misNumerosEnSorteoCard.style.display = 'none';
+      if (estadoNoParticipante) estadoNoParticipante.style.display = 'block';
+      if (btnMisNumeros) btnMisNumeros.classList.add('hidden');
+      if (chatInput) chatInput.disabled = true;
+      if (chatSend) chatSend.disabled = true;
+      if (chatHint) chatHint.textContent = 'Participa para unirte a la conversación.';
       return;
     }
 
-    misNumerosEnSorteoCard.style.display = 'block';
+    if (estadoNoParticipante) estadoNoParticipante.style.display = 'none';
+    if (misNumerosEnSorteoCard) misNumerosEnSorteoCard.style.display = 'block';
+    if (btnMisNumeros) btnMisNumeros.classList.remove('hidden');
+    if (chatInput) chatInput.disabled = false;
+    if (chatSend) chatSend.disabled = false;
+    if (chatHint) chatHint.textContent = '';
     nums.sort((a, b) => Number(a) - Number(b));
 
     misNumerosEnSorteoTexto.textContent = `Aprobados: ${nums.length} número(s)`;
@@ -312,12 +328,14 @@ async function cargarSorteo() {
     }
 
     if (textoProgreso) {
+      textoProgreso.textContent = `${ocupados} / ${total} vendidos`;
+    }
+
+    if (textoCupos) {
       if (faltan <= 0) {
-        textoProgreso.innerHTML =
-          `Todos los números están vendidos. Este sorteo está <strong>listo para ruleta</strong>.`;
+        textoCupos.innerHTML = 'Sorteo completo · listo para ruleta';
       } else {
-        textoProgreso.innerHTML =
-          `${ocupados} de ${total} números vendidos • Quedan <strong>${faltan}</strong>`;
+        textoCupos.innerHTML = `Quedan <strong>${faltan}</strong> cupos disponibles`;
       }
     }
 
