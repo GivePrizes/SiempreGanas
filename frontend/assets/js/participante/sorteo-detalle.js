@@ -358,8 +358,11 @@ async function cargarSorteo() {
       if (chatContainer) {
         chatContainer.style.display = 'block'; // muestra el chat
         try {
+          console.log('[chat] calling initChat', { sorteoId, hasToken: !!token });
           initChat({ sorteoId, token });
+          console.log('[chat] initChat invoked');
         } catch (err) {
+          console.error('[chat] initChat failed', err);
           document.getElementById('chatHint').textContent = 'Error al cargar chat – recarga página';
         }
       }

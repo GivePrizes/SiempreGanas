@@ -27,7 +27,9 @@ function usuarioIdFromToken(token) {
 =============================== */
 
 export async function initChat({ sorteoId, token }) {
+  console.log('[chat] initChat called', { sorteoId, hasToken: !!token });
   if (!sorteoId || !token) {
+    console.log('[chat] initChat missing sorteoId/token', { sorteoId, hasToken: !!token });
     return;
   }
 
