@@ -142,6 +142,10 @@ export async function initChat({ sorteoId, token }) {
   function appendMessage(m) {
     if (!m || store.has(m.id)) return;
 
+    if (window?.DEBUG_CHAT) {
+      console.log('[chat] realtime raw message', m);
+    }
+
     // 🔥 NORMALIZAR MENSAJE REALTIME
     const alias =
       m.usuario?.alias ??
@@ -289,6 +293,10 @@ export async function initChat({ sorteoId, token }) {
       mensaje: text,
       isAdmin: false
     });
+
+    if (window?.DEBUG_CHAT) {
+      console.log('[chat] postMessage response', { ok, status, data });
+    }
 
     if (!ok) {
       // rollback visual (realtime no llegará)
