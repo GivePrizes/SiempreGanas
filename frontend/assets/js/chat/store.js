@@ -2,8 +2,38 @@ export function createChatStore({ myUsuarioId }) {
   const byId = new Map();
   let filter = 'all';
 
+  function mergeMessage(existing, incoming) {
+    if (!existing) return incoming;
+    if (!incoming) return existing;
+
+    const merged = { ...existing, ...incoming };
+
+    const existingUsuario = existing.usuario || {};
+    const incomingUsuario = incoming.usuario || null;
+
+    if (incomingUsuario) {
+      merged.usuario = {
+        ...existingUsuario,
+        ...incomingUsuario,
+        alias: incomingUsuario.alias ?? existingUsuario.alias,
+        nombre: incomingUsuario.nombre ?? existingUsuario.nombre
+      };
+    } else if (existing.usuario) {
+      merged.usuario = existing.usuario;
+    }
+
+    merged.usuario_alias = incoming.usuario_alias ?? existing.usuario_alias;
+    merged.usuario_nombre = incoming.usuario_nombre ?? existing.usuario_nombre;
+
+    return merged;
+  }
+
   function upsertMany(list = []) {
-    list.forEach(m => m?.id && byId.set(m.id, m));
+    list.forEach(m => {
+      if (!m?.id) return;
+      const prev = byId.get(m.id);
+      byId.set(m.id, mergeMessage(prev, m));
+    });
   }
 
   function has(id) {
