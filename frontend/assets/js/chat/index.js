@@ -31,7 +31,18 @@ export async function initChat({ sorteoId, token }) {
     return;
   }
 
+  const debugChat =
+    window?.DEBUG_CHAT ||
+    localStorage.getItem('DEBUG_CHAT') === '1' ||
+    new URLSearchParams(window.location.search).get('debugChat') === '1';
+
+  const logDebug = (...args) => {
+    if (debugChat) console.log('[chat]', ...args);
+  };
+
   const myUsuarioId = usuarioIdFromToken(token);
+
+  logDebug('initChat', { sorteoId, myUsuarioId, debugChat });
 
   const bodyEl    = document.getElementById('chatBody');
   const inputEl   = document.getElementById('chatInput');
@@ -142,9 +153,7 @@ export async function initChat({ sorteoId, token }) {
   function appendMessage(m) {
     if (!m || store.has(m.id)) return;
 
-    if (window?.DEBUG_CHAT) {
-      console.log('[chat] realtime raw message', m);
-    }
+    logDebug('realtime raw message', m);
 
     // 🔥 NORMALIZAR MENSAJE REALTIME
     const alias =
@@ -229,6 +238,7 @@ export async function initChat({ sorteoId, token }) {
   =============================== */
 
   const history = await fetchMessages({ sorteoId, token, limit: 50 });
+  logDebug('history response', history);
   if (!history.ok) {
     if (history.status === 401) {
       canUseChat = false;
@@ -260,8 +270,10 @@ export async function initChat({ sorteoId, token }) {
       sorteoId,
       onInsert: appendMessage
     });
+    logDebug('realtime subscribed');
   } catch {
     // Sin realtime
+    logDebug('realtime subscribe failed');
   }
 
   /* ===============================
@@ -294,9 +306,7 @@ export async function initChat({ sorteoId, token }) {
       isAdmin: false
     });
 
-    if (window?.DEBUG_CHAT) {
-      console.log('[chat] postMessage response', { ok, status, data });
-    }
+    logDebug('postMessage response', { ok, status, data });
 
     if (!ok) {
       // rollback visual (realtime no llegará)
