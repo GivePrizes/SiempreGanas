@@ -158,20 +158,24 @@ export async function initChat({ sorteoId, token }) {
     logDebug('realtime raw message', m);
 
     // 🔥 NORMALIZAR MENSAJE REALTIME
+    const usuarioId = m.usuario_id ?? m.usuario?.id ?? m.usuarioId ?? null;
+    const cachedUser = usuarioId ? store.getUser(usuarioId) : null;
     const alias =
       m.usuario?.alias ??
       m.usuario_alias ??
-      (m.usuario_id === myUsuarioId ? 'Tú' : null);
+      cachedUser?.alias ??
+      (usuarioId === myUsuarioId ? 'Tú' : null);
     const nombre =
       m.usuario?.nombre ??
       m.usuario_nombre ??
-      (m.usuario_id === myUsuarioId ? 'Tú' : 'Usuario');
+      cachedUser?.nombre ??
+      (usuarioId === myUsuarioId ? 'Tú' : 'Usuario');
 
     const mensaje = {
       ...m,
-      usuario_id: m.usuario_id ?? m.usuario?.id ?? m.usuarioId ?? null,
+      usuario_id: usuarioId,
       usuario: {
-        id: m.usuario_id ?? m.usuario?.id ?? m.usuarioId ?? null,
+        id: usuarioId,
         alias,
         nombre
       }
