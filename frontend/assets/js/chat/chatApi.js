@@ -21,6 +21,7 @@ export async function fetchMessages({
   limit = 50,
   cursor = null
 }) {
+  console.log('[chat] fetchMessages start', { sorteoId, limit, cursor });
   const params = new URLSearchParams({ limit: String(limit) });
   if (cursor?.beforeCreatedAt) params.set('beforeCreatedAt', cursor.beforeCreatedAt);
   if (cursor?.beforeId) params.set('beforeId', cursor.beforeId);
@@ -36,8 +37,10 @@ export async function fetchMessages({
     );
 
     const data = await safeJson(res);
+    console.log('[chat] fetchMessages response', { ok: res.ok, status: res.status, data });
     return { ok: res.ok, status: res.status, data, friendlyMessage: friendlyMessage(res.status) };
   } catch (err) {
+    console.log('[chat] fetchMessages error', err);
     return { ok: false, status: 0, data: { error: err.message }, friendlyMessage: '' };
   }
 }
@@ -49,6 +52,7 @@ export async function fetchMessages({
    - Devuelve { ok, status, data } para manejo en UI
 ================================ */
 export async function postMessage({ sorteoId, token, mensaje, isAdmin = false }) {
+  console.log('[chat] postMessage start', { sorteoId, isAdmin });
   try {
     const res = await fetch(getChatEndpoint(sorteoId, { isAdmin }), {
       method: 'POST',
@@ -60,8 +64,10 @@ export async function postMessage({ sorteoId, token, mensaje, isAdmin = false })
     });
 
     const data = await safeJson(res);
+    console.log('[chat] postMessage response', { ok: res.ok, status: res.status, data });
     return { ok: res.ok, status: res.status, data, friendlyMessage: friendlyMessage(res.status) };
   } catch (err) {
+    console.log('[chat] postMessage error', err);
     return { ok: false, status: 0, data: { error: err.message }, friendlyMessage: '' };
   }
 }
