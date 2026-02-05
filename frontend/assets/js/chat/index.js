@@ -27,24 +27,11 @@ function usuarioIdFromToken(token) {
 =============================== */
 
 export async function initChat({ sorteoId, token }) {
-  console.log('[chat] initChat called', { sorteoId, hasToken: !!token });
   if (!sorteoId || !token) {
-    console.log('[chat] initChat missing sorteoId/token', { sorteoId, hasToken: !!token });
     return;
   }
 
-  const debugChat =
-    window?.DEBUG_CHAT ||
-    localStorage.getItem('DEBUG_CHAT') === '1' ||
-    new URLSearchParams(window.location.search).get('debugChat') === '1';
-
-  const logDebug = (...args) => {
-    if (debugChat) console.log('[chat]', ...args);
-  };
-
   const myUsuarioId = usuarioIdFromToken(token);
-
-  logDebug('initChat', { sorteoId, myUsuarioId, debugChat });
 
   const bodyEl    = document.getElementById('chatBody');
   const inputEl   = document.getElementById('chatInput');
@@ -155,20 +142,15 @@ export async function initChat({ sorteoId, token }) {
   function appendMessage(m) {
     if (!m || store.has(m.id)) return;
 
-    logDebug('realtime raw message', m);
-
     // 🔥 NORMALIZAR MENSAJE REALTIME
     const usuarioId = m.usuario_id ?? m.usuario?.id ?? m.usuarioId ?? null;
-    const cachedUser = usuarioId ? store.getUser(usuarioId) : null;
     const alias =
       m.usuario?.alias ??
       m.usuario_alias ??
-      cachedUser?.alias ??
       (usuarioId === myUsuarioId ? 'Tú' : null);
     const nombre =
       m.usuario?.nombre ??
       m.usuario_nombre ??
-      cachedUser?.nombre ??
       (usuarioId === myUsuarioId ? 'Tú' : 'Usuario');
 
     const mensaje = {
@@ -244,7 +226,6 @@ export async function initChat({ sorteoId, token }) {
   =============================== */
 
   const history = await fetchMessages({ sorteoId, token, limit: 50 });
-  logDebug('history response', history);
   if (!history.ok) {
     if (history.status === 401) {
       canUseChat = false;
@@ -276,10 +257,8 @@ export async function initChat({ sorteoId, token }) {
       sorteoId,
       onInsert: appendMessage
     });
-    logDebug('realtime subscribed');
   } catch {
     // Sin realtime
-    logDebug('realtime subscribe failed');
   }
 
   /* ===============================
@@ -312,7 +291,6 @@ export async function initChat({ sorteoId, token }) {
       isAdmin: false
     });
 
-    logDebug('postMessage response', { ok, status, data });
 
     if (!ok) {
       // rollback visual (realtime no llegará)

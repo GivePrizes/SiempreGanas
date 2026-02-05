@@ -2,7 +2,6 @@
 import { getSupabaseClient } from './supabaseClient.js';
 
 export async function subscribeToSorteoInserts({ sorteoId, onInsert }) {
-  console.log('[chat] realtime subscribe start', { sorteoId });
   const supabase = await getSupabaseClient();
 
   const channel = supabase
@@ -16,12 +15,10 @@ export async function subscribeToSorteoInserts({ sorteoId, onInsert }) {
         filter: `sorteo_id=eq.${sorteoId}`
       },
       (payload) => {
-        console.log('[chat] realtime payload', payload);
         onInsert(payload.new);
       }
     )
     .subscribe();
 
-  console.log('[chat] realtime subscribe called');
   return () => supabase.removeChannel(channel);
 }
