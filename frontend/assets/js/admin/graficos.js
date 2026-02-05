@@ -11,7 +11,6 @@ export async function cargarGraficos() {
   // Solo tiene sentido cargar gráficos si es admin y hay Chart
   if (!token || user.rol !== 'admin') return;
   if (typeof Chart === 'undefined') {
-    console.warn('Chart.js no está disponible en esta página.');
     return;
   }
 
@@ -121,3 +120,4 @@ export async function cargarGraficos() {
     console.error('Error cargando gráficos del admin:', err);
   }
 }
+

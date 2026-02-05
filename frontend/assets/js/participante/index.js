@@ -22,7 +22,6 @@ function setBienvenida() {
       subtitulo.textContent =
         'Adquiere tus números, sube tu comprobante y espera la dinámica.';
   } catch {
-    console.warn('User inválido en localStorage');
   }
 }
 
@@ -139,3 +138,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   cargarSorteosActivos();
 });
+

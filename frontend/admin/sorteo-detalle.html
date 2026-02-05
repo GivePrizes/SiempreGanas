@@ -56,7 +56,6 @@
     const sorteoId = params.get('id'); // el ID viene por la URL
     const token = localStorage.getItem('token'); // ✅ corregido: usar "token"
 
-    console.log('Sorteo ID:', sorteoId);
 
     // ✅ Cargar datos del sorteo y mostrarlos en la interfaz
     async function cargarDetalleSorteo() {
@@ -83,7 +82,6 @@
     if (token && sorteoId) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        console.log('Payload JWT:', payload);
 
         if (payload.rol === 'admin') {
           cargarDetalleSorteo();

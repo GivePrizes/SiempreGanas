@@ -16,7 +16,6 @@ export async function cargarProgresoBono() {
     });
 
     if (!res.ok) {
-      console.warn('No se pudo cargar el progreso del bono');
       return;
     }
 
@@ -65,3 +64,4 @@ function renderBono(data) {
     `;
   }
 }
+

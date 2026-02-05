@@ -111,7 +111,6 @@ export async function cargarComprobantes() {
       '<p>No tienes permisos o tu sesión expiró. Vuelve a iniciar sesión.</p>';
     yaPintoAlgo = true;
     ultimoHTML = contenedor.innerHTML;
-    console.warn('No autorizado en /api/admin/comprobantes');
     return;
   }
 
@@ -166,3 +165,4 @@ async function rechazar(id) {
 // 👇 Hacemos que sean accesibles desde el HTML inline
 window.aprobar = aprobar;
 window.rechazar = rechazar;
+

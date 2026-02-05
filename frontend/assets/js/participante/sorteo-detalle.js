@@ -273,7 +273,6 @@ async function cargarMisNumerosDelSorteo() {
     `).join('');
 
   } catch (err) {
-    console.warn('Error cargando mis números del sorteo:', err);
   }
 }
 
@@ -300,7 +299,6 @@ async function cargarSorteo() {
     const data = await res.json();
 
     if (!res.ok) {
-      console.error('Error sorteo:', data);
       tituloSorteo.textContent = data.error || 'Error al cargar el sorteo';
       return;
     }
@@ -358,11 +356,8 @@ async function cargarSorteo() {
       if (chatContainer) {
         chatContainer.style.display = 'block'; // muestra el chat
         try {
-          console.log('[chat] calling initChat', { sorteoId, hasToken: !!token });
           initChat({ sorteoId, token });
-          console.log('[chat] initChat invoked');
         } catch (err) {
-          console.error('[chat] initChat failed', err);
           document.getElementById('chatHint').textContent = 'Error al cargar chat – recarga página';
         }
       }
@@ -374,7 +369,6 @@ async function cargarSorteo() {
     }
 
   } catch (err) {
-    console.error('Error cargando sorteo:', err);
     tituloSorteo.textContent = 'Error de conexión al cargar el sorteo.';
   }
 }
@@ -491,7 +485,6 @@ if (btnConfirmar) {
       const data = await res.json();
 
       if (!res.ok) {
-        console.error('Error guardar numeros:', data);
         mostrarToast(data.error || data.message || 'Error al guardar tu participación.');
         btnConfirmar.disabled = false;
         btnConfirmar.textContent = 'Confirmar participación';
@@ -514,7 +507,6 @@ if (btnConfirmar) {
         location.href = 'mis-numeros.html';
       }, 2000);
     } catch (err) {
-      console.error(err);
       mostrarToast('Error de conexión al enviar tu participación.');
       btnConfirmar.disabled = false;
       btnConfirmar.textContent = 'Confirmar participación';
@@ -524,9 +516,9 @@ if (btnConfirmar) {
 
 // --- init ---
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('[chat] sorteo-detalle loaded');
   cargarSorteo();
   cargarMisNumerosDelSorteo();
 });
+
 
 
