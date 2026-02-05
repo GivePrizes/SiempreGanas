@@ -25,12 +25,12 @@ export async function initAdminChat({ sorteoId, token }) {
   // Store de mensajes (admin)
   const store = createChatStore({ myUsuarioId: 'admin' });
   let unsub = null; // reservado para realtime futuro
-  let canUseChat = true;
-  let soundEnabled = false;
-  let pollId = null;
+  let canUseChat = true;      // permisos para usar el chat
+  let soundEnabled = false;     // sonido deshabilitado hasta interacción
+  let pollId = null;  // ID del polling
 
   /* ===============================
-     Sound
+     Sound notification 
   =============================== */
   function playPing() {
     if (!soundEnabled) return;
