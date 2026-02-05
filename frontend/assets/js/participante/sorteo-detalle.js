@@ -521,6 +521,9 @@ if (btnConfirmar) {
 
 // --- init ---
 document.addEventListener('DOMContentLoaded', () => {
+  if (window?.DEBUG_CHAT || localStorage.getItem('DEBUG_CHAT') === '1') {
+    console.log('[chat] sorteo-detalle loaded');
+  }
   cargarSorteo();
   cargarMisNumerosDelSorteo();
 });
