@@ -37,7 +37,8 @@ export async function initAdminChat({ sorteoId, token }) {
     try {
       const audio = new Audio('/assets/sound/new-notification-SG.mp3');
       audio.volume = 0.4;
-      audio.play();
+      const p = audio.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
     } catch {}
   }
 

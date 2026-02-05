@@ -34,9 +34,10 @@ export function createChatStore({ myUsuarioId }) {
         m.mensaje === mensaje
       ) {
         byId.delete(id);
-        break;
+        return m;
       }
     }
+    return null;
   }
 
   // Remove by id

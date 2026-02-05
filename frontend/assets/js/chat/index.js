@@ -99,7 +99,8 @@ export async function initChat({ sorteoId, token }) {
     try {
       const audio = new Audio('/assets/sound/new-notification-SG.mp3');
       audio.volume = 0.4;
-      audio.play();
+      const p = audio.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
     } catch {}
   }
 
@@ -124,10 +125,14 @@ export async function initChat({ sorteoId, token }) {
   }
 
   function replaceOptimistic(realMsg) {
-    store.removeOptimisticByUserAndText(
+    const optimistic = store.removeOptimisticByUserAndText(
       myUsuarioId,
       realMsg.mensaje
     );
+    if (optimistic?.usuario && realMsg?.usuario) {
+      if (!realMsg.usuario.alias) realMsg.usuario.alias = optimistic.usuario.alias;
+      if (!realMsg.usuario.nombre) realMsg.usuario.nombre = optimistic.usuario.nombre;
+    }
   }
 
   /* ===============================
@@ -323,7 +328,8 @@ export async function initChat({ sorteoId, token }) {
     }
 
     const payloadMessage =
-      (data && (data.message || data.mensaje || data.data)) || null;
+      (data && (data.message || data.mensaje || data.data)) ||
+      (data && data.id ? data : null);
 
     if (payloadMessage && payloadMessage.id) {
       const normalized = {
