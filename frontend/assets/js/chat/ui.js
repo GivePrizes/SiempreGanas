@@ -88,6 +88,12 @@ export function renderMessages({
     .map(m => {
       const isSystem = !!m.is_system;
       const isMine = Number(m.usuario?.id) === Number(myUsuarioId);
+      const displayName =
+        m.usuario?.alias ??
+        m.usuario?.nombre ??
+        m.usuario_alias ??
+        m.usuario_nombre ??
+        'Usuario';
 
       const cls = [
         'chat-row',
@@ -111,7 +117,7 @@ export function renderMessages({
         <div class="${cls}">
           <div class="chat-meta">
             <strong class="chat-author">
-              ${esc(m.usuario?.nombre || m.usuario?.alias || 'Usuario')}
+              ${esc(displayName)}
             </strong>
             <span class="chat-time">
               ${m.created_at ? time(m.created_at) : ''}

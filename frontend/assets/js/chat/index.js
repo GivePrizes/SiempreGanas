@@ -115,7 +115,7 @@ export async function initChat({ sorteoId, token }) {
       mensaje: text,
       is_system: false,
       created_at: new Date().toISOString(),
-      usuario: { id: myUsuarioId, nombre: 'Tú' },
+      usuario: { id: myUsuarioId, alias: 'Tú', nombre: 'Tú' },
       _optimistic: true
     }]);
 
@@ -138,15 +138,21 @@ export async function initChat({ sorteoId, token }) {
     if (!m || store.has(m.id)) return;
 
     // 🔥 NORMALIZAR MENSAJE REALTIME
+    const alias =
+      m.usuario?.alias ??
+      m.usuario_alias ??
+      (m.usuario_id === myUsuarioId ? 'Tú' : null);
     const nombre =
       m.usuario?.nombre ??
-      m.usuario?.alias ??
+      m.usuario_nombre ??
       (m.usuario_id === myUsuarioId ? 'Tú' : 'Usuario');
 
     const mensaje = {
       ...m,
+      usuario_id: m.usuario_id ?? m.usuario?.id ?? m.usuarioId ?? null,
       usuario: {
-        id: m.usuario_id,
+        id: m.usuario_id ?? m.usuario?.id ?? m.usuarioId ?? null,
+        alias,
         nombre
       }
     };
@@ -314,6 +320,39 @@ export async function initChat({ sorteoId, token }) {
 
       sendEl.disabled = false;
       return;
+    }
+
+    const payloadMessage =
+      (data && (data.message || data.mensaje || data.data)) || null;
+
+    if (payloadMessage && payloadMessage.id) {
+      const normalized = {
+        ...payloadMessage,
+        usuario_id:
+          payloadMessage.usuario_id ??
+          payloadMessage.usuario?.id ??
+          payloadMessage.usuarioId ??
+          myUsuarioId,
+        usuario: {
+          id:
+            payloadMessage.usuario?.id ??
+            payloadMessage.usuario_id ??
+            payloadMessage.usuarioId ??
+            myUsuarioId,
+          alias:
+            payloadMessage.usuario?.alias ??
+            payloadMessage.usuario_alias ??
+            'Tú',
+          nombre:
+            payloadMessage.usuario?.nombre ??
+            payloadMessage.usuario_nombre ??
+            'Tú'
+        }
+      };
+
+      replaceOptimistic(normalized);
+      store.upsertMany([normalized]);
+      rerender({ keepBottom: true });
     }
 
     sendEl.disabled = false;
