@@ -149,6 +149,34 @@ function renderNumbersList(){
   }
 }
 
+async function fetchMisNumerosParaLista(){
+  if (!sorteoId || !token || !elNumbersList) return;
+
+  try{
+    const res = await fetch(`${apiBase}/api/participante/mis-numeros?sorteoId=${sorteoId}`, {
+      headers: authHeaders()
+    });
+    const data = await res.json();
+    const nums = Array.isArray(data?.numeros) ? data.numeros : [];
+
+    if (!nums.length) {
+      elNumbersList.innerHTML = '<span class="muted small">Aún no tienes números aprobados.</span>';
+      if (elNumbersCount) elNumbersCount.textContent = '0';
+      return;
+    }
+
+    nums.sort((a,b) => Number(a) - Number(b));
+    elNumbersList.innerHTML = nums.map(n => {
+      const label = `#${String(n).padStart(2,"0")}`;
+      return `<span class="numberChip">${label}</span>`;
+    }).join('');
+
+    if (elNumbersCount) elNumbersCount.textContent = String(nums.length);
+  } catch {
+    elNumbersList.innerHTML = '<span class="muted small">No se pudieron cargar tus números.</span>';
+  }
+}
+
 function setChatEnabled(enabled, message){
   if (typeof window.setRuletaLiveChatState === "function") {
     window.setRuletaLiveChatState({ enabled, message });
@@ -452,7 +480,6 @@ async function fetchNumerosSiHaceFalta(){
   const nums = Array.isArray(data.numeros) ? data.numeros : [];
   segments = nums.map(n => ({ numero: Number(n) })).sort((a,b)=>a.numero-b.numero);
   drawWheel();
-  renderNumbersList();
 }
 
 // =========================
@@ -537,6 +564,9 @@ function tick(){
 
     // 2) Si no llegó snapshot, dibujar con números aprobados
     await fetchNumerosSiHaceFalta();
+
+    // 2b) Mis números para el panel lateral
+    await fetchMisNumerosParaLista();
 
     // 3) empezar contador
     tick();
