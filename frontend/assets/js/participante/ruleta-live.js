@@ -34,6 +34,8 @@ const elOverlay = document.getElementById("overlay");
 const elOverlayNum = document.getElementById("overlayNum");
 const elResult = document.getElementById("result");
 const elSystemFeed = document.getElementById("systemFeed");
+const elNumbersList = document.getElementById("numbersList");
+const elNumbersCount = document.getElementById("numbersCount");
 const chatInputEl = document.getElementById("chatInput");
 const chatSendEl = document.getElementById("chatSend");
 const chatHintEl = document.getElementById("chatHint");
@@ -130,6 +132,21 @@ function pushSystemMessage(text, key){
     </div>
   `;
   elSystemFeed.prepend(row);
+}
+
+function renderNumbersList(){
+  if (!elNumbersList) return;
+
+  const nums = Array.isArray(segments) ? segments : [];
+  elNumbersList.innerHTML = nums.map(s => {
+    const n = Number(s.numero);
+    const label = Number.isFinite(n) ? `#${String(n).padStart(2,"0")}` : String(s.numero || '');
+    return `<span class="numberChip">${label}</span>`;
+  }).join('');
+
+  if (elNumbersCount) {
+    elNumbersCount.textContent = String(nums.length || 0);
+  }
 }
 
 function setChatEnabled(enabled, message){
@@ -435,6 +452,7 @@ async function fetchNumerosSiHaceFalta(){
   const nums = Array.isArray(data.numeros) ? data.numeros : [];
   segments = nums.map(n => ({ numero: Number(n) })).sort((a,b)=>a.numero-b.numero);
   drawWheel();
+  renderNumbersList();
 }
 
 // =========================

@@ -85,6 +85,7 @@ body{
 .wheelWrap{
   position:relative;
   width:min(520px, 92vw);
+  max-width:100%;
   margin:0 auto;
   aspect-ratio:1/1;
 }
@@ -187,6 +188,35 @@ body{
   background:rgba(0,0,0,.22);
   border:1px solid rgba(255,255,255,.08);
   scroll-behavior:smooth;
+}
+
+.numbersCard{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.numbersList{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:10px;
+  border-radius:12px;
+  background:rgba(0,0,0,.22);
+  border:1px solid rgba(255,255,255,.08);
+  max-height:32vh;
+  overflow:auto;
+}
+
+.numberChip{
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(246,208,111,.35);
+  background:rgba(246,208,111,.10);
+  color:rgba(246,208,111,.92);
+  font-weight:800;
+  font-size:12px;
+  letter-spacing:.04em;
 }
 
 .systemMsg{
@@ -313,6 +343,9 @@ body{
 }
 
 @media (max-width: 640px){
+  .wrap{ padding:14px; }
+  .card{ padding:12px; }
+
   .top{
     flex-direction:column;
     align-items:flex-start;
@@ -348,6 +381,19 @@ body{
   }
 }
 
+@media (max-width: 420px){
+  .wheelWrap{
+    width:92vw;
+  }
+  #wheel{
+    max-width:92vw;
+    max-height:92vw;
+  }
+  .wheelCard{
+    overflow:hidden;
+  }
+}
+
 @media (max-width: 768px){
   body{
     background:
@@ -358,7 +404,8 @@ body{
 
   .card,
   .systemFeed,
-  .chatCard #chatContainer{
+  .chatCard #chatContainer,
+  .numbersList{
     background: rgba(14,14,20,0.98);
     border-color: rgba(255,255,255,.16);
   }
