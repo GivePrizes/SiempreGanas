@@ -1081,6 +1081,26 @@ body{
     rgba(255, 215, 0, 0.08)
   );
 }
+
+/* actualización suave de estado (sin llamar la atención) */
+.chip-soft-update{
+  animation: chipSoft 1.2s ease-out;
+}
+
+@keyframes chipSoft{
+  0%{
+    box-shadow: 0 0 0 0 rgba(246,208,111,0.0);
+    background-color: rgba(246,208,111,0.06);
+  }
+  40%{
+    box-shadow: 0 0 0 4px rgba(246,208,111,0.12);
+    background-color: rgba(246,208,111,0.10);
+  }
+  100%{
+    box-shadow: 0 0 0 0 rgba(246,208,111,0.0);
+    background-color: transparent;
+  }
+}
 /*=============================
    Animaciones de ganador
    ============================= */
@@ -1386,10 +1406,47 @@ body{
   font-size: 1.35rem;
   margin: 0;
 }
+
+.app-title-row{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.title-badge{
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(246,208,111,0.35);
+  background: linear-gradient(135deg, rgba(246,208,111,0.12), rgba(255,255,255,0.03));
+  color: rgba(246,208,111,0.95);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  box-shadow: 0 6px 18px rgba(0,0,0,.35);
+}
 .app-subtitle{
   margin: 4px 0 0;
   color: var(--colour-muted);
   font-size: .92rem;
+}
+
+.app-quickline{
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quick-pill{
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(246,208,111,0.08);
+  color: rgba(246,208,111,0.92);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: .03em;
 }
 
 .app-topbar-actions{
@@ -1406,12 +1463,21 @@ body{
   margin: 12px 0 20px;
 }
 
+.stats-row--compact{
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .stat-card{
   background: rgba(18,18,26,0.96);
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 16px;
   padding: 12px 14px;
   box-shadow: 0 10px 24px rgba(0,0,0,.35);
+}
+
+.stat-card--sm{
+  padding: 10px 12px;
+  border-radius: 14px;
 }
 
 .stat-top{
@@ -1427,6 +1493,10 @@ body{
   font-size: 1.6rem;
   font-weight: 800;
   letter-spacing: .3px;
+}
+
+.stats-row--compact .stat-value{
+  font-size: 1.35rem;
 }
 
 
@@ -1502,7 +1572,7 @@ body{
   .app-topbar-actions{
     width:100%;
   }
-  .app-topbar-actions .btn.btn-ghost{
+  .app-topbar-actions .btn{
     flex:1;
     justify-content:center;
   }

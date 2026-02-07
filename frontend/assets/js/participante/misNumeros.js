@@ -4,6 +4,7 @@ const API_URL = window.API_URL; // viene de config.js
 
 let __MIS_ROWS__ = [];   // filas crudas del backend (1 por número)
 let __MIS_GRUPOS__ = []; // grupos (1 por sorteo)
+let __MIS_STATE_MAP__ = new Map(); // estado anterior por sorteo/numero
 
 function norm(x) {
   return (x || '').toString().toLowerCase().trim();
@@ -61,7 +62,7 @@ function agruparPorSorteo(rows) {
   });
 }
 
-function renderGrupos(grupos) {
+function renderGrupos(grupos, changedSet = new Set()) {
   const contenedor = document.getElementById('misNumeros');
   const emptyBox = document.getElementById('misNumerosEmpty');
 
@@ -102,9 +103,11 @@ function renderGrupos(grupos) {
 
               const winnerMark = isWinner ? ' ⭐' : '';
               const winnerClass = isWinner ? ' chip-winner' : '';
+              const key = `${grupo.sorteo_id}:${it.numero}`;
+              const changedClass = changedSet.has(key) ? ' chip-soft-update' : '';
 
               return `
-                <span class="${chipClass(it.estado)}${winnerClass}">
+                <span class="${chipClass(it.estado)}${winnerClass}${changedClass}">
                   #${it.numero}${winnerMark}
                   <small>${estadoTexto(it.estado)}</small>
                 </span>
@@ -220,15 +223,17 @@ export async function cargarMisNumerosResumen() {
 // ------------------------------
 // ✅ DETALLE (mis-numeros.html)
 // ------------------------------
-export async function cargarMisNumerosDetalle() {
+export async function cargarMisNumerosDetalle({ silent = false } = {}) {
   const token = localStorage.getItem('token');
   const contenedor = document.getElementById('misNumeros');
   const emptyBox = document.getElementById('misNumerosEmpty');
 
   if (!token || !contenedor) return;
 
-  if (emptyBox) emptyBox.classList.add('oculto');
-  contenedor.innerHTML = '<p class="loading">Cargando tus participaciones...</p>';
+  if (!silent) {
+    if (emptyBox) emptyBox.classList.add('oculto');
+    contenedor.innerHTML = '<p class="loading">Cargando tus participaciones...</p>';
+  }
 
   try {
     const res = await fetch(`${API_URL}/api/participante/mis-participaciones`, {
@@ -237,8 +242,10 @@ export async function cargarMisNumerosDetalle() {
 
     if (!res.ok) {
       console.error('Error HTTP en mis-participaciones (detalle):', res.status);
-      contenedor.innerHTML =
-        '<p class="error">No se pudieron cargar tus números. Intenta más tarde.</p>';
+      if (!silent) {
+        contenedor.innerHTML =
+          '<p class="error">No se pudieron cargar tus números. Intenta más tarde.</p>';
+      }
       return;
     }
 
@@ -246,16 +253,33 @@ export async function cargarMisNumerosDetalle() {
     __MIS_ROWS__ = Array.isArray(data) ? data : [];
     __MIS_GRUPOS__ = agruparPorSorteo(__MIS_ROWS__);
 
+    // Detectar cambios de estado por número (para animación suave)
+    const nextMap = new Map();
+    const changedSet = new Set();
+    __MIS_ROWS__.forEach((p) => {
+      const key = `${p.sorteo_id}:${p.numero}`;
+      const estado = norm(p.estado);
+      nextMap.set(key, estado);
+      if (__MIS_STATE_MAP__.has(key) && __MIS_STATE_MAP__.get(key) !== estado) {
+        changedSet.add(key);
+      }
+    });
+    __MIS_STATE_MAP__ = nextMap;
+
     if (!__MIS_GRUPOS__.length) {
-      contenedor.innerHTML = '';
-      if (emptyBox) emptyBox.classList.remove('oculto');
+      if (!silent) {
+        contenedor.innerHTML = '';
+        if (emptyBox) emptyBox.classList.remove('oculto');
+      }
       return;
     }
 
-    renderGrupos(__MIS_GRUPOS__);
+    renderGrupos(__MIS_GRUPOS__, changedSet);
   } catch (err) {
     console.error(err);
-    contenedor.innerHTML =
-      '<p class="error">Error de conexión al cargar tus números.</p>';
+    if (!silent) {
+      contenedor.innerHTML =
+        '<p class="error">Error de conexión al cargar tus números.</p>';
+    }
   }
 }

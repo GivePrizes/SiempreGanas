@@ -14,16 +14,29 @@
     <!-- HEADER / BIENVENIDA -->
     <header class="app-topbar">
       <div class="app-topbar-left">
-        <h2 id="tituloBienvenida" class="app-title">Hola 👋</h2>
+        <div class="app-title-row">
+          <h2 id="tituloBienvenida" class="app-title">Cuenta verificada</h2>
+          <span class="title-badge">Miembro</span>
+        </div>
         <p id="subtituloBienvenida" class="app-subtitle">
-          Adquiere tus números, sube tu comprobante y espera la dinámica.
+          Accesos digitales, chat en vivo y sorteos reales en un solo lugar.
         </p>
+        <div class="app-quickline">
+          <span class="quick-pill">Accesos digitales</span>
+          <span class="quick-pill">Chat en vivo</span>
+          <span class="quick-pill">Sorteos reales</span>
+        </div>
       </div>
 
       <div class="app-topbar-actions">
-        <button type="button" class="btn btn-ghost has-ico" onclick="location.href='mis-numeros.html'">
+        <button type="button" class="btn btn-primary has-ico" onclick="location.href='mis-numeros.html'">
           <span class="btn-ico">🎟</span>
           <span class="btn-label">Mis números</span>
+        </button>
+
+        <button type="button" class="btn btn-ghost has-ico" onclick="location.href='dashboard.html#sorteosActivos'">
+          <span class="btn-ico">🎯</span>
+          <span class="btn-label">Sorteos activos</span>
         </button>
 
         <button type="button" class="btn btn-icon" onclick="logout()" aria-label="Salir" title="Salir">
@@ -33,10 +46,10 @@
     </header>
 
     <!-- 📊 RESUMEN RÁPIDO -->
-    <section class="stats-row">
+    <section class="stats-row stats-row--compact">
 
       <!-- Sorteos activos -->
-      <div class="stat-card">
+      <div class="stat-card stat-card--sm">
         <div class="stat-top">
           <span class="stat-label">Sorteos activos</span>
           <span class="stat-ico">🎯</span>
@@ -45,7 +58,7 @@
       </div>
 
       <!-- Números adquiridos + BONO -->
-      <div class="stat-card">
+      <div class="stat-card stat-card--sm">
         <div class="stat-top">
           <span class="stat-label">Números adquiridos</span>
           <span class="stat-ico">🎟</span>

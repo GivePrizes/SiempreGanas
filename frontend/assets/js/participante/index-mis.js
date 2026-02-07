@@ -20,4 +20,9 @@ function setupFiltros() {
 document.addEventListener('DOMContentLoaded', () => {
   setupFiltros();
   cargarMisNumerosDetalle(); // carga y render inicial (Todos)
+
+  // Actualización suave y silenciosa
+  setInterval(() => {
+    cargarMisNumerosDetalle({ silent: true });
+  }, 20000);
 });

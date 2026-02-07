@@ -1,7 +1,6 @@
 // assets/js/admin/index.js
 import { cargarComprobantes } from './comprobantes.js';
 import { cargarStats } from './stats.js';
-import { cargarGraficos } from './graficos.js';
 import { cargarSorteosAdmin } from './sorteos-admin.js';
 import { hasPerm } from './permisos.js';
 
@@ -34,8 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const bloqueStats = document.getElementById('bloqueStats');
     if (bloqueStats) bloqueStats.style.display = 'none';
 
-    const bloqueGraficos = document.getElementById('bloqueGraficos');
-    if (bloqueGraficos) bloqueGraficos.style.display = 'none';
   } else {
     // ✅ Admin pagos: carga normal
     cargarComprobantes();
@@ -44,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarStats();
     setInterval(cargarStats, 15000);
 
-    cargarGraficos();
   }
 
   // ✅ Sorteos (solo lectura) para admins que vean este panel
