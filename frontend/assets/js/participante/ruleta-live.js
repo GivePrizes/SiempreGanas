@@ -34,6 +34,9 @@ const elOverlay = document.getElementById("overlay");
 const elOverlayNum = document.getElementById("overlayNum");
 const elResult = document.getElementById("result");
 const elSystemFeed = document.getElementById("systemFeed");
+const chatInputEl = document.getElementById("chatInput");
+const chatSendEl = document.getElementById("chatSend");
+const chatHintEl = document.getElementById("chatHint");
 
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
@@ -80,7 +83,17 @@ let did321 = false;
 let didSpin = false;
 let lastEstado = null;
 let lastCountdownSecond = null;
+let lastMotivationSecond = null;
 const lastSystemKeys = new Set();
+const motivationalPhrases = [
+  "¡Ya casi llega tu momento!",
+  "La suerte está girando contigo…",
+  "Prepárate, el destino se acerca…",
+  "¿Será tu número el elegido?",
+];
+
+let chatWindowEndsAt = null;
+let chatWindowTimer = null;
 
 function nowServerMs(){
   return Date.now() + (serverSkewMs || 0);
@@ -117,6 +130,40 @@ function pushSystemMessage(text, key){
     </div>
   `;
   elSystemFeed.prepend(row);
+}
+
+function setChatEnabled(enabled, message){
+  if (typeof window.setRuletaLiveChatState === "function") {
+    window.setRuletaLiveChatState({ enabled, message });
+    return;
+  }
+
+  if (chatInputEl) chatInputEl.disabled = !enabled;
+  if (chatSendEl) chatSendEl.disabled = !enabled;
+  if (chatHintEl && typeof message === "string") chatHintEl.textContent = message;
+}
+
+function startChatCountdown(){
+  if (chatWindowEndsAt) return;
+  chatWindowEndsAt = Date.now() + 5 * 60 * 1000;
+
+  if (chatWindowTimer) clearInterval(chatWindowTimer);
+  chatWindowTimer = setInterval(() => {
+    if (!chatWindowEndsAt) return;
+    const diff = chatWindowEndsAt - Date.now();
+    if (diff <= 0) {
+      clearInterval(chatWindowTimer);
+      chatWindowTimer = null;
+      chatWindowEndsAt = null;
+      setChatEnabled(false, "Chat cerrado. Gracias por participar.");
+      return;
+    }
+
+    const total = Math.ceil(diff / 1000);
+    const mm = Math.floor(total / 60);
+    const ss = total % 60;
+    setChatEnabled(true, `Chat activo · se cierra en ${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`);
+  }, 1000);
 }
 
 // =========================
@@ -346,16 +393,21 @@ async function fetchRuletaInfo(){
     if (estado === "waiting") {
       pushSystemMessage("⏳ La ruleta comenzará en breve", "estado_waiting");
       pushSystemMessage("Prepárate, el sorteo comenzará pronto", "waiting_prep");
+      setChatEnabled(false, "El chat se habilita cuando comience el giro.");
     }
     if (estado === "countdown") {
       pushSystemMessage("⏳ La ruleta comienza en breve", "estado_countdown");
+      setChatEnabled(true, "Chat activo · la ruleta está programada.");
     }
     if (estado === "spinning") {
       pushSystemMessage("🎯 ¡La ruleta está girando!", "estado_spinning");
       pushSystemMessage("🍀 Mucha suerte a todos los participantes", "spinning_luck");
+      setChatEnabled(true, "Chat activo · el cierre se anuncia al terminar.");
     }
     if (estado === "finished") {
       pushSystemMessage("🏆 Resultado confirmado. ¡Felicidades al ganador!", "estado_finished");
+      pushSystemMessage("⏳ El chat se cerrará en 5 minutos", "chat_close_5min");
+      startChatCountdown();
     }
     lastEstado = estado;
   }
@@ -413,6 +465,12 @@ function tick(){
       lastCountdownSecond = secondsLeft;
     }
 
+    if (secondsLeft > 5 && secondsLeft % 5 === 0 && lastMotivationSecond !== secondsLeft) {
+      const phrase = motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)];
+      pushSystemMessage(phrase, `mot_${secondsLeft}`);
+      lastMotivationSecond = secondsLeft;
+    }
+
     if (countdownStartSeconds) {
       const totalMs = countdownStartSeconds * 1000;
       const pct = Math.max(0, Math.min(100, 100 - (diff / totalMs) * 100));
@@ -446,6 +504,16 @@ function tick(){
   }
 
   try{
+    const tryInitChat = () => {
+      if (typeof window.initRuletaLiveChat === "function") {
+        window.initRuletaLiveChat({ sorteoId, token });
+        setChatEnabled(false, "El chat se habilita cuando comience el giro.");
+      } else {
+        setTimeout(tryInitChat, 0);
+      }
+    };
+    tryInitChat();
+
     // 1) Info base
     await fetchRuletaInfo();
 

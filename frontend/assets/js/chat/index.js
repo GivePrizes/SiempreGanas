@@ -303,11 +303,17 @@ export async function initChat({ sorteoId, token }) {
         updateChatPermission();
         hintEl.textContent = friendlyMessage || 'Sesión expirada. Inicia sesión nuevamente.';
         hintEl.style.color = '#f87171';
-      } else if (status === 403 && data?.code === 'participation_required') {
-        hintEl.textContent = '🔒 Solo participantes con número aprobado pueden escribir.';
-        puedeEscribir = false;
-        updateChatPermission();
-        hintEl.style.color = '#ff6b6b';
+    } else if (status === 403 && data?.code === 'chat_closed') {
+      hintEl.textContent =
+        'Chat cerrado · el sorteo terminó. Prepárate, el próximo será aún más grande.';
+      hintEl.style.color = '#f59e0b';
+      puedeEscribir = false;
+      updateChatPermission();
+    } else if (status === 403 && data?.code === 'participation_required') {
+      hintEl.textContent = '🔒 Solo participantes con número aprobado pueden escribir.';
+      puedeEscribir = false;
+      updateChatPermission();
+      hintEl.style.color = '#ff6b6b';
       } else if (status === 403 && errText.includes('silenc')) {
         hintEl.textContent = data?.message || data?.error || 'Has sido silenciado.';
         hintEl.style.color = '#f87171';

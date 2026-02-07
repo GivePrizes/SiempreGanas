@@ -51,6 +51,8 @@ let girando = false;
 let ruletaInfo = null;
 let countdownInterval = null;
 let pollingInterval = null;
+let autoSpinIniciado = false;
+let autoSpinTimer = null;
 
 // Helpers de auth
 const token = localStorage.getItem('token');
@@ -413,6 +415,9 @@ function iniciarCountdown() {
         btnGirar.disabled = false;
       }
       if (overlay) overlay.style.display = 'none';
+      if (ruletaInfo && ruletaInfo.ruleta_estado === 'programada') {
+        iniciarRuletaAutomatica();
+      }
       clearInterval(countdownInterval);
       countdownInterval = null;
       return;
@@ -448,6 +453,61 @@ function iniciarCountdown() {
   countdownInterval = setInterval(actualizar, 1000);
 }
 
+async function iniciarRuletaAutomatica() {
+  if (autoSpinIniciado || !sorteoId) return;
+  autoSpinIniciado = true;
+
+  if (btnGirar) btnGirar.disabled = true;
+  if (resultadoRuleta) resultadoRuleta.textContent = 'Girando ruleta... 🎰✨';
+
+  try {
+    const resStart = await fetch(`${API}/sorteos/${sorteoId}/iniciar-ruleta`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    const dataStart = await resStart.json();
+    if (!resStart.ok) {
+      if (resultadoRuleta) {
+        resultadoRuleta.textContent = dataStart?.error || 'Error al iniciar ruleta.';
+      }
+      autoSpinIniciado = false;
+      return;
+    }
+
+    if (autoSpinTimer) clearTimeout(autoSpinTimer);
+    autoSpinTimer = setTimeout(async () => {
+      try {
+        const resFinish = await fetch(`${API}/sorteos/${sorteoId}/spin-finished`, {
+          method: 'POST',
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        const dataFinish = await resFinish.json();
+        if (!resFinish.ok) {
+          if (resultadoRuleta) {
+            resultadoRuleta.textContent = dataFinish?.error || 'Error al finalizar ruleta.';
+          }
+          autoSpinIniciado = false;
+          return;
+        }
+
+        await fetchRuletaInfo();
+        await fetchRuletaParticipantes();
+      } catch (err) {
+        if (resultadoRuleta) {
+          resultadoRuleta.textContent = 'Error de red al finalizar ruleta.';
+        }
+        autoSpinIniciado = false;
+      }
+    }, 7000);
+
+  } catch (err) {
+    if (resultadoRuleta) {
+      resultadoRuleta.textContent = 'Error de red al iniciar ruleta.';
+    }
+    autoSpinIniciado = false;
+  }
+}
 
 // ==========================
 // 6) Programar ruleta

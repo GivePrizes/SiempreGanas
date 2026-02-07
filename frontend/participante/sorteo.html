@@ -24,12 +24,14 @@
       </div>
 
       <div class="sorteo-header__actions">
-        <button type="button" class="btn btn-icon btn-back" onclick="location.href='dashboard.html'" aria-label="Volver a sorteos" title="Volver">
-          ←
+        <button type="button" class="btn btn-secondary btn-back has-ico" onclick="location.href='dashboard.html'" aria-label="Volver a sorteos" title="Volver">
+          <span class="btn-ico">←</span>
+          <span class="btn-label">Volver</span>
         </button>
 
-        <button id="btnMisNumeros" type="button" class="btn btn-primary hidden" onclick="location.href='mis-numeros.html'">
-          🎟 Mis números
+        <button id="btnMisNumeros" type="button" class="btn btn-primary has-ico hidden" onclick="location.href='mis-numeros.html'">
+          <span class="btn-ico">🎟</span>
+          <span class="btn-label">Mis números</span>
         </button>
       </div>
     </header>
@@ -193,7 +195,10 @@
       <div id="chatBody" class="chat-messages"></div>
       <div class="chat-input-wrap">
         <input id="chatInput" type="text" placeholder="Escribe aquí..." maxlength="120">
-        <button id="chatSend" class="btn btn-primary">Enviar</button>
+        <button id="chatSend" class="btn btn-primary has-ico">
+          <span class="btn-ico">➤</span>
+          <span class="btn-label">Enviar</span>
+        </button>
       </div>
       <p id="chatHint" class="text-muted chat-hint"></p>
     </section>

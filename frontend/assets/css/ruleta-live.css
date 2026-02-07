@@ -2,7 +2,7 @@
   --bg:#070A12;
   --card:rgba(255,255,255,.06);
   --stroke:rgba(255,255,255,.10);
-  --gold:#FACC15;
+  --gold:#f6d06f;
   --text:rgba(255,255,255,.92);
   --muted:rgba(255,255,255,.65);
 }
@@ -62,7 +62,7 @@ body{
   font-size:34px;
   font-weight:900;
   letter-spacing:.06em;
-  color:var(--gold);
+  color:rgba(246,208,111,.92);
 }
 
 .progress{
@@ -105,7 +105,7 @@ body{
   width:0; height:0;
   border-left:14px solid transparent;
   border-right:14px solid transparent;
-  border-bottom:26px solid var(--gold);
+  border-bottom:26px solid rgba(246,208,111,.92);
   filter: drop-shadow(0 10px 18px rgba(0,0,0,.6));
 }
 
@@ -140,13 +140,40 @@ body{
 
 .salaBadge{
   border:1px solid rgba(250,204,21,.35);
-  background:rgba(250,204,21,.12);
-  color:var(--gold);
+  background:rgba(246,208,111,.12);
+  color:rgba(246,208,111,.92);
   padding:6px 10px;
   border-radius:999px;
   font-size:11px;
   letter-spacing:.08em;
   text-transform:uppercase;
+}
+
+.chatCard #chatContainer{
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(0,0,0,.22);
+  padding:8px;
+  border-radius:12px;
+}
+
+.chatCard #chatBody.chat-messages{
+  max-height:32vh;
+}
+
+.chatCard .chat-new-btn{
+  align-self:center;
+  margin:6px 0 8px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(250,204,21,.35);
+  background:rgba(250,204,21,.10);
+  color:var(--gold);
+  font-size:12px;
+  cursor:pointer;
+}
+
+.chatCard .chat-new-btn.hidden{
+  display:none;
 }
 
 .systemFeed{
@@ -249,8 +276,101 @@ body{
   border-radius:999px;
   font-size:12px;
   cursor:pointer;
+  min-height: 42px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  box-shadow: 0 10px 24px rgba(0,0,0,.38);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
 .btnBack:hover{
   background:rgba(255,255,255,.10);
+}
+
+.chatCard #chatSend{
+  background: linear-gradient(135deg, rgba(250,204,21,.9), rgba(250,204,21,.7));
+  color: #0b0b0f;
+  border: 1px solid rgba(246,208,111,.6);
+  border-radius: 14px;
+  min-height: 42px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.chatCard .btn-ico{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.chatCard #chatInput{
+  border-radius: 14px;
+}
+
+@media (max-width: 640px){
+  .top{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .top-actions{
+    width:100%;
+    justify-content:space-between;
+  }
+
+  .countdownRow{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .countdown{
+    font-size:28px;
+  }
+
+  .pointer{
+    top:-4px;
+    border-left:12px solid transparent;
+    border-right:12px solid transparent;
+    border-bottom:22px solid var(--gold);
+  }
+
+  .overlayNum{
+    font-size:88px;
+  }
+
+  .systemFeed{
+    max-height:40vh;
+  }
+}
+
+@media (max-width: 768px){
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(250,204,21,.10), transparent 60%),
+      radial-gradient(900px 520px at 10% 0%, rgba(255,255,255,.07), transparent 55%),
+      #07070b;
+  }
+
+  .card,
+  .systemFeed,
+  .chatCard #chatContainer{
+    background: rgba(14,14,20,0.98);
+    border-color: rgba(255,255,255,.16);
+  }
+
+  .countdown,
+  .salaTitle,
+  .title{
+    color: rgba(250,204,21,.95);
+  }
+
+  .muted,
+  .small{
+    color: rgba(242,240,235,.82);
+  }
 }
