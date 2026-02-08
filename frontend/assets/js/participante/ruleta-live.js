@@ -33,7 +33,7 @@ const elBar = document.getElementById("progressBar");
 const elOverlay = document.getElementById("overlay");
 const elOverlayNum = document.getElementById("overlayNum");
 const elResult = document.getElementById("result");
-const elSystemFeed = document.getElementById("systemFeed");
+const elChatBody = document.getElementById("chatBody");
 const elNumbersList = document.getElementById("numbersList");
 const elNumbersCount = document.getElementById("numbersCount");
 const chatInputEl = document.getElementById("chatInput");
@@ -117,21 +117,24 @@ function safeUpper(s){
 }
 
 function pushSystemMessage(text, key){
-  if (!elSystemFeed) return;
+  if (!elChatBody) return;
   const k = key || text;
   if (lastSystemKeys.has(k)) return;
   lastSystemKeys.add(k);
 
   const row = document.createElement("div");
-  row.className = "systemMsg";
+  row.className = "chat-row system";
   row.innerHTML = `
-    <div class="systemAvatar" aria-hidden="true">SG</div>
-    <div class="systemBubble">
-      <div class="systemMeta">Sistema</div>
+    <div class="chat-bubble">
       <div class="systemText">${text}</div>
     </div>
   `;
-  elSystemFeed.prepend(row);
+  elChatBody.appendChild(row);
+  
+  // Auto scroll al final
+  if (elChatBody.parentElement) {
+    elChatBody.parentElement.scrollTop = elChatBody.parentElement.scrollHeight;
+  }
 }
 
 function renderNumbersList(){
@@ -437,21 +440,17 @@ async function fetchRuletaInfo(){
   if (lastEstado !== estado) {
     if (estado === "waiting") {
       pushSystemMessage("⏳ La ruleta comenzará en breve", "estado_waiting");
-      pushSystemMessage("Prepárate, el sorteo comenzará pronto", "waiting_prep");
       setChatEnabled(false, "El chat se habilita cuando comience el giro.");
     }
     if (estado === "countdown") {
-      pushSystemMessage("⏳ La ruleta comienza en breve", "estado_countdown");
       setChatEnabled(true, "Chat activo · la ruleta está programada.");
     }
     if (estado === "spinning") {
       pushSystemMessage("🎯 ¡La ruleta está girando!", "estado_spinning");
-      pushSystemMessage("🍀 Mucha suerte a todos los participantes", "spinning_luck");
       setChatEnabled(true, "Chat activo · el cierre se anuncia al terminar.");
     }
     if (estado === "finished") {
-      pushSystemMessage("🏆 Resultado confirmado. ¡Felicidades al ganador!", "estado_finished");
-      pushSystemMessage("⏳ El chat se cerrará en 5 minutos", "chat_close_5min");
+      pushSystemMessage("🏆 ¡Resultado confirmado!", "estado_finished");
       startChatCountdown();
     }
     lastEstado = estado;
@@ -510,11 +509,7 @@ function tick(){
       lastCountdownSecond = secondsLeft;
     }
 
-    if (secondsLeft > 5 && secondsLeft % 5 === 0 && lastMotivationSecond !== secondsLeft) {
-      const phrase = motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)];
-      pushSystemMessage(phrase, `mot_${secondsLeft}`);
-      lastMotivationSecond = secondsLeft;
-    }
+    // Sin mensajes motivacionales durante countdown
 
     if (countdownStartSeconds) {
       const totalMs = countdownStartSeconds * 1000;
