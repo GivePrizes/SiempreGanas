@@ -55,7 +55,6 @@ async function login() {
     } else {
       alert('❌ ' + data.message);
     }
-    }
   } catch (err) {
     alert('❌ Error de conexión');
   }
@@ -179,7 +178,9 @@ async function registro() {
 // --- Logout ---
 
 function logout() {
+  console.log('Logout ejecutado');
   localStorage.clear();
+  sessionStorage.clear();
   location.href = '../index.html';
 }
 
