@@ -42,16 +42,19 @@ async function login() {
         showWelcomeModal();
       }
 
-      // Redirección según rol (con delay para permitir ver el modal)
+      // Guardar URL de redirección por defecto para el CTA
+      const redirectUrl = data.user.rol === 'admin' 
+        ? 'admin/panel.html'
+        : 'participante/dashboard.html';
+      sessionStorage.setItem('welcomeModal_cta_url', redirectUrl);
+
+      // Redirección según rol (con delay mayor para permitir ver bien el modal)
       setTimeout(() => {
-        if (data.user.rol === 'admin') {
-          location.href = 'admin/panel.html';
-        } else {
-          location.href = 'participante/dashboard.html';
-        }
-      }, 2000);
+        location.href = redirectUrl;
+      }, 7000);
     } else {
       alert('❌ ' + data.message);
+    }
     }
   } catch (err) {
     alert('❌ Error de conexión');
@@ -158,10 +161,13 @@ async function registro() {
         showWelcomeModal();
       }
       
-      // Redirección con delay
+      // Guardar URL de redirección para el CTA
+      sessionStorage.setItem('welcomeModal_cta_url', 'participante/dashboard.html');
+      
+      // Redirección con delay mayor
       setTimeout(() => {
         location.href = 'participante/dashboard.html';
-      }, 2000);
+      }, 7000);
     } else {
       alert('❌ ' + data.message);
     }

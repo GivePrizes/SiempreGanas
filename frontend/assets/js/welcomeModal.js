@@ -97,10 +97,14 @@ class WelcomeModal {
       this.overlay.addEventListener('click', () => this.close());
     }
 
-    // CTA button cierra el modal
+    // CTA button: redirige a URL específica
     const ctaBtn = document.querySelector(`#${this.modalId} .welcome-modal-cta`);
     if (ctaBtn) {
-      ctaBtn.addEventListener('click', () => this.close());
+      ctaBtn.addEventListener('click', () => {
+        const ctaUrl = sessionStorage.getItem('welcomeModal_cta_url') || 'participante/dashboard.html';
+        sessionStorage.removeItem('welcomeModal_cta_url');
+        location.href = ctaUrl;
+      });
     }
 
     // Permitir cerrar con ESC
@@ -174,6 +178,18 @@ class WelcomeModal {
     this.reset();
     this.show();
   }
+
+  /**
+   * Establecer URL de destino para el botón CTA
+   * @param {string} url - URL a redirigir cuando se hace click en "¡Comienza ahora!"
+   */
+  setCtaUrl(url) {
+    try {
+      sessionStorage.setItem('welcomeModal_cta_url', url);
+    } catch (e) {
+      console.warn('sessionStorage no disponible:', e);
+    }
+  }
 }
 
 // Instancia global
@@ -209,5 +225,21 @@ function showWelcomeModal(forceShow = false) {
 function resetWelcomeModal() {
   if (welcomeModalInstance) {
     welcomeModalInstance.forceShowAgain();
+  }
+}
+
+/**
+ * Método público para establecer URL del botón CTA
+ * Uso: setWelcomeModalCtaUrl('participante/sorteo.html?id=33')
+ */
+function setWelcomeModalCtaUrl(url) {
+  if (welcomeModalInstance) {
+    welcomeModalInstance.setCtaUrl(url);
+  } else {
+    try {
+      sessionStorage.setItem('welcomeModal_cta_url', url);
+    } catch (e) {
+      console.warn('sessionStorage no disponible:', e);
+    }
   }
 }
