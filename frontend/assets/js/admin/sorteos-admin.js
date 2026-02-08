@@ -36,24 +36,34 @@ export async function cargarSorteosAdmin() {
       return;
     }
 
-    // Aplicar orden guardado en localStorage (si existe)
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    const byId = new Map(data.map(s => [String(s.id), s]));
-    const ordered = [];
+    const hasServerOrder = data.some(s => s.sort_order !== null && s.sort_order !== undefined);
+    let ordered = data;
 
-    // Primero los que están en el orden guardado
-    for (const id of stored) {
-      if (byId.has(String(id))) {
-        ordered.push(byId.get(String(id)));
-        byId.delete(String(id));
-      }
+    if (hasServerOrder) {
+      // Backend tiene orden global, limpiamos fallback local
+      localStorage.removeItem(STORAGE_KEY);
     }
 
-    // Luego los restantes (nuevos) en el orden recibido
-    for (const s of data) {
-      if (byId.has(String(s.id))) {
-        ordered.push(s);
-        byId.delete(String(s.id));
+    // Si el backend no tiene orden persistido, usar localStorage como fallback
+    if (!hasServerOrder) {
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const byId = new Map(data.map(s => [String(s.id), s]));
+      ordered = [];
+
+      // Primero los que están en el orden guardado
+      for (const id of stored) {
+        if (byId.has(String(id))) {
+          ordered.push(byId.get(String(id)));
+          byId.delete(String(id));
+        }
+      }
+
+      // Luego los restantes (nuevos) en el orden recibido
+      for (const s of data) {
+        if (byId.has(String(s.id))) {
+          ordered.push(s);
+          byId.delete(String(s.id));
+        }
       }
     }
 
@@ -222,6 +232,45 @@ function getDragAfterElement(container, y) {
 function persistOrderFromDOM(container) {
   const ids = [...container.querySelectorAll('.draggable-sorteo')].map(el => el.dataset.id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+  // Intentar persistir en servidor; si falla, localStorage mantiene el orden para este navegador
+  sendOrderToServer(ids).catch(err => {
+    console.warn('No se pudo persistir orden en servidor, usando localStorage:', err);
+  });
+}
+
+async function sendOrderToServer(ids) {
+  const token = localStorage.getItem('token');
+  if (!token) return Promise.reject(new Error('No token'));
+
+  // Endpoint sugerido: POST /api/sorteos/reorder { order: [id,...] }
+  const url = `${API_URL}/api/sorteos/reorder`;
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ order: ids })
+    });
+
+    if (res.status === 404) {
+      // Endpoint no existe en backend
+      return Promise.reject(new Error('Endpoint /api/sorteos/reorder no disponible (404)'));
+    }
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      return Promise.reject(new Error(data.error || `Error ${res.status}`));
+    }
+
+    // OK: limpiar fallback local para evitar divergencias
+    localStorage.removeItem(STORAGE_KEY);
+    return res.json().catch(() => ({}));
+  } catch (err) {
+    return Promise.reject(err);
+  }
 }
 
 // Hacemos accesibles las funciones desde el HTML inline

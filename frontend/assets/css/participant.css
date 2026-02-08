@@ -112,9 +112,10 @@ body{
   font-weight: 700;
   color: var(--colour-primary);
   margin-bottom: 0.5rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /* Allow multi-line titles so long titles are visible to users */
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 .sorteo-card .sorteo-info {
@@ -129,9 +130,10 @@ body{
 }
 
 .sorteo-card .sorteo-info span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /* Allow info text to wrap to multiple lines on small screens */
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 /* Progress bar representing sold numbers */
