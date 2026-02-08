@@ -233,16 +233,7 @@ body{
   color: var(--colour-muted);
   font-size: .98rem;
 }
-.hero-cta {
-  display:flex;
-  gap:.5rem;
-  margin-top:.6rem;
-}
-.hero-cta .btn {
-  padding:.5rem .9rem;
-  border-radius:.5rem;
-  font-weight:600;
-}
+
 
 /* =============================
    Layout general participante
@@ -1452,12 +1443,12 @@ body{
 }
 
 .title-badge{
-  padding: 6px 10px;
+  padding: 3px 6px;
   border-radius: 999px;
   border: 1px solid rgba(246,208,111,0.35);
   background: linear-gradient(135deg, rgba(246,208,111,0.12), rgba(255,255,255,0.03));
   color: rgba(246,208,111,0.95);
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: .04em;
   box-shadow: 0 6px 18px rgba(0,0,0,.35);
