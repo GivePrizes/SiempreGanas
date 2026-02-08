@@ -588,7 +588,8 @@ function tick(){
           didSpin = true;
           stopIdleSpin();
           spinToWinner(numeroGanador);
-          showResult(ganadorNombre);
+          // Mostrar resultado después de que la ruleta termine de girar
+          setTimeout(() => showResult(ganadorNombre), 3500);
         }
 
         if (prevGanador && numeroGanador && prevGanador !== numeroGanador && !spinning) {
