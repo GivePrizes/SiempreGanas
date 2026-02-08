@@ -36,14 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     // ✅ Admin pagos: carga normal
     cargarComprobantes();
-    setInterval(cargarComprobantes, 10000);
+    setInterval(cargarComprobantes, 300000); // 5 min
 
     cargarStats();
-    setInterval(cargarStats, 15000);
+    setInterval(cargarStats, 300000); // 5 min
 
   }
 
   // ✅ Sorteos (solo lectura) para admins que vean este panel
   cargarSorteosAdmin();
-  setInterval(cargarSorteosAdmin, 20000);
+  setInterval(cargarSorteosAdmin, 300000); // 5 min (silencioso con fade)
 });
