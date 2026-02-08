@@ -37,12 +37,19 @@ async function login() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      // Redirección según rol
-      if (data.user.rol === 'admin') {
-        location.href = 'admin/panel.html';
-      } else {
-        location.href = 'participante/dashboard.html';
+      // Mostrar modal de bienvenida
+      if (typeof showWelcomeModal === 'function') {
+        showWelcomeModal();
       }
+
+      // Redirección según rol (con delay para permitir ver el modal)
+      setTimeout(() => {
+        if (data.user.rol === 'admin') {
+          location.href = 'admin/panel.html';
+        } else {
+          location.href = 'participante/dashboard.html';
+        }
+      }, 2000);
     } else {
       alert('❌ ' + data.message);
     }
@@ -145,7 +152,16 @@ async function registro() {
     if (res.ok) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      location.href = 'participante/dashboard.html';
+      
+      // Mostrar modal de bienvenida
+      if (typeof showWelcomeModal === 'function') {
+        showWelcomeModal();
+      }
+      
+      // Redirección con delay
+      setTimeout(() => {
+        location.href = 'participante/dashboard.html';
+      }, 2000);
     } else {
       alert('❌ ' + data.message);
     }
