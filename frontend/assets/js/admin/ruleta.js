@@ -42,6 +42,8 @@ const panelProgramar = document.getElementById('panelProgramar');
 const selectPreset = document.getElementById('selectPreset');
 const inputFechaCustom = document.getElementById('inputFechaCustom');
 const btnConfirmProgramar = document.getElementById('btnConfirmProgramar');
+const btnCancelProgramar = document.getElementById('btnCancelProgramar');
+const customDateGroup = document.getElementById('customDateGroup');
 
 // Estado en memoria
 let participantes = [];
@@ -555,6 +557,10 @@ async function programarRuleta() {
     }
 
     alert('Ruleta programada correctamente.');
+    // Desactivar botón tras programar exitosamente
+    if (btnConfirmProgramar) btnConfirmProgramar.disabled = true;
+    // Ocultar panel de programación
+    if (panelProgramar) panelProgramar.style.display = 'none';
     await fetchRuletaInfo();
   } catch (err) {
     console.error('Error programarRuleta:', err);
@@ -699,12 +705,21 @@ if (btnProgramar) {
 
 if (selectPreset) {
   selectPreset.addEventListener('change', () => {
-    if (!inputFechaCustom) return;
+    if (!customDateGroup) return;
     if (selectPreset.value === 'custom') {
-      inputFechaCustom.style.display = 'inline-block';
+      customDateGroup.style.display = 'flex';
     } else {
-      inputFechaCustom.style.display = 'none';
+      customDateGroup.style.display = 'none';
     }
+  });
+}
+
+if (btnCancelProgramar) {
+  btnCancelProgramar.addEventListener('click', () => {
+    if (!panelProgramar) return;
+    panelProgramar.style.display = 'none';
+    selectPreset.value = '10';
+    if (customDateGroup) customDateGroup.style.display = 'none';
   });
 }
 

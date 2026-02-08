@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="../assets/imagenes/logoparaemoji.png">
   <title>Siempre Ganas — Ruleta del Sorteo</title>
 
   <link rel="stylesheet" href="../assets/css/common.css">
@@ -103,20 +104,32 @@
           <div class="ruleta-actions">
             <button id="btnGirar" class="btn-gold btn-girar">🎰 GIRAR RULETA</button>
             <button id="btnProgramar" class="btn-secondary">⏱ Programar ruleta</button>
-            <p class="ruleta-hint">Este giro es definitivo. El ganador quedará registrado en el sistema.</p>
           </div>
 
-          <div id="panelProgramar" class="programar-panel" style="display:none;">
-            <span>Programar para:</span>
-            <select id="selectPreset">
-              <option value="10">En 10 minutos</option>
-              <option value="30">En 30 minutos</option>
-              <option value="60">En 1 hora</option>
-              <option value="custom">Fecha/hora personalizada</option>
-            </select>
+          <p class="ruleta-hint">Este giro es definitivo. El ganador quedará registrado en el sistema.</p>
 
-            <input type="datetime-local" id="inputFechaCustom" class="programar-input" style="display:none;" />
-            <button id="btnConfirmProgramar" class="btn-gold btn-sm">Guardar programación</button>
+          <div id="panelProgramar" class="programar-panel" style="display:none;">
+            <h3 class="programar-title">⏱ Programar Ruleta</h3>
+            
+            <div class="programar-group">
+              <label for="selectPreset" class="programar-label">Programar para:</label>
+              <select id="selectPreset" class="programar-select">
+                <option value="10">En 10 minutos</option>
+                <option value="30">En 30 minutos</option>
+                <option value="60">En 1 hora</option>
+                <option value="custom">Fecha/hora personalizada</option>
+              </select>
+            </div>
+
+            <div class="programar-group" style="display:none;" id="customDateGroup">
+              <label for="inputFechaCustom" class="programar-label">Selecciona fecha y hora:</label>
+              <input type="datetime-local" id="inputFechaCustom" class="programar-input" />
+            </div>
+
+            <div class="programar-actions">
+              <button id="btnConfirmProgramar" class="btn-gold btn-confirm">✓ Guardar programación</button>
+              <button id="btnCancelProgramar" class="btn-secondary btn-cancel">✕ Cancelar</button>
+            </div>
           </div>
 
           <div id="resultadoRuleta" class="resultado-ruleta">
