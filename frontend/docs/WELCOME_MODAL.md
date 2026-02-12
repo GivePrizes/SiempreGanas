@@ -1,228 +1,186 @@
-# 🎉 Welcome Modal - Documentación
+Quiero que ajustes el sistema de welcomeModal siguiendo exactamente estas directrices técnicas y legales.
 
-## Descripción General
+1️⃣ Limpieza y Refactorización
 
-Sistema de modal de bienvenida premium para "SIEMPRE GANAS" que se muestra automáticamente cuando un usuario:
-- Se registra por primera vez
-- Inicia sesión
+Eliminar completamente:
 
-## Características ✨
+Imagen anterior del modal.
 
-### Funcionalidad
-- ✅ Se muestra una sola vez por dispositivo (localStorage)
-- ✅ Compatible con login y registro
-- ✅ No bloquea la navegación después de cerrar
-- ✅ Cierre elegante con botón X
-- ✅ Cierre con overlay (click fuera del modal)
-- ✅ Cierre con tecla ESC
-- ✅ Delay de 2 segundos antes de redirigir (permite ver el modal)
+Código HTML no utilizado.
 
-### Diseño
-- 🎨 Tema premium: Dorado (#f6d06f) + Oscuro
-- 🎨 Animación suave de entrada (fade + scale)
-- 🎨 Imagen promocional con glow suave
-- 🎨 Responsive: Desktop, Tablet, Mobile
-- 🎨 Backdrop blur para mejor legibilidad
+Clases CSS que ya no se usen.
 
-### Contenido
-- **Título**: "Bienvenido a SIEMPRE GANAS" (gradient dorado)
-- **Subtítulo**: "Disfruta contenido premium, participa en chats en vivo y gana premios reales"
-- **Beneficios**: 
-  - ✓ Cuentas originales
-  - ✓ Comunidad en sorteos
-  - ✓ Premios garantizados
-- **Urgencia**: "⚡ HASTA AGOTAR EXISTENCIAS"
-- **CTA**: Botón "¡Comienza ahora!" (cierra modal)
+Variables JS obsoletas.
 
-## Archivos Incluidos
+No dejar código muerto ni comentarios innecesarios.
 
-### 1. **assets/js/welcomeModal.js**
-Clase `WelcomeModal` que gestiona:
-- Creación del HTML del modal
-- Mostrar/ocultar con animaciones
-- Persistencia en localStorage
-- Event listeners para cierre
+Mantener el archivo documentado y estructurado.
 
-**Métodos públicos:**
-```javascript
-// Mostrar modal (respeta flag de localStorage)
-showWelcomeModal()
+Mantener naming consistente con el proyecto.
 
-// Mostrar forzadamente (ignora flag)
-showWelcomeModal(true)
+2️⃣ Nueva Imagen
 
-// Resetear flag y mostrar nuevamente (para testing)
-resetWelcomeModal()
-```
+Usar esta imagen:
 
-### 2. **assets/css/participant.css**
-Estilos CSS incluidos:
-- `.welcome-modal-container` - Contenedor principal
-- `.welcome-modal-content` - Contenido del modal
-- `.welcome-modal-close` - Botón cerrar
-- `.welcome-modal-image-wrapper` - Wrapper de imagen
-- `.welcome-modal-text` - Contenido de texto
-- Animaciones: `welcomeModalSlideIn`
-- Media queries para responsive
+assets/imagenes/disn+Netflix.png
 
-### 3. **login.html**
-- Agregado: `<script src="assets/js/welcomeModal.js"></script>`
 
-### 4. **auth.js** (Modificado)
-- Login: Llama `showWelcomeModal()` antes de redirigir
-- Registro: Llama `showWelcomeModal()` antes de redirigir
-- Delay de 2s permite ver el modal
+Requisitos:
 
-### 5. **Otros HTML** (Participante)
-Agregado el script en:
-- `participante/dashboard.html`
-- `participante/mis-numeros.html`
-- `participante/ruleta-live.html`
-- `participante/sorteo.html`
+Responsive real.
 
-## Flujo de Uso
+Debe verse perfectamente en móvil (max-width 100%).
 
-### Scenario 1: Primer Login
-```
-1. Usuario abre login.html
-2. Ingresa credenciales
-3. Backend devuelve token + user
-4. auth.js guarda en localStorage
-5. showWelcomeModal() se ejecuta
-6. Modal aparece con animación
-7. Usuario puede:
-   - Cerrar con X
-   - Cerrar haciendo click en overlay
-   - Cerrar con ESC
-   - Hacer click en "¡Comienza ahora!"
-8. Después de 2s, redirige a dashboard
-9. localStorage['welcomeModal_shown_v1'] = 'true'
-10. Próximos logins no muestran el modal
-```
+Mantener proporción.
 
-### Scenario 2: Forzar Mostrar (Testing)
-```javascript
-// En la consola del navegador:
-resetWelcomeModal() // Borra flag
-// O desde otro script:
-showWelcomeModal(true) // Fuerza mostrar
-```
+No deformar.
 
-## Personalización
+Usar object-fit: contain.
 
-### Cambiar Texto
-Editar en `welcomeModal.js`, función `createModalHTML()`:
-```javascript
-<h1 class="welcome-modal-title">Tu nuevo título</h1>
-```
+Debe cargar lazy si es posible.
 
-### Cambiar Imagen
-Editar en `welcomeModal.js`:
-```javascript
-<img 
-  src="assets/imagenes/tu-imagen.png" 
-  alt="Nuevo alt"
-/>
-```
+Agregar alt descriptivo neutral (sin uso de marcas como promesa comercial).
 
-### Cambiar Colores
-Editar en `participant.css`:
-```css
-/* Color principal */
-color: #f6d06f; /* Cambiar a otro color */
+Ejemplo alt sugerido:
 
-/* Background */
-background: linear-gradient(135deg, #f6d06f 0%, #ffe4a6 100%);
-```
+Promoción especial disponible para participantes
 
-### Cambiar Delay de Redirección
-En `auth.js`, cambiar valor en `setTimeout`:
-```javascript
-setTimeout(() => {
-  location.href = 'participante/dashboard.html';
-}, 2000); // 2000ms = 2 segundos
-```
+3️⃣ Mostrar SOLO a Participantes
 
-### Cambiar Storage Key
-En `welcomeModal.js`:
-```javascript
-this.storageKey = 'welcomeModal_shown_v2'; // Cambiar versión
-```
+El modal debe mostrarse únicamente si:
 
-## Responsive Design
+user.role === 'participante'
 
-| Dispositivo | Ancho Max | Behavior |
-|------------|-----------|----------|
-| Desktop | 90vw | Centrado con spacing |
-| Tablet | 95vw | Reducido padding |
-| Mobile | 100vw | Fullscreen con scroll |
 
-## Performance
+No debe mostrarse a admin ni otros roles.
 
-- ✅ Sin dependencias externas
-- ✅ CSS3 animations (hardware accelerated)
-- ✅ localStorage para evitar repetición
-- ✅ Lazy loading del HTML (se crea al cargar)
-- ✅ Event delegation eficiente
+4️⃣ Botón CTA
 
-## Compatibilidad
+Cambiar el botón actual por uno que diga:
 
-- ✅ Chrome/Edge (latest)
-- ✅ Firefox (latest)
-- ✅ Safari (latest)
-- ✅ Móviles (iOS/Android)
-- ⚠️ IE11: No compatible (usa CSS3 Grid, Flexbox)
+QUIERO MI CUPO AHORA
 
-## Troubleshooting
 
-### El modal no aparece
-1. Verificar que `welcomeModal.js` está cargado
-2. Verificar console para errores
-3. Resetear localStorage: `resetWelcomeModal()`
+Debe:
 
-### localStorage no funciona
-- Aplicación en modo privado: localStorage deshabilitado
-- Verifica permisos de origen
-- Fallback: El modal sigue mostrándose si localStorage no disponible
+Mantener el mismo estilo visual premium.
 
-### El modal se muestra múltiples veces
-- Resetear flag: `resetWelcomeModal()`
-- Verificar que hay un único `welcomeModalInstance`
+Tener hover effect.
 
-## Testing
+Tener transición suave.
 
-### Console Commands
-```javascript
-// Ver si fue mostrado
-localStorage.getItem('welcomeModal_shown_v1')
+Redirigir a:
 
-// Resetear para testing
-resetWelcomeModal()
+https://siempre-ganas.vercel.app/participante/sorteo.html?id=42
 
-// Forzar mostrar
-showWelcomeModal(true)
 
-// Limpiar todo
-localStorage.clear()
-```
+Importante:
+No usar window.open.
+Usar location.href.
 
-## Analytics (Futuro)
+5️⃣ Tiempo y Flujo
 
-Puedes agregar tracking:
-```javascript
-showWelcomeModal() {
-  // Evento: Modal mostrado
-  trackEvent('welcome_modal_shown')
-}
+Mantener el delay actual (2 segundos).
 
-close() {
-  // Evento: Modal cerrado
-  trackEvent('welcome_modal_closed')
-}
-```
+No bloquear navegación.
 
----
+No generar doble redirección.
 
-**Versión**: 1.0  
-**Última actualización**: Febrero 2026  
-**Autor**: Sistema Siempre Ganas
+No interferir con auth.
+
+6️⃣ Responsividad Obligatoria
+
+Debe verse perfecto en:
+
+360px (móvil pequeño)
+
+390px
+
+768px
+
+Desktop
+
+En móvil:
+
+Modal casi fullscreen.
+
+Scroll interno si es necesario.
+
+Padding optimizado.
+
+Texto legible sin overflow.
+
+No permitir:
+
+Desbordamientos.
+
+Texto cortado.
+
+Botones fuera de pantalla.
+
+7️⃣ Ajuste Legal (Cumplimiento Coljuegos)
+
+⚠️ Muy importante:
+
+Eliminar cualquier frase como:
+
+“Premios garantizados”
+
+“Gana seguro”
+
+“100% garantizado”
+
+Usar lenguaje adecuado:
+
+“Participa en sorteos disponibles”
+
+“Promoción válida hasta agotar cupos”
+
+“Aplican términos y condiciones”
+
+Agregar una línea pequeña debajo del CTA:
+
+Promoción sujeta a términos y condiciones.
+
+
+Sin exageraciones comerciales.
+
+8️⃣ Código Bien Documentado
+
+En el archivo:
+
+Comentar secciones principales.
+
+Explicar:
+
+Control de rol
+
+Control de localStorage
+
+Control de redirección
+
+Versionado del storageKey
+
+Ejemplo:
+
+// Solo mostrar a participantes autenticados
+if (user?.role !== 'participante') return;
+
+9️⃣ Storage Profesional
+
+Actualizar storageKey a:
+
+welcomeModal_participante_v2
+
+
+Y que sea versionado para evitar conflictos.
+
+🔟 No Romper Arquitectura
+
+No modificar auth global.
+
+No modificar rutas existentes.
+
+No duplicar listeners.
+
+No generar memory leaks.

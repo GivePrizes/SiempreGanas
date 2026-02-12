@@ -41,12 +41,9 @@ async function login() {
       if (typeof showWelcomeModal === 'function') {
         showWelcomeModal();
       }
-
-      // Guardar URL de redirección por defecto para el CTA
       const redirectUrl = data.user.rol === 'admin' 
         ? 'admin/panel.html'
         : 'participante/dashboard.html';
-      sessionStorage.setItem('welcomeModal_cta_url', redirectUrl);
 
       // Redirección según rol (con delay mayor para permitir ver bien el modal)
       setTimeout(() => {
@@ -159,9 +156,6 @@ async function registro() {
       if (typeof showWelcomeModal === 'function') {
         showWelcomeModal();
       }
-      
-      // Guardar URL de redirección para el CTA
-      sessionStorage.setItem('welcomeModal_cta_url', 'participante/dashboard.html');
       
       // Redirección con delay mayor
       setTimeout(() => {
@@ -356,3 +350,4 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape') closeTermsModal();
   });
 });
+

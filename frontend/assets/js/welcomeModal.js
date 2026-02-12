@@ -1,90 +1,80 @@
 /**
  * welcomeModal.js
- * 
- * Sistema de modal de bienvenida para usuarios nuevos
- * - Se muestra automáticamente al registrarse o iniciar sesión
- * - Se persiste en localStorage para no mostrar más de una vez por dispositivo
- * - Totalmente responsive y premium
+ *
+ * Modal promocional exclusivo para participantes.
+ * - Control de rol: solo se muestra a usuarios con role "participante".
+ * - Control de localStorage: llave versionada para evitar conflictos entre versiones.
+ * - Control de redireccion: CTA unico con location.href y bloqueo de doble click.
  */
 
 class WelcomeModal {
   constructor(options = {}) {
-    this.storageKey = 'welcomeModal_shown_v1';
+    // Storage versionado para evitar conflictos con versiones anteriores.
+    this.storageKey = 'welcomeModal_participante_v2';
     this.modalId = 'welcomeModalContainer';
-    this.forceShow = options.forceShow || false;
-    
-    // Crear HTML del modal si no existe
+    this.forceShow = options.forceShow === true;
+    this.showDelayMs = 2000;
+    this.ctaUrl = 'https://siempre-ganas.vercel.app/participante/sorteo.html?id=42';
+    this.redirectInProgress = false;
+    this.showTimeoutId = null;
+    this.hideTimeoutId = null;
+
     if (!document.getElementById(this.modalId)) {
       this.createModalHTML();
     }
-    
+
     this.modal = document.getElementById(this.modalId);
     this.closeBtn = document.querySelector(`#${this.modalId} .welcome-modal-close`);
     this.overlay = document.querySelector(`#${this.modalId} .welcome-modal-overlay`);
-    
+    this.ctaBtn = document.querySelector(`#${this.modalId} .welcome-modal-cta`);
+
+    this.handleEscKey = (event) => {
+      if (event.key === 'Escape' && this.isVisible()) {
+        this.close();
+      }
+    };
+
     this.attachEventListeners();
+  }
+
+  getImageSrc() {
+    const inNestedSection = /^\/(participante|admin)\//.test(window.location.pathname);
+    const basePath = inNestedSection ? '../assets/imagenes/' : 'assets/imagenes/';
+    return `${basePath}disn+Netflix.png`;
   }
 
   createModalHTML() {
     const modalHTML = `
-      <div id="welcomeModalContainer" class="welcome-modal-container" style="display: none;">
+      <div id="welcomeModalContainer" class="welcome-modal-container" style="display: none;" aria-hidden="true">
         <div class="welcome-modal-overlay"></div>
-        <div class="welcome-modal-content">
-          <!-- Botón cerrar -->
-          <button class="welcome-modal-close" aria-label="Cerrar bienvenida">
+        <div class="welcome-modal-content" role="dialog" aria-modal="true" aria-labelledby="welcomeModalTitle">
+          <button class="welcome-modal-close" type="button" aria-label="Cerrar promocion">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           </button>
 
-          <!-- Imagen promocional -->
           <div class="welcome-modal-image-wrapper">
-            <img 
-              src="assets/imagenes/90c68f7d-4e86-4560-8877-9782faad12dd.png" 
-              alt="Bienvenido a Siempre Ganas" 
+            <img
+              src="${this.getImageSrc()}"
+              alt="Promocion especial disponible para participantes"
               class="welcome-modal-image"
+              loading="lazy"
+              decoding="async"
             />
-            <div class="welcome-modal-image-glow"></div>
           </div>
 
-          <!-- Contenido texto -->
           <div class="welcome-modal-text">
-            <h1 class="welcome-modal-title">Bienvenido a SIEMPRE GANAS</h1>
-            
-            <p class="welcome-modal-subtitle">
-              Disfruta contenido premium, participa en chats en vivo y gana premios reales
-            </p>
-
-            <!-- Beneficios -->
-            <div class="welcome-modal-benefits">
-              <div class="benefit-item">
-                <span class="benefit-icon">✓</span>
-                <span class="benefit-text">Cuentas originales</span>
-              </div>
-              <div class="benefit-item">
-                <span class="benefit-icon">✓</span>
-                <span class="benefit-text">Comunidad en sorteos</span>
-              </div>
-              <div class="benefit-item">
-                <span class="benefit-icon">✓</span>
-                <span class="benefit-text">Premios garantizados</span>
-              </div>
-            </div>
-
-            <!-- Urgencia -->
-            <div class="welcome-modal-urgency">
-              ⚡ HASTA AGOTAR EXISTENCIAS
-            </div>
-
-            <!-- Botón CTA -->
-            <button class="welcome-modal-cta">¡Comienza ahora!</button>
+            <h1 id="welcomeModalTitle" class="welcome-modal-title">Participa en sorteos disponibles</h1>
+            <p class="welcome-modal-subtitle">Promocion valida hasta agotar cupos. Aplican terminos y condiciones.</p>
+            <button class="welcome-modal-cta" type="button">QUIERO MI CUPO AHORA</button>
+            <p class="welcome-modal-legal">Promocion sujeta a terminos y condiciones.</p>
           </div>
         </div>
       </div>
     `;
 
-    // Insertar al final del body
     document.body.insertAdjacentHTML('beforeend', modalHTML);
   }
 
@@ -97,50 +87,82 @@ class WelcomeModal {
       this.overlay.addEventListener('click', () => this.close());
     }
 
-    // CTA button: redirige a URL específica
-    const ctaBtn = document.querySelector(`#${this.modalId} .welcome-modal-cta`);
-    if (ctaBtn) {
-      ctaBtn.addEventListener('click', () => {
-        const ctaUrl = sessionStorage.getItem('welcomeModal_cta_url') || 'participante/dashboard.html';
-        sessionStorage.removeItem('welcomeModal_cta_url');
-        location.href = ctaUrl;
+    if (this.ctaBtn) {
+      this.ctaBtn.addEventListener('click', () => {
+        if (this.redirectInProgress) {
+          return;
+        }
+
+        this.redirectInProgress = true;
+        location.href = this.ctaUrl;
       });
     }
 
-    // Permitir cerrar con ESC
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.isVisible()) {
-        this.close();
-      }
-    });
+    document.addEventListener('keydown', this.handleEscKey);
+  }
+
+  getCurrentUser() {
+    try {
+      const rawUser = localStorage.getItem('user');
+      return rawUser ? JSON.parse(rawUser) : null;
+    } catch (error) {
+      console.warn('No se pudo leer el usuario desde localStorage:', error);
+      return null;
+    }
+  }
+
+  isParticipante() {
+    const user = this.getCurrentUser();
+    if (!user) return false;
+
+    // Compatibilidad con payloads legacy: normaliza "rol" a "role".
+    const normalizedUser = user.role ? user : { ...user, role: user.rol };
+
+    // Solo mostrar a participantes autenticados.
+    return normalizedUser?.role === 'participante';
   }
 
   show() {
     if (!this.modal) return;
 
-    // Si ya fue mostrado y no es force, no mostrar
-    if (!this.forceShow && this.hasBeenShown()) {
-      return;
+    // Solo mostrar a participantes autenticados.
+    if (!this.isParticipante()) return;
+
+    // Control de localStorage para mostrar una sola vez por version.
+    if (!this.forceShow && this.hasBeenShown()) return;
+
+    if (this.showTimeoutId) {
+      clearTimeout(this.showTimeoutId);
     }
 
-    this.modal.style.display = 'flex';
-    
-    // Agregar clase para trigger animación
-    setTimeout(() => {
-      this.modal.classList.add('welcome-modal-active');
-    }, 10);
+    this.showTimeoutId = setTimeout(() => {
+      this.modal.style.display = 'flex';
+      this.modal.setAttribute('aria-hidden', 'false');
 
-    // Marcar como mostrado en localStorage
-    this.markAsShown();
+      setTimeout(() => {
+        this.modal.classList.add('welcome-modal-active');
+      }, 10);
+
+      this.markAsShown();
+    }, this.showDelayMs);
   }
 
   close() {
     if (!this.modal) return;
 
+    if (this.showTimeoutId) {
+      clearTimeout(this.showTimeoutId);
+      this.showTimeoutId = null;
+    }
+
     this.modal.classList.remove('welcome-modal-active');
-    
-    // Esperar animación de salida
-    setTimeout(() => {
+    this.modal.setAttribute('aria-hidden', 'true');
+
+    if (this.hideTimeoutId) {
+      clearTimeout(this.hideTimeoutId);
+    }
+
+    this.hideTimeoutId = setTimeout(() => {
       this.modal.style.display = 'none';
     }, 300);
   }
@@ -152,94 +174,37 @@ class WelcomeModal {
   markAsShown() {
     try {
       localStorage.setItem(this.storageKey, 'true');
-    } catch (e) {
-      console.warn('localStorage no disponible:', e);
+    } catch (error) {
+      console.warn('localStorage no disponible:', error);
     }
   }
 
   hasBeenShown() {
     try {
       return localStorage.getItem(this.storageKey) === 'true';
-    } catch (e) {
-      console.warn('localStorage no disponible:', e);
+    } catch (error) {
+      console.warn('localStorage no disponible:', error);
       return false;
-    }
-  }
-
-  reset() {
-    try {
-      localStorage.removeItem(this.storageKey);
-    } catch (e) {
-      console.warn('localStorage no disponible:', e);
-    }
-  }
-
-  forceShowAgain() {
-    this.reset();
-    this.show();
-  }
-
-  /**
-   * Establecer URL de destino para el botón CTA
-   * @param {string} url - URL a redirigir cuando se hace click en "¡Comienza ahora!"
-   */
-  setCtaUrl(url) {
-    try {
-      sessionStorage.setItem('welcomeModal_cta_url', url);
-    } catch (e) {
-      console.warn('sessionStorage no disponible:', e);
     }
   }
 }
 
-// Instancia global
 let welcomeModalInstance = null;
 
-/**
- * Inicializar modal de bienvenida cuando el DOM esté listo
- */
 document.addEventListener('DOMContentLoaded', () => {
-  welcomeModalInstance = new WelcomeModal();
+  if (!welcomeModalInstance) {
+    welcomeModalInstance = new WelcomeModal();
+  }
 });
 
-/**
- * Método público para mostrar el modal desde otros scripts
- * Uso: showWelcomeModal() desde auth.js u otro lugar
- */
 function showWelcomeModal(forceShow = false) {
   if (!welcomeModalInstance) {
     welcomeModalInstance = new WelcomeModal({ forceShow });
   }
-  
+
   if (forceShow) {
     welcomeModalInstance.forceShow = true;
   }
-  
+
   welcomeModalInstance.show();
-}
-
-/**
- * Método público para forzar mostrar nuevamente (útil para testing)
- * Uso: resetWelcomeModal()
- */
-function resetWelcomeModal() {
-  if (welcomeModalInstance) {
-    welcomeModalInstance.forceShowAgain();
-  }
-}
-
-/**
- * Método público para establecer URL del botón CTA
- * Uso: setWelcomeModalCtaUrl('participante/sorteo.html?id=33')
- */
-function setWelcomeModalCtaUrl(url) {
-  if (welcomeModalInstance) {
-    welcomeModalInstance.setCtaUrl(url);
-  } else {
-    try {
-      sessionStorage.setItem('welcomeModal_cta_url', url);
-    } catch (e) {
-      console.warn('sessionStorage no disponible:', e);
-    }
-  }
 }
