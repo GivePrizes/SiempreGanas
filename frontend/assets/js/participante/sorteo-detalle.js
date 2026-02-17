@@ -167,7 +167,7 @@ function actualizarBloqueoPorMaximo() {
 
 // --- función para copiar Nequi (global para el onclick del HTML) ---
 function copiarNequi() {
-  const numero = '3045538465';
+  const numero = '3123450890';
 
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard
@@ -519,6 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
   cargarSorteo();
   cargarMisNumerosDelSorteo();
 });
+
 
 
 

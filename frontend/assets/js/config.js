@@ -1,21 +1,18 @@
 // frontend/assets/js/config.js
+// Carga de config publica en runtime.
+// Recomendado: definir window.__APP_CONFIG__ antes de este script.
+const runtime = window.__APP_CONFIG__ || {};
 
-// Microservicios (producción)
-const API_URL  = 'https://app-service-phi.vercel.app';
-const AUTH_URL = 'https://siempregana-auth-service.vercel.app';
+const API_URL = runtime.API_URL || 'https://app-service-phi.vercel.app';
+const AUTH_URL = runtime.AUTH_URL || 'https://siempregana-auth-service.vercel.app';
+const CHAT_URL = runtime.CHAT_URL || 'https://chat-service-theta.vercel.app';
 
-// Chat Service (producción: usa el despliegue correcto en Vercel)
-const CHAT_URL = 'https://chat-service-theta.vercel.app';
+// Valores publicos requeridos por cliente (no usar aqui service role keys)
+const SUPABASE_URL = runtime.SUPABASE_URL || '';
+const SUPABASE_ANON_KEY = runtime.SUPABASE_ANON_KEY || '';
 
-// Supabase (para Realtime en el frontend)
-const SUPABASE_URL = 'https://wbtphqctdvyejjtgucuk.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndidHBocWN0ZHZ5ZWpqdGd1Y3VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3ODkyNTMsImV4cCI6MjA3OTM2NTI1M30.fZ5UxsYaEoF058bgWQDnFaow0zHJwI64G3nvrGmSLvQ';
-
-// Exponer al objeto global (para scripts type="module")
-window.API_URL  = API_URL;
+window.API_URL = API_URL;
 window.AUTH_URL = AUTH_URL;
-
-// NUEVO:
 window.CHAT_URL = CHAT_URL;
 window.SUPABASE_URL = SUPABASE_URL;
 window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;

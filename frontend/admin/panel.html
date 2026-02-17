@@ -112,6 +112,7 @@
   <div id="toast" class="toast hidden">Acción realizada</div>
 
   <!-- Scripts existentes -->
+  <script src="../assets/js/app-config.js"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script type="module" src="../assets/js/admin/index.js"></script>
@@ -126,14 +127,18 @@
     import { initAdminChat } from '../assets/js/chat/adminChat.js';
 
     const sorteoId = window.currentSorteoId;
-    const token = localStorage.getItem('jwt');
+    const token = localStorage.getItem('token');
 
     if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      if (payload.rol === 'admin') {
-        initAdminChat({ sorteoId, token });
-      } else {
-        document.getElementById('adminChatHint').textContent = 'Tu rol no es admin, no puedes usar este chat.';
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.rol === 'admin') {
+          initAdminChat({ sorteoId, token });
+        } else {
+          document.getElementById('adminChatHint').textContent = 'Tu rol no es admin, no puedes usar este chat.';
+        }
+      } catch {
+        document.getElementById('adminChatHint').textContent = 'Token inválido.';
       }
     } else {
       document.getElementById('adminChatHint').textContent = 'Inicia sesión para usar el chat admin.';
@@ -141,3 +146,4 @@
   </script>
 </body>
 </html>
+

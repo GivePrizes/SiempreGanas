@@ -424,7 +424,7 @@
     }, JWT_SECRET)
              │
              ▼
-    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDIsImVtYWlsIjoieHh4Iiwicm9sIjoidXN1YXJpbyJ9.signature
+    <JWT_DEMO_TOKEN>
     
     Almacenado en localStorage del cliente
 
@@ -436,7 +436,7 @@
 
     fetch('/api/bonus/progreso', {
       headers: {
-        Authorization: 'Bearer eyJhbGci...' ◄── Token aquí
+        Authorization: 'Bearer <JWT_DEMO_TOKEN>' ◄── Token aquí
       }
     })
 
@@ -446,12 +446,12 @@
 │ 3. VALIDACIÓN EN MIDDLEWARE (verifyToken)                   │
 └─────────────────────────────────────────────────────────────┘
 
-    const authHeader = 'Bearer eyJhbGci...'
+    const authHeader = 'Bearer <JWT_DEMO_TOKEN>'
                         │
                         ├─ ¿Empieza con 'Bearer '? ✓
                         │
                         ▼
-    const token = 'eyJhbGci...'
+    const token = '<JWT_DEMO_TOKEN>'
                         │
                         ▼
     jwt.verify(token, JWT_SECRET)
@@ -580,3 +580,4 @@ COMMIT;
 
 **Diagrama actualizado:** 26 de enero de 2026  
 **Validado contra código:** https://github.com/GivePrizes/app-service
+
