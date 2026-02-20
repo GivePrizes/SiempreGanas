@@ -6,7 +6,7 @@ import { cargarProgresoBono } from '../bonus.js';
 const API_URL = window.API_URL || '';
 
 // ================================
-// ðŸ‘‹ BIENVENIDA
+// 👋 BIENVENIDA
 // ================================
 function setBienvenida() {
   const titulo = document.getElementById('tituloBienvenida');
@@ -17,16 +17,16 @@ function setBienvenida() {
   try {
     const user = JSON.parse(raw);
     const nombre = user.nombre || user.name || '';
-    if (titulo) titulo.textContent = nombre ? `Hola ${nombre} ðŸ‘‹` : 'Hola ðŸ‘‹';
+    if (titulo) titulo.textContent = nombre ? `Hola ${nombre} 👋` : 'Hola 👋';
     if (subtitulo)
       subtitulo.textContent =
-        'Adquiere tus nÃºmeros, sube tu comprobante y espera la dinÃ¡mica.';
+        'Adquiere tus números, sube tu comprobante y espera la dinámica.';
   } catch {
   }
 }
 
 // ================================
-// ðŸŽŸï¸ TARJETAS DE SORTEO
+// 🎟️ TARJETAS DE SORTEO
 // ================================
 function renderSorteoCard(s) {
   const vendidos = s.ocupados ?? s.numeros_vendidos ?? 0;
@@ -60,9 +60,9 @@ function renderSorteoCard(s) {
           <span class="status-badge ${estadoClass}">${estadoTxt}</span>
         </div>
 
-        <div class="sorteo-info">ðŸŽ Beneficio: ${s.premio}</div>
-        <div class="sorteo-info">ðŸ’µ Precio: $${precio}</div>
-        <div class="sorteo-info">ðŸŽŸ ${vendidos} / ${total}</div>
+        <div class="sorteo-info">🎁 Beneficio: ${s.premio}</div>
+        <div class="sorteo-info">💵 Precio: $${precio}</div>
+        <div class="sorteo-info">🎟 ${vendidos} / ${total}</div>
 
         <div class="progress-container">
           <div class="progress-bar" style="width:${porcentaje}%"></div>
@@ -71,7 +71,7 @@ function renderSorteoCard(s) {
         <div class="cta">
           ${
             porcentaje >= 100
-              ? `<a class="btn btn-secondary" href="ruleta-live.html?id=${s.id}">ðŸŽ° Ver sorteo en vivo</a>`
+              ? `<a class="btn btn-secondary" href="ruleta-live.html?id=${s.id}">🎰 Ver sorteo en vivo</a>`
               : `<a class="btn btn-primary" href="sorteo.html?id=${s.id}">Participar ahora</a>`
           }
         </div>
@@ -90,7 +90,7 @@ function renderSorteos(lista) {
 }
 
 // ================================
-// ðŸ“Š STATS
+// 📊 STATS
 // ================================
 async function cargarStatsSorteos() {
   const el = document.getElementById('statSorteosActivos');
@@ -102,7 +102,7 @@ async function cargarStatsSorteos() {
     el.textContent = String(count);
     el.style.opacity = '1';
   } catch {
-    // Error: mostrar 0 atenuado, no guiÃ³n
+    // Error: mostrar 0 atenuado, no guión
     if (el) {
       el.textContent = '0';
       el.style.opacity = '0.5';
@@ -112,7 +112,7 @@ async function cargarStatsSorteos() {
 
 async function cargarSorteosActivos() {
   const cont = document.getElementById('sorteosActivos');
-  cont.innerHTML = '<p class="loading">Cargando sorteosâ€¦</p>';
+  cont.innerHTML = '<p class="loading">Cargando sorteos…</p>';
 
   try {
     const res = await fetch(`${API_URL}/api/sorteos`);
@@ -124,20 +124,21 @@ async function cargarSorteosActivos() {
 }
 
 // ================================
-// ðŸš€ INIT
+// 🚀 INIT
 // ================================
 document.addEventListener('DOMContentLoaded', async () => {
   setBienvenida();
   cargarStatsSorteos();
 
-  // ðŸ”¹ Esto llena â€œNÃºmeros adquiridosâ€
+  // 🔹 Esto llena “Números adquiridos”
   await cargarMisNumerosResumen();
 
-  // ðŸ”¹ SOLO esto maneja el bonus (mini o grande)
+  // 🔹 SOLO esto maneja el bonus (mini o grande)
   cargarProgresoBono();
 
   cargarSorteosActivos();
 });
+
 
 
 

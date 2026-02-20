@@ -2,7 +2,7 @@
 
 const API_URL = window.API_URL; // viene de config.js
 
-let __MIS_ROWS__ = [];   // filas crudas del backend (1 por nÃºmero)
+let __MIS_ROWS__ = [];   // filas crudas del backend (1 por número)
 let __MIS_GRUPOS__ = []; // grupos (1 por sorteo)
 let __MIS_STATE_MAP__ = new Map(); // estado anterior por sorteo/numero
 
@@ -15,7 +15,7 @@ function estadoTexto(e) {
   if (v === 'aprobado') return 'Pagado';
   if (v === 'pendiente') return 'Pendiente';
   if (v === 'rechazado') return 'Rechazado';
-  return 'â€”';
+  return '—';
 }
 
 function chipClass(e) {
@@ -101,7 +101,7 @@ function renderGrupos(grupos, changedSet = new Set()) {
                 grupo.numero_ganador != null &&
                 Number(grupo.numero_ganador) === Number(it.numero);
 
-              const winnerMark = isWinner ? ' â­' : '';
+              const winnerMark = isWinner ? ' ⭐' : '';
               const winnerClass = isWinner ? ' chip-winner' : '';
               const key = `${grupo.sorteo_id}:${it.numero}`;
               const changedClass = changedSet.has(key) ? ' chip-soft-update' : '';
@@ -114,7 +114,7 @@ function renderGrupos(grupos, changedSet = new Set()) {
               `;
             })
             .join('')
-        : '<span class="text-muted">â€”</span>';
+        : '<span class="text-muted">—</span>';
 
     const badges = [];
     if (grupo.aprobados) badges.push(`<span class="badge badge-success">Pagados: ${grupo.aprobados}</span>`);
@@ -133,7 +133,7 @@ function renderGrupos(grupos, changedSet = new Set()) {
 
         ${ganadorHtml}
 
-        <p class="resumen-linea"><strong>NÃºmeros:</strong></p>
+        <p class="resumen-linea"><strong>Números:</strong></p>
         <div class="numeros-chips-wrap">${chipsHtml}</div>
 
         <p class="resumen-linea">
@@ -165,7 +165,7 @@ function aplicarFiltro(estado) {
     return __MIS_GRUPOS__.filter((g) => norm(g.sorteo_estado) === 'finalizado');
   }
 
-  // â€œpendienteâ€: al menos un nÃºmero pendiente dentro del sorteo
+  // “pendiente”: al menos un número pendiente dentro del sorteo
   if (e === 'pendiente') {
     return __MIS_GRUPOS__.filter((g) =>
       (g.numeros || []).some((n) => norm(n.estado) === 'pendiente')
@@ -175,13 +175,13 @@ function aplicarFiltro(estado) {
   return __MIS_GRUPOS__;
 }
 
-// âœ… filtros internos sin recargar pÃ¡gina (lo llaman tus chips)
+// ✅ filtros internos sin recargar página (lo llaman tus chips)
 window.filtrarMisNumeros = (estado) => {
   renderGrupos(aplicarFiltro(estado));
 };
 
 // ------------------------------
-// âœ… RESUMEN (dashboard)
+// ✅ RESUMEN (dashboard)
 // ------------------------------
 export async function cargarMisNumerosResumen() {
   const token = localStorage.getItem('token');
@@ -196,7 +196,7 @@ export async function cargarMisNumerosResumen() {
 
     if (!res.ok) {
       console.error('Error HTTP en mis-participaciones (resumen):', res.status);
-      // No mostrar guiÃ³n, solo ocultar
+      // No mostrar guión, solo ocultar
       if (stat) stat.style.opacity = '0.5';
       return { totalNumeros: 0 };
     }
@@ -213,7 +213,7 @@ export async function cargarMisNumerosResumen() {
     return { totalNumeros };
   } catch (err) {
     console.error(err);
-    // No mostrar guiÃ³n, solo ocultar el contenido
+    // No mostrar guión, solo ocultar el contenido
     if (stat) stat.style.opacity = '0.5';
     return { totalNumeros: 0 };
   }
@@ -221,7 +221,7 @@ export async function cargarMisNumerosResumen() {
 
 
 // ------------------------------
-// âœ… DETALLE (mis-numeros.html)
+// ✅ DETALLE (mis-numeros.html)
 // ------------------------------
 export async function cargarMisNumerosDetalle({ silent = false } = {}) {
   const token = localStorage.getItem('token');
@@ -244,7 +244,7 @@ export async function cargarMisNumerosDetalle({ silent = false } = {}) {
       console.error('Error HTTP en mis-participaciones (detalle):', res.status);
       if (!silent) {
         contenedor.innerHTML =
-          '<p class="error">No se pudieron cargar tus nÃºmeros. Intenta mÃ¡s tarde.</p>';
+          '<p class="error">No se pudieron cargar tus números. Intenta más tarde.</p>';
       }
       return;
     }
@@ -253,7 +253,7 @@ export async function cargarMisNumerosDetalle({ silent = false } = {}) {
     __MIS_ROWS__ = Array.isArray(data) ? data : [];
     __MIS_GRUPOS__ = agruparPorSorteo(__MIS_ROWS__);
 
-    // Detectar cambios de estado por nÃºmero (para animaciÃ³n suave)
+    // Detectar cambios de estado por número (para animación suave)
     const nextMap = new Map();
     const changedSet = new Set();
     __MIS_ROWS__.forEach((p) => {
@@ -279,10 +279,11 @@ export async function cargarMisNumerosDetalle({ silent = false } = {}) {
     console.error(err);
     if (!silent) {
       contenedor.innerHTML =
-        '<p class="error">Error de conexiÃ³n al cargar tus nÃºmeros.</p>';
+        '<p class="error">Error de conexión al cargar tus números.</p>';
     }
   }
 }
+
 
 
 

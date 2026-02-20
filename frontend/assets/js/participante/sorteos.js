@@ -16,25 +16,25 @@ export async function cargarSorteos() {
     if (!res.ok) {
       console.error('Error al cargar sorteos:', data);
       cont.innerHTML = '<p>Error al cargar sorteos. Intenta de nuevo en unos segundos.</p>';
-      if (statSorteos) statSorteos.textContent = 'â€”';
-      if (statProxima) statProxima.textContent = 'â€”';
+      if (statSorteos) statSorteos.textContent = '—';
+      if (statProxima) statProxima.textContent = '—';
       return;
     }
 
     if (!Array.isArray(data) || data.length === 0) {
       cont.innerHTML = `
         <p>No hay sorteos activos en este momento.</p>
-        <p>Vuelve pronto, estamos preparando nuevas oportunidades âœ¨</p>
+        <p>Vuelve pronto, estamos preparando nuevas oportunidades ✨</p>
       `;
       if (statSorteos) statSorteos.textContent = '0';
-      if (statProxima) statProxima.textContent = 'â€”';
+      if (statProxima) statProxima.textContent = '—';
       return;
     }
 
     // stats
     if (statSorteos) statSorteos.textContent = data.length.toString();
 
-    // identificar el sorteo mÃ¡s avanzado para â€œprÃ³xima ruletaâ€
+    // identificar el sorteo más avanzado para “próxima ruleta”
     const ordenados = [...data].sort((a, b) => {
       const pa = a.ocupados / a.cantidad_numeros;
       const pb = b.ocupados / b.cantidad_numeros;
@@ -63,16 +63,16 @@ export async function cargarSorteos() {
         let mensajeEstado = '';
         if (lleno) {
           mensajeEstado =
-            'Este sorteo ya se cerrÃ³. La ruleta se lanzarÃ¡ en cualquier momento ðŸŽ°';
+            'Este sorteo ya se cerró. La ruleta se lanzará en cualquier momento 🎰';
         } else if (porcentaje >= 80) {
           mensajeEstado =
-            'ðŸ”¥ Â¡Ãšltimos nÃºmeros! EstÃ¡s a nada de ver la ruleta girar.';
+            '🔥 ¡Últimos números! Estás a nada de ver la ruleta girar.';
         } else if (porcentaje >= 50) {
           mensajeEstado =
-            'Ya vamos por la mitad, cada activaciÃ³n acerca el resultado.';
+            'Ya vamos por la mitad, cada activación acerca el resultado.';
         } else {
           mensajeEstado =
-            'Aprovecha ahora: hay buena disponibilidad de nÃºmeros.';
+            'Aprovecha ahora: hay buena disponibilidad de números.';
         }
 
         const disabledAttr = lleno ? 'disabled' : '';
@@ -86,9 +86,9 @@ export async function cargarSorteos() {
               <img src="../assets/img/default.png" class="sorteo-img" alt="Imagen por defecto">
             `}
             <h3>${s.descripcion}</h3>
-            <p class="sorteo-premio">ðŸŽ Beneficio: <strong>${s.premio}</strong></p>
+            <p class="sorteo-premio">🎁 Beneficio: <strong>${s.premio}</strong></p>
             <p class="sorteo-precio">
-              ðŸ’¸ Precio por nÃºmero: <strong>$${s.precio_numero}</strong>
+              💸 Precio por número: <strong>$${s.precio_numero}</strong>
             </p>
 
             <div class="progress-wrapper">
@@ -96,8 +96,8 @@ export async function cargarSorteos() {
                 <div class="progress-fill" style="width:${porcentaje}%;"></div>
               </div>
               <p class="progress-text">
-                ${ocupados} de ${total} nÃºmeros vendidos
-                ${!lleno ? `â€¢ Quedan <strong>${faltan}</strong>` : ''}
+                ${ocupados} de ${total} números vendidos
+                ${!lleno ? `• Quedan <strong>${faltan}</strong>` : ''}
               </p>
             </div>
 
@@ -117,25 +117,25 @@ export async function cargarSorteos() {
       })
       .join('');
 
-    // pequeÃ±o CSS inline si quieres, o llÃ©valo a premium.css
+    // pequeño CSS inline si quieres, o llévalo a premium.css
     injectParticipantStyles();
   } catch (err) {
     console.error(err);
-    cont.innerHTML = '<p>Error de conexiÃ³n al cargar las sorteos.</p>';
-    if (statSorteos) statSorteos.textContent = 'â€”';
-    if (statProxima) statProxima.textContent = 'â€”';
+    cont.innerHTML = '<p>Error de conexión al cargar los sorteos.</p>';
+    if (statSorteos) statSorteos.textContent = '—';
+    if (statProxima) statProxima.textContent = '—';
   }
 }
 
-// Navegar a la pÃ¡gina de participar en un sorteo concreto
+// Navegar a la página de participar en un sorteo concreto
 function irASorteo(id) {
-  // podrÃ­as tener participante/sorteo.html?id=123
+  // podrías tener participante/sorteo.html?id=123
   location.href = `sorteo.html?id=${id}`;
 }
 
 window.irASorteo = irASorteo;
 
-// Inyectar estilos mÃ­nimos para la barra de progreso si no los tienes
+// Inyectar estilos mínimos para la barra de progreso si no los tienes
 function injectParticipantStyles() {
   if (document.getElementById('sg-participante-styles')) return;
 
@@ -188,6 +188,7 @@ function injectParticipantStyles() {
   `;
   document.head.appendChild(style);
 }
+
 
 
 

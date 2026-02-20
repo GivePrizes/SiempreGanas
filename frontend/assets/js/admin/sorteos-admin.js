@@ -12,7 +12,7 @@ export async function cargarSorteosAdmin() {
   const cont = document.getElementById('sorteosAdmin');
   if (!cont) return;
 
-  // transiciÃ³n suave para actualizaciÃ³n
+  // transición suave para actualización
   cont.style.transition = cont.style.transition || 'opacity 0.25s ease';
   cont.style.opacity = '0.3';
 
@@ -31,7 +31,7 @@ export async function cargarSorteosAdmin() {
     }
 
     if (!Array.isArray(data) || data.length === 0) {
-      cont.innerHTML = '<p>AÃºn no tienes sorteos creados. Empieza con el botÃ³n â€œCrear sorteoâ€.</p>';
+      cont.innerHTML = '<p>Aún no tienes sorteos creados. Empieza con el botón “Crear sorteo”.</p>';
       cont.style.opacity = '1';
       return;
     }
@@ -50,7 +50,7 @@ export async function cargarSorteosAdmin() {
       const byId = new Map(data.map(s => [String(s.id), s]));
       ordered = [];
 
-      // Primero los que estÃ¡n en el orden guardado
+      // Primero los que están en el orden guardado
       for (const id of stored) {
         if (byId.has(String(id))) {
           ordered.push(byId.get(String(id)));
@@ -78,15 +78,15 @@ export async function cargarSorteosAdmin() {
         if (finalizado) {
           estadoLabel = '<span class="badge badge-danger">Finalizado</span>';
         } else if (lleno) {
-          estadoLabel = '<span class="badge badge-warning">Lleno â€” Listo para resultado en vivo</span>';
+          estadoLabel = '<span class="badge badge-warning">Lleno — Listo para resultado en vivo</span>';
         } else {
           estadoLabel = '<span class="badge badge-success">En venta</span>';
         }
 
         const btnRuleta = lleno
           ? `<div class="ruleta-actions-admin">
-              <button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">ðŸŽ° Iniciar sorteo</button>
-              <button class="btn btn-ghost btn-sm" onclick="window.open('../participante/ruleta-live.html?id=${s.id}', '_blank', 'noopener')">ðŸ‘ Ver resultado en vivo</button>
+              <button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">🎰 Iniciar sorteo</button>
+              <button class="btn btn-ghost btn-sm" onclick="window.open('../participante/ruleta-live.html?id=${s.id}', '_blank', 'noopener')">👁 Ver resultado en vivo</button>
             </div>`
           : '';
 
@@ -103,17 +103,17 @@ export async function cargarSorteosAdmin() {
                 ${estadoLabel}
               </div>
               <p class="sorteo-detalle">Beneficio: <strong>${s.premio}</strong></p>
-              <p class="sorteo-detalle">OcupaciÃ³n: <strong>${ocupacion}</strong></p>
+              <p class="sorteo-detalle">Ocupación: <strong>${ocupacion}</strong></p>
               <p class="sorteo-detalle-mini">${
                 lleno
-                  ? 'Esta ronda ya estÃ¡ completa. Puedes publicar el resultado en vivo y generar expectativa.'
-                  : 'AÃºn se estÃ¡n vendiendo nÃºmeros. Cuantos mÃ¡s participen, mÃ¡s fuerte se siente el momento de la ronda.'
+                  ? 'Esta ronda ya está completa. Puedes publicar el resultado en vivo y generar expectativa.'
+                  : 'Aún se están vendiendo números. Cuantos más participen, más fuerte se siente el momento de la ronda.'
               }</p>
               <div class="sorteo-actions-admin">
                 ${btnRuleta}
-                <button class="btn btn-warning btn-sm" onclick="editarSorteo(${s.id})">âœï¸ Editar</button>
-                <button class="btn btn-danger btn-sm" onclick="eliminarSorteo(${s.id})">ðŸ—‘ Eliminar</button>
-                <button class="btn btn-primary btn-sm" onclick="verDetalleSorteo(${s.id})">ðŸ‘ Ver detalle</button>
+                <button class="btn btn-warning btn-sm" onclick="editarSorteo(${s.id})">✏️ Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="eliminarSorteo(${s.id})">🗑 Eliminar</button>
+                <button class="btn btn-primary btn-sm" onclick="verDetalleSorteo(${s.id})">👁 Ver detalle</button>
               </div>
             </div>
           </article>
@@ -126,7 +126,7 @@ export async function cargarSorteosAdmin() {
     cont.style.opacity = '1';
   } catch (err) {
     console.error(err);
-    cont.innerHTML = '<p>Error de conexiÃ³n al cargar las sorteos.</p>';
+    cont.innerHTML = '<p>Error de conexión al cargar los sorteos.</p>';
     cont.style.opacity = '1';
   }
 }
@@ -138,11 +138,11 @@ function editarSorteo(id) {
 async function eliminarSorteo(id) {
   const token = localStorage.getItem('token');
   if (!token) {
-    alert('SesiÃ³n expirada. Vuelve a iniciar sesiÃ³n.');
+    alert('Sesión expirada. Vuelve a iniciar sesión.');
     return;
   }
 
-  const confirmar = confirm('Â¿Seguro que quieres ELIMINAR esta ronda? Esta acciÃ³n no se puede deshacer.');
+  const confirmar = confirm('¿Seguro que quieres ELIMINAR esta ronda? Esta acción no se puede deshacer.');
   if (!confirmar) return;
 
   try {
@@ -166,7 +166,7 @@ async function eliminarSorteo(id) {
     await cargarSorteosAdmin();
   } catch (err) {
     console.error('Error de red al eliminar sorteo:', err);
-    alert('Error de conexiÃ³n al intentar eliminar el sorteo.');
+    alert('Error de conexión al intentar eliminar el sorteo.');
   }
 }
 
@@ -176,7 +176,7 @@ function verDetalleSorteo(id) {
 
 // Drag & Drop
 function initDragAndDrop(container) {
-  // Evitar reinicializar mÃºltiples veces
+  // Evitar reinicializar múltiples veces
   if (container._dndInit) return;
   container._dndInit = true;
 
@@ -277,6 +277,7 @@ async function sendOrderToServer(ids) {
 window.editarSorteo = editarSorteo;
 window.eliminarSorteo = eliminarSorteo;
 window.verDetalleSorteo = verDetalleSorteo;
+
 
 
 

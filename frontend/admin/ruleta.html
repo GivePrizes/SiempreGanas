@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="../assets/imagenes/mathome-favicon.png">
-  <title>Mathome â€” Resultado de la Ronda</title>
+  <title>Mathome — Resultado de la Ronda</title>
 
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
@@ -22,7 +22,7 @@
     </div>
 
     <div class="sg-actions">
-      <button onclick="location.href='panel.html'" class="btn-gold">â¬… Volver al panel</button>
+      <button onclick="location.href='panel.html'" class="btn-gold">⬅ Volver al panel</button>
       <button onclick="logout()" class="btn-red">Salir</button>
     </div>
   </nav>
@@ -33,7 +33,7 @@
       <header class="ruleta-header">
         <h2 class="sg-hero-title" id="tituloSorteo">Cargando ronda...</h2>
         <p class="sg-hero-sub" id="subtituloSorteo">
-          Control de programaciÃ³n y giro en tiempo real.
+          Control de programación y giro en tiempo real.
         </p>
       </header>
 
@@ -43,12 +43,12 @@
           <div class="ruleta-circle-wrapper">
             <div id="ruletaCircle" class="ruleta-circle"></div>
 
-            <!-- âœ… Resultado destacado flotante (aparece solo cuando finaliza) -->
+            <!-- ✅ Resultado destacado flotante (aparece solo cuando finaliza) -->
             <div id="winnerFloat" class="winner-float oculto" aria-live="polite">
               <div class="winner-float__pill">
                 <span class="winner-float__label">DESTACADO</span>
-                <span id="winnerFloatNumero" class="winner-float__num">â€”</span>
-                <span id="winnerFloatNombre" class="winner-float__name">â€”</span>
+                <span id="winnerFloatNumero" class="winner-float__num">—</span>
+                <span id="winnerFloatNombre" class="winner-float__name">—</span>
               </div>
             </div>
 
@@ -95,21 +95,21 @@
           <p id="motivationalMsg" class="motivational-msg"></p>
 
           <div class="ruleta-mini-stats">
-            <h4>Resumen rÃ¡pido de la ronda</h4>
-            <p><span class="label">NÃºmeros totales:</span><span id="statTotalNumeros">-</span></p>
-            <p><span class="label">NÃºmeros en juego:</span><span id="statParticipantes">-</span></p>
-            <p><span class="label">Probabilidad por nÃºmero:</span><span id="statProbMedia">-</span></p>
+            <h4>Resumen rápido de la ronda</h4>
+            <p><span class="label">Números totales:</span><span id="statTotalNumeros">-</span></p>
+            <p><span class="label">Números en juego:</span><span id="statParticipantes">-</span></p>
+            <p><span class="label">Probabilidad por número:</span><span id="statProbMedia">-</span></p>
           </div>
 
           <div class="ruleta-actions">
-            <button id="btnGirar" class="btn-gold btn-girar">ðŸŽ° INICIAR RONDA</button>
-            <button id="btnProgramar" class="btn-secondary">â± Programar ronda</button>
+            <button id="btnGirar" class="btn-gold btn-girar">🎰 INICIAR RONDA</button>
+            <button id="btnProgramar" class="btn-secondary">⏱ Programar ronda</button>
           </div>
 
-          <p class="ruleta-hint">Este giro es definitivo. El resultado destacado quedarÃ¡ registrado en el sistema.</p>
+          <p class="ruleta-hint">Este giro es definitivo. El resultado destacado quedará registrado en el sistema.</p>
 
           <div id="panelProgramar" class="programar-panel" style="display:none;">
-            <h3 class="programar-title">â± Programar Ronda</h3>
+            <h3 class="programar-title">⏱ Programar Ronda</h3>
             
             <div class="programar-group">
               <label for="selectPreset" class="programar-label">Programar para:</label>
@@ -127,13 +127,13 @@
             </div>
 
             <div class="programar-actions">
-              <button id="btnConfirmProgramar" class="btn-gold btn-confirm">âœ“ Guardar programaciÃ³n</button>
-              <button id="btnCancelProgramar" class="btn-secondary btn-cancel">âœ• Cancelar</button>
+              <button id="btnConfirmProgramar" class="btn-gold btn-confirm">✓ Guardar programación</button>
+              <button id="btnCancelProgramar" class="btn-secondary btn-cancel">✕ Cancelar</button>
             </div>
           </div>
 
           <div id="resultadoRuleta" class="resultado-ruleta">
-            AÃºn no se ha publicado resultado para esta ronda.
+            Aún no se ha publicado resultado para esta ronda.
           </div>
 
           <div id="topBuyerInfo" class="ruleta-hint"></div>
@@ -145,7 +145,7 @@
   <!-- Overlay cuenta regresiva (lo controla tu JS) -->
   <div id="countdownOverlay" class="countdown-overlay" style="display:none;">
     <div class="countdown-big" id="countdownBig">10</div>
-    <div class="countdown-msg" id="countdownMsg">PrepÃ¡rateâ€¦</div>
+    <div class="countdown-msg" id="countdownMsg">Prepárate…</div>
   </div>
 
   <script src="../assets/js/app-config.js"></script>
@@ -155,6 +155,7 @@
 
 </body>
 </html>
+
 
 
 

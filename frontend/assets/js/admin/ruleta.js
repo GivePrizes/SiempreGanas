@@ -1,8 +1,8 @@
 ﻿// assets/js/admin/ruleta.js
 
-// URL fija al APP-SERVICE en producciÃ³n
+// URL fija al APP-SERVICE en producción
 
-// Se asume que frontend/assets/js/config.js ya fue cargado y definiÃ³ window.API_URL
+// Se asume que frontend/assets/js/config.js ya fue cargado y definió window.API_URL
 const API_URL = (window.API_URL || 'https://app-service-phi.vercel.app').replace(/\/$/, '');
 
 // Endpoint base de API
@@ -61,7 +61,7 @@ const token = localStorage.getItem('token');
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 if (!token || user.rol !== 'admin') {
-  location.href = '../login.html'; // ajusta la ruta segÃºn tu estructura
+  location.href = '../login.html'; // ajusta la ruta según tu estructura
 }
 // ==========================
 // 1) Validar y early checks
@@ -70,7 +70,7 @@ if (!sorteoId) {
   if (tituloSorteo) tituloSorteo.textContent = 'Sorteo no especificado';
   if (subtituloSorteo) {
     subtituloSorteo.textContent =
-      'Vuelve al panel y entra desde el botÃ³n de ruleta.';
+      'Vuelve al panel y entra desde el botón de ruleta.';
   }
   if (btnGirar) btnGirar.disabled = true;
 }
@@ -183,10 +183,10 @@ async function fetchRuletaInfo() {
       return;
     }
 
-    // âœ… completa con cache si backend a veces no manda ganador
+    // ✅ completa con cache si backend a veces no manda ganador
     const data = applyWinnerFromCache(dataRaw);
 
-    // âœ… si ya finalizÃ³, guarda en cache
+    // ✅ si ya finalizó, guarda en cache
     cacheWinnerIfFinal(data);
 
     ruletaInfo = data;
@@ -212,13 +212,13 @@ async function fetchRuletaParticipantes() {
       return;
     }
 
-    // Normalizamos para conservar nombre_corto que usa la animaciÃ³n
+    // Normalizamos para conservar nombre_corto que usa la animación
     participantes = (data.participantes || []).map((p) => ({
       ...p,
       nombre_corto: p.nombre ? p.nombre.split(' ')[0] : `Usuario ${p.usuario_id}`,
     }));
 
-    // Stats bÃ¡sicos
+    // Stats básicos
     const totalEnJuego = participantes.length;
     if (elEnJuego) elEnJuego.textContent = totalEnJuego;
 
@@ -228,27 +228,27 @@ async function fetchRuletaParticipantes() {
 
     if (elProb) {
       elProb.textContent =
-        totalEnJuego > 0 ? `Cada nÃºmero tiene 1 entre ${totalEnJuego}` : '-';
+        totalEnJuego > 0 ? `Cada número tiene 1 entre ${totalEnJuego}` : '-';
     }
 
     if (!participantes.length) {
       if (ruletaCircle) {
         ruletaCircle.innerHTML =
-          '<p style="text-align:center; padding:1rem;">No hay participantes aprobados todavÃ­a.</p>';
+          '<p style="text-align:center; padding:1rem;">No hay participantes aprobados todavía.</p>';
       }
       if (btnGirar) btnGirar.disabled = true;
       return;
     }
 
-    // âœ… 1) Construir la ruleta primero (crea los slices)
+    // ✅ 1) Construir la ruleta primero (crea los slices)
     construirRuleta(participantes);
 
-    // âœ… 2) Si ya estÃ¡ finalizada, ahora sÃ­ resaltar el slice ganador
+    // ✅ 2) Si ya está finalizada, ahora sí resaltar el slice ganador
     if (ruletaInfo?.ruleta_estado === 'finalizada' && ruletaInfo?.numero_ganador) {
       resaltarSliceGanador(ruletaInfo.numero_ganador);
     }
 
-    // BotÃ³n girar segÃºn si ya se puede
+    // Botón girar según si ya se puede
     if (btnGirar && ruletaInfo) {
       btnGirar.disabled = !puedeGirarAhora();
     }
@@ -318,7 +318,7 @@ function renderRuletaInfo() {
     }
   }
 
-  // BotÃ³n girar segÃºn si ya se puede
+  // Botón girar según si ya se puede
   if (btnGirar) btnGirar.disabled = !puedeGirarAhora();
 
   //  FINALIZADA
@@ -341,13 +341,13 @@ function renderRuletaInfo() {
       if (numero_ganador) {
         const nombreCorto = ganador?.nombre ? ganador.nombre.split(' ')[0] : 'Ganador';
         resultadoRuleta.innerHTML =
-          `âœ… NÃºmero ganador: <strong>${numero_ganador}</strong> â€” <strong>${nombreCorto}</strong>`;
+          `✅ Número ganador: <strong>${numero_ganador}</strong> — <strong>${nombreCorto}</strong>`;
       } else {
-        resultadoRuleta.innerHTML = `âœ… Ruleta finalizada.`;
+        resultadoRuleta.innerHTML = `✅ Ruleta finalizada.`;
       }
     }
 
-    // âœ… DESTACADO FLOTANTE (premium)
+    // ✅ DESTACADO FLOTANTE (premium)
     const wf = document.getElementById('winnerFloat');
     const wfNum = document.getElementById('winnerFloatNumero');
     const wfName = document.getElementById('winnerFloatNombre');
@@ -356,7 +356,7 @@ function renderRuletaInfo() {
       wf.classList.remove('oculto');
       wf.classList.add('winner-float--show');
 
-      if (wfNum) wfNum.textContent = `NÂ° ${numero_ganador}`; // sin "#"
+      if (wfNum) wfNum.textContent = `N° ${numero_ganador}`; // sin "#"
       if (wfName) wfName.textContent = ganador?.nombre ? ganador.nombre.split(' ')[0] : 'Ganador';
     }
 
@@ -378,7 +378,7 @@ function renderRuletaInfo() {
     return; // no countdown
   }
 
-  // Si no estÃ¡ finalizada, mantenemos el contador activo
+  // Si no está finalizada, mantenemos el contador activo
   iniciarCountdown();
 }
 
@@ -436,7 +436,7 @@ function iniciarCountdown() {
       seconds.toString().padStart(2, '0'),
     ].join(':');
 
-    // Overlay gigante solo Ãºltimos 10 segundos
+    // Overlay gigante solo últimos 10 segundos
     if (totalSeconds <= 10 && overlay && bigEl) {
       overlay.style.display = 'flex';
       bigEl.textContent = totalSeconds;
@@ -460,7 +460,7 @@ async function iniciarRuletaAutomatica() {
   autoSpinIniciado = true;
 
   if (btnGirar) btnGirar.disabled = true;
-  if (resultadoRuleta) resultadoRuleta.textContent = 'Girando ruleta... ðŸŽ°âœ¨';
+  if (resultadoRuleta) resultadoRuleta.textContent = 'Girando ruleta... 🎰✨';
 
   try {
     const resStart = await fetch(`${API}/sorteos/${sorteoId}/iniciar-ruleta`, {
@@ -522,14 +522,14 @@ async function programarRuleta() {
   if (selectPreset.value === 'custom') {
     const val = inputFechaCustom.value;
     if (!val) {
-      alert('Selecciona una fecha/hora vÃ¡lida');
+      alert('Selecciona una fecha/hora válida');
       return;
     }
     body.fechaPersonalizada = new Date(val).toISOString();
   } else {
     const minutos = parseInt(selectPreset.value, 10);
     if (Number.isNaN(minutos) || minutos <= 0) {
-      alert('Valor de minutos invÃ¡lido');
+      alert('Valor de minutos inválido');
       return;
     }
     body.tiempoMinutos = minutos;
@@ -557,9 +557,9 @@ async function programarRuleta() {
     }
 
     alert('Ronda programada correctamente.');
-    // Desactivar botÃ³n tras programar exitosamente
+    // Desactivar botón tras programar exitosamente
     if (btnConfirmProgramar) btnConfirmProgramar.disabled = true;
-    // Ocultar panel de programaciÃ³n
+    // Ocultar panel de programación
     if (panelProgramar) panelProgramar.style.display = 'none';
     await fetchRuletaInfo();
   } catch (err) {
@@ -569,7 +569,7 @@ async function programarRuleta() {
 }
 
 // ==========================
-// 7) Girar ruleta (animaciÃ³n)
+// 7) Girar ruleta (animación)
 // ==========================
 async function girarRuleta() {
   if (girando) return;
@@ -579,14 +579,14 @@ async function girarRuleta() {
   }
 
   const confirmar = confirm(
-    'Este giro registrarÃ¡ al ganador de forma definitiva.\n\nÂ¿Deseas continuar?'
+    'Este giro registrará al ganador de forma definitiva.\n\n¿Deseas continuar?'
   );
   if (!confirmar) return;
 
   girando = true;
   if (btnGirar) btnGirar.disabled = true;
   if (resultadoRuleta) {
-    resultadoRuleta.textContent = 'Girando ruleta... ðŸŽ°âœ¨';
+    resultadoRuleta.textContent = 'Girando ruleta... 🎰✨';
   }
 
   let res, data;
@@ -634,8 +634,8 @@ async function girarRuleta() {
   if (!ruletaCircle || !numeroGanador) {
     if (resultadoRuleta) {
       resultadoRuleta.innerHTML = ganador
-        ? `ðŸŽ‰ Ganador: <strong>${ganador.nombre_corto}</strong> con el nÃºmero <strong>#${numeroGanador}</strong>.`
-        : `ðŸŽ‰ NÃºmero ganador: <strong>#${numeroGanador}</strong>.`;
+        ? `🎉 Ganador: <strong>${ganador.nombre_corto}</strong> con el número <strong>#${numeroGanador}</strong>.`
+        : `🎉 Número ganador: <strong>#${numeroGanador}</strong>.`;
     }
     girando = false;
     return;
@@ -650,7 +650,7 @@ async function girarRuleta() {
   const indice = idxGanador >= 0 ? idxGanador : 0;
   const anguloCentro = indice * anguloSlice + anguloSlice / 2;
 
-  const vueltasExtra = 5 + Math.floor(Math.random() * 3); // 5â€“7 vueltas
+  const vueltasExtra = 5 + Math.floor(Math.random() * 3); // 5–7 vueltas
   const rotacionDestino =
     rotacionActual + vueltasExtra * 360 + (360 - anguloCentro);
 
@@ -667,12 +667,12 @@ async function girarRuleta() {
       resultadoRuleta.classList.add('ganador-texto');
       resultadoRuleta.innerHTML = ganador
         ? `
-          ðŸŽ‰ <strong>${ganador.nombre_corto}</strong> es el ganador con el nÃºmero <strong>#${numeroGanador}</strong>.<br/>
-          Llama su nombre, muÃ©strale el comprobante y celebra el momento: todos vieron la ruleta en pantalla.
+          🎉 <strong>${ganador.nombre_corto}</strong> es el ganador con el número <strong>#${numeroGanador}</strong>.<br/>
+          Llama su nombre, muéstrale el comprobante y celebra el momento: todos vieron la ruleta en pantalla.
         `
         : `
-          ðŸŽ‰ NÃºmero ganador: <strong>#${numeroGanador}</strong>.<br/>
-          Revisa en el panel quÃ© usuario tiene este nÃºmero y anÃºncialo en voz alta.
+          🎉 Número ganador: <strong>#${numeroGanador}</strong>.<br/>
+          Revisa en el panel qué usuario tiene este número y anúncialo en voz alta.
         `;
 
       setTimeout(() => {
@@ -681,14 +681,14 @@ async function girarRuleta() {
     }
 
     girando = false;
-    // No reactivamos el botÃ³n: el giro es definitivo.
+    // No reactivamos el botón: el giro es definitivo.
     // Reforzamos estado final desde backend:
     fetchRuletaInfo();
   }, 4700);
 }
 
 // ==========================
-// 8) Eventos e inicializaciÃ³n
+// 8) Eventos e inicialización
 // ==========================
 
 if (btnGirar) {
@@ -734,11 +734,12 @@ async function init() {
   await fetchRuletaInfo();
   await fetchRuletaParticipantes();
 
-  // Polling suave de ruleta-info cada 3s (sin recargar pÃ¡gina, sin "saltos")
+  // Polling suave de ruleta-info cada 3s (sin recargar página, sin "saltos")
   pollingInterval = setInterval(fetchRuletaInfo, 3000);
 }
 
 init();
+
 
 
 

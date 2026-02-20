@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="icon" type="image/png" href="assets/imagenes/mathome-favicon.png">
-  <title>Mathome â€” Acceso</title>
+  <title>Mathome - Acceso</title>
 
   <link rel="stylesheet" href="assets/css/common.css">
   <link rel="stylesheet" href="assets/css/participant.css">
@@ -19,7 +19,7 @@
       padding: 28px 14px;
     }
 
-    /* Fondo limpio: â€œpremium darkâ€ con glow suave */
+    /* Fondo limpio: “premium dark” con glow suave */
     .auth-shell::before{
       content:"";
       position: fixed;
@@ -76,7 +76,7 @@
       margin-top: 22px;
       text-align: left;
 
-      /* ðŸ”¥ FONDO MEZCLADO CON LA IMAGEN */
+      /* 🔥 FONDO MEZCLADO CON LA IMAGEN */
       background:
         linear-gradient(
           180deg,
@@ -158,7 +158,7 @@
       font-weight: 900;
     }
 
-    /* Micro-trust debajo del botÃ³n */
+    /* Micro-trust debajo del botón */
     .trust-row{
       margin-top: 12px;
       display:flex;
@@ -328,7 +328,7 @@
 
       <!-- LOGIN -->
       <section id="loginForm" class="auth-card">
-        <h3>Iniciar sesiÃ³n</h3>
+        <h3>Iniciar sesión</h3>
 
         <div class="auth-field">
           <label for="loginEmail">Correo</label>
@@ -336,19 +336,19 @@
         </div>
 
         <div class="auth-field">
-          <label for="loginPass">ContraseÃ±a</label>
-          <input type="password" id="loginPass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password">
+          <label for="loginPass">Contraseña</label>
+          <input type="password" id="loginPass" placeholder="********" autocomplete="current-password">
         </div>
 
         <button class="btn btn-primary btn-wide" onclick="login()">Entra al momento</button>
 
         <div class="trust-row">
           <span class="trust-dot"></span>
-          <span>Acceso seguro â€¢ Chat en vivo â€¢ Pagos verificados</span>
+          <span>Acceso seguro | Chat en vivo | Pagos verificados</span>
         </div>
 
         <div class="switch-link" onclick="showRegistro()">
-          Â¿No tienes cuenta? Registrarse
+          ¿No tienes cuenta? Registrarse
         </div>
       </section>
 
@@ -369,27 +369,27 @@
         </div>
 
         <div class="auth-field">
-          <label for="regTelefono">TelÃ©fono</label>
+          <label for="regTelefono">Telefono</label>
           <input type="tel" id="regTelefono" placeholder="+57 3XX XXX XXXX" autocomplete="tel">
           <small id="errorTelefono" class="error-msg"></small>
         </div>
 
         <div class="auth-field">
-          <label for="regAlias">Nombre pÃºblico (opcional)</label>
+          <label for="regAlias">Nombre público (opcional)</label>
           <input type="text" id="regAlias" placeholder="Tu nombre en la sala" autocomplete="nickname">
-          <small class="text-muted" style="display:block; margin-top:4px; font-size:12px;">3â€“20, letras/nÃºmeros/_</small>
+          <small class="text-muted" style="display:block; margin-top:4px; font-size:12px;">3-20, letras/números/_</small>
           <small id="errorAlias" class="error-msg"></small>
         </div>
 
         <div class="auth-field">
-          <label for="regPass">ContraseÃ±a</label>
-          <input type="password" id="regPass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="new-password">
+          <label for="regPass">Contraseña</label>
+          <input type="password" id="regPass" placeholder="********" autocomplete="new-password">
           <small id="errorPass" class="error-msg"></small>
         </div>
 
         <div class="auth-field">
-          <label for="regPassConfirm">Confirmar contraseÃ±a</label>
-          <input type="password" id="regPassConfirm" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="new-password">
+          <label for="regPassConfirm">Confirmar contraseña</label>
+          <input type="password" id="regPassConfirm" placeholder="********" autocomplete="new-password">
           <small id="errorPassConfirm" class="error-msg"></small>
         </div>
 
@@ -398,7 +398,7 @@
             <input type="checkbox" id="regTerms" />
             <span>
               Acepto los
-              <span class="terms-link" id="openTermsModal">TÃ©rminos y Condiciones</span>
+              <span class="terms-link" id="openTermsModal">Términos y Condiciones</span>
             </span>
           </label>
           <small id="errorTerms" class="error-msg"></small>
@@ -409,7 +409,7 @@
         </button>
 
         <div class="switch-link" onclick="showLogin()">
-          Â¿Ya tienes cuenta? Iniciar sesiÃ³n
+          ¿Ya tienes cuenta? Iniciar sesión
         </div>
       </section>
 
@@ -421,56 +421,56 @@
     <div class="terms-modal__backdrop" data-terms-close></div>
     <div class="terms-modal__card" role="document">
       <div class="terms-modal__header">
-        <h4 id="termsTitle">TÃ©rminos y Condiciones</h4>
-        <button class="terms-modal__close" type="button" data-terms-close aria-label="Cerrar">Ã—</button>
+        <h4 id="termsTitle">Términos y Condiciones</h4>
+        <button class="terms-modal__close" type="button" data-terms-close aria-label="Cerrar">X</button>
       </div>
       <div class="terms-modal__body">
         <div class="terms-full">
-          <p><strong>TÃ‰RMINOS Y CONDICIONES DE USO â€“ MATHOME</strong></p>
-          <p>Ãšltima actualizaciÃ³n: 2026</p>
-          <p>Al registrarte y utilizar la plataforma Mathome, aceptas de forma expresa los presentes TÃ©rminos y Condiciones. Si no estÃ¡s de acuerdo con alguno de ellos, no debes utilizar la plataforma.</p>
+          <p><strong>TÉRMINOS Y CONDICIONES DE USO – MATHOME</strong></p>
+          <p>Última actualización: 2026</p>
+          <p>Al registrarte y utilizar la plataforma Mathome, aceptas de forma expresa los presentes Términos y Condiciones. Si no estás de acuerdo con alguno de ellos, no debes utilizar la plataforma.</p>
           <p><strong>1. IDENTIDAD Y VERACIDAD DE LOS DATOS</strong></p>
-          <p>El usuario declara que la informaciÃ³n proporcionada durante el registro (nombre, correo electrÃ³nico, telÃ©fono y demÃ¡s datos) es real, exacta y actualizada.</p>
-          <p>Mathome no se responsabiliza por problemas derivados de informaciÃ³n falsa o incorrecta.</p>
+          <p>El usuario declara que la información proporcionada durante el registro (nombre, correo electrónico, teléfono y demás datos) es real, exacta y actualizada.</p>
+          <p>Mathome no se responsabiliza por problemas derivados de información falsa o incorrecta.</p>
           <p><strong>2. TRATAMIENTO DE DATOS PERSONALES</strong></p>
           <p>Al registrarte, autorizas el tratamiento de tus datos personales con fines de:</p>
-          <p>CreaciÃ³n y administraciÃ³n de tu cuenta.</p>
+          <p>Creación y administración de tu cuenta.</p>
           <p>Contacto relacionado con sorteos, premios o notificaciones operativas.</p>
-          <p>VerificaciÃ³n de identidad y prevenciÃ³n de fraudes.</p>
-          <p>Los datos no serÃ¡n vendidos a terceros. PodrÃ¡n compartirse Ãºnicamente cuando sea necesario para la operaciÃ³n del servicio o por requerimiento legal.</p>
+          <p>Verificación de identidad y prevención de fraudes.</p>
+          <p>Los datos no serán vendidos a terceros. Podrán compartirse únicamente cuando sea necesario para la operación del servicio o por requerimiento legal.</p>
           <p><strong>3. USO ADECUADO DEL SERVICIO</strong></p>
           <p>El usuario se compromete a:</p>
-          <p>No crear mÃºltiples cuentas con la finalidad de obtener ventajas indebidas.</p>
-          <p>No utilizar la plataforma para actividades fraudulentas, ilegales o engaÃ±osas.</p>
-          <p>Respetar las reglas especÃ­ficas de cada sorteo publicadas en la plataforma.</p>
-          <p>El incumplimiento podrÃ¡ resultar en la suspensiÃ³n o cancelaciÃ³n definitiva de la cuenta, sin derecho a reclamos.</p>
+          <p>No crear múltiples cuentas con la finalidad de obtener ventajas indebidas.</p>
+          <p>No utilizar la plataforma para actividades fraudulentas, ilegales o engañosas.</p>
+          <p>Respetar las reglas específicas de cada sorteo publicadas en la plataforma.</p>
+          <p>El incumplimiento podrá resultar en la suspensión o cancelación definitiva de la cuenta, sin derecho a reclamos.</p>
           <p><strong>4. SORTEOS Y PREMIOS</strong></p>
-          <p>Los sorteos se rigen por reglas especÃ­ficas visibles dentro de la plataforma.</p>
+          <p>Los sorteos se rigen por reglas específicas visibles dentro de la plataforma.</p>
           <p>Los resultados son definitivos una vez publicados y validados conforme a dichas reglas.</p>
           <p>Mathome no garantiza resultados ni premios fuera de las condiciones establecidas en cada sorteo.</p>
           <p><strong>5. COMUNICACIONES</strong></p>
-          <p>El usuario acepta recibir comunicaciones electrÃ³nicas relacionadas con:</p>
+          <p>El usuario acepta recibir comunicaciones electrónicas relacionadas con:</p>
           <p>Actividad de la cuenta.</p>
-          <p>ParticipaciÃ³n en sorteos.</p>
-          <p>Notificaciones tÃ©cnicas o administrativas.</p>
+          <p>Participación en sorteos.</p>
+          <p>Notificaciones técnicas o administrativas.</p>
           <p>Estas comunicaciones son parte esencial del servicio.</p>
           <p><strong>6. DISPONIBILIDAD DEL SERVICIO</strong></p>
-          <p>Mathome podrÃ¡ suspender temporalmente el acceso a la plataforma por:</p>
-          <p>Mantenimiento tÃ©cnico.</p>
+          <p>Mathome podrá suspender temporalmente el acceso a la plataforma por:</p>
+          <p>Mantenimiento técnico.</p>
           <p>Actualizaciones.</p>
           <p>Seguridad del sistema.</p>
           <p>No se garantiza disponibilidad continua e ininterrumpida.</p>
           <p><strong>7. RESPONSABILIDAD</strong></p>
           <p>El uso de la plataforma es bajo responsabilidad del usuario.</p>
-          <p>Mathome no serÃ¡ responsable por daÃ±os indirectos, pÃ©rdidas de oportunidad o fallos externos al sistema.</p>
+          <p>Mathome no será responsable por daños indirectos, pérdidas de oportunidad o fallos externos al sistema.</p>
           <p><strong>8. MODIFICACIONES</strong></p>
-          <p>Mathome se reserva el derecho de modificar estos TÃ©rminos y Condiciones en cualquier momento.</p>
-          <p>Los cambios serÃ¡n efectivos desde su publicaciÃ³n en la plataforma.</p>
-          <p><strong>9. ACEPTACIÃ“N</strong></p>
-          <p>Al marcar la casilla â€œAcepto los TÃ©rminos y Condicionesâ€, el usuario declara que:</p>
-          <p>Ha leÃ­do el contenido completo.</p>
+          <p>Mathome se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento.</p>
+          <p>Los cambios serán efectivos desde su publicación en la plataforma.</p>
+          <p><strong>9. ACEPTACIÓN</strong></p>
+          <p>Al marcar la casilla "Acepto los Términos y Condiciones", el usuario declara que:</p>
+          <p>Ha leído el contenido completo.</p>
           <p>Comprende su alcance.</p>
-          <p>Acepta expresamente todos los puntos aquÃ­ descritos.</p>
+          <p>Acepta expresamente todos los puntos aquí descritos.</p>
         </div>
       </div>
       <div class="terms-modal__actions">
@@ -502,6 +502,7 @@
   <script src="assets/js/welcomeModal.js"></script>
 </body>
 </html>
+
 
 
 

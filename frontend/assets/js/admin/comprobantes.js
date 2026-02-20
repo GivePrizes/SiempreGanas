@@ -1,4 +1,4 @@
-// frontend/assets/js/admin/comprobantes.js
+﻿// frontend/assets/js/admin/comprobantes.js
 
 const API_URL = window.API_URL || '';
 
@@ -6,11 +6,11 @@ function agruparComprobantesPorSorteo(comprobantes) {
   const mapa = new Map();
 
   for (const c of comprobantes) {
-    const id = c.sorteo_id; // viene del backend
+    const id = c.sorteo_id;
     if (!mapa.has(id)) {
       mapa.set(id, {
         sorteo_id: id,
-        sorteo: c.sorteo, // nombre/descripcion del sorteo
+        sorteo: c.sorteo,
         comprobantes: [],
       });
     }
@@ -20,16 +20,15 @@ function agruparComprobantesPorSorteo(comprobantes) {
   return Array.from(mapa.values());
 }
 
-// ✅ NUEVO: estado para evitar parpadeo
+// Estado para evitar parpadeo
 let yaPintoAlgo = false;
 let ultimoHTML = '';
 
-// ✅ NUEVO: mini “actualizando…” sin borrar el contenedor
+// Mini estado "actualizando..." sin borrar el contenedor
 function setMiniEstado(texto) {
   const contenedor = document.getElementById('comprobantes');
   if (!contenedor) return;
 
-  // lo ponemos dentro del mismo contenedor (arriba)
   let el = contenedor.querySelector('.mini-estado');
   if (!el) {
     el = document.createElement('div');
@@ -43,7 +42,7 @@ function setMiniEstado(texto) {
 
 function construirHTML(grupos) {
   if (!grupos.length) {
-    return '<p>¡No hay pendientes! 🎉</p>';
+    return '<p>No hay pendientes.</p>';
   }
 
   return grupos
@@ -53,7 +52,7 @@ function construirHTML(grupos) {
           (c) => `
           <li class="comprobante-item">
             <div class="comprobante-info">
-              <strong>#${c.numero}</strong> — ${c.usuario} (${c.telefono})
+              <strong>#${c.numero}</strong> - ${c.usuario} (${c.telefono})
               <br>
               <a href="${c.comprobante_url}" target="_blank" class="link">
                 Ver comprobante
@@ -62,8 +61,8 @@ function construirHTML(grupos) {
               <small>${new Date(c.fecha).toLocaleString()}</small>
             </div>
             <div class="comprobante-actions">
-              <button class="btn-green" onclick="aprobar(${c.id})">✅ Aprobar</button>
-              <button class="btn-red" onclick="rechazar(${c.id})">❌ Rechazar</button>
+              <button class="btn-green" onclick="aprobar(${c.id})">Aprobar</button>
+              <button class="btn-red" onclick="rechazar(${c.id})">Rechazar</button>
             </div>
           </li>
         `
@@ -85,17 +84,14 @@ function construirHTML(grupos) {
     .join('');
 }
 
-// 👇 EXPORTAMOS la función para que index.js la pueda importar
 export async function cargarComprobantes() {
   const contenedor = document.getElementById('comprobantes');
   if (!contenedor) return;
 
-  // ✅ Primera carga: igual que antes (no cambia nada)
   if (!yaPintoAlgo) {
     contenedor.innerHTML = '<p class="loading">Cargando comprobantes...</p>';
   } else {
-    // ✅ Refrescos: NO borrar contenido (evita salto)
-    setMiniEstado('Actualizando…');
+    setMiniEstado('Actualizando...');
   }
 
   const token = localStorage.getItem('token');
@@ -103,7 +99,6 @@ export async function cargarComprobantes() {
     headers: { Authorization: `Bearer ${token}` },
   });
 
-  // quitamos mini estado si existía
   setMiniEstado('');
 
   if (res.status === 401 || res.status === 403) {
@@ -117,7 +112,6 @@ export async function cargarComprobantes() {
   if (!res.ok) {
     console.error('Error al cargar comprobantes:', res.status);
 
-    // ✅ Si ya había algo pintado, no lo borres por un error de refresh
     if (!yaPintoAlgo) {
       contenedor.innerHTML = '<p>Error al cargar comprobantes.</p>';
       ultimoHTML = contenedor.innerHTML;
@@ -131,7 +125,6 @@ export async function cargarComprobantes() {
 
   const nuevoHTML = construirHTML(grupos);
 
-  // ✅ Clave anti-parpadeo: solo reemplazar si cambió el HTML
   if (nuevoHTML !== ultimoHTML) {
     contenedor.innerHTML = nuevoHTML;
     ultimoHTML = nuevoHTML;
@@ -140,8 +133,6 @@ export async function cargarComprobantes() {
   yaPintoAlgo = true;
 }
 
-// Estas dos funciones se usan desde el HTML generado con onclick="..."
-// En módulos NO se vuelven globales, así que las colgamos de window:
 async function aprobar(id) {
   if (!confirm('¿Aprobar?')) return;
   const token = localStorage.getItem('token');
@@ -162,7 +153,5 @@ async function rechazar(id) {
   cargarComprobantes();
 }
 
-// 👇 Hacemos que sean accesibles desde el HTML inline
 window.aprobar = aprobar;
 window.rechazar = rechazar;
-

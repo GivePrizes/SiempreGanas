@@ -2,11 +2,11 @@
 /*
  * Admin dashboard styling
  *
- * Este archivo da estilo al panel de administraciÃ³n de Mathome.
+ * Este archivo da estilo al panel de administración de Mathome.
  * Dark theme, detalles dorados y enfoque en claridad + control.
  */
 
-/* Ya se incluye common.css desde el HTML con <link>, asÃ­ que no hace falta importarlo aquÃ­ */
+/* Ya se incluye common.css desde el HTML con <link>, así que no hace falta importarlo aquí */
 /* @import url('common.css'); */
 
 /* =============================
@@ -77,7 +77,7 @@
 }
 
 /* =============================
-   Main content / Cards genÃ©ricas
+   Main content / Cards genéricas
    ============================= */
 
 .admin-main {
@@ -86,7 +86,7 @@
   gap: 1.25rem;
 }
 
-/* Card genÃ©rica, reutilizada en todo el panel */
+/* Card genérica, reutilizada en todo el panel */
 .card {
   background-color: var(--colour-surface);
   border-radius: 0.7rem;
@@ -94,7 +94,7 @@
   box-shadow: 0 3px 14px rgba(0, 0, 0, 0.7);
 }
 
-/* Cabecera de las cards (tÃ­tulo + hint derecha) */
+/* Cabecera de las cards (título + hint derecha) */
 .card-title-row {
   display: flex;
   justify-content: space-between;
@@ -333,7 +333,7 @@
   gap: 0.4rem;
 }
 
-/* VersiÃ³n pequeÃ±a de botones dentro de las tarjetas */
+/* Versión pequeña de botones dentro de las tarjetas */
 .btn-sm {
   padding: 0.25rem 0.6rem;
   font-size: 0.8rem;
@@ -411,7 +411,7 @@
 }
 
 /* =============================
-   Stats rÃ¡pidas (bloque de abajo)
+   Stats rápidas (bloque de abajo)
    ============================= */
 
 .stats-grid {
@@ -508,4 +508,5 @@
 .card {
   will-change: transform, opacity;
 }
+
 
