@@ -17,6 +17,9 @@
       align-items:center;
       justify-content:center;
       padding: 28px 14px;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
     }
 
     /* Fondo limpio: “premium dark” con glow suave */
@@ -35,6 +38,93 @@
     .auth-wrapper{
       width: min(460px, 96vw);
       text-align:center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===== STORY / CHAT FX ===== */
+    .story-stream{
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .story-lane{
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: min(34vw, 320px);
+    }
+
+    .story-lane-left{ left: 0; }
+    .story-lane-right{ right: 0; }
+
+    .chat-float{
+      position: absolute;
+      bottom: -120px;
+      left: var(--x, 10%);
+      width: min(260px, 75vw);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      opacity: 0;
+      animation: bubbleRise var(--dur, 11s) linear forwards;
+      animation-delay: var(--delay, 0s);
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,.45));
+    }
+
+    .chat-avatar{
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-size: .72rem;
+      font-weight: 900;
+      color: #fff;
+      background: linear-gradient(135deg, rgba(56,189,248,.9), rgba(34,197,94,.9));
+      border: 1px solid rgba(255,255,255,.2);
+      flex-shrink: 0;
+    }
+
+    .chat-bubble{
+      background: rgba(10, 16, 30, .78);
+      border: 1px solid rgba(255, 215, 0, .22);
+      color: rgba(241,245,249,.95);
+      border-radius: 14px;
+      padding: 10px 12px;
+      font-size: .82rem;
+      line-height: 1.3;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .chat-user{
+      display: block;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: rgba(255,215,0,.9);
+      margin-bottom: 4px;
+    }
+
+    @keyframes bubbleRise{
+      0%{
+        transform: translateY(0) translateX(0) scale(.94);
+        opacity: 0;
+      }
+      8%{
+        opacity: .95;
+      }
+      65%{
+        opacity: .88;
+      }
+      100%{
+        transform: translateY(-115vh) translateX(var(--drift, -12px)) scale(1.02);
+        opacity: 0;
+      }
     }
 
     /* ===== BRAND / LOGO ===== */
@@ -66,6 +156,54 @@
       margin: 0;
       color: var(--colour-muted);
       font-size: .95rem;
+    }
+
+    .live-tracker{
+      margin: 8px 0 16px;
+      padding: 12px 14px;
+      text-align: left;
+      border-radius: 14px;
+      border: 1px solid rgba(255,215,0,.2);
+      background: linear-gradient(180deg, rgba(13,18,32,.66), rgba(8,12,22,.7));
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+
+    .live-tracker__head{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .74rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(255,215,0,.95);
+      margin-bottom: 6px;
+    }
+
+    .live-tracker__dot{
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 5px rgba(34,197,94,.12);
+      animation: trackerPulse 1.7s ease-in-out infinite;
+    }
+
+    .live-tracker__text{
+      min-height: 42px;
+      color: rgba(241,245,249,.95);
+      font-size: .9rem;
+      line-height: 1.35;
+      transition: opacity .35s ease, transform .35s ease;
+    }
+
+    .live-tracker__text.is-changing{
+      opacity: .08;
+      transform: translateY(-5px);
+    }
+
+    @keyframes trackerPulse{
+      0%, 100%{ transform: scale(1); }
+      50%{ transform: scale(1.18); }
     }
 
     /* ===== CARD ===== */
@@ -308,22 +446,46 @@
       .brand-sub{ font-size: .9rem; }
       .brand-logo{ width: min(360px, 90%); }
       .terms-modal__actions{ flex-direction: column; }
+      .story-lane{ width: 56vw; }
+      .story-lane-right{ display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .chat-float{
+        animation: none !important;
+        display: none !important;
+      }
     }
   </style>
 </head>
 
 <body>
   <div class="auth-shell">
+    <div class="story-stream" aria-hidden="true">
+      <div class="story-lane story-lane-left" id="storyLaneLeft"></div>
+      <div class="story-lane story-lane-right" id="storyLaneRight"></div>
+    </div>
+
     <div class="auth-wrapper">
 
       <!-- BRAND -->
       <div class="brand">
         <img
-          src="assets/imagenes/Mathome.png"
+          src="assets/imagenes/mathome sin fondo.png"
           alt="Mathome"
           class="brand-logo"
         />
         <p class="brand-sub">Todo pasa en vivo.</p>
+      </div>
+
+      <div class="live-tracker" aria-live="polite">
+        <div class="live-tracker__head">
+          <span class="live-tracker__dot"></span>
+          <span>Seguimiento en sala</span>
+        </div>
+        <div class="live-tracker__text" id="liveTrackerText">
+          Cientos de usuarios conectados en tiempo real, pendientes del proximo giro.
+        </div>
       </div>
 
       <!-- LOGIN -->
@@ -496,6 +658,90 @@
       document.getElementById("loginForm").classList.remove("hidden");
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    (function initStoryBubbles() {
+      const leftLane = document.getElementById('storyLaneLeft');
+      const rightLane = document.getElementById('storyLaneRight');
+      if (!leftLane || !rightLane) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const users = [
+        'Alex', 'Naty', 'Fer', 'Sofi', 'Leo', 'Majo', 'Dani', 'Pipe', 'Lina', 'Meli'
+      ];
+      const messages = [
+        'Listo el combo para peli, esperando que gire la suerte.',
+        'Entrando a sala, hoy sí cae el premio grande.',
+        'Ya prendimos la peli, avisen cuando arranque la ruleta.',
+        'Equipo completo en chat, que se active el giro.',
+        'Mi número está caliente, esta noche toca.',
+        'Se siente la energía, a esperar el giro final.',
+        'Todo en vivo, snacks listos y ojos en la suerte.',
+        'Conectado desde ya, pendiente del próximo giro.',
+        'Hoy se ve buena racha, vamos con toda.',
+        'Nada de dormirse, que la suerte aparece rápido.'
+      ];
+
+      function createBubble(lane) {
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-float';
+        bubble.style.setProperty('--x', `${6 + Math.random() * 58}%`);
+        bubble.style.setProperty('--drift', `${-28 + Math.random() * 56}px`);
+        bubble.style.setProperty('--dur', `${9 + Math.random() * 6}s`);
+        bubble.style.setProperty('--delay', `${Math.random() * 1.8}s`);
+
+        const user = users[Math.floor(Math.random() * users.length)];
+        const message = messages[Math.floor(Math.random() * messages.length)];
+        const initials = user.slice(0, 2).toUpperCase();
+
+        bubble.innerHTML = `
+          <div class="chat-avatar">${initials}</div>
+          <div class="chat-bubble">
+            <span class="chat-user">${user}</span>
+            ${message}
+          </div>
+        `;
+
+        bubble.addEventListener('animationend', () => bubble.remove());
+        lane.appendChild(bubble);
+      }
+
+      function pickLane() {
+        if (window.innerWidth < 700) return leftLane;
+        return Math.random() > 0.5 ? leftLane : rightLane;
+      }
+
+      for (let i = 0; i < 6; i += 1) {
+        createBubble(pickLane());
+      }
+
+      setInterval(() => {
+        createBubble(pickLane());
+      }, 1300);
+    })();
+
+    (function initLiveTracker() {
+      const tracker = document.getElementById('liveTrackerText');
+      if (!tracker) return;
+
+      const feed = [
+        'En chat comentan la pelicula mientras esperan el giro de la suerte.',
+        'La sala sube de ritmo cuando anuncian que la ruleta arranca en breve.',
+        'Muchos entran por curiosidad y se quedan por el ambiente en vivo.',
+        'Hay expectativa por el proximo giro: todos atentos al contador.',
+        'Mensajes en vivo, reacciones y predicciones antes del resultado final.',
+        'Los nuevos usuarios leen el chat y se enganchan rapido a la dinamica.'
+      ];
+
+      let i = 0;
+      setInterval(() => {
+        tracker.classList.add('is-changing');
+        setTimeout(() => {
+          i = (i + 1) % feed.length;
+          tracker.textContent = feed[i];
+          tracker.classList.remove('is-changing');
+        }, 220);
+      }, 3600);
+    })();
   </script>
 
   <!-- Welcome Modal -->
