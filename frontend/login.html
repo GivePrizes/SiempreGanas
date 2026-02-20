@@ -132,16 +132,23 @@
       display:flex;
       flex-direction: column;
       align-items:center;
-      gap: 10px;
-      margin-bottom: 16px;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .brand-logo-frame{
+      width: min(520px, 96%);
+      max-width: 520px;
+      height: clamp(180px, 36vh, 330px);
+      overflow: hidden;
+      display: grid;
+      place-items: start center;
     }
 
     .brand-logo{
-      width: min(520px, 96%);
-      max-width: 520px;
+      width: 100%;
       height: auto;
       display:block;
-      border-radius: 18px;
       filter: drop-shadow(0 18px 50px rgba(0,0,0,.55));
       opacity: .98;
     }
@@ -153,30 +160,38 @@
     }
 
     .brand-sub{
-      margin: 0;
+      margin: -2px 0 0;
       color: var(--colour-muted);
       font-size: .95rem;
     }
 
     .live-tracker{
-      margin: 8px 0 16px;
-      padding: 12px 14px;
+      margin: 6px 0 12px;
+      padding: 10px 10px 8px;
       text-align: left;
-      border-radius: 14px;
+      border-radius: 16px;
       border: 1px solid rgba(255,215,0,.2);
-      background: linear-gradient(180deg, rgba(13,18,32,.66), rgba(8,12,22,.7));
+      background: linear-gradient(180deg, rgba(13,18,32,.7), rgba(8,12,22,.74));
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      overflow: hidden;
     }
 
     .live-tracker__head{
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 8px;
-      font-size: .74rem;
+      font-size: .72rem;
       letter-spacing: .08em;
       text-transform: uppercase;
       color: rgba(255,215,0,.95);
-      margin-bottom: 6px;
+      margin: 2px 4px 8px;
+    }
+
+    .live-tracker__left{
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .live-tracker__dot{
@@ -188,22 +203,93 @@
       animation: trackerPulse 1.7s ease-in-out infinite;
     }
 
-    .live-tracker__text{
-      min-height: 42px;
-      color: rgba(241,245,249,.95);
-      font-size: .9rem;
-      line-height: 1.35;
-      transition: opacity .35s ease, transform .35s ease;
+    .live-tracker__count{
+      color: rgba(241,245,249,.8);
+      letter-spacing: .04em;
+      text-transform: none;
+      font-size: .72rem;
     }
 
-    .live-tracker__text.is-changing{
-      opacity: .08;
-      transform: translateY(-5px);
+    .chat-thread{
+      height: 138px;
+      padding: 2px 6px 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
     }
+
+    .chat-msg{
+      max-width: 82%;
+      padding: 7px 10px;
+      border-radius: 12px;
+      font-size: .81rem;
+      line-height: 1.3;
+      color: rgba(241,245,249,.96);
+      opacity: 0;
+      transform: translateY(8px) scale(.98);
+      animation: chatIn .25s ease forwards;
+      word-break: break-word;
+    }
+
+    .chat-msg.user{
+      align-self: flex-end;
+      background: linear-gradient(180deg, rgba(56,189,248,.32), rgba(30,64,175,.34));
+      border: 1px solid rgba(125,211,252,.32);
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-msg.host{
+      align-self: flex-start;
+      background: linear-gradient(180deg, rgba(37,99,235,.16), rgba(15,23,42,.75));
+      border: 1px solid rgba(255,215,0,.22);
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-typing{
+      max-width: 84px;
+      align-self: flex-start;
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(255,215,0,.2);
+      background: rgba(15,23,42,.8);
+    }
+
+    .chat-typing.is-visible{
+      display: inline-flex;
+    }
+
+    .typing-dot{
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(241,245,249,.9);
+      animation: typingDots 1s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(2){ animation-delay: .18s; }
+    .typing-dot:nth-child(3){ animation-delay: .34s; }
 
     @keyframes trackerPulse{
       0%, 100%{ transform: scale(1); }
       50%{ transform: scale(1.18); }
+    }
+
+    @keyframes chatIn{
+      to{
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes typingDots{
+      0%, 70%, 100%{ opacity: .28; transform: translateY(0); }
+      35%{ opacity: 1; transform: translateY(-2px); }
     }
 
     /* ===== CARD ===== */
@@ -211,7 +297,7 @@
       position: relative;
       padding: 26px 24px;
       border-radius: 1.2rem;
-      margin-top: 22px;
+      margin-top: 12px;
       text-align: left;
 
       /* 🔥 FONDO MEZCLADO CON LA IMAGEN */
@@ -442,9 +528,16 @@
 
     /* Ajuste mobile */
     @media (max-width: 420px){
+      .auth-shell{
+        align-items: flex-start;
+        padding-top: 14px;
+      }
       .auth-card{ padding: 18px 16px; }
       .brand-sub{ font-size: .9rem; }
-      .brand-logo{ width: min(360px, 90%); }
+      .brand-logo-frame{
+        width: min(360px, 90%);
+        height: clamp(140px, 30vh, 220px);
+      }
       .terms-modal__actions{ flex-direction: column; }
       .story-lane{ width: 56vw; }
       .story-lane-right{ display: none; }
@@ -470,21 +563,32 @@
 
       <!-- BRAND -->
       <div class="brand">
-        <img
-          src="assets/imagenes/mathome sin fondo.png"
-          alt="Mathome"
-          class="brand-logo"
-        />
+        <div class="brand-logo-frame">
+          <img
+            src="assets/imagenes/mathome sin fondo.png"
+            alt="Mathome"
+            class="brand-logo"
+          />
+        </div>
         <p class="brand-sub">Todo pasa en vivo.</p>
       </div>
 
       <div class="live-tracker" aria-live="polite">
         <div class="live-tracker__head">
-          <span class="live-tracker__dot"></span>
-          <span>Seguimiento en sala</span>
+          <div class="live-tracker__left">
+            <span class="live-tracker__dot"></span>
+            <span>Seguimiento en sala</span>
+          </div>
+          <span class="live-tracker__count" id="liveTrackerCount">127 conectados</span>
         </div>
-        <div class="live-tracker__text" id="liveTrackerText">
-          Cientos de usuarios conectados en tiempo real, pendientes del proximo giro.
+        <div class="chat-thread" id="liveTrackerThread">
+          <div class="chat-msg host">Ya casi inicia el giro de la suerte.</div>
+          <div class="chat-msg user">Estamos viendo peli y esperando ese giro.</div>
+          <div class="chat-typing" id="liveTrackerTyping" aria-hidden="true">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
         </div>
       </div>
 
@@ -720,27 +824,53 @@
     })();
 
     (function initLiveTracker() {
-      const tracker = document.getElementById('liveTrackerText');
-      if (!tracker) return;
+      const thread = document.getElementById('liveTrackerThread');
+      const typing = document.getElementById('liveTrackerTyping');
+      const count = document.getElementById('liveTrackerCount');
+      if (!thread || !typing || !count) return;
 
-      const feed = [
-        'En chat comentan la pelicula mientras esperan el giro de la suerte.',
-        'La sala sube de ritmo cuando anuncian que la ruleta arranca en breve.',
-        'Muchos entran por curiosidad y se quedan por el ambiente en vivo.',
-        'Hay expectativa por el proximo giro: todos atentos al contador.',
-        'Mensajes en vivo, reacciones y predicciones antes del resultado final.',
-        'Los nuevos usuarios leen el chat y se enganchan rapido a la dinamica.'
+      const queue = [
+        { side: 'host', text: 'Entramos en cuenta regresiva para girar.' },
+        { side: 'user', text: 'Activo, ya tengo mi numero listo.' },
+        { side: 'host', text: 'Mientras esperan, comenten su prediccion.' },
+        { side: 'user', text: 'Yo digo que hoy se prende la racha.' },
+        { side: 'host', text: 'Se abre sala completa en segundos.' },
+        { side: 'user', text: 'Con snacks y peli, no me pierdo este giro.' },
+        { side: 'host', text: 'Chat encendido. Alerta de giro inminente.' },
+        { side: 'user', text: 'Vamos con todo, que llegue la suerte.' }
       ];
 
       let i = 0;
+      let online = 127;
+
+      function pushMessage(item) {
+        const node = document.createElement('div');
+        node.className = `chat-msg ${item.side}`;
+        node.textContent = item.text;
+        thread.insertBefore(node, typing);
+
+        while (thread.querySelectorAll('.chat-msg').length > 5) {
+          const first = thread.querySelector('.chat-msg');
+          if (first) first.remove();
+        }
+
+        thread.scrollTop = thread.scrollHeight;
+      }
+
+      function randomCountDelta() {
+        return Math.floor(Math.random() * 5) - 1;
+      }
+
       setInterval(() => {
-        tracker.classList.add('is-changing');
+        typing.classList.add('is-visible');
         setTimeout(() => {
-          i = (i + 1) % feed.length;
-          tracker.textContent = feed[i];
-          tracker.classList.remove('is-changing');
-        }, 220);
-      }, 3600);
+          typing.classList.remove('is-visible');
+          pushMessage(queue[i]);
+          i = (i + 1) % queue.length;
+          online = Math.max(95, online + randomCountDelta());
+          count.textContent = `${online} conectados`;
+        }, 1200);
+      }, 2600);
     })();
   </script>
 
