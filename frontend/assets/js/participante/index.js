@@ -1,4 +1,4 @@
-// assets/js/participante/index.js
+﻿// assets/js/participante/index.js
 
 import { cargarMisNumerosResumen } from './misNumeros.js';
 import { cargarProgresoBono } from '../bonus.js';
@@ -6,7 +6,7 @@ import { cargarProgresoBono } from '../bonus.js';
 const API_URL = window.API_URL || '';
 
 // ================================
-// 👋 BIENVENIDA
+// ðŸ‘‹ BIENVENIDA
 // ================================
 function setBienvenida() {
   const titulo = document.getElementById('tituloBienvenida');
@@ -17,16 +17,16 @@ function setBienvenida() {
   try {
     const user = JSON.parse(raw);
     const nombre = user.nombre || user.name || '';
-    if (titulo) titulo.textContent = nombre ? `Hola ${nombre} 👋` : 'Hola 👋';
+    if (titulo) titulo.textContent = nombre ? `Hola ${nombre} ðŸ‘‹` : 'Hola ðŸ‘‹';
     if (subtitulo)
       subtitulo.textContent =
-        'Adquiere tus números, sube tu comprobante y espera la dinámica.';
+        'Adquiere tus nÃºmeros, sube tu comprobante y espera la dinÃ¡mica.';
   } catch {
   }
 }
 
 // ================================
-// 🎟️ TARJETAS DE SORTEO
+// ðŸŽŸï¸ TARJETAS DE SORTEO
 // ================================
 function renderSorteoCard(s) {
   const vendidos = s.ocupados ?? s.numeros_vendidos ?? 0;
@@ -43,7 +43,7 @@ function renderSorteoCard(s) {
   let estadoClass = 'status-open';
 
   if (porcentaje >= 100) {
-    estadoTxt = 'Listo para ruleta';
+    estadoTxt = 'Listo para resultado en vivo';
     estadoClass = 'status-closed';
   } else if (porcentaje >= 80) {
     estadoTxt = 'Casi lleno';
@@ -60,9 +60,9 @@ function renderSorteoCard(s) {
           <span class="status-badge ${estadoClass}">${estadoTxt}</span>
         </div>
 
-        <div class="sorteo-info">🎁 Premio: ${s.premio}</div>
-        <div class="sorteo-info">💵 Precio: $${precio}</div>
-        <div class="sorteo-info">🎟 ${vendidos} / ${total}</div>
+        <div class="sorteo-info">ðŸŽ Beneficio: ${s.premio}</div>
+        <div class="sorteo-info">ðŸ’µ Precio: $${precio}</div>
+        <div class="sorteo-info">ðŸŽŸ ${vendidos} / ${total}</div>
 
         <div class="progress-container">
           <div class="progress-bar" style="width:${porcentaje}%"></div>
@@ -71,8 +71,8 @@ function renderSorteoCard(s) {
         <div class="cta">
           ${
             porcentaje >= 100
-              ? `<a class="btn btn-secondary" href="ruleta-live.html?id=${s.id}">🎰 Ver ruleta</a>`
-              : `<a class="btn btn-primary" href="sorteo.html?id=${s.id}">Adquirir acceso</a>`
+              ? `<a class="btn btn-secondary" href="ruleta-live.html?id=${s.id}">ðŸŽ° Ver sorteo en vivo</a>`
+              : `<a class="btn btn-primary" href="sorteo.html?id=${s.id}">Participar ahora</a>`
           }
         </div>
       </div>
@@ -90,7 +90,7 @@ function renderSorteos(lista) {
 }
 
 // ================================
-// 📊 STATS
+// ðŸ“Š STATS
 // ================================
 async function cargarStatsSorteos() {
   const el = document.getElementById('statSorteosActivos');
@@ -102,7 +102,7 @@ async function cargarStatsSorteos() {
     el.textContent = String(count);
     el.style.opacity = '1';
   } catch {
-    // Error: mostrar 0 atenuado, no guión
+    // Error: mostrar 0 atenuado, no guiÃ³n
     if (el) {
       el.textContent = '0';
       el.style.opacity = '0.5';
@@ -112,30 +112,35 @@ async function cargarStatsSorteos() {
 
 async function cargarSorteosActivos() {
   const cont = document.getElementById('sorteosActivos');
-  cont.innerHTML = '<p class="loading">Cargando sorteos…</p>';
+  cont.innerHTML = '<p class="loading">Cargando sorteosâ€¦</p>';
 
   try {
     const res = await fetch(`${API_URL}/api/sorteos`);
     const data = await res.json();
     renderSorteos(data.filter(s => s.estado !== 'finalizado'));
   } catch {
-    cont.innerHTML = '<p class="error">No se pudieron cargar los sorteos.</p>';
+    cont.innerHTML = '<p class="error">No se pudieron cargar las rondas.</p>';
   }
 }
 
 // ================================
-// 🚀 INIT
+// ðŸš€ INIT
 // ================================
 document.addEventListener('DOMContentLoaded', async () => {
   setBienvenida();
   cargarStatsSorteos();
 
-  // 🔹 Esto llena “Números adquiridos”
+  // ðŸ”¹ Esto llena â€œNÃºmeros adquiridosâ€
   await cargarMisNumerosResumen();
 
-  // 🔹 SOLO esto maneja el bonus (mini o grande)
+  // ðŸ”¹ SOLO esto maneja el bonus (mini o grande)
   cargarProgresoBono();
 
   cargarSorteosActivos();
 });
+
+
+
+
+
 

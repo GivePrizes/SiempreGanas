@@ -1,4 +1,4 @@
-/**
+﻿/**
  * welcomeModal.js
  *
  * Modal promocional exclusivo para participantes.
@@ -14,7 +14,7 @@ class WelcomeModal {
     this.modalId = 'welcomeModalContainer';
     this.forceShow = options.forceShow === true;
     this.showDelayMs = 2000;
-    this.ctaUrl = 'https://siempre-ganas.vercel.app/participante/sorteo.html?id=42';
+    this.ctaUrl = '/participante/sorteo.html?id=42';
     this.redirectInProgress = false;
     this.showTimeoutId = null;
     this.hideTimeoutId = null;
@@ -68,7 +68,7 @@ class WelcomeModal {
           <div class="welcome-modal-text">
             <h1 id="welcomeModalTitle" class="welcome-modal-title">Participa en sorteos disponibles</h1>
             <p class="welcome-modal-subtitle">Promocion valida hasta agotar cupos. Aplican terminos y condiciones.</p>
-            <button class="welcome-modal-cta" type="button">QUIERO MI CUPO AHORA</button>
+            <button class="welcome-modal-cta" type="button">ENTRA AL MOMENTO</button>
             <p class="welcome-modal-legal">Promocion sujeta a terminos y condiciones.</p>
           </div>
         </div>
@@ -208,3 +208,6 @@ function showWelcomeModal(forceShow = false) {
 
   welcomeModalInstance.show();
 }
+
+
+

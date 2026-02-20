@@ -1,4 +1,4 @@
-// assets/js/admin/crear-sorteo.js
+﻿// assets/js/admin/crear-sorteo.js
 
 const API_URL = window.API_URL; // viene de config.js
 
@@ -25,7 +25,7 @@ function initPreviewImagen() {
     const file = input.files[0];
 
     if (!file) {
-      // si no hay archivo y estamos en edición, mostramos la imagen actual (si existe)
+      // si no hay archivo y estamos en ediciÃ³n, mostramos la imagen actual (si existe)
       if (modoEdicion && imagenActualUrl) {
         preview.innerHTML = `<img src="${imagenActualUrl}" alt="Imagen actual del sorteo">`;
       } else {
@@ -36,19 +36,19 @@ function initPreviewImagen() {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      preview.innerHTML = `<img src="${e.target.result}" alt="Previsualización">`;
+      preview.innerHTML = `<img src="${e.target.result}" alt="PrevisualizaciÃ³n">`;
     };
     reader.readAsDataURL(file);
   });
 }
 
 /**
- * Cargar datos de un sorteo existente para modo EDICIÓN
+ * Cargar datos de un sorteo existente para modo EDICIÃ“N
  */
 async function cargarSorteoParaEditar(id) {
   const token = localStorage.getItem('token');
   if (!token) {
-    mostrarToast('Sesión no válida. Inicia sesión nuevamente.');
+    mostrarToast('SesiÃ³n no vÃ¡lida. Inicia sesiÃ³n nuevamente.');
     return;
   }
 
@@ -61,7 +61,7 @@ async function cargarSorteoParaEditar(id) {
 
     if (!resp.ok) {
       console.error('Error cargando sorteo para editar:', resp.status);
-      mostrarToast('No se pudo cargar el sorteo para edición.');
+      mostrarToast('No se pudo cargar el sorteo para ediciÃ³n.');
       return;
     }
 
@@ -91,15 +91,15 @@ async function cargarSorteoParaEditar(id) {
       }
     }
 
-    // Si quieres, puedes deshabilitar el input de imagen en edición (por ahora no manejamos cambio de imagen)
+    // Si quieres, puedes deshabilitar el input de imagen en ediciÃ³n (por ahora no manejamos cambio de imagen)
     const inputImagen = document.getElementById('imagen');
     if (inputImagen) {
-      // Opcional: dejarlo deshabilitado en edición
+      // Opcional: dejarlo deshabilitado en ediciÃ³n
       // inputImagen.disabled = true;
-      // o mostrar un texto indicando que la imagen no se cambia aún
+      // o mostrar un texto indicando que la imagen no se cambia aÃºn
     }
 
-    // Cambiar el título del formulario y el texto del botón para indicar modo edición
+    // Cambiar el tÃ­tulo del formulario y el texto del botÃ³n para indicar modo ediciÃ³n
     const titulo = document.querySelector('h2');
     if (titulo) {
       titulo.textContent = 'Editar sorteo';
@@ -110,7 +110,7 @@ async function cargarSorteoParaEditar(id) {
     }
   } catch (err) {
     console.error(err);
-    mostrarToast('Error de conexión al cargar el sorteo.');
+    mostrarToast('Error de conexiÃ³n al cargar el sorteo.');
   }
 }
 
@@ -131,11 +131,11 @@ async function enviarFormulario(e) {
 
   const token = localStorage.getItem('token');
   if (!token) {
-    mostrarToast('Sesión no válida. Inicia sesión nuevamente.');
+    mostrarToast('SesiÃ³n no vÃ¡lida. Inicia sesiÃ³n nuevamente.');
     return;
   }
 
-  // 🔹 MODO CREAR (sin id en la URL)
+  // ðŸ”¹ MODO CREAR (sin id en la URL)
   if (!modoEdicion) {
     const formData = new FormData();
     formData.append('descripcion', descripcion);
@@ -172,13 +172,13 @@ async function enviarFormulario(e) {
       }, 1200);
     } catch (err) {
       console.error(err);
-      mostrarToast('Error de conexión al crear el sorteo.');
+      mostrarToast('Error de conexiÃ³n al crear el sorteo.');
     }
 
     return;
   }
 
-  // 🔹 MODO EDICIÓN (hay id en la URL → PUT /api/sorteos/:id)
+  // ðŸ”¹ MODO EDICIÃ“N (hay id en la URL â†’ PUT /api/sorteos/:id)
   try {
     const formData = new FormData();
     formData.append('descripcion', descripcion);
@@ -188,17 +188,17 @@ async function enviarFormulario(e) {
     formData.append('fecha_sorteo', fecha_sorteo);
     formData.append('estado', estadoActual);
 
-    // Si el admin seleccionó una NUEVA imagen, la enviamos
+    // Si el admin seleccionÃ³ una NUEVA imagen, la enviamos
     if (imagenInput.files[0]) {
       formData.append('imagen', imagenInput.files[0]);
     }
-    // Si no hay archivo nuevo, el backend mantendrá la imagen_url actual
+    // Si no hay archivo nuevo, el backend mantendrÃ¡ la imagen_url actual
 
     const resp = await fetch(`${API_URL}/api/sorteos/${sorteoId}`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${token}`,
-        // 🚫 No pongas 'Content-Type' aquí, el navegador lo arma para multipart/form-data
+        // ðŸš« No pongas 'Content-Type' aquÃ­, el navegador lo arma para multipart/form-data
       },
       body: formData,
     });
@@ -217,7 +217,7 @@ async function enviarFormulario(e) {
     }, 1200);
   } catch (err) {
     console.error(err);
-    mostrarToast('Error de conexión al actualizar el sorteo.');
+    mostrarToast('Error de conexiÃ³n al actualizar el sorteo.');
   }
 
 }
@@ -239,3 +239,5 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', enviarFormulario);
   }
 });
+
+

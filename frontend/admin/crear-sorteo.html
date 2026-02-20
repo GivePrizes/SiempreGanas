@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="icon" type="image/png" href="../assets/imagenes/logoparaemoji.png">
-  <title>Siempre Gana — Crear sorteo</title>
+  <link rel="icon" type="image/png" href="../assets/imagenes/mathome-favicon.png">
+  <title>Mathome â€” Crear sorteo</title>
 
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
@@ -16,7 +16,7 @@
     <header class="admin-header">
       <div class="admin-header-left">
         <h1>Crear nuevo sorteo</h1>
-        <span class="admin-subtitle">Configura el premio, los números y la imagen del sorteo.</span>
+        <span class="admin-subtitle">Configura el premio, los nÃºmeros y la imagen del sorteo.</span>
       </div>
       <div class="admin-header-right">
         <button type="button" class="btn btn-secondary"
@@ -42,7 +42,7 @@
             <div class="form-section-title">Imagen del sorteo</div>
             <div class="image-upload">
               <label for="imagen">Selecciona una imagen</label>
-              <small>Formato recomendado: JPG o PNG, proporción 16:9.</small>
+              <small>Formato recomendado: JPG o PNG, proporciÃ³n 16:9.</small>
               <input type="file" id="imagen" name="imagen" accept="image/*">
               <div id="previewImagen" class="image-preview">
                 <span>Sin imagen seleccionada</span>
@@ -50,30 +50,30 @@
             </div>
           </div>
 
-          <!-- Columna derecha: campos de texto/números -->
+          <!-- Columna derecha: campos de texto/nÃºmeros -->
           <div>
-            <div class="form-section-title">Información general</div>
+            <div class="form-section-title">InformaciÃ³n general</div>
 
             <div class="form-group">
-              <label for="descripcion">Descripción del sorteo</label>
+              <label for="descripcion">DescripciÃ³n del sorteo</label>
               <input type="text" id="descripcion" name="descripcion"
                      placeholder="Ej: Pantalla Netflix / iPhone 15 Pro" required>
             </div>
 
             <div class="form-group">
-              <label for="premio">Premio</label>
+              <label for="premio">Beneficio</label>
               <input type="text" id="premio" name="premio"
                      placeholder="Ej: 1 mes de Netflix, iPhone 15 Pro, etc." required>
             </div>
 
             <div class="form-row-inline">
               <div class="form-group">
-                <label for="cantidad_numeros">Cantidad de números</label>
+                <label for="cantidad_numeros">Cantidad de nÃºmeros</label>
                 <input type="number" id="cantidad_numeros" name="cantidad_numeros"
                        min="1" step="1" required>
               </div>
               <div class="form-group">
-                <label for="precio_numero">Precio por número</label>
+                <label for="precio_numero">Precio por nÃºmero</label>
                 <input type="number" id="precio_numero" name="precio_numero"
                        min="0" step="0.01" required>
               </div>
@@ -104,4 +104,8 @@
   <script type="module" src="../assets/js/admin/crear-sorteo.js"></script>
 </body>
 </html>
+
+
+
+
 

@@ -1,7 +1,7 @@
-// assets/js/participante/sorteo-detalle.js
+﻿// assets/js/participante/sorteo-detalle.js
 
 const API_URL = window.API_URL || ''; // viene de config.js
-// IMPORTANTE: el chat usa módulos ES
+// IMPORTANTE: el chat usa mÃ³dulos ES
 import { initChat } from '../chat/index.js';
 
 // obtener sorteoId de la URL
@@ -67,7 +67,7 @@ function mostrarToast(msg) {
 
 function actualizarResumen() {
   if (seleccionados.length === 0) {
-    resumenNumeros.textContent = 'Ninguno todavía';
+    resumenNumeros.textContent = 'Ninguno todavÃ­a';
     resumenTotal.textContent = '$0';
   } else {
     resumenNumeros.textContent = seleccionados.join(', ');
@@ -79,11 +79,11 @@ function actualizarResumen() {
 
 }
 
-// habilitar/deshabilitar botón confirmar según selección y comprobante
+// habilitar/deshabilitar botÃ³n confirmar segÃºn selecciÃ³n y comprobante
 function actualizarEstadoConfirmar() {
   if (!btnConfirmar) return;
 
-  // Si el sorteo está lleno, se mantiene bloqueado
+  // Si el sorteo estÃ¡ lleno, se mantiene bloqueado
   if (sorteoActual && (sorteoActual.estado === 'lleno')) {
     btnConfirmar.disabled = true;
     btnConfirmar.textContent = 'Cupo lleno';
@@ -95,8 +95,8 @@ function actualizarEstadoConfirmar() {
 
   btnConfirmar.disabled = !listo;
   btnConfirmar.textContent = listo
-    ? 'Confirmar participación'
-    : 'Selecciona números y sube comprobante';
+    ? 'Confirmar participaciÃ³n'
+    : 'Selecciona nÃºmeros y sube comprobante';
 }
 
 
@@ -118,11 +118,11 @@ function renderNumeros() {
     div.dataset.numero = n;
 
     if (ocupado) {
-      // estilo de número ya vendido / ocupado
+      // estilo de nÃºmero ya vendido / ocupado
       div.classList.add('numero-bola--ocupado');
       div.setAttribute('aria-disabled', 'true');
     } else {
-      // si ese número ya está en "seleccionados", marcarlo
+      // si ese nÃºmero ya estÃ¡ en "seleccionados", marcarlo
       if (seleccionados.includes(n)) {
         div.classList.add('numero-bola--seleccionado');
       }
@@ -143,17 +143,17 @@ function actualizarBloqueoPorMaximo() {
 
   const maxAlcanzado = seleccionados.length >= MAX_NUMEROS_POR_COMPRA;
 
-  // Recorremos todos los números pintados
+  // Recorremos todos los nÃºmeros pintados
   gridNumeros.querySelectorAll('.numero-bola').forEach((el) => {
     const n = Number(el.dataset.numero);
 
     const ocupado = el.classList.contains('numero-bola--ocupado');
     const seleccionado = el.classList.contains('numero-bola--seleccionado');
 
-    // Si está ocupado, no tocamos nada
+    // Si estÃ¡ ocupado, no tocamos nada
     if (ocupado) return;
 
-    // Si se alcanzó el max, apagamos los NO seleccionados
+    // Si se alcanzÃ³ el max, apagamos los NO seleccionados
     if (maxAlcanzado && !seleccionado) {
       el.classList.add('numero-bola--bloqueado');
       el.setAttribute('aria-disabled', 'true');
@@ -165,7 +165,7 @@ function actualizarBloqueoPorMaximo() {
 }
 
 
-// --- función para copiar Nequi (global para el onclick del HTML) ---
+// --- funciÃ³n para copiar Nequi (global para el onclick del HTML) ---
 function copiarNequi() {
   const numero = '3123450890';
 
@@ -173,10 +173,10 @@ function copiarNequi() {
     navigator.clipboard
       .writeText(numero)
       .then(() => {
-        mostrarToast('Número Nequi copiado ✅');
+        mostrarToast('NÃºmero Nequi copiado âœ…');
       })
       .catch(() => {
-        alert('No se pudo copiar automáticamente, pero el número es: ' + numero);
+        alert('No se pudo copiar automÃ¡ticamente, pero el nÃºmero es: ' + numero);
       });
   } else {
     // Fallback para navegadores antiguos / contextos no seguros
@@ -186,7 +186,7 @@ function copiarNequi() {
     inputOculto.select();
     document.execCommand('copy');
     document.body.removeChild(inputOculto);
-    alert('Número Nequi copiado ✅');
+    alert('NÃºmero Nequi copiado âœ…');
   }
 }
 
@@ -195,18 +195,18 @@ window.copiarNequi = copiarNequi;
 
 
 function toggleNumero(numero, el) {
-  // por seguridad: si está ocupado, no hacer nada
+  // por seguridad: si estÃ¡ ocupado, no hacer nada
   if (el.classList.contains('numero-bola--ocupado')) return;
 
   const idx = seleccionados.indexOf(numero);
 
   if (idx >= 0) {
-    // quitar selección
+    // quitar selecciÃ³n
     seleccionados.splice(idx, 1);
     el.classList.remove('numero-bola--seleccionado');
   } else {
     if (seleccionados.length >= MAX_NUMEROS_POR_COMPRA) {
-      mostrarToast(`Máximo ${MAX_NUMEROS_POR_COMPRA} números por compra.`);
+      mostrarToast(`MÃ¡ximo ${MAX_NUMEROS_POR_COMPRA} nÃºmeros por compra.`);
       return;
     }
     seleccionados.push(numero);
@@ -227,7 +227,7 @@ function fileToBase64(file) {
   });
 }
 
-// --- cargar mis números en este sorteo ---
+// --- cargar mis nÃºmeros en esta ronda ---
 async function cargarMisNumerosDelSorteo() {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -254,7 +254,7 @@ async function cargarMisNumerosDelSorteo() {
       if (btnMisNumeros) btnMisNumeros.classList.add('hidden');
       if (chatInput) chatInput.disabled = true;
       if (chatSend) chatSend.disabled = true;
-      if (chatHint) chatHint.textContent = 'Participa para unirte a la conversación.';
+      if (chatHint) chatHint.textContent = 'Participa para unirte a la conversaciÃ³n.';
       return;
     }
 
@@ -266,7 +266,7 @@ async function cargarMisNumerosDelSorteo() {
     if (chatHint) chatHint.textContent = '';
     nums.sort((a, b) => Number(a) - Number(b));
 
-    misNumerosEnSorteoTexto.textContent = `Aprobados: ${nums.length} número(s)`;
+    misNumerosEnSorteoTexto.textContent = `Aprobados: ${nums.length} nÃºmero(s)`;
 
     misNumerosEnSorteoChips.innerHTML = nums.map(n => `
       <span class="chip-numero">#${n}</span>
@@ -289,8 +289,8 @@ async function cargarSorteo() {
   }
 
   if (!sorteoId) {
-    tituloSorteo.textContent = 'Sorteo no especificado';
-    subtituloSorteo.textContent = 'Vuelve al panel y entra desde un sorteo válido.';
+    tituloSorteo.textContent = 'Ronda no especificada';
+    subtituloSorteo.textContent = 'Vuelve al panel y entra desde una ronda valida.';
     return;
   }
 
@@ -299,7 +299,7 @@ async function cargarSorteo() {
     const data = await res.json();
 
     if (!res.ok) {
-      tituloSorteo.textContent = data.error || 'Error al cargar el sorteo';
+      tituloSorteo.textContent = data.error || 'Error al cargar la ronda';
       return;
     }
 
@@ -311,7 +311,7 @@ async function cargarSorteo() {
 
     // Hero
     tituloSorteo.textContent = sorteoActual.descripcion;
-    tituloPremio.textContent = 'Sorteo: ' + sorteoActual.descripcion;
+    tituloPremio.textContent = 'Ronda: ' + sorteoActual.descripcion;
     textoPremio.textContent = sorteoActual.premio;
     textoPrecio.textContent = `$${precioNumero.toLocaleString('es-CO')}`;
     textoCantidad.textContent = sorteoActual.cantidad_numeros;
@@ -331,7 +331,7 @@ async function cargarSorteo() {
 
     if (textoCupos) {
       if (faltan <= 0) {
-        textoCupos.innerHTML = 'Sorteo completo · listo para ruleta';
+        textoCupos.innerHTML = 'Ronda completa · lista para resultado en vivo';
       } else {
         textoCupos.innerHTML = `Quedan <strong>${faltan}</strong> cupos disponibles`;
       }
@@ -339,7 +339,7 @@ async function cargarSorteo() {
 
     if (faltan <= 0 || sorteoActual.estado === 'lleno') {
       subtituloSorteo.textContent =
-        'Este sorteo ya está lleno. La ruleta puede activarse en cualquier momento.';
+        'Esta ronda ya estÃ¡ completa. El resultado en vivo puede activarse en cualquier momento.';
       if (btnConfirmar) {
         btnConfirmar.disabled = true;
         await cargarMisNumerosDelSorteo();
@@ -350,7 +350,7 @@ async function cargarSorteo() {
     renderNumeros();
     actualizarResumen();
 
-    // === INICIALIZA CHAT AQUÍ (al final del try) ===
+    // === INICIALIZA CHAT AQUÃ (al final del try) ===
     if (token && sorteoId) {
       const chatContainer = document.getElementById('chatContainer');
       if (chatContainer) {
@@ -358,18 +358,18 @@ async function cargarSorteo() {
         try {
           initChat({ sorteoId, token });
         } catch (err) {
-          document.getElementById('chatHint').textContent = 'Error al cargar chat – recarga página';
+          document.getElementById('chatHint').textContent = 'Error al cargar chat. Recarga la pagina.';
         }
       }
     } else {
       const hint = document.getElementById('chatHint');
       if (hint) {
-        hint.textContent = token ? 'Sorteo no válido' : 'Inicia sesión para chatear';
+        hint.textContent = token ? 'Ronda no valida' : 'Inicia sesion para chatear';
       }
     }
 
   } catch (err) {
-    tituloSorteo.textContent = 'Error de conexión al cargar el sorteo.';
+    tituloSorteo.textContent = 'Error de conexiÃ³n al cargar el sorteo.';
   }
 }
 
@@ -378,7 +378,7 @@ if (inputComprobante) {
   let _currentObjectUrl = null;
   inputComprobante.addEventListener('change', () => {
     const file = inputComprobante.files[0];
-    // limpiar url anterior si había
+    // limpiar url anterior si habÃ­a
     if (_currentObjectUrl) {
       URL.revokeObjectURL(_currentObjectUrl);
       _currentObjectUrl = null;
@@ -392,7 +392,7 @@ if (inputComprobante) {
   }
 
 
-    // Validaciones básicas: tipo y tamaño
+    // Validaciones bÃ¡sicas: tipo y tamaÃ±o
     if (!file.type || !file.type.startsWith('image/')) {
       mostrarToast('Selecciona un archivo de imagen (jpg, png, ...).');
       inputComprobante.value = '';
@@ -403,7 +403,7 @@ if (inputComprobante) {
 
     const maxBytes = 2 * 1024 * 1024; // 2 MB
     if (file.size > maxBytes) {
-      mostrarToast('El archivo es demasiado grande. Máx 2 MB.');
+      mostrarToast('El archivo es demasiado grande. MÃ¡x 2 MB.');
       inputComprobante.value = '';
       previewComprobante.classList.add('oculto');
       imgPreview.src = '';
@@ -420,7 +420,7 @@ if (inputComprobante) {
   });
 }
 
-// --- confirmar participación ---
+// --- confirmar participaciÃ³n ---
 if (btnConfirmar) {
   btnConfirmar.addEventListener('click', async () => {
     const token = localStorage.getItem('token');
@@ -432,12 +432,12 @@ if (btnConfirmar) {
     }
 
     if (!sorteoActual) {
-      mostrarToast('El sorteo no está listo todavía.');
+      mostrarToast('La ronda no esta lista todavia.');
       return;
     }
 
     if (seleccionados.length === 0) {
-      mostrarToast('Selecciona al menos un número antes de confirmar.');
+      mostrarToast('Selecciona al menos un nÃºmero antes de confirmar.');
       return;
     }
 
@@ -455,7 +455,7 @@ if (btnConfirmar) {
     const maxBytes = 2 * 1024 * 1024; // 2 MB
 
     if (file.size > maxBytes) {
-      mostrarToast('El comprobante es demasiado grande. Máx 2 MB.');
+      mostrarToast('El comprobante es demasiado grande. MÃ¡x 2 MB.');
       return;
     }
 
@@ -463,10 +463,10 @@ if (btnConfirmar) {
     btnConfirmar.textContent = 'Enviando...';
 
     try {
-      // 1️⃣ convertir archivo a base64 (data URL)
+      // 1ï¸âƒ£ convertir archivo a base64 (data URL)
       const base64 = await fileToBase64(file);
 
-      // 2️⃣ armar body JSON como lo espera el backend
+      // 2ï¸âƒ£ armar body JSON como lo espera el backend
       const body = {
         sorteo_id: Number(sorteoId),
         numeros: seleccionados,
@@ -485,15 +485,15 @@ if (btnConfirmar) {
       const data = await res.json();
 
       if (!res.ok) {
-        mostrarToast(data.error || data.message || 'Error al guardar tu participación.');
+        mostrarToast(data.error || data.message || 'Error al guardar tu participaciÃ³n.');
         btnConfirmar.disabled = false;
-        btnConfirmar.textContent = 'Confirmar participación';
+        btnConfirmar.textContent = 'Confirmar participaciÃ³n';
         return;
       }
 
-      mostrarToast('¡Listo! Tu participación quedó registrada como pendiente ✅');
+      mostrarToast('Â¡Listo! Tu participaciÃ³n quedÃ³ registrada como pendiente âœ…');
 
-      // reset selección
+      // reset selecciÃ³n
       seleccionados = [];
       inputComprobante.value = '';
       previewComprobante.classList.add('oculto');
@@ -507,9 +507,9 @@ if (btnConfirmar) {
         location.href = 'mis-numeros.html';
       }, 2000);
     } catch (err) {
-      mostrarToast('Error de conexión al enviar tu participación.');
+      mostrarToast('Error de conexiÃ³n al enviar tu participaciÃ³n.');
       btnConfirmar.disabled = false;
-      btnConfirmar.textContent = 'Confirmar participación';
+      btnConfirmar.textContent = 'Confirmar participaciÃ³n';
     }
   });
 }
@@ -519,6 +519,13 @@ document.addEventListener('DOMContentLoaded', () => {
   cargarSorteo();
   cargarMisNumerosDelSorteo();
 });
+
+
+
+
+
+
+
 
 
 

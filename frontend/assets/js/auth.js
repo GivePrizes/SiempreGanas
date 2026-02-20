@@ -1,4 +1,4 @@
-// --- Cambio entre login / registro ---
+﻿// --- Cambio entre login / registro ---
 
 function showLogin() {
   const loginForm = document.getElementById('loginForm');
@@ -21,7 +21,7 @@ function showRegistro() {
 // --- Login ---
 
 async function login() {
-  const email = document.getElementById('loginEmail')?.value;
+  const email = document.getElementById('loginEmail')?.value?.trim().toLowerCase();
   const password = document.getElementById('loginPass')?.value;
 
   try {
@@ -45,22 +45,22 @@ async function login() {
         ? 'admin/panel.html'
         : 'participante/dashboard.html';
 
-      // Redirección según rol (con delay mayor para permitir ver bien el modal)
+      // RedirecciÃ³n segÃºn rol (con delay mayor para permitir ver bien el modal)
       setTimeout(() => {
         location.href = redirectUrl;
       }, 7000);
     } else {
-      alert('❌ ' + data.message);
+      alert('âŒ ' + data.message);
     }
   } catch (err) {
-    alert('❌ Error de conexión');
+    alert('âŒ Error de conexiÃ³n');
   }
 }
 
 // --- Validaciones ---
 
 function nombreValido(nombre) {
-  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/.test(nombre)) return false;
+  if (!/^[a-zA-ZÃ¡Ã©Ã­Ã³ÃºÃÃ‰ÃÃ“ÃšÃ±Ã‘ ]+$/.test(nombre)) return false;
 
   const partes = nombre.split(" ").filter(p => p.length > 0);
   if (partes.length < 2) return false;
@@ -104,7 +104,7 @@ function aliasValido(alias) {
 
 async function registro() {
   const nombre   = document.getElementById('regNombre')?.value.trim();
-  const email    = document.getElementById('regEmail')?.value.trim();
+  const email    = document.getElementById('regEmail')?.value?.trim().toLowerCase();
   const telefono = document.getElementById('regTelefono')?.value.trim();
   const alias    = document.getElementById('regAlias')?.value.trim();
   const password = document.getElementById('regPass')?.value;
@@ -114,29 +114,29 @@ async function registro() {
   const errorAlias = document.getElementById('errorAlias') || null;
 
   if (!nombreValido(nombre)) {
-    return alert("❌ Ingresa tu nombre real (mínimo nombre y apellido).");
+    return alert("âŒ Ingresa tu nombre real (mÃ­nimo nombre y apellido).");
   }
 
   if (!correoValido(email)) {
-    return alert("❌ Ingresa un correo válido.");
+    return alert("âŒ Ingresa un correo vÃ¡lido.");
   }
 
   if (!telefonoValido(telefono)) {
-    return alert("❌ Ingresa un número de teléfono válido (mínimo 10 dígitos).");
+    return alert("âŒ Ingresa un nÃºmero de telÃ©fono vÃ¡lido (mÃ­nimo 10 dÃ­gitos).");
   }
 
   if (!aliasValido(alias)) {
-    if (errorAlias) errorAlias.textContent = 'Nombre público inválido. Usa 3–20 letras, números o _';
-    return alert('❌ Nombre público inválido. Usa 3–20 letras, números o _.');
+    if (errorAlias) errorAlias.textContent = 'Nombre pÃºblico invÃ¡lido. Usa 3â€“20 letras, nÃºmeros o _';
+    return alert('âŒ Nombre pÃºblico invÃ¡lido. Usa 3â€“20 letras, nÃºmeros o _.');
   }
 
   if (password !== confirm) {
-    return alert('❌ Contraseñas no coinciden');
+    return alert('âŒ ContraseÃ±as no coinciden');
   }
 
   if (!termsAccepted) {
-    if (errorTerms) errorTerms.textContent = 'Debes aceptar los términos para continuar.';
-    return alert('❌ Debes aceptar los términos y condiciones.');
+    if (errorTerms) errorTerms.textContent = 'Debes aceptar los tÃ©rminos para continuar.';
+    return alert('âŒ Debes aceptar los tÃ©rminos y condiciones.');
   }
 
   try {
@@ -157,15 +157,15 @@ async function registro() {
         showWelcomeModal();
       }
       
-      // Redirección con delay mayor
+      // RedirecciÃ³n con delay mayor
       setTimeout(() => {
         location.href = 'participante/dashboard.html';
       }, 7000);
     } else {
-      alert('❌ ' + data.message);
+      alert('âŒ ' + data.message);
     }
   } catch (err) {
-    alert('❌ Error de conexión');
+    alert('âŒ Error de conexiÃ³n');
   }
 }
 
@@ -178,7 +178,7 @@ function logout() {
   location.href = '../index.html';
 }
 
-// --- Validación en vivo SOLO si existe el formulario de registro ---
+// --- ValidaciÃ³n en vivo SOLO si existe el formulario de registro ---
 
 document.addEventListener('DOMContentLoaded', () => {
   const inputNombre   = document.getElementById('regNombre');
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
       inputNombre.classList.add('input-error');
       inputNombre.classList.remove('input-ok');
     } else {
-      if (errorNombre) errorNombre.textContent = '✓ Nombre válido';
+      if (errorNombre) errorNombre.textContent = 'âœ“ Nombre vÃ¡lido';
       inputNombre.classList.add('input-ok');
       inputNombre.classList.remove('input-error');
     }
@@ -224,11 +224,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (errorEmail) errorEmail.textContent = '';
       inputEmail.classList.remove('input-error', 'input-ok');
     } else if (!correoValido(valor)) {
-      if (errorEmail) errorEmail.textContent = 'Correo no válido.';
+      if (errorEmail) errorEmail.textContent = 'Correo no vÃ¡lido.';
       inputEmail.classList.add('input-error');
       inputEmail.classList.remove('input-ok');
     } else {
-      if (errorEmail) errorEmail.textContent = '✓ Correo válido';
+      if (errorEmail) errorEmail.textContent = 'âœ“ Correo vÃ¡lido';
       inputEmail.classList.add('input-ok');
       inputEmail.classList.remove('input-error');
     }
@@ -240,11 +240,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (errorTelefono) errorTelefono.textContent = '';
       inputTelefono.classList.remove('input-error', 'input-ok');
     } else if (!telefonoValido(valor)) {
-      if (errorTelefono) errorTelefono.textContent = 'Mínimo 10 dígitos, solo números.';
+      if (errorTelefono) errorTelefono.textContent = 'MÃ­nimo 10 dÃ­gitos, solo nÃºmeros.';
       inputTelefono.classList.add('input-error');
       inputTelefono.classList.remove('input-ok');
     } else {
-      if (errorTelefono) errorTelefono.textContent = '✓ Teléfono válido';
+      if (errorTelefono) errorTelefono.textContent = 'âœ“ TelÃ©fono vÃ¡lido';
       inputTelefono.classList.add('input-ok');
       inputTelefono.classList.remove('input-error');
     }
@@ -257,11 +257,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (errorAlias) errorAlias.textContent = '';
         inputAlias.classList.remove('input-error', 'input-ok');
       } else if (!aliasValido(valor)) {
-        if (errorAlias) errorAlias.textContent = '3–20 letras, números o _';
+        if (errorAlias) errorAlias.textContent = '3â€“20 letras, nÃºmeros o _';
         inputAlias.classList.add('input-error');
         inputAlias.classList.remove('input-ok');
       } else {
-        if (errorAlias) errorAlias.textContent = '✓ Nombre público válido';
+        if (errorAlias) errorAlias.textContent = 'âœ“ Nombre pÃºblico vÃ¡lido';
         inputAlias.classList.add('input-ok');
         inputAlias.classList.remove('input-error');
       }
@@ -274,11 +274,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (errorPass) errorPass.textContent = '';
       inputPass.classList.remove('input-error', 'input-ok');
     } else if (valor.length < 6) {
-      if (errorPass) errorPass.textContent = 'Mínimo 6 caracteres.';
+      if (errorPass) errorPass.textContent = 'MÃ­nimo 6 caracteres.';
       inputPass.classList.add('input-error');
       inputPass.classList.remove('input-ok');
     } else {
-      if (errorPass) errorPass.textContent = '✓ Contraseña aceptable';
+      if (errorPass) errorPass.textContent = 'âœ“ ContraseÃ±a aceptable';
       inputPass.classList.add('input-ok');
       inputPass.classList.remove('input-error');
     }
@@ -290,11 +290,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (errorPass2) errorPass2.textContent = '';
       inputPass2.classList.remove('input-error', 'input-ok');
     } else if (valor !== inputPass.value) {
-      if (errorPass2) errorPass2.textContent = 'Las contraseñas no coinciden.';
+      if (errorPass2) errorPass2.textContent = 'Las contraseÃ±as no coinciden.';
       inputPass2.classList.add('input-error');
       inputPass2.classList.remove('input-ok');
     } else {
-      if (errorPass2) errorPass2.textContent = '✓ Coinciden';
+      if (errorPass2) errorPass2.textContent = 'âœ“ Coinciden';
       inputPass2.classList.add('input-ok');
       inputPass2.classList.remove('input-error');
     }
@@ -303,14 +303,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (inputTerms) {
     inputTerms.addEventListener('change', () => {
       if (!inputTerms.checked) {
-        if (errorTerms) errorTerms.textContent = 'Debes aceptar los términos para continuar.';
+        if (errorTerms) errorTerms.textContent = 'Debes aceptar los tÃ©rminos para continuar.';
       } else {
         if (errorTerms) errorTerms.textContent = '';
       }
     });
   }
 
-  // --- Modal términos ---
+  // --- Modal tÃ©rminos ---
   const termsModal = document.getElementById('termsModal');
   const openTermsBtn = document.getElementById('openTermsModal');
   const acceptTermsBtn = document.getElementById('termsAcceptBtn');
@@ -350,4 +350,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape') closeTermsModal();
   });
 });
+
 

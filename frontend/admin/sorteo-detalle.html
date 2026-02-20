@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="icon" type="image/png" href="../assets/imagenes/logoparaemoji.png">
-  <title>Siempre Gana — Sorteo Admin</title>
+  <link rel="icon" type="image/png" href="../assets/imagenes/mathome-favicon.png">
+  <title>Mathome â€” Sorteo Admin</title>
 
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
@@ -16,28 +16,28 @@
 
     <header class="admin-header">
       <h1>Detalle del sorteo (Admin)</h1>
-      <button onclick="location.href='panel.html'" class="btn btn-secondary">← Volver al panel</button>
+      <button onclick="location.href='panel.html'" class="btn btn-secondary">â† Volver al panel</button>
     </header>
 
     <main class="admin-main">
       <!-- Datos del sorteo -->
       <section class="card">
         <h2 id="tituloSorteo">Cargando sorteo...</h2>
-        <p id="subtituloSorteo" class="text-muted">Detalles del sorteo para administración.</p>
+        <p id="subtituloSorteo" class="text-muted">Detalles del sorteo para administraciÃ³n.</p>
         <p id="estadoSorteo" class="text-muted"></p>
       </section>
 
       <!-- Bloque de chat admin -->
       <section class="card" style="margin-top:18px;">
         <div class="card-title-row">
-          <h2>💬 Chat de Administración</h2>
-          <p class="text-muted">Comunicación en tiempo real con los participantes y control de moderación.</p>
+          <h2>ðŸ’¬ Chat de AdministraciÃ³n</h2>
+          <p class="text-muted">ComunicaciÃ³n en tiempo real con los participantes y control de moderaciÃ³n.</p>
         </div>
 
         <div id="adminChatContainer" class="chat-card admin-chat">
           <div id="adminChatBody" class="chat-messages"></div>
           <div class="chat-input-wrap">
-            <input id="adminChatInput" placeholder="Mensaje global o moderación...">
+            <input id="adminChatInput" placeholder="Mensaje global o moderaciÃ³n...">
             <button id="adminChatSend">Enviar</button>
           </div>
           <p id="adminChatHint"></p>
@@ -56,10 +56,10 @@
     const API_URL = window.API_URL || '';
     const params = new URLSearchParams(window.location.search);
     const sorteoId = params.get('id'); // el ID viene por la URL
-    const token = localStorage.getItem('token'); // ✅ corregido: usar "token"
+    const token = localStorage.getItem('token'); // âœ… corregido: usar "token"
 
 
-    // ✅ Cargar datos del sorteo y mostrarlos en la interfaz
+    // âœ… Cargar datos del sorteo y mostrarlos en la interfaz
     async function cargarDetalleSorteo() {
       try {
         const res = await fetch(`${API_URL}/api/sorteos/${sorteoId}`, {
@@ -69,14 +69,14 @@
 
         if (res.ok) {
           document.getElementById('tituloSorteo').textContent = data.descripcion;
-          document.getElementById('subtituloSorteo').textContent = `Premio: ${data.premio} · Ocupación: ${data.ocupados}/${data.cantidad_numeros}`;
+          document.getElementById('subtituloSorteo').textContent = `Beneficio: ${data.premio} Â· OcupaciÃ³n: ${data.ocupados}/${data.cantidad_numeros}`;
           document.getElementById('estadoSorteo').textContent = `Estado: ${data.estado}`;
         } else {
           document.getElementById('tituloSorteo').textContent = 'Error cargando sorteo';
         }
       } catch (err) {
         console.error('Error al cargar detalle del sorteo:', err);
-        document.getElementById('tituloSorteo').textContent = 'Error de conexión';
+        document.getElementById('tituloSorteo').textContent = 'Error de conexiÃ³n';
       }
     }
 
@@ -93,12 +93,16 @@
         }
       } catch (err) {
         console.error('Error leyendo el token:', err);
-        document.getElementById('adminChatHint').textContent = 'Token inválido.';
+        document.getElementById('adminChatHint').textContent = 'Token invÃ¡lido.';
       }
     } else {
-      document.getElementById('adminChatHint').textContent = 'Inicia sesión para usar el chat.';
+      document.getElementById('adminChatHint').textContent = 'Inicia sesiÃ³n para usar el chat.';
     }
   </script>
 </body>
 </html>
+
+
+
+
 

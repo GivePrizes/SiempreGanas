@@ -1,4 +1,4 @@
-// frontend/assets/js/admin/cuentas/render.js
+﻿// frontend/assets/js/admin/cuentas/render.js
 
 function sanitizePhone(raw) {
   if (!raw) return '';
@@ -12,7 +12,7 @@ function sanitizePhone(raw) {
 
 function buildWhatsappLink(phoneDigits, nombre = '') {
   if (!phoneDigits) return '';
-  const text = encodeURIComponent(`Hola ${nombre || ''} 👋 Te escribo por tu participación en Siempre Gana.`);
+  const text = encodeURIComponent(`Hola ${nombre || ''} ðŸ‘‹ Te escribo por tu participaciÃ³n en Mathome.`);
   return `https://wa.me/${phoneDigits}?text=${text}`;
 }
 
@@ -31,7 +31,7 @@ function sectionTitle(label, count) {
 function miniEmpty(text) {
   const el = document.createElement('div');
   el.className = 'mini-empty';
-  el.textContent = `— ${text} —`;
+  el.textContent = `â€” ${text} â€”`;
   return el;
 }
 
@@ -39,7 +39,7 @@ function renderRow(p, s) {
   const estado = (p.entregaEstado || 'pendiente');
   const phoneDigits = sanitizePhone(p.telefono);
   const wa = phoneDigits ? buildWhatsappLink(phoneDigits, p.nombre) : '';
-  const numerosTxt = (p.numeros && p.numeros.length) ? p.numeros.join(', ') : '—';
+  const numerosTxt = (p.numeros && p.numeros.length) ? p.numeros.join(', ') : 'â€”';
 
   const row = document.createElement('div');
   row.className = `user-row ${estado === 'entregada' ? 'is-done' : 'is-pending'}`;
@@ -52,9 +52,9 @@ function renderRow(p, s) {
           ${estado === 'entregada' ? 'ENTREGADA' : 'PENDIENTE'}
         </span>
         <span class="muted">${p.email || 'Sin correo'}</span>
-        <span class="muted">${p.telefono || 'Sin teléfono'}</span>
+        <span class="muted">${p.telefono || 'Sin telÃ©fono'}</span>
       </div>
-      <div class="numbers">Números: ${numerosTxt}</div>
+      <div class="numbers">NÃºmeros: ${numerosTxt}</div>
       ${p.entregadaAt ? `<div class="muted tiny">Entregada: ${new Date(p.entregadaAt).toLocaleString()}</div>` : ''}
     </div>
 
@@ -63,7 +63,7 @@ function renderRow(p, s) {
          ${wa ? '' : 'aria-disabled="true"'}>WhatsApp</a>
 
       <a class="btn-mini" ${
-        p.email ? `href="mailto:${p.email}?subject=${encodeURIComponent('Siempre Gana — Entrega de cuenta')}"` : ''
+        p.email ? `href="mailto:${p.email}?subject=${encodeURIComponent('Mathome â€” Entrega de cuenta')}"` : ''
       } data-action="mail" ${p.email ? '' : 'aria-disabled="true"'}>Email</a>
 
       <button class="btn-mini primary"
@@ -71,7 +71,7 @@ function renderRow(p, s) {
         data-sorteo="${s.sorteoId}"
         data-user="${p.usuarioId}"
         ${estado === 'entregada' ? 'disabled' : ''}>
-        ${estado === 'entregada' ? 'Entregada ✅' : 'Marcar entregada'}
+        ${estado === 'entregada' ? 'Entregada âœ…' : 'Marcar entregada'}
       </button>
     </div>
   `;
@@ -93,7 +93,7 @@ function renderRow(p, s) {
 }
 
 // Este render NO hace fetch, NO marca entregada.
-// Solo construye UI, acordeón, badges, y botones con data-attrs.
+// Solo construye UI, acordeÃ³n, badges, y botones con data-attrs.
 export function renderAcordeon(sorteos, uiState) {
   const cont = document.getElementById('acordeonSorteos');
   const empty = document.getElementById('emptyState');
@@ -160,7 +160,7 @@ export function renderAcordeon(sorteos, uiState) {
         <div class="ac-name">${s.descripcion || `Sorteo #${s.sorteoId}`}</div>
         <div class="ac-sub">
           <span class="muted">#${s.sorteoId}</span>
-          ${s.premio ? `<span class="muted">· Premio: ${s.premio}</span>` : ''}
+          ${s.premio ? `<span class="muted">Â· Beneficio: ${s.premio}</span>` : ''}
         </div>
       </div>
 
@@ -170,7 +170,7 @@ export function renderAcordeon(sorteos, uiState) {
         <span class="badge neutral">Mostrando: ${totalMostrando}</span>
       </div>
 
-      <div class="ac-chevron" aria-hidden="true">${isOpen ? '▲' : '▼'}</div>
+      <div class="ac-chevron" aria-hidden="true">${isOpen ? 'â–²' : 'â–¼'}</div>
     `;
 
     const body = document.createElement('div');
@@ -179,12 +179,12 @@ export function renderAcordeon(sorteos, uiState) {
     const list = document.createElement('div');
     list.className = 'users-list';
 
-    // ✅ Pendientes
+    // âœ… Pendientes
     list.appendChild(sectionTitle('Pendientes', pendFil.length));
     if (pendFil.length) pendFil.forEach(p => list.appendChild(renderRow(p, s)));
     else list.appendChild(miniEmpty('Sin pendientes en este filtro'));
 
-    // ✅ Entregadas
+    // âœ… Entregadas
     list.appendChild(sectionTitle('Entregadas', entFil.length));
     if (entFil.length) entFil.forEach(p => list.appendChild(renderRow(p, s)));
     else list.appendChild(miniEmpty('Sin entregadas en este filtro'));
@@ -199,3 +199,6 @@ export function renderAcordeon(sorteos, uiState) {
   if (!cont.children.length) empty?.classList.remove('hidden');
   else empty?.classList.add('hidden');
 }
+
+
+

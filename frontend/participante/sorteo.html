@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="../assets/imagenes/logoparaemoji.png">
-  <title>Siempre Ganas — Elige tus números y entra a la ruleta</title>
+  <link rel="icon" type="image/png" href="../assets/imagenes/mathome-favicon.png">
+  <title>Mathome â€” Elige tus nÃºmeros y participa</title>
 
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/participant.css">
@@ -18,41 +18,41 @@
     <!-- HEADER COMPACTO (sticky) -->
     <header class="sorteo-header">
       <div class="sorteo-header__text">
-        <h1 id="tituloSorteo" class="sorteo-title">Cargando sorteo...</h1>
+        <h1 id="tituloSorteo" class="sorteo-title">Cargando ronda...</h1>
         <p id="subtituloSorteo" class="sorteo-subtitle">
-          Estás a unos pasos de asegurar tus números 🎟️
+          EstÃ¡s a unos pasos de asegurar tus nÃºmeros ðŸŽŸï¸
         </p>
       </div>
 
       <div class="sorteo-header__actions">
-        <button type="button" class="btn btn-secondary btn-back has-ico" onclick="location.href='dashboard.html'" aria-label="Volver a sorteos" title="Volver">
-          <span class="btn-ico">←</span>
+        <button type="button" class="btn btn-secondary btn-back has-ico" onclick="location.href='dashboard.html'" aria-label="Volver a rondas" title="Volver">
+          <span class="btn-ico">â†</span>
           <span class="btn-label">Volver</span>
         </button>
 
         <button id="btnMisNumeros" type="button" class="btn btn-primary has-ico hidden" onclick="location.href='mis-numeros.html'">
-          <span class="btn-ico">🎟</span>
-          <span class="btn-label">Mis números</span>
+          <span class="btn-ico">ðŸŽŸ</span>
+          <span class="btn-label">Mis nÃºmeros</span>
         </button>
       </div>
     </header>
 
     <!-- CARD PRINCIPAL DEL SORTEO -->
     <section class="sorteo-card-premium">
-      <p id="tituloPremio" class="sorteo-card__eyebrow">Sorteo</p>
+      <p id="tituloPremio" class="sorteo-card__eyebrow">Ronda</p>
 
       <div class="sorteo-card__list">
-        <p class="sorteo-info-line">✅ Incluye producto digital + entrada a la ruleta</p>
-        <p class="sorteo-info-line">🎁 Premio principal: <span id="textoPremio">—</span></p>
-        <p class="sorteo-info-line">💲 Precio por número: <span id="textoPrecio">—</span></p>
-        <p class="sorteo-info-line">🔢 Total de números: <span id="textoCantidad">—</span></p>
+        <p class="sorteo-info-line">âœ… Incluye producto digital + acceso a la ronda en vivo</p>
+        <p class="sorteo-info-line">ðŸŽ Beneficio principal: <span id="textoPremio">â€”</span></p>
+        <p class="sorteo-info-line">ðŸ’² Precio por nÃºmero: <span id="textoPrecio">â€”</span></p>
+        <p class="sorteo-info-line">ðŸ”¢ Total de nÃºmeros: <span id="textoCantidad">â€”</span></p>
       </div>
 
       <div class="progress-wrapper">
         <div class="progress-container">
           <div id="progressFill" class="progress-bar"></div>
         </div>
-        <p class="progress-text" id="textoProgreso">Cargando ocupación...</p>
+        <p class="progress-text" id="textoProgreso">Cargando ocupaciÃ³n...</p>
         <p class="progress-tip-text" id="textoCupos">Quedan cupos disponibles</p>
       </div>
     </section>
@@ -60,12 +60,12 @@
     <!-- ESTADO DEL USUARIO -->
     <section class="sorteo-status">
       <div id="estadoNoParticipante" class="status-card status-locked">
-        <div class="status-title">🔒 Aún no participas</div>
-        <div class="status-text">Elige tus números para entrar a la sala.</div>
+        <div class="status-title">ðŸ”’ AÃºn no participas</div>
+        <div class="status-text">Elige tus nÃºmeros para entrar a la sala.</div>
       </div>
 
       <div id="misNumerosEnSorteoCard" class="status-card status-ok" style="display:none;">
-        <div class="status-title">✅ Ya estás participando en este sorteo</div>
+        <div class="status-title">âœ… Ya estÃ¡s participando en esta ronda</div>
         <div class="status-text" id="misNumerosEnSorteoTexto">Cargando...</div>
         <div id="misNumerosEnSorteoChips" class="numeros-chips-wrap"></div>
       </div>
@@ -77,15 +77,15 @@
       <!-- PASO 1 -->
       <details class="info-accordion" open>
         <summary>
-          <span>🎯 Paso 1 · Elige tus números</span>
+          <span>ðŸŽ¯ Paso 1 Â· Elige tus nÃºmeros</span>
           <span class="pago-nequi-badge">1</span>
         </summary>
 
         <div class="sorteo-numeros-card">
           <div class="sorteo-numeros-header">
-            <h3>Elige tus números</h3>
+            <h3>Elige tus nÃºmeros</h3>
             <p class="text-muted microhint">
-              Máx. <strong><span id="maxNumerosTexto">5</span></strong> por compra
+              MÃ¡x. <strong><span id="maxNumerosTexto">5</span></strong> por compra
             </p>
           </div>
 
@@ -95,8 +95,8 @@
 
           <div class="mini-resumen-compra">
             <div class="mini-resumen-row">
-              <span class="mini-label">Selección</span>
-              <strong id="resumenNumeros">Ninguno todavía</strong>
+              <span class="mini-label">SelecciÃ³n</span>
+              <strong id="resumenNumeros">Ninguno todavÃ­a</strong>
             </div>
             <div class="mini-resumen-row">
               <span class="mini-label">Total</span>
@@ -109,43 +109,43 @@
       <!-- PASO 2 -->
       <details class="info-accordion">
         <summary>
-          <span>💳 Paso 2 · Paga por Nequi</span>
+          <span>ðŸ’³ Paso 2 Â· Paga por Nequi</span>
           <span class="pago-nequi-badge">2</span>
         </summary>
 
         <div class="pago-nequi-card">
           <div class="pago-nequi-header">
             <div>
-              <p class="pago-nequi-title">Paga tus números por Nequi</p>
-              <p class="pago-nequi-subtitle">Asegura tu lugar en menos de 1 minuto ⚡</p>
+              <p class="pago-nequi-title">Paga tus nÃºmeros por Nequi</p>
+              <p class="pago-nequi-subtitle">Asegura tu lugar en menos de 1 minuto âš¡</p>
             </div>
           </div>
 
           <div class="pago-nequi-main">
             <div class="pago-nequi-datos">
-              <p class="pago-nequi-label">Número Nequi</p>
+              <p class="pago-nequi-label">NÃºmero Nequi</p>
               <p class="pago-nequi-value pago-nequi-value--big">3123450890</p>
 
               <p class="pago-nequi-label">Titular</p>
               <p class="pago-nequi-value">Mar** Gom**</p>
 
               <button type="button" class="btn btn-primary btn-nequi-copy" onclick="copiarNequi()">
-                📋 Copiar número de Nequi
+                ðŸ“‹ Copiar nÃºmero de Nequi
               </button>
             </div>
 
             <div class="pago-nequi-steps">
               <ol>
-                <li>Elige tus números y mira el total.</li>
-                <li>Envía el pago con la nota <strong>"Sorteo + tu nombre"</strong>.</li>
+                <li>Elige tus nÃºmeros y mira el total.</li>
+                <li>EnvÃ­a el pago con la nota <strong>"Ronda + tu nombre"</strong>.</li>
                 <li>Sube el comprobante.</li>
               </ol>
-              <p class="pago-nequi-seguro">🛡️ Revisión manual para mantener el sorteo transparente.</p>
+              <p class="pago-nequi-seguro">ðŸ›¡ï¸ RevisiÃ³n manual para mantener la dinÃ¡mica transparente.</p>
             </div>
           </div>
 
           <div class="pago-nequi-footer">
-            💡 Tip: si te gustan ciertos números, págalos apenas los elijas.
+            ðŸ’¡ Tip: si te gustan ciertos nÃºmeros, pÃ¡galos apenas los elijas.
           </div>
         </div>
       </details>
@@ -153,7 +153,7 @@
       <!-- PASO 3 -->
       <details class="info-accordion">
         <summary>
-          <span>🧾 Paso 3 · Subir comprobante</span>
+          <span>ðŸ§¾ Paso 3 Â· Subir comprobante</span>
           <span class="pago-nequi-badge">3</span>
         </summary>
 
@@ -171,13 +171,13 @@
           </div>
 
           <button id="btnConfirmar" class="btn btn-primary btn-full-width">
-            Confirmar participación
+            Confirmar participaciÃ³n
           </button>
 
           <details class="mini-ayuda">
-            <summary>¿Qué pasa después?</summary>
+            <summary>Â¿QuÃ© pasa despuÃ©s?</summary>
             <p class="text-muted">
-              Tus números quedan <strong>pendientes</strong> hasta revisión. Al aprobar, quedan <strong>activos</strong>.
+              Tus nÃºmeros quedan <strong>pendientes</strong> hasta revisiÃ³n. Al aprobar, quedan <strong>activos</strong>.
             </p>
           </details>
         </div>
@@ -189,15 +189,15 @@
     <section id="chatContainer" class="chat-card chat-sala" style="display: none;">
       <div class="chat-header">
         <div>
-          <h3>💬 Sala del sorteo</h3>
-          <p class="text-muted microhint">🔒 Solo participantes pueden escribir</p>
+          <h3>ðŸ’¬ Sala de la ronda</h3>
+          <p class="text-muted microhint">ðŸ”’ Solo participantes pueden escribir</p>
         </div>
       </div>
       <div id="chatBody" class="chat-messages"></div>
       <div class="chat-input-wrap">
-        <input id="chatInput" type="text" placeholder="Escribe aquí..." maxlength="120">
+        <input id="chatInput" type="text" placeholder="Escribe aquÃ­..." maxlength="120">
         <button id="chatSend" class="btn btn-primary has-ico">
-          <span class="btn-ico">➤</span>
+          <span class="btn-ico">âž¤</span>
           <span class="btn-label">Enviar</span>
         </button>
       </div>
@@ -215,5 +215,11 @@
   <script type="module" src="../assets/js/participante/sorteo-detalle.js"></script>
 </body>
 </html>
+
+
+
+
+
+
 
 

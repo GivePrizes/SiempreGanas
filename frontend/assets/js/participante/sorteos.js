@@ -1,4 +1,4 @@
-// assets/js/participante/sorteos.js
+﻿// assets/js/participante/sorteos.js
 
 export async function cargarSorteos() {
   const cont = document.getElementById('sorteosActivos');
@@ -16,25 +16,25 @@ export async function cargarSorteos() {
     if (!res.ok) {
       console.error('Error al cargar sorteos:', data);
       cont.innerHTML = '<p>Error al cargar sorteos. Intenta de nuevo en unos segundos.</p>';
-      if (statSorteos) statSorteos.textContent = '—';
-      if (statProxima) statProxima.textContent = '—';
+      if (statSorteos) statSorteos.textContent = 'â€”';
+      if (statProxima) statProxima.textContent = 'â€”';
       return;
     }
 
     if (!Array.isArray(data) || data.length === 0) {
       cont.innerHTML = `
         <p>No hay sorteos activos en este momento.</p>
-        <p>Vuelve pronto, estamos preparando nuevas oportunidades ✨</p>
+        <p>Vuelve pronto, estamos preparando nuevas oportunidades âœ¨</p>
       `;
       if (statSorteos) statSorteos.textContent = '0';
-      if (statProxima) statProxima.textContent = '—';
+      if (statProxima) statProxima.textContent = 'â€”';
       return;
     }
 
     // stats
     if (statSorteos) statSorteos.textContent = data.length.toString();
 
-    // identificar el sorteo más avanzado para “próxima ruleta”
+    // identificar el sorteo mÃ¡s avanzado para â€œprÃ³xima ruletaâ€
     const ordenados = [...data].sort((a, b) => {
       const pa = a.ocupados / a.cantidad_numeros;
       const pb = b.ocupados / b.cantidad_numeros;
@@ -45,8 +45,8 @@ export async function cargarSorteos() {
       const faltan = masCercano.cantidad_numeros - masCercano.ocupados;
       statProxima.textContent =
         faltan <= 0
-          ? 'Listo para ruleta'
-          : `Faltan ${faltan} número(s) para la ruleta`;
+          ? 'Listo para resultado en vivo'
+          : `Faltan ${faltan} cupo(s) para activar la ronda`;
     }
 
     cont.innerHTML = data
@@ -63,16 +63,16 @@ export async function cargarSorteos() {
         let mensajeEstado = '';
         if (lleno) {
           mensajeEstado =
-            'Este sorteo ya se cerró. La ruleta se lanzará en cualquier momento 🎰';
+            'Este sorteo ya se cerrÃ³. La ruleta se lanzarÃ¡ en cualquier momento ðŸŽ°';
         } else if (porcentaje >= 80) {
           mensajeEstado =
-            '🔥 ¡Últimos números! Estás a nada de ver la ruleta girar.';
+            'ðŸ”¥ Â¡Ãšltimos nÃºmeros! EstÃ¡s a nada de ver la ruleta girar.';
         } else if (porcentaje >= 50) {
           mensajeEstado =
-            'Ya vamos por la mitad, cada número que compras acelera la ruleta.';
+            'Ya vamos por la mitad, cada activaciÃ³n acerca el resultado.';
         } else {
           mensajeEstado =
-            'Aprovecha ahora: hay buena disponibilidad de números.';
+            'Aprovecha ahora: hay buena disponibilidad de nÃºmeros.';
         }
 
         const disabledAttr = lleno ? 'disabled' : '';
@@ -86,9 +86,9 @@ export async function cargarSorteos() {
               <img src="../assets/img/default.png" class="sorteo-img" alt="Imagen por defecto">
             `}
             <h3>${s.descripcion}</h3>
-            <p class="sorteo-premio">🎁 Premio: <strong>${s.premio}</strong></p>
+            <p class="sorteo-premio">ðŸŽ Beneficio: <strong>${s.premio}</strong></p>
             <p class="sorteo-precio">
-              💸 Precio por número: <strong>$${s.precio_numero}</strong>
+              ðŸ’¸ Precio por nÃºmero: <strong>$${s.precio_numero}</strong>
             </p>
 
             <div class="progress-wrapper">
@@ -96,8 +96,8 @@ export async function cargarSorteos() {
                 <div class="progress-fill" style="width:${porcentaje}%;"></div>
               </div>
               <p class="progress-text">
-                ${ocupados} de ${total} números vendidos
-                ${!lleno ? `• Quedan <strong>${faltan}</strong>` : ''}
+                ${ocupados} de ${total} nÃºmeros vendidos
+                ${!lleno ? `â€¢ Quedan <strong>${faltan}</strong>` : ''}
               </p>
             </div>
 
@@ -117,25 +117,25 @@ export async function cargarSorteos() {
       })
       .join('');
 
-    // pequeño CSS inline si quieres, o llévalo a premium.css
+    // pequeÃ±o CSS inline si quieres, o llÃ©valo a premium.css
     injectParticipantStyles();
   } catch (err) {
     console.error(err);
-    cont.innerHTML = '<p>Error de conexión al cargar los sorteos.</p>';
-    if (statSorteos) statSorteos.textContent = '—';
-    if (statProxima) statProxima.textContent = '—';
+    cont.innerHTML = '<p>Error de conexiÃ³n al cargar las sorteos.</p>';
+    if (statSorteos) statSorteos.textContent = 'â€”';
+    if (statProxima) statProxima.textContent = 'â€”';
   }
 }
 
-// Navegar a la página de participar en un sorteo concreto
+// Navegar a la pÃ¡gina de participar en un sorteo concreto
 function irASorteo(id) {
-  // podrías tener participante/sorteo.html?id=123
+  // podrÃ­as tener participante/sorteo.html?id=123
   location.href = `sorteo.html?id=${id}`;
 }
 
 window.irASorteo = irASorteo;
 
-// Inyectar estilos mínimos para la barra de progreso si no los tienes
+// Inyectar estilos mÃ­nimos para la barra de progreso si no los tienes
 function injectParticipantStyles() {
   if (document.getElementById('sg-participante-styles')) return;
 
@@ -188,3 +188,8 @@ function injectParticipantStyles() {
   `;
   document.head.appendChild(style);
 }
+
+
+
+
+

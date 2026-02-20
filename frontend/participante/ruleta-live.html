@@ -1,10 +1,10 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="icon" type="image/png" href="../assets/imagenes/logoparaemoji.png">
-  <title>Ruleta en vivo — Siempre Ganas</title>
+  <link rel="icon" type="image/png" href="../assets/imagenes/mathome-favicon.png">
+  <title>Ronda en vivo â€” Mathome</title>
 
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/ruleta-live.css">
@@ -15,16 +15,16 @@
   <main class="wrap">
     <header class="top">
     <div>
-        <h1 class="title">Ruleta en vivo</h1>
-        <p id="subtitle" class="muted">Conectando…</p>
+        <h1 class="title">Ronda en vivo</h1>
+        <p id="subtitle" class="muted">Conectandoâ€¦</p>
     </div>
 
     <div class="top-actions">
         <button id="btnBack" class="btnBack" type="button" aria-label="Volver">
-        <span class="btn-ico">←</span>
+        <span class="btn-ico">â†</span>
         <span class="btn-label">Volver</span>
         </button>
-        <div id="badgeEstado" class="badge">—</div>
+        <div id="badgeEstado" class="badge">â€”</div>
     </div>
     </header>
 
@@ -37,30 +37,30 @@
           <div id="countdown" class="countdown">--:--</div>
         </div>
 
-        <div class="progress" aria-label="Progreso hacia la ruleta">
+        <div class="progress" aria-label="Progreso hacia la ronda">
           <div id="progressBar" class="progressBar"></div>
         </div>
       </div>
 
-      <p class="muted small" id="countdownHint">—</p>
+      <p class="muted small" id="countdownHint">â€”</p>
     </section>
 
     <!-- Wheel -->
     <section class="card wheelCard">
       <div class="wheelWrap">
         <div class="pointer" aria-hidden="true"></div>
-        <canvas id="wheel" width="520" height="520" aria-label="Ruleta"></canvas>
+        <canvas id="wheel" width="520" height="520" aria-label="Ronda"></canvas>
       </div>
 
       <div id="result" class="result hidden" aria-live="polite"></div>
     </section>
 
-    <!-- Mis números -->
+    <!-- Mis nÃºmeros -->
     <section class="card numbersCard">
       <div class="salaHeader">
         <div>
-          <h2 class="salaTitle">Mis números</h2>
-          <p class="muted small">Tus números aprobados en este sorteo</p>
+          <h2 class="salaTitle">Mis nÃºmeros</h2>
+          <p class="muted small">Tus nÃºmeros aprobados en esta ronda</p>
         </div>
         <span id="numbersCount" class="salaBadge">0</span>
       </div>
@@ -79,12 +79,12 @@
       </div>
 
       <div id="chatContainer">
-        <button id="chatNewBtn" class="chat-new-btn hidden" type="button">Nuevos mensajes ↓</button>
+        <button id="chatNewBtn" class="chat-new-btn hidden" type="button">Nuevos mensajes â†“</button>
         <div id="chatBody" class="chat-messages"></div>
         <div class="chat-input-wrap">
-          <input id="chatInput" type="text" maxlength="120" placeholder="Escribe aquí..." />
+          <input id="chatInput" type="text" maxlength="120" placeholder="Escribe aquÃ­..." />
           <button id="chatSend" type="button">
-            <span class="btn-ico">➤</span>
+            <span class="btn-ico">âž¤</span>
             <span class="btn-label">Enviar</span>
           </button>
         </div>
@@ -103,9 +103,14 @@
   <script src="../assets/js/welcomeModal.js"></script>
   <script type="module" src="../assets/js/participante/ruleta-live-chat.js"></script>
   <script src="../assets/js/participante/ruleta-live.js"></script>
-    <!-- 🔊 Sonido ganador -->
+    <!-- ðŸ”Š Sonido resultado destacado -->
   <audio id="audioWin" src="../assets/sound/sonidoWin.mp3" preload="auto"></audio>
 
 </body>
 </html>
+
+
+
+
+
 

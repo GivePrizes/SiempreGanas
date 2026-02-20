@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="icon" type="image/png" href="../assets/imagenes/logoparaemoji.png">
-  <title>Siempre Gana — Panel Admin</title>
+  <link rel="icon" type="image/png" href="../assets/imagenes/mathome-favicon.png">
+  <title>Mathome â€” Panel Admin</title>
 
   <!-- CSS del sistema -->
   <link rel="stylesheet" href="../assets/css/common.css">
@@ -18,15 +18,15 @@
     <!-- HEADER ADMIN -->
     <header class="admin-header">
       <div class="admin-header-left">
-        <h1>Panel de Administración</h1>
+        <h1>Panel de AdministraciÃ³n</h1>
         <span class="admin-subtitle">
-          Control total de sorteos, comprobantes y ruletas en un solo lugar.
+          Control total de rondas, comprobantes y resultados en un solo lugar.
         </span>
 
         <!-- Cinta de estado / confianza -->
         <div class="admin-status-pill">
           <span class="dot"></span>
-          <span>Sistema en línea · Validaciones manuales para máxima transparencia</span>
+          <span>Sistema en lÃ­nea Â· Validaciones manuales para mÃ¡xima transparencia</span>
         </div>
       </div>
       <div class="admin-header-right">
@@ -34,7 +34,7 @@
           type="button"
           class="btn btn-secondary"
           onclick="location.href='crear-sorteo.html'">
-          ➕ Crear sorteo
+          âž• Crear ronda
         </button>
         <button
           type="button"
@@ -48,57 +48,57 @@
     <!-- CONTENIDO PRINCIPAL -->
     <main class="admin-main">
 
-      <!-- 📑 COMPROBANTES PENDIENTES -->
+      <!-- ðŸ“‘ COMPROBANTES PENDIENTES -->
       <section id="bloqueComprobantes" class="card">
         <div class="card-title-row">
           <div>
-            <h2>📑 Comprobantes pendientes</h2>
+            <h2>ðŸ“‘ Comprobantes pendientes</h2>
             <p class="text-muted">
-              Cada comprobante aprobado libera números reales para los participantes.
+              Cada comprobante aprobado libera nÃºmeros reales para los participantes.
               Revisa monto, fecha y referencia antes de aceptar.
             </p>
           </div>
           <div class="card-title-right text-muted mini-hint">
-            Tip: una bandeja “en cero” antes de girar ruletas transmite seriedad.
+            Tip: una bandeja â€œen ceroâ€ antes de iniciar rondas transmite seriedad.
           </div>
         </div>
 
         <div id="comprobantes" class="table-wrapper">
-          <!-- Aquí se inyectan las tarjetas o filas de comprobantes -->
+          <!-- AquÃ­ se inyectan las tarjetas o filas de comprobantes -->
         </div>
       </section>
 
-      <!-- 🎯 SORTEOS ACTIVOS -->
+      <!-- ðŸŽ¯ SORTEOS ACTIVOS -->
       <section class="card" style="margin-top:18px;">
         <div class="card-title-row">
           <div>
-            <h2>🎯 Sorteos activos</h2>
+            <h2>ðŸŽ¯ Rondas activas</h2>
             <p class="text-muted">
-              Observa el avance de cada sorteo, llena cupos y pasa a la ruleta cuando
-              todo esté validado.
+              Observa el avance de cada ronda, llena cupos y pasa a la ruleta cuando
+              todo estÃ© validado.
             </p>
           </div>
           <div class="card-title-right text-muted mini-hint">
-            Recomendado: anuncia con tiempo qué sorteo será el próximo en pasar a ruleta.
+            Recomendado: anuncia con tiempo quÃ© ronda serÃ¡ la prÃ³xima en pasar a resultado en vivo.
           </div>
         </div>
 
         <div id="sorteosAdmin" class="table-wrapper">
-          <!-- Aquí se listan los sorteos (cards o tabla) -->
+          <!-- AquÃ­ se listan los sorteos (cards o tabla) -->
         </div>
       </section>
 
-      <!-- 💬 CHAT ADMIN -->
+      <!-- ðŸ’¬ CHAT ADMIN -->
       <section class="card" style="margin-top:18px;">
         <div class="card-title-row">
-          <h2>💬 Chat de Administración</h2>
-          <p class="text-muted">Comunicación en tiempo real con los participantes y control de moderación.</p>
+          <h2>ðŸ’¬ Chat de AdministraciÃ³n</h2>
+          <p class="text-muted">ComunicaciÃ³n en tiempo real con los participantes y control de moderaciÃ³n.</p>
         </div>
 
         <div id="adminChatContainer" class="chat-card admin-chat">
           <div id="adminChatBody" class="chat-messages"></div>
           <div class="chat-input-wrap">
-            <input id="adminChatInput" placeholder="Mensaje global o moderación...">
+            <input id="adminChatInput" placeholder="Mensaje global o moderaciÃ³n...">
             <button id="adminChatSend">Enviar</button>
           </div>
           <p id="adminChatHint"></p>
@@ -109,7 +109,7 @@
   </div>
 
   <!-- Toast de feedback -->
-  <div id="toast" class="toast hidden">Acción realizada</div>
+  <div id="toast" class="toast hidden">AcciÃ³n realizada</div>
 
   <!-- Scripts existentes -->
   <script src="../assets/js/app-config.js"></script>
@@ -119,7 +119,7 @@
 
   <!-- Script del chat admin -->
   <script>
-    // Define el sorteo actual (puedes obtenerlo dinámicamente)
+    // Define el sorteo actual (puedes obtenerlo dinÃ¡micamente)
     window.currentSorteoId = '1'; // ejemplo: ID 1
   </script>
 
@@ -138,12 +138,18 @@
           document.getElementById('adminChatHint').textContent = 'Tu rol no es admin, no puedes usar este chat.';
         }
       } catch {
-        document.getElementById('adminChatHint').textContent = 'Token inválido.';
+        document.getElementById('adminChatHint').textContent = 'Token invÃ¡lido.';
       }
     } else {
-      document.getElementById('adminChatHint').textContent = 'Inicia sesión para usar el chat admin.';
+      document.getElementById('adminChatHint').textContent = 'Inicia sesiÃ³n para usar el chat admin.';
     }
   </script>
 </body>
 </html>
+
+
+
+
+
+
 

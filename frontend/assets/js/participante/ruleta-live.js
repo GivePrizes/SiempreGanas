@@ -1,8 +1,8 @@
-const apiBase = (window.API_URL || '').replace(/\/$/, '');
+﻿const apiBase = (window.API_URL || '').replace(/\/$/, '');
 const token = localStorage.getItem('token') || '';
 
 if (!token) {
-  // si no hay sesión, manda al login
+  // si no hay sesiÃ³n, manda al login
   location.href = '../login.html';
 }
 
@@ -14,7 +14,7 @@ const authHeaders = () => ({
 const btnBack = document.getElementById("btnBack");
 if (btnBack) {
   btnBack.addEventListener("click", () => {
-    // vuelve a donde venía o al dashboard
+    // vuelve a donde venÃ­a o al dashboard
     if (document.referrer) history.back();
     else location.href = "dashboard.html";
   });
@@ -55,7 +55,7 @@ function primeAudioOnce() {
   if (!audioWin || audioPrimed) return;
   audioPrimed = true;
 
-  // Intento de habilitar audio en móviles (requiere gesto del usuario)
+  // Intento de habilitar audio en mÃ³viles (requiere gesto del usuario)
   audioWin.volume = 0;
   const p = audioWin.play();
   if (p && typeof p.then === "function") {
@@ -88,10 +88,10 @@ let lastCountdownSecond = null;
 let lastMotivationSecond = null;
 const lastSystemKeys = new Set();
 const motivationalPhrases = [
-  "¡Ya casi llega tu momento!",
-  "La suerte está girando contigo…",
-  "Prepárate, el destino se acerca…",
-  "¿Será tu número el elegido?",
+  "Â¡Ya casi llega tu momento!",
+  "La sorteo estÃ¡ en movimientoâ€¦",
+  "PrepÃ¡rate, el destino se acercaâ€¦",
+  "Â¿SerÃ¡ tu nÃºmero el elegido?",
 ];
 
 let chatWindowEndsAt = null;
@@ -163,7 +163,7 @@ async function fetchMisNumerosParaLista(){
     const nums = Array.isArray(data?.numeros) ? data.numeros : [];
 
     if (!nums.length) {
-      elNumbersList.innerHTML = '<span class="muted small">Aún no tienes números aprobados.</span>';
+      elNumbersList.innerHTML = '<span class="muted small">AÃºn no tienes nÃºmeros aprobados.</span>';
       if (elNumbersCount) elNumbersCount.textContent = '0';
       return;
     }
@@ -176,7 +176,7 @@ async function fetchMisNumerosParaLista(){
 
     if (elNumbersCount) elNumbersCount.textContent = String(nums.length);
   } catch {
-    elNumbersList.innerHTML = '<span class="muted small">No se pudieron cargar tus números.</span>';
+    elNumbersList.innerHTML = '<span class="muted small">No se pudieron cargar tus nÃºmeros.</span>';
   }
 }
 
@@ -210,7 +210,7 @@ function startChatCountdown(){
     const total = Math.ceil(diff / 1000);
     const mm = Math.floor(total / 60);
     const ss = total % 60;
-    setChatEnabled(true, `Chat activo · se cierra en ${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`);
+    setChatEnabled(true, `Chat activo Â· se cierra en ${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`);
   }, 1000);
 }
 
@@ -287,8 +287,8 @@ function drawWheel(){
   ctx.font = "900 16px system-ui";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("SIEMPRE", 0, -10);
-  ctx.fillText("GANAS", 0, 12);
+  ctx.fillText("MATHO", 0, -10);
+  ctx.fillText("ME", 0, 12);
 
   ctx.restore();
 }
@@ -306,13 +306,13 @@ function showResult(ganadorNombre){
   elResult.classList.remove("hidden");
   const num = `#${String(numeroGanador).padStart(2,"0")}`;
   elResult.textContent = ganadorNombre
-    ? `✅ Resultado oficial: ${num} — ${ganadorNombre}`
-    : `✅ Resultado oficial: ${num}`;
+    ? `âœ… Resultado oficial: ${num} â€” ${ganadorNombre}`
+    : `âœ… Resultado oficial: ${num}`;
 
   if (ganadorNombre) {
-    pushSystemMessage(`🎉 Felicitaciones a ${ganadorNombre}`, `win_${ganadorNombre}`);
+    pushSystemMessage(`ðŸŽ‰ Felicitaciones a ${ganadorNombre}`, `win_${ganadorNombre}`);
   } else if (numeroGanador != null) {
-    pushSystemMessage(`🏆 ¡Tenemos ganador! Número ${num}`, `win_num_${numeroGanador}`);
+    pushSystemMessage(`ðŸ† Â¡Resultado destacado confirmado! NÃºmero ${num}`, `win_num_${numeroGanador}`);
   }
 
   if (audioWin) {
@@ -353,7 +353,7 @@ function spinToWinner(winnerNumero){
   const n = segments.length;
   const slice = (Math.PI * 2) / n;
 
-  // puntero arriba (-90°)
+  // puntero arriba (-90Â°)
   const targetAngle = idx * slice + slice/2;
   const up = -Math.PI/2;
 
@@ -431,26 +431,26 @@ async function fetchRuletaInfo(){
   setEstadoBadge(safeUpper(estado));
 
   elSubtitle.textContent =
-    estado === "waiting" ? "La ruleta aún no ha sido programada." :
-    estado === "countdown" ? "Cuenta regresiva en marcha. Quédate aquí." :
-    estado === "spinning" ? "🎯 La ruleta está girando…" :
-    estado === "finished" ? "🏆 Resultado oficial confirmado." :
-    "Actualizando…";
+    estado === "waiting" ? "La sorteo en vivo aÃºn no ha sido programada." :
+    estado === "countdown" ? "Cuenta regresiva en marcha. QuÃ©date aquÃ­." :
+    estado === "spinning" ? "ðŸŽ¯ La ruleta estÃ¡ girandoâ€¦" :
+    estado === "finished" ? "ðŸ† Resultado oficial confirmado." :
+    "Actualizandoâ€¦";
 
   if (lastEstado !== estado) {
     if (estado === "waiting") {
-      pushSystemMessage("⏳ La ruleta comenzará en breve", "estado_waiting");
+      pushSystemMessage("â³ La ruleta comenzarÃ¡ en breve", "estado_waiting");
       setChatEnabled(false, "El chat se habilita cuando comience el giro.");
     }
     if (estado === "countdown") {
-      setChatEnabled(true, "Chat activo · la ruleta está programada.");
+      setChatEnabled(true, "Chat activo Â· la ronda estÃ¡ programada.");
     }
     if (estado === "spinning") {
-      pushSystemMessage("🎯 ¡La ruleta está girando!", "estado_spinning");
-      setChatEnabled(true, "Chat activo · el cierre se anuncia al terminar.");
+      pushSystemMessage("ðŸŽ¯ Â¡La ruleta estÃ¡ girando!", "estado_spinning");
+      setChatEnabled(true, "Chat activo Â· el cierre se anuncia al terminar.");
     }
     if (estado === "finished") {
-      pushSystemMessage("🏆 ¡Resultado confirmado!", "estado_finished");
+      pushSystemMessage("ðŸ† Â¡Resultado confirmado!", "estado_finished");
       startChatCountdown();
     }
     lastEstado = estado;
@@ -488,10 +488,10 @@ function tick(){
   if(estado !== "countdown" || !countdownEndsAtMs){
     elCountdown.textContent = "--:--";
     elHint.textContent = estado === "spinning"
-      ? "🎯 La ruleta está girando…"
+      ? "ðŸŽ¯ La ruleta estÃ¡ girandoâ€¦"
       : estado === "finished"
-        ? "🏆 Ya tenemos ganador"
-        : "Prepárate, el sorteo comenzará pronto";
+        ? "ðŸ† Ya tenemos ganador"
+        : "PrepÃ¡rate, el sorteo comenzarÃ¡ pronto";
     elBar.style.width = "0%";
     requestAnimationFrame(tick);
     return;
@@ -502,10 +502,10 @@ function tick(){
   if(diff > 0){
     elCountdown.textContent = fmtMMSS(diff);
     const secondsLeft = Math.ceil(diff / 1000);
-    elHint.textContent = `⏳ La ruleta comienza en ${secondsLeft} segundos`;
+    elHint.textContent = `â³ La ruleta comienza en ${secondsLeft} segundos`;
 
     if (secondsLeft <= 5 && secondsLeft > 0 && lastCountdownSecond !== secondsLeft) {
-      pushSystemMessage(`🔥 ${secondsLeft}…`, `count_${secondsLeft}`);
+      pushSystemMessage(`ðŸ”¥ ${secondsLeft}â€¦`, `count_${secondsLeft}`);
       lastCountdownSecond = secondsLeft;
     }
 
@@ -519,7 +519,7 @@ function tick(){
       elBar.style.width = "0%";
     }
 
-    // 3-2-1 en los últimos 3.2s (solo una vez)
+    // 3-2-1 en los Ãºltimos 3.2s (solo una vez)
     if(diff <= 3200 && !did321){
       did321 = true;
       show321();
@@ -527,7 +527,7 @@ function tick(){
 
   } else {
     elCountdown.textContent = "00:00";
-    elHint.textContent = "🎯 La ruleta está girando…";
+    elHint.textContent = "ðŸŽ¯ La ruleta estÃ¡ girandoâ€¦";
     elBar.style.width = "100%";
   }
 
@@ -557,10 +557,10 @@ function tick(){
     // 1) Info base
     await fetchRuletaInfo();
 
-    // 2) Si no llegó snapshot, dibujar con números aprobados
+    // 2) Si no llegÃ³ snapshot, dibujar con nÃºmeros aprobados
     await fetchNumerosSiHaceFalta();
 
-    // 2b) Mis números para el panel lateral
+    // 2b) Mis nÃºmeros para el panel lateral
     await fetchMisNumerosParaLista();
 
     // 3) empezar contador
@@ -583,7 +583,7 @@ function tick(){
           didSpin = true;
           stopIdleSpin();
           spinToWinner(numeroGanador);
-          // Mostrar resultado después de que la ruleta termine de girar
+          // Mostrar resultado despuÃ©s de que la ruleta termine de girar
           setTimeout(() => showResult(ganadorNombre), 3500);
         }
 
@@ -599,6 +599,12 @@ function tick(){
     }, 2500);
 
   }catch(err){
-    elSubtitle.textContent = "No se pudo conectar con la ruleta.";
+    elSubtitle.textContent = "No se pudo conectar con la ronda en vivo.";
   }
 })();
+
+
+
+
+
+

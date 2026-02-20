@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="icon" type="image/png" href="../assets/imagenes/logoparaemoji.png">
-  <title>Siempre Gana — Entrega de cuentas</title>
+  <link rel="icon" type="image/png" href="../assets/imagenes/mathome-favicon.png">
+  <title>Mathome â€” Entrega de cuentas</title>
 
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
-  <!-- ✅ CSS aislado de este micro-módulo -->
+  <!-- âœ… CSS aislado de este micro-mÃ³dulo -->
   <link rel="stylesheet" href="../assets/css/cuentas-sorteo.css">
 </head>
 
@@ -19,18 +19,18 @@
       <div class="admin-header-left">
         <h1>Entrega de cuentas</h1>
         <span class="admin-subtitle">
-          Aquí ves participantes aprobados por sorteo y marcas cuando ya se les entregó la cuenta.
+          AquÃ­ ves participantes aprobados por sorteo y marcas cuando ya se les entregÃ³ la cuenta.
         </span>
 
         <div class="admin-status-pill">
           <span class="dot"></span>
-          <span>Vista de cuentas · Sólo lectura de sorteos · Acciones auditables</span>
+          <span>Vista de cuentas Â· SÃ³lo lectura de sorteos Â· Acciones auditables</span>
         </div>
       </div>
 
       <div class="admin-header-right">
         <button type="button" class="btn btn-secondary" id="btnRefrescar">
-          🔄 Refrescar
+          ðŸ”„ Refrescar
         </button>
 
         <button type="button" class="btn btn-danger" onclick="logout()">
@@ -44,7 +44,7 @@
         <div class="toolbar-row">
           <div class="toolbar-left">
             <label class="label" for="q">Buscar</label>
-            <input id="q" class="input" placeholder="Nombre, correo, teléfono, número, sorteo..." />
+            <input id="q" class="input" placeholder="Nombre, correo, telÃ©fono, nÃºmero, sorteo..." />
           </div>
 
           <div class="toolbar-right">
@@ -55,16 +55,16 @@
         </div>
 
         <div class="mini-note">
-          Tip: marca “Entregada” solo cuando ya enviaste la cuenta. Queda registro.
+          Tip: marca â€œEntregadaâ€ solo cuando ya enviaste la cuenta. Queda registro.
         </div>
       </section>
 
       <section class="card" style="margin-top:18px;">
         <div class="card-title-row">
           <div>
-            <h2>📦 Participantes aprobados (por sorteo)</h2>
+            <h2>ðŸ“¦ Participantes aprobados (por sorteo)</h2>
             <p class="text-muted">
-              Cada sorteo se despliega como acordeón. Dentro verás a quién entregar la cuenta, sus números y contacto rápido.
+              Cada sorteo se despliega como acordeÃ³n. Dentro verÃ¡s a quiÃ©n entregar la cuenta, sus nÃºmeros y contacto rÃ¡pido.
             </p>
           </div>
 
@@ -73,27 +73,31 @@
           </div>
         </div>
 
-        <!-- ✅ Render dinámico -->
+        <!-- âœ… Render dinÃ¡mico -->
         <div id="acordeonSorteos" class="acordeon"></div>
 
-        <!-- Estado vacío -->
+        <!-- Estado vacÃ­o -->
         <div id="emptyState" class="empty hidden">
           <div class="empty-title">No hay participantes aprobados para mostrar</div>
-          <div class="empty-sub">Cuando apruebes pagos, aparecerán aquí como “pendiente”.</div>
+          <div class="empty-sub">Cuando apruebes pagos, aparecerÃ¡n aquÃ­ como â€œpendienteâ€.</div>
         </div>
       </section>
     </main>
   </div>
 
-  <div id="toast" class="toast hidden">Acción realizada</div>
+  <div id="toast" class="toast hidden">AcciÃ³n realizada</div>
 
   <!-- Base -->
   <script src="../assets/js/app-config.js"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
 
-  <!-- ✅ Entry point del micro-módulo -->
+  <!-- âœ… Entry point del micro-mÃ³dulo -->
 <script type="module" src="../assets/js/admin/cuentas/index.js"></script>
 </body>
 </html>
+
+
+
+
 

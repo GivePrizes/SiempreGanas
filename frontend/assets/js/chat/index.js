@@ -1,4 +1,4 @@
-//chat/index.js
+﻿//chat/index.js
 import { fetchMessages, postMessage } from './chatApi.js';
 import { createChatStore } from './store.js';
 import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js';
@@ -59,14 +59,14 @@ export async function initChat({ sorteoId, token }) {
     if (!hintEl) return;
 
     if (!canUseChat) {
-      hintEl.textContent = 'Sesión no válida. Inicia sesión nuevamente.';
+      hintEl.textContent = 'SesiÃ³n no vÃ¡lida. Inicia sesiÃ³n nuevamente.';
       hintEl.style.color = '#f87171';
     } else if (puedeEscribir) {
-      hintEl.textContent = 'Escribe tu mensaje... (máx. 120 caracteres)';
+      hintEl.textContent = 'Escribe tu mensaje... (mÃ¡x. 120 caracteres)';
       hintEl.style.color = '#ccc';
     } else {
       hintEl.textContent =
-        '🔒 Solo participantes con número aprobado pueden escribir.';
+        'ðŸ”’ Solo participantes con nÃºmero aprobado pueden escribir.';
       hintEl.style.color = '#ff6b6b';
     }
   }
@@ -86,7 +86,7 @@ export async function initChat({ sorteoId, token }) {
       newBtnEl?.classList.add('hidden');
     } else if (pendingNew > 0) {
       newBtnEl?.classList.remove('hidden');
-      newBtnEl.textContent = `Nuevos mensajes (${pendingNew}) ↓`;
+      newBtnEl.textContent = `Nuevos mensajes (${pendingNew}) â†“`;
     }
   }
 
@@ -116,7 +116,7 @@ export async function initChat({ sorteoId, token }) {
       mensaje: text,
       is_system: false,
       created_at: new Date().toISOString(),
-      usuario: { id: myUsuarioId, alias: 'Tú', nombre: 'Tú' },
+      usuario: { id: myUsuarioId, alias: 'TÃº', nombre: 'TÃº' },
       _optimistic: true
     }]);
 
@@ -142,16 +142,16 @@ export async function initChat({ sorteoId, token }) {
   function appendMessage(m) {
     if (!m || store.has(m.id)) return;
 
-    // 🔥 NORMALIZAR MENSAJE REALTIME
+    // ðŸ”¥ NORMALIZAR MENSAJE REALTIME
     const usuarioId = m.usuario_id ?? m.usuario?.id ?? m.usuarioId ?? null;
     const alias =
       m.usuario?.alias ??
       m.usuario_alias ??
-      (usuarioId === myUsuarioId ? 'Tú' : null);
+      (usuarioId === myUsuarioId ? 'TÃº' : null);
     const nombre =
       m.usuario?.nombre ??
       m.usuario_nombre ??
-      (usuarioId === myUsuarioId ? 'Tú' : 'Usuario');
+      (usuarioId === myUsuarioId ? 'TÃº' : 'Usuario');
 
     const mensaje = {
       ...m,
@@ -192,7 +192,7 @@ export async function initChat({ sorteoId, token }) {
       pendingNew++;
       newBtnEl?.classList.remove('hidden');
       if (newBtnEl) {
-        newBtnEl.textContent = `Nuevos mensajes (${pendingNew}) ↓`;
+        newBtnEl.textContent = `Nuevos mensajes (${pendingNew}) â†“`;
       }
     }
   }
@@ -230,7 +230,7 @@ export async function initChat({ sorteoId, token }) {
     if (history.status === 401) {
       canUseChat = false;
       updateChatPermission();
-      hintEl.textContent = history.friendlyMessage || 'Sesión expirada. Inicia sesión nuevamente.';
+      hintEl.textContent = history.friendlyMessage || 'SesiÃ³n expirada. Inicia sesiÃ³n nuevamente.';
     } else if (history.status === 403) {
       hintEl.textContent = history.friendlyMessage || 'No tienes permiso para ver este chat.';
       hintEl.style.color = '#f87171';
@@ -274,14 +274,14 @@ export async function initChat({ sorteoId, token }) {
 
     //  chequeo previo
     if (!puedeEscribir) {
-      hintEl.textContent = '🔒 No tienes permiso para escribir.';
+      hintEl.textContent = 'ðŸ”’ No tienes permiso para escribir.';
       sendEl.disabled = false;
       return;
     }
 
     inputEl.value = '';
 
-    //  SOLO aquí optimistic UI
+    //  SOLO aquÃ­ optimistic UI
     addOptimisticMessage(text);
 
     const { ok, status, data, friendlyMessage } = await postMessage({
@@ -293,7 +293,7 @@ export async function initChat({ sorteoId, token }) {
 
 
     if (!ok) {
-      // rollback visual (realtime no llegará)
+      // rollback visual (realtime no llegarÃ¡)
       store.removeOptimisticByUserAndText(myUsuarioId, text);
 
       const errText = String(data?.message || data?.error || '').toLowerCase();
@@ -301,16 +301,16 @@ export async function initChat({ sorteoId, token }) {
       if (status === 401) {
         canUseChat = false;
         updateChatPermission();
-        hintEl.textContent = friendlyMessage || 'Sesión expirada. Inicia sesión nuevamente.';
+        hintEl.textContent = friendlyMessage || 'SesiÃ³n expirada. Inicia sesiÃ³n nuevamente.';
         hintEl.style.color = '#f87171';
     } else if (status === 403 && data?.code === 'chat_closed') {
       hintEl.textContent =
-        'Chat cerrado · el sorteo terminó. Prepárate, el próximo será aún más grande.';
+        'Chat cerrado Â· el sorteo terminÃ³. PrepÃ¡rate, el prÃ³ximo serÃ¡ aÃºn mÃ¡s grande.';
       hintEl.style.color = '#f59e0b';
       puedeEscribir = false;
       updateChatPermission();
     } else if (status === 403 && data?.code === 'participation_required') {
-      hintEl.textContent = '🔒 Solo participantes con número aprobado pueden escribir.';
+      hintEl.textContent = 'ðŸ”’ Solo participantes con nÃºmero aprobado pueden escribir.';
       puedeEscribir = false;
       updateChatPermission();
       hintEl.style.color = '#ff6b6b';
@@ -356,11 +356,11 @@ export async function initChat({ sorteoId, token }) {
           alias:
             payloadMessage.usuario?.alias ??
             payloadMessage.usuario_alias ??
-            'Tú',
+            'TÃº',
           nombre:
             payloadMessage.usuario?.nombre ??
             payloadMessage.usuario_nombre ??
-            'Tú'
+            'TÃº'
         }
       };
 
@@ -382,7 +382,7 @@ export async function initChat({ sorteoId, token }) {
     }
   });
 
-  // 🔊 sonido
+  // ðŸ”Š sonido
   window.addEventListener('click', () => {
     soundEnabled = true;
   }, { once: true });
@@ -395,4 +395,8 @@ export async function initChat({ sorteoId, token }) {
     unsub?.();
   });
   }
+
+
+
+
 
