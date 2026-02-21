@@ -126,7 +126,7 @@ function renderGrupos(grupos, changedSet = new Set()) {
         <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
           <div>
             <h3 class="sorteo-title">${grupo.descripcion}</h3>
-            <p class="text-muted">Beneficio: ${grupo.premio}</p>
+            <p class="text-muted">Ganador: ${grupo.premio}</p>
           </div>
           <div>${pillSorteo}</div>
         </div>

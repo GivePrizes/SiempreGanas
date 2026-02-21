@@ -69,7 +69,7 @@
 
         if (res.ok) {
           document.getElementById('tituloSorteo').textContent = data.descripcion;
-          document.getElementById('subtituloSorteo').textContent = `Beneficio: ${data.premio} · Ocupación: ${data.ocupados}/${data.cantidad_numeros}`;
+          document.getElementById('subtituloSorteo').textContent = `Ganador: ${data.premio} · Ocupación: ${data.ocupados}/${data.cantidad_numeros}`;
           document.getElementById('estadoSorteo').textContent = `Estado: ${data.estado}`;
         } else {
           document.getElementById('tituloSorteo').textContent = 'Error cargando sorteo';

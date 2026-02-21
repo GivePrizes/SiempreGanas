@@ -160,7 +160,7 @@ export function renderAcordeon(sorteos, uiState) {
         <div class="ac-name">${s.descripcion || `Sorteo #${s.sorteoId}`}</div>
         <div class="ac-sub">
           <span class="muted">#${s.sorteoId}</span>
-          ${s.premio ? `<span class="muted">· Beneficio: ${s.premio}</span>` : ''}
+          ${s.premio ? `<span class="muted">· Ganador: ${s.premio}</span>` : ''}
         </div>
       </div>
 

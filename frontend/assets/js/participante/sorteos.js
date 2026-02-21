@@ -86,7 +86,7 @@ export async function cargarSorteos() {
               <img src="../assets/img/default.png" class="sorteo-img" alt="Imagen por defecto">
             `}
             <h3>${s.descripcion}</h3>
-            <p class="sorteo-premio">🎁 Beneficio: <strong>${s.premio}</strong></p>
+            <p class="sorteo-premio">🎁 Ganador: <strong>${s.premio}</strong></p>
             <p class="sorteo-precio">
               💸 Precio por número: <strong>$${s.precio_numero}</strong>
             </p>

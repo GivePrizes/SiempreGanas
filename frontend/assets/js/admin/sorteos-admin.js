@@ -102,7 +102,7 @@ export async function cargarSorteosAdmin() {
                 <h3>${s.descripcion}</h3>
                 ${estadoLabel}
               </div>
-              <p class="sorteo-detalle">Beneficio: <strong>${s.premio}</strong></p>
+              <p class="sorteo-detalle">Ganador: <strong>${s.premio}</strong></p>
               <p class="sorteo-detalle">Ocupación: <strong>${ocupacion}</strong></p>
               <p class="sorteo-detalle-mini">${
                 lleno

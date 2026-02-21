@@ -60,7 +60,7 @@ function renderSorteoCard(s) {
           <span class="status-badge ${estadoClass}">${estadoTxt}</span>
         </div>
 
-        <div class="sorteo-info">🎁 Beneficio: ${s.premio}</div>
+        <div class="sorteo-info">🎁 Ganador: ${s.premio}</div>
         <div class="sorteo-info">💵 Precio: $${precio}</div>
         <div class="sorteo-info">🎟 ${vendidos} / ${total}</div>
 
