@@ -127,6 +127,16 @@ export function renderAcordeon(sorteos, uiState) {
     return hay.includes(q);
   };
 
+  const matchesSorteoQueryOnly = (s) => {
+    if (!q) return true;
+    const hay = [
+      s.descripcion,
+      s.premio,
+      String(s.sorteoId),
+    ].join(' ').toLowerCase();
+    return hay.includes(q);
+  };
+
   const matchesFilter = (p) => {
     if (filter === 'todos') return true;
     return (p.entregaEstado || 'pendiente') === filter;
@@ -142,7 +152,13 @@ export function renderAcordeon(sorteos, uiState) {
     const entFil  = ent.filter(matchesFilter).filter(p => matchesQuery(s, p));
 
     const totalMostrando = pendFil.length + entFil.length;
-    if (!totalMostrando) continue;
+    const sorteoSinParticipantes = participantes.length === 0;
+    const mostrarSorteoVacio =
+      sorteoSinParticipantes &&
+      filter === 'todos' &&
+      matchesSorteoQueryOnly(s);
+
+    if (!totalMostrando && !mostrarSorteoVacio) continue;
 
     const isOpen = state.open.has(String(s.sorteoId));
 
