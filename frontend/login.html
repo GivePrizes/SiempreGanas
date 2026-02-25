@@ -6,8 +6,8 @@
   <link rel="icon" type="image/png" href="assets/imagenes/mathome-favicon.png">
   <title>Mathome - Acceso</title>
 
-  <link rel="stylesheet" href="assets/css/common.css">
-  <link rel="stylesheet" href="assets/css/participant.css">
+  <link rel="stylesheet" href="assets/css/common.css?v=20260225c">
+  <link rel="stylesheet" href="assets/css/participant.css?v=20260225c">
 
   <style>
     /* ===== LOGIN LAYOUT PREMIUM ===== */
@@ -549,6 +549,97 @@
         display: none !important;
       }
     }
+
+    /* ===== LOGIN BLUE METAL REFRESH ===== */
+    .auth-shell::before{
+      background:
+        radial-gradient(1200px 640px at 18% 10%, rgba(59,130,246,.18), transparent 60%),
+        radial-gradient(900px 520px at 84% 24%, rgba(56,189,248,.14), transparent 60%),
+        radial-gradient(900px 520px at 52% 95%, rgba(96,165,250,.10), transparent 60%),
+        linear-gradient(180deg, rgba(5,11,22,1), rgba(5,11,22,1));
+    }
+
+    .chat-bubble{
+      border-color: rgba(125,211,252,.28);
+      background: rgba(8, 18, 35, .80);
+    }
+
+    .chat-user{
+      color: rgba(186,230,253,.95);
+    }
+
+    .live-tracker{
+      border-color: rgba(125,211,252,.34);
+      background: linear-gradient(180deg, rgba(15,30,56,.76), rgba(8,16,31,.82));
+      box-shadow: 0 14px 34px rgba(0,0,0,.44);
+    }
+
+    .live-tracker__head{
+      color: rgba(186,230,253,.95);
+    }
+
+    .chat-msg.user{
+      background: linear-gradient(180deg, rgba(96,165,250,.36), rgba(30,64,175,.34));
+      border-color: rgba(147,197,253,.36);
+    }
+
+    .chat-msg.host{
+      background: linear-gradient(180deg, rgba(30,64,175,.24), rgba(10,20,39,.78));
+      border-color: rgba(125,211,252,.30);
+    }
+
+    .chat-typing{
+      border-color: rgba(125,211,252,.30);
+      background: rgba(10,20,39,.84);
+    }
+
+    .auth-card{
+      border-color: rgba(147,197,253,.26);
+      background:
+        linear-gradient(180deg, rgba(23,42,73,.78), rgba(11,21,39,.90));
+      box-shadow: 0 18px 40px rgba(2,8,20,.58);
+    }
+
+    .auth-card h3,
+    .terms-modal__title{
+      color: #dbeafe;
+      text-shadow: 0 0 16px rgba(96,165,250,.25);
+    }
+
+    .auth-field input,
+    .auth-field select,
+    .auth-field textarea{
+      border-color: rgba(125,211,252,.28);
+      background: rgba(8,19,38,.76);
+    }
+
+    .auth-field input:focus,
+    .auth-field select:focus,
+    .auth-field textarea:focus{
+      border-color: rgba(147,197,253,.72);
+      box-shadow: 0 0 0 4px rgba(59,130,246,.18), 0 0 26px rgba(59,130,246,.24);
+    }
+
+    .btn.btn-primary{
+      background: linear-gradient(180deg, rgba(96,165,250,.96), rgba(59,130,246,.92));
+      border-color: rgba(147,197,253,.56);
+      color: #eef6ff;
+      box-shadow: 0 0 22px rgba(59,130,246,.30);
+    }
+
+    .btn.btn-primary:hover{
+      filter: brightness(1.06);
+    }
+
+    .switch-link,
+    .terms-link{
+      color: #93c5fd;
+    }
+
+    .terms-modal__card{
+      border-color: rgba(147,197,253,.28);
+      background: linear-gradient(180deg, rgba(17,33,60,.92), rgba(10,19,35,.94));
+    }
   </style>
 </head>
 
@@ -748,7 +839,7 @@
 
   <script src="assets/js/app-config.js"></script>
   <script src="assets/js/config.js"></script>
-  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/auth.js?v=20260225c"></script>
 
   <script>
     function showRegistro() {

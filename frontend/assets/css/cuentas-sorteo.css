@@ -23,6 +23,23 @@
   display: grid;
   gap: 14px;
   margin-top: 12px;
+  position: relative;
+}
+
+#acordeonSorteos.acordeon::before{
+  content: "";
+  position: absolute;
+  inset: -18px -12px;
+  pointer-events: none;
+  background:
+    radial-gradient(55% 55% at 8% 0%, rgba(56,189,248,.12), transparent 58%),
+    radial-gradient(45% 45% at 92% 0%, rgba(96,165,250,.10), transparent 65%);
+  z-index: 0;
+}
+
+#acordeonSorteos.acordeon > *{
+  position: relative;
+  z-index: 1;
 }
 
 /* Card por sorteo */
@@ -36,6 +53,7 @@
   box-shadow: var(--shadow);
   backdrop-filter: blur(10px);
   position: relative;
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
 }
 
 .ac-item::before{
@@ -47,6 +65,11 @@
   pointer-events: none;
   background: radial-gradient(circle, rgba(142, 205, 255, .16) 0%, rgba(142, 205, 255, 0) 62%);
   transform: rotate(14deg);
+}
+
+.ac-item:hover{
+  border-color: rgba(172, 212, 255, .42);
+  transform: translateY(-1px);
 }
 
 /* Header clickeable (button) */

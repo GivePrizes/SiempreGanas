@@ -421,3 +421,135 @@ body{
     color: rgba(242,240,235,.82);
   }
 }
+
+/* =========================================================
+   Ruleta Live Blue Metal Refresh
+   ========================================================= */
+:root{
+  --bg:#050b16;
+  --card:linear-gradient(180deg, rgba(24,43,76,.74), rgba(12,22,40,.88));
+  --stroke:rgba(146,193,255,.28);
+  --gold:#60a5fa;
+  --text:rgba(234,242,255,.95);
+  --muted:rgba(170,191,224,.82);
+}
+
+body{
+  background:
+    radial-gradient(1200px 620px at 14% -12%, rgba(59,130,246,.24), transparent 58%),
+    radial-gradient(920px 540px at 88% -6%, rgba(56,189,248,.16), transparent 60%),
+    var(--bg);
+}
+
+.card{
+  background: var(--card);
+  border-color: var(--stroke);
+  box-shadow: 0 18px 38px rgba(2,8,20,.62);
+}
+
+.title,
+.countdown,
+.salaTitle{
+  color:#dbeafe;
+  text-shadow:0 0 18px rgba(96,165,250,.24);
+}
+
+.countdown{
+  letter-spacing:.04em;
+}
+
+.badge,
+.btnBack,
+.salaBadge,
+.numberChip{
+  border-color: rgba(147,197,253,.42);
+  background: linear-gradient(180deg, rgba(96,165,250,.24), rgba(37,91,173,.24));
+  color: #eaf2ff;
+}
+
+.progress{
+  background: rgba(16,32,60,.72);
+  border-color: rgba(147,197,253,.2);
+}
+
+.progressBar{
+  background: linear-gradient(90deg, rgba(59,130,246,.42), rgba(96,165,250,.95));
+}
+
+.pointer{
+  border-bottom-color: rgba(96,165,250,.95);
+}
+
+.result{
+  border-color: rgba(125,211,252,.5);
+  background: linear-gradient(180deg, rgba(56,189,248,.22), rgba(17,94,168,.2));
+  color:#eaf2ff;
+}
+
+.chatCard #chatContainer,
+.systemFeed,
+.numbersList{
+  border-color: rgba(146,193,255,.24);
+  background: rgba(8,18,35,.76);
+}
+
+.chatCard .chat-new-btn{
+  border-color: rgba(125,211,252,.48);
+  background: linear-gradient(180deg, rgba(56,189,248,.24), rgba(20,88,153,.24));
+  color:#dbeafe;
+}
+
+.systemAvatar{
+  color:#eaf2ff;
+  border-color: rgba(125,211,252,.5);
+  background: linear-gradient(180deg, rgba(96,165,250,.34), rgba(29,78,216,.28));
+  box-shadow: 0 8px 20px rgba(2,8,20,.55);
+}
+
+.chatCard #chatSend{
+  background: linear-gradient(135deg, rgba(96,165,250,.94), rgba(59,130,246,.82));
+  border-color: rgba(147,197,253,.65);
+  color:#eff6ff;
+  box-shadow: 0 0 24px rgba(59,130,246,.34);
+}
+
+.chatCard #chatSend:hover{
+  filter: brightness(1.08);
+}
+
+.overlay{
+  background: rgba(3,10,24,.64);
+}
+
+.overlayNum{
+  color:#bfdbfe;
+  text-shadow: 0 16px 46px rgba(2,8,20,.86), 0 0 24px rgba(59,130,246,.26);
+}
+
+@media (max-width: 768px){
+  body{
+    background:
+      radial-gradient(1000px 520px at 50% -10%, rgba(59,130,246,.24), transparent 62%),
+      radial-gradient(780px 440px at 12% 0, rgba(56,189,248,.14), transparent 58%),
+      #050b16;
+  }
+
+  .card,
+  .systemFeed,
+  .chatCard #chatContainer,
+  .numbersList{
+    background: rgba(10,20,37,.94);
+    border-color: rgba(146,193,255,.28);
+  }
+
+  .countdown,
+  .salaTitle,
+  .title{
+    color:#dbeafe;
+  }
+
+  .muted,
+  .small{
+    color:rgba(189,208,238,.88);
+  }
+}

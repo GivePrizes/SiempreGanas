@@ -2074,3 +2074,236 @@ body{
     font-size: 0.88rem;
   }
 }
+
+/* =========================================================
+   Participant Blue Metal Refresh
+   ========================================================= */
+:root {
+  --colour-background: #050b16;
+  --colour-surface: #0e1729;
+  --colour-surface-alt: #111f37;
+  --colour-border: rgba(139, 188, 255, 0.28);
+  --colour-primary: #60a5fa;
+  --colour-primary-hover: #93c5fd;
+  --colour-text: #eaf2ff;
+  --colour-muted: #a7bddf;
+  --gold: #60a5fa;
+  --muted: #a7bddf;
+  --shadow-soft: 0 10px 28px rgba(3, 8, 20, 0.55);
+  --shadow-medium: 0 14px 34px rgba(2, 8, 20, 0.62);
+  --shadow-strong: 0 22px 50px rgba(0, 0, 0, 0.68);
+}
+
+body {
+  background:
+    radial-gradient(1200px 640px at 16% -10%, rgba(59, 130, 246, 0.20), transparent 60%),
+    radial-gradient(1000px 560px at 88% 0%, rgba(56, 189, 248, 0.15), transparent 58%),
+    var(--colour-background);
+}
+
+.app-topbar,
+.dashboard-header,
+.sorteo-header {
+  border: 1px solid rgba(146, 193, 255, 0.24);
+  background: linear-gradient(180deg, rgba(24, 43, 76, 0.82), rgba(12, 23, 41, 0.92));
+  border-radius: 16px;
+  box-shadow: var(--shadow-medium);
+  padding: 0.95rem 1rem;
+}
+
+.title-badge,
+.pago-nequi-badge {
+  border: 1px solid rgba(133, 198, 255, 0.52);
+  background: linear-gradient(180deg, rgba(96, 165, 250, 0.34), rgba(44, 101, 190, 0.28));
+  color: #e8f3ff;
+  box-shadow: 0 0 18px rgba(59, 130, 246, 0.26);
+}
+
+.sorteos-hero,
+.sorteo-card,
+.summary-card,
+.stat-card,
+.status-card,
+.sorteo-card-premium,
+.sorteo-detalle-side,
+.pago-nequi-card,
+.mis-numeros-empty,
+.info-accordion,
+.sorteo-motivos-card,
+.sorteo-compra-card,
+.chat-card {
+  border: 1px solid rgba(146, 193, 255, 0.24);
+  background: linear-gradient(180deg, rgba(24, 43, 76, 0.66), rgba(11, 21, 38, 0.9));
+  box-shadow: var(--shadow-soft);
+}
+
+.sorteo-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(165, 209, 255, 0.46);
+  box-shadow: 0 0 0 1px rgba(133, 198, 255, 0.16), 0 16px 34px rgba(4, 10, 22, 0.68);
+}
+
+.sorteo-card .sorteo-title,
+.sorteos-section h2,
+.sorteos-hero h2,
+.sorteo-title,
+.mis-numeros-section h3 {
+  color: #dbeafe;
+  text-shadow: 0 0 16px rgba(96, 165, 250, 0.25);
+}
+
+.btn.btn-ghost {
+  background: linear-gradient(180deg, rgba(68, 109, 173, 0.28), rgba(25, 49, 92, 0.34));
+  border-color: rgba(148, 197, 255, 0.28);
+}
+
+.btn.btn-icon {
+  background: linear-gradient(135deg, rgba(96, 165, 250, 0.28), rgba(33, 79, 152, 0.26));
+  border-color: rgba(133, 198, 255, 0.38);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45), 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.btn.btn-icon:hover,
+.btn.btn-icon:focus-visible {
+  box-shadow: 0 12px 26px rgba(2, 8, 20, 0.62), 0 0 24px rgba(96, 165, 250, 0.34);
+  border-color: rgba(154, 208, 255, 0.7);
+}
+
+.btn:focus-visible{
+  box-shadow:
+    0 0 0 3px rgba(59,130,246,0.24),
+    0 10px 26px rgba(0,0,0,.38);
+}
+
+.btn-primary{
+  background: linear-gradient(135deg, #93c5fd, #60a5fa 55%, #3b82f6);
+  color: #eef6ff;
+  border-color: rgba(147,197,253,0.58);
+  box-shadow: 0 12px 30px rgba(59,130,246,.26), inset 0 -2px 0 rgba(0,0,0,.15);
+}
+
+.btn-secondary{
+  background: linear-gradient(180deg, rgba(45,72,116,0.95), rgba(23,42,73,0.95));
+  border-color: rgba(147,197,253,0.24);
+}
+
+.chip-filtro {
+  border: 1px solid rgba(139, 188, 255, 0.24);
+  background: linear-gradient(180deg, rgba(68, 109, 173, 0.24), rgba(22, 45, 84, 0.28));
+}
+
+.chip-filtro--activo {
+  color: #eef6ff;
+  border-color: rgba(147, 197, 253, 0.72);
+  background: linear-gradient(180deg, rgba(96, 165, 250, 0.72), rgba(55, 123, 223, 0.74));
+  box-shadow: 0 0 22px rgba(59, 130, 246, 0.34);
+}
+
+.pago-nequi-footer {
+  color: #dbeafe;
+  border-top-color: rgba(133, 198, 255, 0.4);
+}
+
+.status-open {
+  background-color: #0ea5e9;
+}
+
+.status-pending {
+  background-color: #3b82f6;
+}
+
+.bonus-mini{
+  background: linear-gradient(135deg, rgba(96,165,250,0.16), rgba(37,99,235,0.08));
+  box-shadow: inset 0 1px 2px rgba(59,130,246,0.08);
+}
+
+.bonus-mini strong{
+  color: #dbeafe;
+}
+
+.bonus-mini-bar span{
+  background: linear-gradient(90deg, rgba(96,165,250,0.72), rgba(59,130,246,0.98));
+}
+
+.mini-resumen-compra,
+.pago-nequi-datos,
+.comprobante-preview,
+.numeros-scroll,
+.chat-messages {
+  border-color: rgba(139, 188, 255, 0.22);
+  background: rgba(9, 19, 37, 0.72);
+}
+
+.numeros-grid .numero-btn.selected,
+.numero-item.selected,
+.chip-numero,
+.chip {
+  border-color: rgba(147, 197, 253, 0.5);
+  background: linear-gradient(180deg, rgba(96, 165, 250, 0.32), rgba(33, 86, 166, 0.3));
+}
+
+.chip-ganador{
+  border-color: rgba(125,211,252,0.74);
+  box-shadow: 0 0 14px rgba(59,130,246,0.28);
+  background: linear-gradient(135deg, rgba(96,165,250,0.30), rgba(37,99,235,0.16));
+}
+
+.numero-bola:hover {
+  border-color: rgba(125,211,252,0.65);
+  background: rgba(96,165,250,0.16);
+}
+
+.numero-bola:focus-visible {
+  outline-color: rgba(96,165,250,0.8);
+}
+
+.numero-bola--seleccionado {
+  background: #60a5fa;
+  color: #f0f7ff;
+  border-color: rgba(147,197,253,0.86);
+  box-shadow:
+    0 0 0 3px rgba(59,130,246,0.22),
+    var(--shadow-strong);
+}
+
+.welcome-modal-content{
+  border-color: rgba(147,197,253,0.22);
+  background: linear-gradient(135deg, rgba(13,27,51,.98), rgba(18,34,60,.96));
+}
+
+.welcome-modal-close{
+  background: rgba(96,165,250,0.12);
+  border-color: rgba(147,197,253,0.28);
+  color: #bfdbfe;
+}
+
+.welcome-modal-close:hover{
+  background: rgba(96,165,250,0.22);
+  border-color: #93c5fd;
+}
+
+.welcome-modal-title{
+  background: linear-gradient(135deg, #bfdbfe 0%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.welcome-modal-cta{
+  background: linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%);
+  color: #061224;
+  box-shadow: 0 8px 20px rgba(59,130,246,0.34);
+}
+
+.welcome-modal-cta:hover{
+  box-shadow: 0 12px 30px rgba(59,130,246,0.42);
+}
+
+@media (max-width: 768px) {
+  .app-topbar,
+  .dashboard-header,
+  .sorteo-header {
+    border-radius: 14px;
+    padding: 0.8rem 0.85rem;
+  }
+}

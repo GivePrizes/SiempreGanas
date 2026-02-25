@@ -7,33 +7,33 @@
    VARIABLES GLOBALES
    ========================= */
 :root {
-  /* 🎨 Paleta premium (oscuro + dorado confianza) */
-  --colour-background: #0b0b0f;
-  --colour-surface: #15151f;
-  --colour-surface-alt: #111118;
-  --colour-border: #333646;
+  /* Premium streaming (blue metal) */
+  --colour-background: #050b16;
+  --colour-surface: #0e1729;
+  --colour-surface-alt: #111f37;
+  --colour-border: #2a4369;
 
-  --colour-primary: #ffd700;
-  --colour-primary-hover: #ffea7a;
+  --colour-primary: #3b82f6;
+  --colour-primary-hover: #60a5fa;
 
-  --colour-secondary: #2e2e3a;
-  --colour-secondary-hover: #3b3b49;
+  --colour-secondary: #1f2f4d;
+  --colour-secondary-hover: #2a4067;
 
   --colour-danger: #d32f2f;
   --colour-danger-hover: #f44336;
 
-  --colour-text: #f5f5f5;
-  --colour-muted: #8a8f9e;
+  --colour-text: #eaf2ff;
+  --colour-muted: #9db3d7;
 
-  --colour-progress-bg: #252736;
-  --colour-progress-bar: hsl(240, 30%, 51%);
+  --colour-progress-bg: #1a2a45;
+  --colour-progress-bar: #60a5fa;
 
   /* Alias usados en varias vistas */
-  --gold: #ffd700;
-  --muted: #8a8f9e;
+  --gold: #60a5fa;
+  --muted: #9db3d7;
 
   /* 🧠 Tipografía */
-  --font-base: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-base: 'Plus Jakarta Sans', 'Manrope', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   --font-size-base: 16px;
   --font-size-small: 0.875rem;
   --font-size-large: 1.25rem;
@@ -44,8 +44,8 @@
   --radius-lg: 18px;
 
   /* 🌫️ Sombras */
-  --shadow-soft: 0 8px 24px rgba(0,0,0,.45);
-  --shadow-strong: 0 20px 60px rgba(0,0,0,.6);
+  --shadow-soft: 0 10px 28px rgba(3,8,20,.55);
+  --shadow-strong: 0 24px 66px rgba(0,0,0,.72);
 }
 
 /* =========================
@@ -86,7 +86,7 @@ select {
 }
 
 ::placeholder {
-  color: rgba(245,245,245,.45);
+  color: rgba(214,229,255,.44);
 }
 
 /* =========================
@@ -95,8 +95,8 @@ select {
 input,
 textarea,
 select {
-  background: rgba(2,6,23,.55);
-  border: 1px solid rgba(148,163,184,.22);
+  background: linear-gradient(180deg, rgba(25,42,73,.55), rgba(11,22,40,.62));
+  border: 1px solid rgba(128,171,236,.28);
   color: var(--colour-text);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
@@ -110,8 +110,8 @@ select {
 input:focus,
 textarea:focus,
 select:focus {
-  border-color: rgba(255,215,0,.55);
-  box-shadow: 0 0 0 4px rgba(255,215,0,.12);
+  border-color: rgba(124,185,255,.68);
+  box-shadow: 0 0 0 4px rgba(59,130,246,.16), 0 0 28px rgba(59,130,246,.24);
 }
 
 /* =========================
@@ -164,27 +164,28 @@ select:focus {
   transform: translateY(1px);
 }
 
-/* Primario (dorado) */
+/* Primario (azul premium) */
 .btn-primary {
-  background-color: var(--colour-primary);
-  color: #0b0b0f;
-  box-shadow: 0 12px 30px rgba(255,215,0,.15);
+  background: linear-gradient(180deg, rgba(96,165,250,.95), rgba(59,130,246,.92));
+  color: #edf4ff;
+  box-shadow: 0 12px 30px rgba(59,130,246,.35);
+  border-color: rgba(147,197,253,.35);
 }
 
 .btn-primary:hover {
-  background-color: var(--colour-primary-hover);
-  filter: brightness(1.03);
+  background: linear-gradient(180deg, rgba(125,188,255,.98), rgba(76,147,248,.95));
+  filter: brightness(1.06);
 }
 
 /* Secundario */
 .btn-secondary {
-  background-color: var(--colour-secondary);
+  background: linear-gradient(180deg, rgba(47,73,116,.72), rgba(26,43,74,.78));
   color: var(--colour-text);
-  border-color: rgba(148,163,184,.25);
+  border-color: rgba(145,191,255,.24);
 }
 
 .btn-secondary:hover {
-  background-color: var(--colour-secondary-hover);
+  background: linear-gradient(180deg, rgba(61,95,149,.76), rgba(34,57,96,.82));
 }
 
 /* Peligro */
@@ -201,8 +202,8 @@ select:focus {
    CARDS
    ========================= */
 .card {
-  background-color: rgba(21,21,31,.78);
-  border: 1px solid rgba(148,163,184,.20);
+  background: linear-gradient(180deg, rgba(22,39,68,.72), rgba(12,22,40,.84));
+  border: 1px solid rgba(145,191,255,.22);
   border-radius: var(--radius-lg);
   padding: 1.25rem;
   box-shadow: var(--shadow-soft);
@@ -240,18 +241,18 @@ select:focus {
   border-radius: 999px;
   font-size: var(--font-size-small);
   font-weight: 800;
-  border: 1px solid rgba(148,163,184,.22);
-  background: rgba(2,6,23,.35);
+  border: 1px solid rgba(150,196,255,.26);
+  background: linear-gradient(180deg, rgba(77,120,186,.24), rgba(28,52,94,.26));
 }
 
 .badge-success {
-  border-color: rgba(34,197,94,.35);
-  color: #86efac;
+  border-color: rgba(56,189,248,.45);
+  color: #b6ecff;
 }
 
 .badge-warning {
-  border-color: rgba(250,204,21,.35);
-  color: #fde68a;
+  border-color: rgba(125,211,252,.42);
+  color: #d7f0ff;
 }
 
 .badge-danger {

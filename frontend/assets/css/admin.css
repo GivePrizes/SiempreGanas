@@ -3,7 +3,7 @@
  * Admin dashboard styling
  *
  * Este archivo da estilo al panel de administración de Mathome.
- * Dark theme, detalles dorados y enfoque en claridad + control.
+ * Dark theme, estética blue-metal y enfoque en claridad + control.
  */
 
 /* Ya se incluye common.css desde el HTML con <link>, así que no hace falta importarlo aquí */
@@ -354,8 +354,8 @@
 }
 
 .badge-warning {
-  background-color: #f4b400; /* amarillo */
-  color: #000;
+  background-color: #3b82f6;
+  color: #eaf2ff;
 }
 
 .badge-danger {
@@ -447,8 +447,8 @@
 
 /* Variantes de color */
 .stat-card.gold {
-  background: radial-gradient(circle at top, #facc15, #92400e);
-  color: #111827;
+  background: radial-gradient(circle at top, #7dd3fc, #1e40af);
+  color: #eff6ff;
 }
 
 .stat-card.ruby {
@@ -507,6 +507,158 @@
 
 .card {
   will-change: transform, opacity;
+}
+
+/* =============================
+   Blue Metal Visual Refresh
+   ============================= */
+
+.admin-body {
+  background:
+    radial-gradient(1200px 700px at 12% -10%, rgba(59,130,246,.20), transparent 58%),
+    radial-gradient(900px 500px at 88% -12%, rgba(56,189,248,.14), transparent 60%),
+    linear-gradient(180deg, #050b16 0%, #060e1b 100%);
+}
+
+.admin-wrapper {
+  max-width: 1220px;
+  width: min(1220px, calc(100% - 2rem));
+}
+
+.admin-header {
+  border: 1px solid rgba(145,191,255,.22);
+  background:
+    linear-gradient(180deg, rgba(27,47,81,.82), rgba(13,24,42,.90));
+  box-shadow: 0 12px 34px rgba(0,0,0,.45);
+}
+
+.admin-header-left h1 {
+  letter-spacing: .2px;
+}
+
+.admin-status-pill {
+  border-color: rgba(141,195,255,.45);
+  background: linear-gradient(180deg, rgba(72,115,178,.35), rgba(23,45,81,.45));
+}
+
+.admin-status-pill .dot {
+  background-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56,189,248,.75);
+}
+
+.card {
+  border: 1px solid rgba(145,191,255,.24);
+  background:
+    linear-gradient(180deg, rgba(22,39,68,.78), rgba(11,21,39,.88));
+  box-shadow: 0 16px 34px rgba(2,8,20,.55);
+}
+
+.card-title-row h2 {
+  text-shadow: 0 0 18px rgba(96,165,250,.22);
+}
+
+.table thead {
+  background: linear-gradient(180deg, rgba(49,77,123,.45), rgba(23,41,71,.55));
+}
+
+.table th {
+  color: #bfdbfe;
+}
+
+.table tr:nth-child(even) {
+  background-color: rgba(83,128,201,.08);
+}
+
+.table tr:hover {
+  background-color: rgba(96,165,250,.16);
+}
+
+.pagination .page-link {
+  border: 1px solid rgba(144,191,255,.24);
+  background: linear-gradient(180deg, rgba(49,77,123,.42), rgba(21,40,71,.54));
+}
+
+.pagination .page-link:hover,
+.pagination .page-link.active {
+  background: linear-gradient(180deg, rgba(103,170,252,.78), rgba(55,122,220,.82));
+  color: #eaf2ff;
+  box-shadow: 0 0 22px rgba(59,130,246,.32);
+}
+
+.badge-success {
+  background: linear-gradient(180deg, rgba(56,189,248,.80), rgba(14,116,144,.82));
+  color: #f0f9ff;
+}
+
+.badge-warning {
+  background: linear-gradient(180deg, rgba(96,165,250,.84), rgba(37,99,235,.84));
+  color: #eff6ff;
+}
+
+.badge-danger {
+  background: linear-gradient(180deg, rgba(251,113,133,.85), rgba(190,24,93,.86));
+}
+
+.stat-card {
+  border: 1px solid rgba(152,198,255,.28);
+  overflow: hidden;
+  position: relative;
+}
+
+.stat-card::after {
+  content: "";
+  position: absolute;
+  inset: -120% auto auto -35%;
+  width: 46%;
+  height: 320%;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(197,228,255,.24) 50%, rgba(255,255,255,0) 100%);
+  transform: rotate(20deg);
+  animation: stat-sheen 6s linear infinite;
+  pointer-events: none;
+}
+
+.stat-card.gold {
+  background: radial-gradient(circle at 12% -10%, rgba(125,211,252,.55), rgba(30,64,175,.78) 68%, rgba(15,23,42,.92));
+  color: #eff6ff;
+}
+
+.stat-card.ruby {
+  background: radial-gradient(circle at 18% -12%, rgba(251,113,133,.56), rgba(136,19,55,.82) 68%, rgba(15,23,42,.92));
+  color: #fdf2f8;
+}
+
+.stat-card.obsidian {
+  background: radial-gradient(circle at 12% -10%, rgba(125,211,252,.30), rgba(15,23,42,.78) 65%, rgba(2,6,23,.95));
+  color: #e5efff;
+}
+
+.btn,
+.chip,
+.pagination .page-link {
+  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+.btn:hover,
+.chip:hover,
+.pagination .page-link:hover {
+  transform: translateY(-1px);
+}
+
+@keyframes stat-sheen {
+  0% {
+    transform: translateX(0) rotate(20deg);
+    opacity: .4;
+  }
+  100% {
+    transform: translateX(360%) rotate(20deg);
+    opacity: .08;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card::after {
+    animation: none;
+  }
 }
 
 
