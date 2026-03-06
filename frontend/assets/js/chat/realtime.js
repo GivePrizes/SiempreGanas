@@ -60,6 +60,7 @@ async function consumeSseBody(body, onEvent, signal) {
 export async function subscribeToSorteoInserts({ sorteoId, token, onInsert }) {
   const controller = new AbortController();
   let closed = false;
+  let unavailableNotified = false;
   const streamUrl = `${getChatEndpoint(sorteoId, { isAdmin: false })}/stream`;
 
   (async () => {
@@ -76,6 +77,13 @@ export async function subscribeToSorteoInserts({ sorteoId, token, onInsert }) {
         });
 
         if (!res.ok || !res.body) {
+          if ((res.status === 404 || res.status === 410) && !unavailableNotified) {
+            unavailableNotified = true;
+            window.dispatchEvent(new CustomEvent('chat-stream-unavailable', {
+              detail: { status: res.status, sorteoId }
+            }));
+            break;
+          }
           throw new Error(`SSE status ${res.status}`);
         }
 
