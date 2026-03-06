@@ -81,7 +81,7 @@
          │
          ▼
     ┌─────────────────────────┐
-    │ Elige 1-5 números       │
+    │ Elige 1 número          │
     │ Sube comprobante (foto) │
     └────────┬────────────────┘
              │

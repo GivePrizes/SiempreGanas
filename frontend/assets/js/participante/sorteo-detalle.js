@@ -8,7 +8,7 @@ import { initChat } from '../chat/index.js';
 const params = new URLSearchParams(window.location.search);
 const sorteoId = params.get('id');
 
-const MAX_NUMEROS_POR_COMPRA = 5;
+const MAX_NUMEROS_POR_COMPRA = 1;
 
 const tituloSorteo = document.getElementById('tituloSorteo');
 const subtituloSorteo = document.getElementById('subtituloSorteo');
@@ -96,7 +96,7 @@ function actualizarEstadoConfirmar() {
   btnConfirmar.disabled = !listo;
   btnConfirmar.textContent = listo
     ? 'Confirmar participación'
-    : 'Selecciona números y sube comprobante';
+    : 'Selecciona un número y sube comprobante';
 }
 
 
@@ -206,7 +206,7 @@ function toggleNumero(numero, el) {
     el.classList.remove('numero-bola--seleccionado');
   } else {
     if (seleccionados.length >= MAX_NUMEROS_POR_COMPRA) {
-      mostrarToast(`Máximo ${MAX_NUMEROS_POR_COMPRA} números por compra.`);
+      mostrarToast(`Máximo ${MAX_NUMEROS_POR_COMPRA} número por compra.`);
       return;
     }
     seleccionados.push(numero);
