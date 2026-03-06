@@ -116,31 +116,36 @@
         <div class="pago-nequi-card">
           <div class="pago-nequi-header">
             <div>
-              <p class="pago-nequi-title">Paga tus números por Nequi</p>
-              <p class="pago-nequi-subtitle">Asegura tu lugar en menos de 1 minuto ⚡</p>
+              <p class="pago-nequi-title">Paga con Nequi</p>
+              <p class="pago-nequi-subtitle">Escanea el QR o abre el link de pago.</p>
             </div>
           </div>
 
           <div class="pago-nequi-main">
             <div class="pago-nequi-datos">
-              <p class="pago-nequi-label">Número Nequi</p>
-              <p class="pago-nequi-value pago-nequi-value--big">3123450890</p>
-
-              <p class="pago-nequi-label">Titular</p>
-              <p class="pago-nequi-value">Mar** Gom**</p>
-
-              <button type="button" class="btn btn-primary btn-nequi-copy" onclick="copiarNequi()">
-                📋 Copiar número de Nequi
+              <p class="pago-nequi-label">QR de pago</p>
+              <img
+                id="imgQrNequi"
+                class="qr-nequi-img hidden"
+                alt="QR de pago Nequi"
+                loading="lazy"
+                referrerpolicy="no-referrer"
+              />
+              <p id="textoQrNequi" class="pago-nequi-value hidden">
+                Escanea el QR desde tu app Nequi.
+              </p>
+              <button id="btnPagarNequiLink" type="button" class="btn btn-primary btn-nequi-copy hidden">
+                🔗 Pagar con Nequi
               </button>
             </div>
 
             <div class="pago-nequi-steps">
               <ol>
-                <li>Elige tus números y mira el total.</li>
-                <li>Envía el pago con la nota <strong>"Ronda + tu nombre"</strong>.</li>
-                <li>Sube el comprobante.</li>
+                <li>Elige tu número.</li>
+                <li>Paga escaneando el QR o tocando <strong>Pagar con Nequi</strong>.</li>
+                <li>Sube el comprobante para validación.</li>
               </ol>
-              <p class="pago-nequi-seguro">🛡️ Revisión manual para mantener la dinámica transparente.</p>
+              <p class="pago-nequi-seguro">🛡️ Pago seguro + validación de participación.</p>
             </div>
           </div>
 

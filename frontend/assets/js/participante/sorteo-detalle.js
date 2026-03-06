@@ -28,6 +28,9 @@ const resumenTotal = document.getElementById('resumenTotal');
 const inputComprobante = document.getElementById('inputComprobante');
 const previewComprobante = document.getElementById('previewComprobante');
 const imgPreview = document.getElementById('imgPreview');
+const btnPagarNequiLink = document.getElementById('btnPagarNequiLink');
+const imgQrNequi = document.getElementById('imgQrNequi');
+const textoQrNequi = document.getElementById('textoQrNequi');
 
 const btnConfirmar = document.getElementById('btnConfirmar');
 const toast = document.getElementById('toast');
@@ -45,6 +48,7 @@ let sorteoActual = null;
 let numerosOcupados = [];
 let seleccionados = [];
 let precioNumero = 0;
+const NEQUI_PAYMENT_LINKS = window.NEQUI_PAYMENT_LINKS || {};
 
 if (maxNumerosTexto) maxNumerosTexto.textContent = MAX_NUMEROS_POR_COMPRA.toString();
 
@@ -165,33 +169,45 @@ function actualizarBloqueoPorMaximo() {
 }
 
 
-// --- función para copiar Nequi (global para el onclick del HTML) ---
-function copiarNequi() {
-  const numero = '3123450890';
+function obtenerLinkNequiSeguro(sorteoIdValue) {
+  const raw = NEQUI_PAYMENT_LINKS?.[String(sorteoIdValue)];
+  if (!raw) return null;
 
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard
-      .writeText(numero)
-      .then(() => {
-        mostrarToast('Número Nequi copiado ✅');
-      })
-      .catch(() => {
-        alert('No se pudo copiar automáticamente, pero el número es: ' + numero);
-      });
-  } else {
-    // Fallback para navegadores antiguos / contextos no seguros
-    const inputOculto = document.createElement('input');
-    inputOculto.value = numero;
-    document.body.appendChild(inputOculto);
-    inputOculto.select();
-    document.execCommand('copy');
-    document.body.removeChild(inputOculto);
-    alert('Número Nequi copiado ✅');
+  try {
+    const parsed = new URL(raw);
+    const hostPermitido = parsed.hostname === 'checkout.nequi.wompi.co';
+    const pathValido = parsed.pathname.startsWith('/l/');
+    if (parsed.protocol !== 'https:' || !hostPermitido || !pathValido) return null;
+    return parsed.toString();
+  } catch {
+    return null;
   }
 }
 
-// exponerla al scope global, porque el script es type="module"
-window.copiarNequi = copiarNequi;
+function construirQrDesdeLink(linkSeguro) {
+  const encoded = encodeURIComponent(linkSeguro);
+  return `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encoded}`;
+}
+
+function configurarPagoNequiPorLink() {
+  if (!btnPagarNequiLink || !imgQrNequi || !textoQrNequi || !sorteoId) return;
+
+  const linkSeguro = obtenerLinkNequiSeguro(sorteoId);
+  if (!linkSeguro) {
+    btnPagarNequiLink.classList.add('hidden');
+    imgQrNequi.classList.add('hidden');
+    textoQrNequi.classList.add('hidden');
+    return;
+  }
+
+  imgQrNequi.src = construirQrDesdeLink(linkSeguro);
+  imgQrNequi.classList.remove('hidden');
+  textoQrNequi.classList.remove('hidden');
+  btnPagarNequiLink.classList.remove('hidden');
+  btnPagarNequiLink.addEventListener('click', () => {
+    window.open(linkSeguro, '_blank', 'noopener,noreferrer');
+  });
+}
 
 
 function toggleNumero(numero, el) {
@@ -516,6 +532,7 @@ if (btnConfirmar) {
 
 // --- init ---
 document.addEventListener('DOMContentLoaded', () => {
+  configurarPagoNequiPorLink();
   cargarSorteo();
   cargarMisNumerosDelSorteo();
 });

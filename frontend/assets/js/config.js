@@ -10,9 +10,11 @@ const CHAT_URL = runtime.CHAT_URL || 'https://chat-service-theta.vercel.app';
 // Valores publicos requeridos por cliente (no usar aqui service role keys)
 const SUPABASE_URL = runtime.SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = runtime.SUPABASE_ANON_KEY || '';
+const NEQUI_PAYMENT_LINKS = runtime.NEQUI_PAYMENT_LINKS || {};
 
 window.API_URL = API_URL;
 window.AUTH_URL = AUTH_URL;
 window.CHAT_URL = CHAT_URL;
 window.SUPABASE_URL = SUPABASE_URL;
 window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
+window.NEQUI_PAYMENT_LINKS = NEQUI_PAYMENT_LINKS;

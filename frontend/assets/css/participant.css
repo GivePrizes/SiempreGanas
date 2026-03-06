@@ -683,6 +683,17 @@ body{
   letter-spacing: 0.08em;
 }
 
+.qr-nequi-img {
+  width: min(240px, 72vw);
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: #fff;
+  padding: 8px;
+  margin-bottom: 0.45rem;
+}
+
 .btn-nequi-copy {
   width: 100%;
   margin-top: 0.4rem;
