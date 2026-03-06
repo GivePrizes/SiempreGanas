@@ -255,6 +255,7 @@ export async function initChat({ sorteoId, token }) {
   try {
     unsub = await subscribeToSorteoInserts({
       sorteoId,
+      token,
       onInsert: appendMessage
     });
   } catch {
