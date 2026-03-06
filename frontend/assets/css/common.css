@@ -360,4 +360,178 @@ select:focus {
   transform: translateY(0);
 }
 
+/* =========================================================
+   Global Light App Theme
+   ========================================================= */
+:root {
+  --colour-background: #f4f7fb;
+  --colour-surface: #ffffff;
+  --colour-surface-alt: #f8fafc;
+  --colour-border: #dbe5f1;
+
+  --colour-primary: #2563eb;
+  --colour-primary-hover: #1d4ed8;
+
+  --colour-secondary: #e2e8f0;
+  --colour-secondary-hover: #cbd5e1;
+
+  --colour-danger: #dc2626;
+  --colour-danger-hover: #b91c1c;
+
+  --colour-text: #0f172a;
+  --colour-muted: #475569;
+
+  --colour-progress-bg: #e2e8f0;
+  --colour-progress-bar: #3b82f6;
+
+  --gold: #2563eb;
+  --muted: #64748b;
+
+  --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-strong: 0 20px 48px rgba(15, 23, 42, 0.14);
+}
+
+html, body {
+  color: var(--colour-text);
+  background-color: var(--colour-background);
+}
+
+body {
+  background:
+    radial-gradient(1000px 500px at 0% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
+    radial-gradient(900px 460px at 100% 0%, rgba(14, 165, 233, 0.05), transparent 60%),
+    var(--colour-background);
+}
+
+::placeholder {
+  color: rgba(71, 85, 105, 0.7);
+}
+
+input,
+textarea,
+select {
+  background: #ffffff;
+  border: 1px solid var(--colour-border);
+  color: var(--colour-text);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: rgba(37, 99, 235, 0.6);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+}
+
+.text-muted { color: var(--colour-muted); }
+
+.btn-primary {
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  color: #ffffff;
+  border-color: rgba(37, 99, 235, 0.45);
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, #60a5fa, #2563eb);
+}
+
+.btn-secondary {
+  background: #eef2f7;
+  color: #0f172a;
+  border-color: #d3dce8;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid var(--colour-border);
+  box-shadow: var(--shadow-soft);
+}
+
+.badge {
+  border-color: #d0dced;
+  background: #eef2f7;
+  color: #334155;
+}
+
+.badge-success {
+  border-color: #86efac;
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-warning {
+  border-color: #fde68a;
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.badge-danger {
+  border-color: #fecaca;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.toast {
+  background: #0f172a;
+  border-color: #1e293b;
+  color: #f8fafc;
+}
+
+.error-msg {
+  color: #dc2626;
+}
+
+.whatsapp-float-dashboard {
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
+}
+
+/* =========================================================
+   Cognitive Comfort Mode
+   ========================================================= */
+:root {
+  --colour-background: #f6f7f9;
+  --colour-surface: #ffffff;
+  --colour-surface-alt: #f7f8fa;
+  --colour-border: #e5e7eb;
+
+  --colour-primary: #2563eb;
+  --colour-primary-hover: #1d4ed8;
+
+  --colour-text: #111827;
+  --colour-muted: #6b7280;
+
+  --shadow-soft: 0 4px 12px rgba(17, 24, 39, 0.06);
+  --shadow-strong: 0 10px 24px rgba(17, 24, 39, 0.1);
+}
+
+body {
+  background: var(--colour-background);
+}
+
+.card,
+.toast,
+.btn,
+input,
+textarea,
+select {
+  box-shadow: none;
+}
+
+.card {
+  border-color: var(--colour-border);
+}
+
+.btn {
+  transition: background-color .12s ease, border-color .12s ease, color .12s ease;
+}
+
+.btn:hover,
+.btn:active {
+  transform: none;
+}
+
 

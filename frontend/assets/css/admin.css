@@ -661,4 +661,145 @@
   }
 }
 
+/* =========================================================
+   Admin Light App Theme
+   ========================================================= */
+.admin-body {
+  background:
+    radial-gradient(1000px 500px at 0% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
+    radial-gradient(900px 460px at 100% 0%, rgba(14, 165, 233, 0.05), transparent 60%),
+    #f4f7fb;
+  color: #0f172a;
+}
+
+.admin-header,
+.card,
+.sorteo-card-admin,
+.stat-card,
+.table-wrapper {
+  border: 1px solid #dbe5f1;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.admin-status-pill {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.admin-status-pill .dot {
+  background-color: #22c55e;
+  box-shadow: none;
+}
+
+.admin-header-left .admin-subtitle,
+.mini-hint,
+.sorteo-detalle-mini,
+.stat-hint,
+.mini-estado {
+  color: #64748b;
+}
+
+.table thead {
+  background: #f8fafc;
+}
+
+.table th {
+  color: #1e3a8a;
+}
+
+.table td {
+  color: #0f172a;
+}
+
+.table tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.table tr:hover {
+  background-color: #eef2ff;
+}
+
+.pagination .page-link {
+  border: 1px solid #dbe5f1;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.pagination .page-link:hover,
+.pagination .page-link.active {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+}
+
+.badge-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-warning {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.badge-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.stat-card.gold,
+.stat-card.ruby,
+.stat-card.obsidian {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.stat-card::after {
+  display: none;
+}
+
+.toast {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+/* =========================================================
+   Admin Cognitive Comfort Mode
+   ========================================================= */
+.admin-body {
+  background: #f6f7f9;
+}
+
+.admin-header,
+.card,
+.sorteo-card-admin,
+.stat-card,
+.table-wrapper,
+.table,
+.pagination .page-link {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: none;
+}
+
+.table thead,
+.table tr:nth-child(even) {
+  background: #f7f8fa;
+}
+
+.table tr:hover {
+  background: #eef2f7;
+}
+
+.btn:hover,
+.pagination .page-link:hover {
+  transform: none;
+}
+
+.stat-card::after {
+  display: none !important;
+}
+
 

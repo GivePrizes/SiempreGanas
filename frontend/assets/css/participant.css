@@ -2307,3 +2307,232 @@ body {
     padding: 0.8rem 0.85rem;
   }
 }
+
+/* =========================================================
+   Participant Light App Theme
+   ========================================================= */
+:root {
+  --colour-background: #f4f7fb;
+  --colour-surface: #ffffff;
+  --colour-surface-alt: #f8fafc;
+  --colour-border: #dbe5f1;
+  --colour-primary: #2563eb;
+  --colour-primary-hover: #1d4ed8;
+  --colour-text: #0f172a;
+  --colour-muted: #64748b;
+  --gold: #2563eb;
+  --muted: #64748b;
+  --shadow-soft: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-medium: 0 14px 30px rgba(15, 23, 42, 0.12);
+  --shadow-strong: 0 20px 44px rgba(15, 23, 42, 0.16);
+}
+
+body {
+  background:
+    radial-gradient(1000px 500px at 0% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
+    radial-gradient(900px 460px at 100% 0%, rgba(14, 165, 233, 0.05), transparent 60%),
+    var(--colour-background);
+  color: var(--colour-text);
+}
+
+.app-topbar,
+.dashboard-header,
+.sorteo-header,
+.sorteos-hero,
+.sorteo-card,
+.summary-card,
+.stat-card,
+.status-card,
+.sorteo-card-premium,
+.sorteo-detalle-side,
+.pago-nequi-card,
+.mis-numeros-empty,
+.info-accordion,
+.sorteo-motivos-card,
+.sorteo-compra-card,
+.chat-card {
+  border: 1px solid var(--colour-border);
+  background: #ffffff;
+  box-shadow: var(--shadow-soft);
+}
+
+.app-subtitle,
+.sorteos-section p.section-description,
+.section-description,
+.status-text,
+.progress-tip-text,
+.chat-hint,
+.sorteo-subtitle,
+.stat-top,
+.stat-hint {
+  color: var(--colour-muted);
+}
+
+.sorteos-section h2,
+.sorteos-hero h2,
+.sorteo-card .sorteo-title,
+.sorteo-title,
+.mis-numeros-section h3,
+.dashboard-header h2,
+.app-title {
+  color: #0f172a;
+  text-shadow: none;
+}
+
+.title-badge,
+.pago-nequi-badge {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+  box-shadow: none;
+}
+
+.btn.btn-ghost {
+  background: #f1f5f9;
+  border-color: #cfd9e5;
+  color: #0f172a;
+}
+
+.btn.btn-icon {
+  background: #ffffff;
+  border-color: #d3dce8;
+  color: #0f172a;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
+}
+
+.btn.btn-icon::after {
+  background: #0f172a;
+}
+
+.btn.btn-icon:hover,
+.btn.btn-icon:focus-visible {
+  border-color: #93c5fd;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.2);
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  color: #ffffff;
+  border-color: rgba(37, 99, 235, 0.45);
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
+}
+
+.btn-secondary {
+  background: #eef2f7;
+  color: #0f172a;
+  border-color: #d3dce8;
+}
+
+.chip-filtro {
+  border-color: #d3dce8;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.chip-filtro--activo {
+  color: #ffffff;
+  border-color: #2563eb;
+  background: #2563eb;
+  box-shadow: none;
+}
+
+.status-open {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-pending {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+.status-closed {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.mini-resumen-compra,
+.pago-nequi-datos,
+.comprobante-preview,
+.numeros-scroll,
+.chat-messages {
+  border-color: var(--colour-border);
+  background: var(--colour-surface-alt);
+}
+
+.chat-sala input {
+  border-color: var(--colour-border);
+  background: #ffffff;
+  color: var(--colour-text);
+}
+
+.bonus-mini {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e3a8a;
+  box-shadow: none;
+}
+
+.bonus-mini strong {
+  color: #1d4ed8;
+}
+
+.bonus-mini-bar {
+  background: #dbeafe;
+}
+
+.bonus-mini-bar span {
+  background: linear-gradient(90deg, #60a5fa, #2563eb);
+}
+
+/* =========================================================
+   Participant Cognitive Comfort Mode
+   ========================================================= */
+body {
+  background: #f6f7f9;
+}
+
+.app-topbar,
+.dashboard-header,
+.sorteo-header,
+.sorteos-hero,
+.sorteo-card,
+.summary-card,
+.stat-card,
+.status-card,
+.sorteo-card-premium,
+.sorteo-detalle-side,
+.pago-nequi-card,
+.mis-numeros-empty,
+.info-accordion,
+.sorteo-motivos-card,
+.sorteo-compra-card,
+.chat-card,
+.chat-messages,
+.pago-nequi-datos,
+.comprobante-preview,
+.numeros-scroll {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: none;
+}
+
+.btn,
+.chip-filtro,
+.status-badge,
+.title-badge,
+.pago-nequi-badge {
+  box-shadow: none;
+}
+
+.sorteo-card:hover,
+.btn:hover,
+.chip-filtro:hover {
+  transform: none;
+}
+
+.chat-typing,
+.live-indicator,
+.typing-dot {
+  animation: none !important;
+}
