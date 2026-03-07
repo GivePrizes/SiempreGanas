@@ -45,7 +45,6 @@ export async function initChat({ sorteoId, token }) {
   let pendingNew = 0;
   let puedeEscribir = false;
   let unsub = null;
-  let pollTimer = null;
   let soundEnabled = false;
   let canUseChat = true;
 
@@ -252,25 +251,6 @@ export async function initChat({ sorteoId, token }) {
   /* ===============================
     2) REALTIME
   =============================== */
-  function startPollingFallback() {
-    if (pollTimer) return;
-
-    pollTimer = setInterval(async () => {
-      const poll = await fetchMessages({ sorteoId, token, limit: 50 });
-      if (!poll.ok) return;
-
-      const list = poll.data?.messages || [];
-      for (const msg of list) appendMessage(msg);
-    }, 3000);
-  }
-
-  const onStreamUnavailable = (ev) => {
-    if (Number(ev?.detail?.sorteoId) !== Number(sorteoId)) return;
-    startPollingFallback();
-  };
-
-  window.addEventListener('chat-stream-unavailable', onStreamUnavailable);
-
   try {
     unsub = await subscribeToSorteoInserts({
       sorteoId,
@@ -413,8 +393,6 @@ export async function initChat({ sorteoId, token }) {
 
   window.addEventListener('beforeunload', () => {
     unsub?.();
-    if (pollTimer) clearInterval(pollTimer);
-    window.removeEventListener('chat-stream-unavailable', onStreamUnavailable);
   });
   }
 
