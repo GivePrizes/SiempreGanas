@@ -39,6 +39,7 @@ const misNumerosEnSorteoTexto = document.getElementById('misNumerosEnSorteoTexto
 const misNumerosEnSorteoChips = document.getElementById('misNumerosEnSorteoChips');
 const estadoNoParticipante = document.getElementById('estadoNoParticipante');
 const btnMisNumeros = document.getElementById('btnMisNumeros');
+const btnChatOnline = document.getElementById('btnChatOnline');
 const chatInput = document.getElementById('chatInput');
 const chatSend = document.getElementById('chatSend');
 const chatHint = document.getElementById('chatHint');
@@ -51,6 +52,11 @@ let precioNumero = 0;
 const NEQUI_PAYMENT_LINKS = window.NEQUI_PAYMENT_LINKS || {};
 
 if (maxNumerosTexto) maxNumerosTexto.textContent = MAX_NUMEROS_POR_COMPRA.toString();
+if (btnChatOnline && sorteoId) {
+  btnChatOnline.addEventListener('click', () => {
+    location.href = `chat.html?id=${encodeURIComponent(sorteoId)}`;
+  });
+}
 
 // --- helpers ---
 function mostrarToast(msg) {

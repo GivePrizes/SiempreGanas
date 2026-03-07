@@ -139,6 +139,7 @@
   background: rgba(2, 6, 23, 0.8);
   align-items: stretch;
   min-height: 44px;
+  position: relative;
 }
 
 #chatInput {
@@ -202,6 +203,54 @@
   cursor: not-allowed;
 }
 
+.chat-emoji-btn {
+  background: #0f172a;
+  color: #f2f0eb;
+  border: 1px solid rgba(246, 208, 111, 0.2);
+  border-radius: 8px;
+  padding: 0 10px;
+  min-width: 44px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.chat-emoji-btn:hover {
+  border-color: #f6d06f;
+}
+
+.chat-emoji-panel {
+  position: absolute;
+  right: 8px;
+  bottom: calc(100% + 8px);
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  width: 220px;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(246, 208, 111, 0.2);
+  background: rgba(2, 6, 23, 0.97);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  z-index: 20;
+}
+
+.chat-emoji-item {
+  border: 1px solid transparent;
+  background: rgba(30, 41, 59, 0.7);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  min-height: 34px;
+}
+
+.chat-emoji-item:hover {
+  border-color: rgba(246, 208, 111, 0.35);
+  background: rgba(51, 65, 85, 0.85);
+}
+
 /* ===============================
    HINT
 =============================== */
@@ -245,6 +294,17 @@
     padding: 8px 12px;
     min-width: 60px;
     font-size: 13px;
+  }
+
+  .chat-emoji-btn {
+    min-width: 38px;
+    padding: 0 8px;
+    font-size: 16px;
+  }
+
+  .chat-emoji-panel {
+    width: 190px;
+    right: 6px;
   }
 
   #chatContainer {

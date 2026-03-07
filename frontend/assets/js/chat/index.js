@@ -39,6 +39,7 @@ export async function initChat({ sorteoId, token }) {
   const hintEl    = document.getElementById('chatHint');
   const filtersEl = document.getElementById('chatFilters');
   const newBtnEl  = document.getElementById('chatNewBtn');
+  const inputWrapEl = inputEl?.closest('.chat-input-wrap') || null;
 
   const store = createChatStore({ myUsuarioId });
 
@@ -48,6 +49,10 @@ export async function initChat({ sorteoId, token }) {
   let pollTimer = null;
   let soundEnabled = false;
   let canUseChat = true;
+  let emojiBtnEl = null;
+  let emojiPanelEl = null;
+  let onDocClick = null;
+  let onDocKeydown = null;
 
   /* ===============================
      UI helpers
@@ -216,6 +221,67 @@ export async function initChat({ sorteoId, token }) {
     pendingNew = 0;
     newBtnEl.classList.add('hidden');
   });
+
+  function setupEmojiPicker() {
+    if (!inputWrapEl || !inputEl) return;
+    if (inputWrapEl.querySelector('#chatEmojiBtn')) return;
+
+    const emojis = ['😀', '😂', '😍', '🥳', '😎', '🔥', '💯', '🎉', '🍀', '🙏'];
+
+    emojiBtnEl = document.createElement('button');
+    emojiBtnEl.type = 'button';
+    emojiBtnEl.id = 'chatEmojiBtn';
+    emojiBtnEl.className = 'chat-emoji-btn';
+    emojiBtnEl.setAttribute('aria-label', 'Insertar emoji');
+    emojiBtnEl.textContent = '😊';
+
+    emojiPanelEl = document.createElement('div');
+    emojiPanelEl.id = 'chatEmojiPanel';
+    emojiPanelEl.className = 'chat-emoji-panel hidden';
+
+    for (const emoji of emojis) {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'chat-emoji-item';
+      item.textContent = emoji;
+      item.setAttribute('aria-label', `Emoji ${emoji}`);
+      item.addEventListener('click', () => {
+        const start = inputEl.selectionStart ?? inputEl.value.length;
+        const end = inputEl.selectionEnd ?? start;
+        const left = inputEl.value.slice(0, start);
+        const right = inputEl.value.slice(end);
+        const next = `${left}${emoji}${right}`.slice(0, 120);
+        const nextPos = Math.min(start + emoji.length, next.length);
+        inputEl.value = next;
+        inputEl.focus();
+        inputEl.setSelectionRange(nextPos, nextPos);
+      });
+      emojiPanelEl.appendChild(item);
+    }
+
+    emojiBtnEl.addEventListener('click', e => {
+      e.stopPropagation();
+      emojiPanelEl?.classList.toggle('hidden');
+    });
+
+    inputWrapEl.appendChild(emojiBtnEl);
+    inputWrapEl.appendChild(emojiPanelEl);
+
+    onDocClick = e => {
+      if (!emojiPanelEl || emojiPanelEl.classList.contains('hidden')) return;
+      if (emojiPanelEl.contains(e.target) || emojiBtnEl?.contains(e.target)) return;
+      emojiPanelEl.classList.add('hidden');
+    };
+
+    onDocKeydown = e => {
+      if (e.key === 'Escape') emojiPanelEl?.classList.add('hidden');
+    };
+
+    document.addEventListener('click', onDocClick);
+    document.addEventListener('keydown', onDocKeydown);
+  }
+
+  setupEmojiPicker();
 
   // Por defecto permitimos escribir
   puedeEscribir = true;
@@ -415,6 +481,8 @@ export async function initChat({ sorteoId, token }) {
     unsub?.();
     if (pollTimer) clearInterval(pollTimer);
     window.removeEventListener('chat-stream-unavailable', onStreamUnavailable);
+    if (onDocClick) document.removeEventListener('click', onDocClick);
+    if (onDocKeydown) document.removeEventListener('keydown', onDocKeydown);
   });
   }
 
