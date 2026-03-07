@@ -19,11 +19,3 @@ Plataforma de sorteos con psicología persuasiva integrada.
 ## Cómo Correr Localmente
 
 ```bash
-# Clonar
-git clone https://github.com/GivePrizes/SiempreGanas.git
-cd SiempreGanas
-
-# Abrir frontend localmente
-cd frontend
-python3 -m http.server 3000
-# O abre index.html directamente en el navegador
