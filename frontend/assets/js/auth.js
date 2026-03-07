@@ -48,7 +48,7 @@ async function login() {
       // Redirección según rol (con delay mayor para permitir ver bien el modal)
       setTimeout(() => {
         location.href = redirectUrl;
-      }, 7000);
+      }, 1200);
     } else {
       alert('Error: ' + data.message);
     }
@@ -160,7 +160,7 @@ async function registro() {
       // Redirección con delay mayor
       setTimeout(() => {
         location.href = 'participante/dashboard.html';
-      }, 7000);
+      }, 1200);
     } else {
       alert('Error: ' + data.message);
     }
@@ -350,5 +350,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape') closeTermsModal();
   });
 });
+
 
 
