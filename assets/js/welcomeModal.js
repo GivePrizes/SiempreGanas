@@ -107,6 +107,7 @@ class WelcomeModal {
     return await window.getAuthUser();
   }
 
+  // Verifica si el usuario actual es un participante autenticado.
   async isParticipante() {
     const user = await this.getCurrentUser();
     if (!user) return false;
