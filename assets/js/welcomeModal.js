@@ -101,18 +101,13 @@ class WelcomeModal {
     document.addEventListener('keydown', this.handleEscKey);
   }
 
-  getCurrentUser() {
-    try {
-      const rawUser = localStorage.getItem('user');
-      return rawUser ? JSON.parse(rawUser) : null;
-    } catch (error) {
-      console.warn('No se pudo leer el usuario desde localStorage:', error);
-      return null;
-    }
+  async getCurrentUser() {
+    if (typeof window.getAuthUser !== 'function') return null;
+    return await window.getAuthUser();
   }
 
-  isParticipante() {
-    const user = this.getCurrentUser();
+  async isParticipante() {
+    const user = await this.getCurrentUser();
     if (!user) return false;
 
     // Compatibilidad con payloads legacy: normaliza "rol" a "role".
@@ -122,11 +117,11 @@ class WelcomeModal {
     return normalizedUser?.role === 'participante';
   }
 
-  show() {
+  async show() {
     if (!this.modal) return;
 
     // Solo mostrar a participantes autenticados.
-    if (!this.isParticipante()) return;
+    if (!await this.isParticipante()) return;
 
     // Control de localStorage para mostrar una sola vez por version.
     if (!this.forceShow && this.hasBeenShown()) return;

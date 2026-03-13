@@ -27,7 +27,7 @@ Host: app-service-phi.vercel.app (o localhost en desarrollo)
 
 ### Headers Requeridos
 ```
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+Authorization: Bearer <JWT_DEMO_TOKEN>
 Content-Type: application/json (implícito)
 ```
 
@@ -358,7 +358,7 @@ CREATE TABLE numero_participacion (
 ### Con curl
 ```bash
 # 1. Obtener token (requiere auth-service)
-TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+TOKEN="<JWT_DEMO_TOKEN>"
 
 # 2. Llamar al endpoint
 curl -X GET \
@@ -372,7 +372,7 @@ curl -X GET \
 
 ### Con JavaScript (Node.js)
 ```javascript
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+const token = '<JWT_DEMO_TOKEN>';
 
 const res = await fetch('http://localhost:3001/api/bonus/progreso', {
   headers: {
@@ -389,3 +389,4 @@ console.log(data);
 
 **Generado:** 26 de enero de 2026  
 **Verificado:** Repositorio GitHub GivePrizes/app-service (main)
+

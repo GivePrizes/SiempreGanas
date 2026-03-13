@@ -1,4 +1,4 @@
-// assets/js/participante/index.js
+﻿// assets/js/participante/index.js
 
 import { cargarMisNumerosResumen } from './misNumeros.js';
 import { cargarProgresoBono } from '../bonus.js';
@@ -8,22 +8,16 @@ const API_URL = window.API_URL || '';
 // ================================
 // 👋 BIENVENIDA
 // ================================
-function setBienvenida() {
+function setBienvenida(user) {
   const titulo = document.getElementById('tituloBienvenida');
   const subtitulo = document.getElementById('subtituloBienvenida');
-  const raw = localStorage.getItem('user');
-  if (!raw) return;
+  if (!user) return;
 
-  try {
-    const user = JSON.parse(raw);
-    const nombre = user.nombre || user.name || '';
-    if (titulo) titulo.textContent = nombre ? `Hola ${nombre} 👋` : 'Hola 👋';
-    if (subtitulo)
-      subtitulo.textContent =
-        'Adquiere tus números, sube tu comprobante y espera la dinámica.';
-  } catch {
-    console.warn('User inválido en localStorage');
-  }
+  const nombre = user.nombre || user.alias || user.email || '';
+  if (titulo) titulo.textContent = nombre ? `Hola ${nombre} 👋` : 'Hola 👋';
+  if (subtitulo)
+    subtitulo.textContent =
+      'Adquiere tus números, sube tu comprobante y espera la dinámica.';
 }
 
 // ================================
@@ -44,7 +38,7 @@ function renderSorteoCard(s) {
   let estadoClass = 'status-open';
 
   if (porcentaje >= 100) {
-    estadoTxt = 'Listo para ruleta';
+    estadoTxt = 'Listo para resultado en vivo';
     estadoClass = 'status-closed';
   } else if (porcentaje >= 80) {
     estadoTxt = 'Casi lleno';
@@ -61,7 +55,7 @@ function renderSorteoCard(s) {
           <span class="status-badge ${estadoClass}">${estadoTxt}</span>
         </div>
 
-        <div class="sorteo-info">🎁 Premio: ${s.premio}</div>
+        <div class="sorteo-info">🎁 Ganador: ${s.premio}</div>
         <div class="sorteo-info">💵 Precio: $${precio}</div>
         <div class="sorteo-info">🎟 ${vendidos} / ${total}</div>
 
@@ -72,8 +66,8 @@ function renderSorteoCard(s) {
         <div class="cta">
           ${
             porcentaje >= 100
-              ? `<a class="btn btn-secondary" href="ruleta-live.html?sorteo=${s.id}">🎰 Ver ruleta</a>`
-              : `<a class="btn btn-primary" href="sorteo.html?id=${s.id}">Adquirir acceso</a>`
+              ? `<a class="btn btn-secondary" href="ruleta-live.html?id=${s.id}">🎰 Ver sorteo en vivo</a>`
+              : `<a class="btn btn-primary" href="sorteo.html?id=${s.id}">Participar ahora</a>`
           }
         </div>
       </div>
@@ -120,7 +114,7 @@ async function cargarSorteosActivos() {
     const data = await res.json();
     renderSorteos(data.filter(s => s.estado !== 'finalizado'));
   } catch {
-    cont.innerHTML = '<p class="error">No se pudieron cargar los sorteos.</p>';
+    cont.innerHTML = '<p class="error">No se pudieron cargar las rondas.</p>';
   }
 }
 
@@ -128,7 +122,12 @@ async function cargarSorteosActivos() {
 // 🚀 INIT
 // ================================
 document.addEventListener('DOMContentLoaded', async () => {
-  setBienvenida();
+  const user = typeof window.requireAuthUser === 'function'
+    ? await window.requireAuthUser({ redirectTo: '../index.html' })
+    : null;
+  if (!user) return;
+
+  setBienvenida(user);
   cargarStatsSorteos();
 
   // 🔹 Esto llena “Números adquiridos”
@@ -139,3 +138,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   cargarSorteosActivos();
 });
+
+
+
+
+
+
+

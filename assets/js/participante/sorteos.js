@@ -1,4 +1,4 @@
-// assets/js/participante/sorteos.js
+﻿// assets/js/participante/sorteos.js
 
 export async function cargarSorteos() {
   const cont = document.getElementById('sorteosActivos');
@@ -45,8 +45,8 @@ export async function cargarSorteos() {
       const faltan = masCercano.cantidad_numeros - masCercano.ocupados;
       statProxima.textContent =
         faltan <= 0
-          ? 'Listo para ruleta'
-          : `Faltan ${faltan} número(s) para la ruleta`;
+          ? 'Listo para resultado en vivo'
+          : `Faltan ${faltan} cupo(s) para activar la ronda`;
     }
 
     cont.innerHTML = data
@@ -69,7 +69,7 @@ export async function cargarSorteos() {
             '🔥 ¡Últimos números! Estás a nada de ver la ruleta girar.';
         } else if (porcentaje >= 50) {
           mensajeEstado =
-            'Ya vamos por la mitad, cada número que compras acelera la ruleta.';
+            'Ya vamos por la mitad, cada activación acerca el resultado.';
         } else {
           mensajeEstado =
             'Aprovecha ahora: hay buena disponibilidad de números.';
@@ -86,7 +86,7 @@ export async function cargarSorteos() {
               <img src="../assets/img/default.png" class="sorteo-img" alt="Imagen por defecto">
             `}
             <h3>${s.descripcion}</h3>
-            <p class="sorteo-premio">🎁 Premio: <strong>${s.premio}</strong></p>
+            <p class="sorteo-premio">🎁 Ganador: <strong>${s.premio}</strong></p>
             <p class="sorteo-precio">
               💸 Precio por número: <strong>$${s.precio_numero}</strong>
             </p>
@@ -188,3 +188,9 @@ function injectParticipantStyles() {
   `;
   document.head.appendChild(style);
 }
+
+
+
+
+
+

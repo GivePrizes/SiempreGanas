@@ -1,9 +1,9 @@
-/* css/admin.css */
+﻿/* css/admin.css */
 /*
  * Admin dashboard styling
  *
- * Este archivo da estilo al panel de administración de Siempre Gana.
- * Dark theme, detalles dorados y enfoque en claridad + control.
+ * Este archivo da estilo al panel de administración de Mathome.
+ * Dark theme, estética blue-metal y enfoque en claridad + control.
  */
 
 /* Ya se incluye common.css desde el HTML con <link>, así que no hace falta importarlo aquí */
@@ -354,13 +354,20 @@
 }
 
 .badge-warning {
-  background-color: #f4b400; /* amarillo */
-  color: #000;
+  background-color: #3b82f6;
+  color: #eaf2ff;
 }
 
 .badge-danger {
   background-color: #d32f2f; /* rojo */
   color: #fff;
+}
+
+/* Ruleta admin: acciones secundarias */
+.ruleta-actions-admin{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.4rem;
 }
 
 /* =============================
@@ -440,8 +447,8 @@
 
 /* Variantes de color */
 .stat-card.gold {
-  background: radial-gradient(circle at top, #facc15, #92400e);
-  color: #111827;
+  background: radial-gradient(circle at top, #7dd3fc, #1e40af);
+  color: #eff6ff;
 }
 
 .stat-card.ruby {
@@ -452,16 +459,6 @@
 .stat-card.obsidian {
   background: radial-gradient(circle at top, #0f172a, #020617);
   color: #e5e7eb;
-}
-
-/* =============================
-   Charts (visualizaciones)
-   ============================= */
-
-.charts-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.1rem;
 }
 
 /* =============================
@@ -511,3 +508,437 @@
 .card {
   will-change: transform, opacity;
 }
+
+/* =============================
+   Blue Metal Visual Refresh
+   ============================= */
+
+.admin-body {
+  background:
+    radial-gradient(1200px 700px at 12% -10%, rgba(59,130,246,.20), transparent 58%),
+    radial-gradient(900px 500px at 88% -12%, rgba(56,189,248,.14), transparent 60%),
+    linear-gradient(180deg, #050b16 0%, #060e1b 100%);
+}
+
+.admin-wrapper {
+  max-width: 1220px;
+  width: min(1220px, calc(100% - 2rem));
+}
+
+.admin-header {
+  border: 1px solid rgba(145,191,255,.22);
+  background:
+    linear-gradient(180deg, rgba(27,47,81,.82), rgba(13,24,42,.90));
+  box-shadow: 0 12px 34px rgba(0,0,0,.45);
+}
+
+.admin-header-left h1 {
+  letter-spacing: .2px;
+}
+
+.admin-status-pill {
+  border-color: rgba(141,195,255,.45);
+  background: linear-gradient(180deg, rgba(72,115,178,.35), rgba(23,45,81,.45));
+}
+
+.admin-status-pill .dot {
+  background-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56,189,248,.75);
+}
+
+.card {
+  border: 1px solid rgba(145,191,255,.24);
+  background:
+    linear-gradient(180deg, rgba(22,39,68,.78), rgba(11,21,39,.88));
+  box-shadow: 0 16px 34px rgba(2,8,20,.55);
+}
+
+.card-title-row h2 {
+  text-shadow: 0 0 18px rgba(96,165,250,.22);
+}
+
+.table thead {
+  background: linear-gradient(180deg, rgba(49,77,123,.45), rgba(23,41,71,.55));
+}
+
+.table th {
+  color: #bfdbfe;
+}
+
+.table tr:nth-child(even) {
+  background-color: rgba(83,128,201,.08);
+}
+
+.table tr:hover {
+  background-color: rgba(96,165,250,.16);
+}
+
+.pagination .page-link {
+  border: 1px solid rgba(144,191,255,.24);
+  background: linear-gradient(180deg, rgba(49,77,123,.42), rgba(21,40,71,.54));
+}
+
+.pagination .page-link:hover,
+.pagination .page-link.active {
+  background: linear-gradient(180deg, rgba(103,170,252,.78), rgba(55,122,220,.82));
+  color: #eaf2ff;
+  box-shadow: 0 0 22px rgba(59,130,246,.32);
+}
+
+.badge-success {
+  background: linear-gradient(180deg, rgba(56,189,248,.80), rgba(14,116,144,.82));
+  color: #f0f9ff;
+}
+
+.badge-warning {
+  background: linear-gradient(180deg, rgba(96,165,250,.84), rgba(37,99,235,.84));
+  color: #eff6ff;
+}
+
+.badge-danger {
+  background: linear-gradient(180deg, rgba(251,113,133,.85), rgba(190,24,93,.86));
+}
+
+.stat-card {
+  border: 1px solid rgba(152,198,255,.28);
+  overflow: hidden;
+  position: relative;
+}
+
+.stat-card::after {
+  content: "";
+  position: absolute;
+  inset: -120% auto auto -35%;
+  width: 46%;
+  height: 320%;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(197,228,255,.24) 50%, rgba(255,255,255,0) 100%);
+  transform: rotate(20deg);
+  animation: stat-sheen 6s linear infinite;
+  pointer-events: none;
+}
+
+.stat-card.gold {
+  background: radial-gradient(circle at 12% -10%, rgba(125,211,252,.55), rgba(30,64,175,.78) 68%, rgba(15,23,42,.92));
+  color: #eff6ff;
+}
+
+.stat-card.ruby {
+  background: radial-gradient(circle at 18% -12%, rgba(251,113,133,.56), rgba(136,19,55,.82) 68%, rgba(15,23,42,.92));
+  color: #fdf2f8;
+}
+
+.stat-card.obsidian {
+  background: radial-gradient(circle at 12% -10%, rgba(125,211,252,.30), rgba(15,23,42,.78) 65%, rgba(2,6,23,.95));
+  color: #e5efff;
+}
+
+.btn,
+.chip,
+.pagination .page-link {
+  transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+.btn:hover,
+.chip:hover,
+.pagination .page-link:hover {
+  transform: translateY(-1px);
+}
+
+@keyframes stat-sheen {
+  0% {
+    transform: translateX(0) rotate(20deg);
+    opacity: .4;
+  }
+  100% {
+    transform: translateX(360%) rotate(20deg);
+    opacity: .08;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-card::after {
+    animation: none;
+  }
+}
+
+/* =========================================================
+   Admin Light App Theme
+   ========================================================= */
+.admin-body {
+  background:
+    radial-gradient(1000px 500px at 0% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
+    radial-gradient(900px 460px at 100% 0%, rgba(14, 165, 233, 0.05), transparent 60%),
+    #f4f7fb;
+  color: #0f172a;
+}
+
+.admin-header,
+.card,
+.sorteo-card-admin,
+.stat-card,
+.table-wrapper {
+  border: 1px solid #dbe5f1;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.admin-status-pill {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.admin-status-pill .dot {
+  background-color: #22c55e;
+  box-shadow: none;
+}
+
+.admin-header-left .admin-subtitle,
+.mini-hint,
+.sorteo-detalle-mini,
+.stat-hint,
+.mini-estado {
+  color: #64748b;
+}
+
+.table thead {
+  background: #f8fafc;
+}
+
+.table th {
+  color: #1e3a8a;
+}
+
+.table td {
+  color: #0f172a;
+}
+
+.table tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.table tr:hover {
+  background-color: #eef2ff;
+}
+
+.pagination .page-link {
+  border: 1px solid #dbe5f1;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.pagination .page-link:hover,
+.pagination .page-link.active {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+}
+
+.badge-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-warning {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.badge-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.stat-card.gold,
+.stat-card.ruby,
+.stat-card.obsidian {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.stat-card::after {
+  display: none;
+}
+
+.toast {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+/* =========================================================
+   Admin Cognitive Comfort Mode
+   ========================================================= */
+.admin-body {
+  background: #f6f7f9;
+}
+
+.admin-header,
+.card,
+.sorteo-card-admin,
+.stat-card,
+.table-wrapper,
+.table,
+.pagination .page-link {
+  background: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: none;
+}
+
+.table thead,
+.table tr:nth-child(even) {
+  background: #f7f8fa;
+}
+
+.table tr:hover {
+  background: #eef2f7;
+}
+
+.btn:hover,
+.pagination .page-link:hover {
+  transform: none;
+}
+
+.stat-card::after {
+  display: none !important;
+}
+
+/* =========================================================
+   Responsive Admin (100%)
+   ========================================================= */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 1100px) {
+  .admin-wrapper {
+    width: min(100%, calc(100% - 1.5rem));
+    margin: 1.5rem auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .admin-header-right {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .admin-header-right .btn {
+    margin-left: 0;
+    flex: 1 1 160px;
+  }
+
+  .card-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .card-title-right {
+    text-align: left;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    column-gap: 1rem;
+  }
+
+  .form-row-inline {
+    flex-direction: column;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sorteo-card-admin {
+    flex-direction: column;
+  }
+
+  .sorteo-admin-image {
+    width: 100%;
+    height: 180px;
+  }
+
+  .sorteo-header-admin {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  .comprobante-item {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .comprobante-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-wrapper {
+    width: 100%;
+    margin: 1rem auto;
+    padding: 0 0.75rem;
+  }
+
+  .admin-header {
+    padding: 0.85rem 1rem;
+  }
+
+  .admin-header-left h1 {
+    font-size: 1.25rem;
+  }
+
+  .admin-status-pill {
+    flex-wrap: wrap;
+  }
+
+  .card {
+    padding: 0.9rem;
+  }
+
+  .table th,
+  .table td {
+    padding: 0.6rem 0.7rem;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+  }
+
+  .toast {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .image-preview {
+    height: 180px;
+  }
+}
+
+@media (max-width: 420px) {
+  .admin-header-right .btn {
+    flex: 1 1 100%;
+  }
+
+  .sorteo-admin-image {
+    height: 160px;
+  }
+}
+
+

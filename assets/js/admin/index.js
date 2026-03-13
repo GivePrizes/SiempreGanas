@@ -1,24 +1,25 @@
 // assets/js/admin/index.js
 import { cargarComprobantes } from './comprobantes.js';
 import { cargarStats } from './stats.js';
-import { cargarGraficos } from './graficos.js';
 import { cargarSorteosAdmin } from './sorteos-admin.js';
-import { hasPerm } from './permisos.js';
 
 // Al cargar el panel admin, verificamos que haya token y que sea admin
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = typeof window.requireAuthUser === 'function'
+    ? await window.requireAuthUser({ redirectTo: '../index.html' })
+    : null;
 
-  if (!token || user.rol !== 'admin') {
+  if (!token || !user || user.rol !== 'admin') {
     alert('No tienes acceso al panel de administrador.');
     location.href = '../index.html';
     return;
   }
 
   // ✅ Permisos
-  const puedePagos = hasPerm('pagos:aprobar');
-  const puedeCuentas = hasPerm('cuentas:gestionar');
+  const permisos = Array.isArray(user.permisos) ? user.permisos : [];
+  const puedePagos = permisos.includes('pagos:aprobar');
+  const puedeCuentas = permisos.includes('cuentas:gestionar');
 
   // ✅ Si es admin SOLO de cuentas, lo mandamos a su panel dedicado
   if (puedeCuentas && !puedePagos) {
@@ -34,20 +35,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const bloqueStats = document.getElementById('bloqueStats');
     if (bloqueStats) bloqueStats.style.display = 'none';
 
-    const bloqueGraficos = document.getElementById('bloqueGraficos');
-    if (bloqueGraficos) bloqueGraficos.style.display = 'none';
   } else {
     // ✅ Admin pagos: carga normal
     cargarComprobantes();
-    setInterval(cargarComprobantes, 10000);
+    setInterval(cargarComprobantes, 300000); // 5 min
 
     cargarStats();
-    setInterval(cargarStats, 15000);
+    setInterval(cargarStats, 300000); // 5 min
 
-    cargarGraficos();
   }
 
   // ✅ Sorteos (solo lectura) para admins que vean este panel
   cargarSorteosAdmin();
-  setInterval(cargarSorteosAdmin, 20000);
+  setInterval(cargarSorteosAdmin, 300000); // 5 min (silencioso con fade)
 });

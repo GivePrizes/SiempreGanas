@@ -1,4 +1,4 @@
-// --- Cambio entre login / registro ---
+﻿// --- Cambio entre login / registro ---
 
 function showLogin() {
   const loginForm = document.getElementById('loginForm');
@@ -21,7 +21,7 @@ function showRegistro() {
 // --- Login ---
 
 async function login() {
-  const email = document.getElementById('loginEmail')?.value;
+  const email = document.getElementById('loginEmail')?.value?.trim().toLowerCase();
   const password = document.getElementById('loginPass')?.value;
 
   try {
@@ -35,26 +35,41 @@ async function login() {
 
     if (res.ok) {
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      localStorage.removeItem('user');
 
-      // Redirección según rol
-      if (data.user.rol === 'admin') {
-        location.href = 'admin/panel.html';
-      } else {
-        location.href = 'participante/dashboard.html';
+      const freshUser = typeof window.getAuthUser === 'function'
+        ? await window.getAuthUser({ force: true })
+        : null;
+
+      if (!freshUser) {
+        if (typeof window.clearSession === 'function') window.clearSession();
+        return alert('No se pudo validar tu sesión. Intenta nuevamente.');
       }
+
+      // Mostrar modal de bienvenida
+      if (typeof showWelcomeModal === 'function') {
+        showWelcomeModal();
+      }
+      const redirectUrl = freshUser.rol === 'admin' 
+        ? 'admin/panel.html'
+        : 'participante/dashboard.html';
+
+      // Redirección según rol (con delay mayor para permitir ver bien el modal)
+      setTimeout(() => {
+        location.href = redirectUrl;
+      }, 1200);
     } else {
-      alert('❌ ' + data.message);
+      alert('Error: ' + data.message);
     }
   } catch (err) {
-    alert('❌ Error de conexión');
+    alert('Error de conexión');
   }
 }
 
 // --- Validaciones ---
 
 function nombreValido(nombre) {
-  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/.test(nombre)) return false;
+  if (!/^[\p{L} ]+$/u.test(nombre)) return false;
 
   const partes = nombre.split(" ").filter(p => p.length > 0);
   if (partes.length < 2) return false;
@@ -88,63 +103,99 @@ function correoValido(email) {
   return true;
 }
 
+function aliasValido(alias) {
+  if (!alias) return true;
+  if (!/^[a-zA-Z0-9_]{3,20}$/.test(alias)) return false;
+  return true;
+}
+
 // --- Registro ---
 
 async function registro() {
   const nombre   = document.getElementById('regNombre')?.value.trim();
-  const email    = document.getElementById('regEmail')?.value.trim();
+  const email    = document.getElementById('regEmail')?.value?.trim().toLowerCase();
   const telefono = document.getElementById('regTelefono')?.value.trim();
+  const alias    = document.getElementById('regAlias')?.value.trim();
   const password = document.getElementById('regPass')?.value;
   const confirm  = document.getElementById('regPassConfirm')?.value;
   const termsAccepted = document.getElementById('regTerms')?.checked;
   const errorTerms = document.getElementById('errorTerms') || null;
+  const errorAlias = document.getElementById('errorAlias') || null;
 
   if (!nombreValido(nombre)) {
-    return alert("❌ Ingresa tu nombre real (mínimo nombre y apellido).");
+    return alert("Error: Ingresa tu nombre real (mínimo nombre y apellido).");
   }
 
   if (!correoValido(email)) {
-    return alert("❌ Ingresa un correo válido.");
+    return alert("Error: Ingresa un correo válido.");
   }
 
   if (!telefonoValido(telefono)) {
-    return alert("❌ Ingresa un número de teléfono válido (mínimo 10 dígitos).");
+    return alert("Error: Ingresa un número de teléfono válido (mínimo 10 dígitos).");
+  }
+
+  if (!aliasValido(alias)) {
+    if (errorAlias) errorAlias.textContent = 'Nombre público inválido. Usa 3-20 letras, números o _.';
+    return alert('Error: Nombre público inválido. Usa 3-20 letras, números o _.');
   }
 
   if (password !== confirm) {
-    return alert('❌ Contraseñas no coinciden');
+    return alert('Error: Las contraseñas no coinciden');
   }
 
   if (!termsAccepted) {
     if (errorTerms) errorTerms.textContent = 'Debes aceptar los términos para continuar.';
-    return alert('❌ Debes aceptar los términos y condiciones.');
+    return alert('Error: Debes aceptar los términos y condiciones.');
   }
 
   try {
     const res = await fetch(`${AUTH_URL}/api/auth/registro`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, telefono, password, terms_accepted: true })
+      body: JSON.stringify({ nombre, email, telefono, alias: alias || null, password, terms_accepted: true })
     });
 
     const data = await res.json();
 
     if (res.ok) {
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      location.href = 'participante/dashboard.html';
+      localStorage.removeItem('user');
+
+      const freshUser = typeof window.getAuthUser === 'function'
+        ? await window.getAuthUser({ force: true })
+        : null;
+      if (!freshUser) {
+        if (typeof window.clearSession === 'function') window.clearSession();
+        return alert('No se pudo validar tu sesión. Intenta nuevamente.');
+      }
+      
+      // Mostrar modal de bienvenida
+      if (typeof showWelcomeModal === 'function') {
+        showWelcomeModal();
+      }
+      
+      // Redirección con delay mayor
+      setTimeout(() => {
+        location.href = 'participante/dashboard.html';
+      }, 1200);
     } else {
-      alert('❌ ' + data.message);
+      alert('Error: ' + data.message);
     }
   } catch (err) {
-    alert('❌ Error de conexión');
+    alert('Error de conexión');
   }
 }
 
 // --- Logout ---
 
 function logout() {
-  localStorage.clear();
+  console.log('Logout ejecutado');
+  if (typeof window.clearSession === 'function') {
+    window.clearSession();
+  } else {
+    localStorage.clear();
+    sessionStorage.clear();
+  }
   location.href = '../index.html';
 }
 
@@ -154,6 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputNombre   = document.getElementById('regNombre');
   const inputEmail    = document.getElementById('regEmail');
   const inputTelefono = document.getElementById('regTelefono');
+  const inputAlias    = document.getElementById('regAlias');
   const inputPass     = document.getElementById('regPass');
   const inputPass2    = document.getElementById('regPassConfirm');
   const inputTerms    = document.getElementById('regTerms');
@@ -166,6 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorNombre   = document.getElementById('errorNombre') || null;
   const errorEmail    = document.getElementById('errorEmail') || null;
   const errorTelefono = document.getElementById('errorTelefono') || null;
+  const errorAlias    = document.getElementById('errorAlias') || null;
   const errorPass     = document.getElementById('errorPass') || null;
   const errorPass2    = document.getElementById('errorPassConfirm') || null;
   const errorTerms    = document.getElementById('errorTerms') || null;
@@ -180,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
       inputNombre.classList.add('input-error');
       inputNombre.classList.remove('input-ok');
     } else {
-      if (errorNombre) errorNombre.textContent = '✓ Nombre válido';
+      if (errorNombre) errorNombre.textContent = 'Nombre válido';
       inputNombre.classList.add('input-ok');
       inputNombre.classList.remove('input-error');
     }
@@ -196,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
       inputEmail.classList.add('input-error');
       inputEmail.classList.remove('input-ok');
     } else {
-      if (errorEmail) errorEmail.textContent = '✓ Correo válido';
+      if (errorEmail) errorEmail.textContent = 'Correo válido';
       inputEmail.classList.add('input-ok');
       inputEmail.classList.remove('input-error');
     }
@@ -212,11 +265,29 @@ document.addEventListener('DOMContentLoaded', () => {
       inputTelefono.classList.add('input-error');
       inputTelefono.classList.remove('input-ok');
     } else {
-      if (errorTelefono) errorTelefono.textContent = '✓ Teléfono válido';
+      if (errorTelefono) errorTelefono.textContent = 'Teléfono válido';
       inputTelefono.classList.add('input-ok');
       inputTelefono.classList.remove('input-error');
     }
   });
+
+  if (inputAlias) {
+    inputAlias.addEventListener('input', () => {
+      const valor = inputAlias.value.trim();
+      if (!valor) {
+        if (errorAlias) errorAlias.textContent = '';
+        inputAlias.classList.remove('input-error', 'input-ok');
+      } else if (!aliasValido(valor)) {
+        if (errorAlias) errorAlias.textContent = '3-20 letras, números o _';
+        inputAlias.classList.add('input-error');
+        inputAlias.classList.remove('input-ok');
+      } else {
+        if (errorAlias) errorAlias.textContent = 'Nombre público válido';
+        inputAlias.classList.add('input-ok');
+        inputAlias.classList.remove('input-error');
+      }
+    });
+  }
 
   inputPass.addEventListener('input', () => {
     const valor = inputPass.value;
@@ -228,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
       inputPass.classList.add('input-error');
       inputPass.classList.remove('input-ok');
     } else {
-      if (errorPass) errorPass.textContent = '✓ Contraseña aceptable';
+      if (errorPass) errorPass.textContent = 'Contraseña aceptable';
       inputPass.classList.add('input-ok');
       inputPass.classList.remove('input-error');
     }
@@ -244,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
       inputPass2.classList.add('input-error');
       inputPass2.classList.remove('input-ok');
     } else {
-      if (errorPass2) errorPass2.textContent = '✓ Coinciden';
+      if (errorPass2) errorPass2.textContent = 'Coinciden';
       inputPass2.classList.add('input-ok');
       inputPass2.classList.remove('input-error');
     }
@@ -300,3 +371,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Escape') closeTermsModal();
   });
 });
+
+
+

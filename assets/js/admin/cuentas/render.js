@@ -1,4 +1,4 @@
-// frontend/assets/js/admin/cuentas/render.js
+﻿// frontend/assets/js/admin/cuentas/render.js
 
 function sanitizePhone(raw) {
   if (!raw) return '';
@@ -12,7 +12,7 @@ function sanitizePhone(raw) {
 
 function buildWhatsappLink(phoneDigits, nombre = '') {
   if (!phoneDigits) return '';
-  const text = encodeURIComponent(`Hola ${nombre || ''} 👋 Te escribo por tu participación en Siempre Gana.`);
+  const text = encodeURIComponent(`Hola ${nombre || ''} 👋 Te escribo por tu participación en Mathome.`);
   return `https://wa.me/${phoneDigits}?text=${text}`;
 }
 
@@ -63,7 +63,7 @@ function renderRow(p, s) {
          ${wa ? '' : 'aria-disabled="true"'}>WhatsApp</a>
 
       <a class="btn-mini" ${
-        p.email ? `href="mailto:${p.email}?subject=${encodeURIComponent('Siempre Gana — Entrega de cuenta')}"` : ''
+        p.email ? `href="mailto:${p.email}?subject=${encodeURIComponent('Mathome — Entrega de cuenta')}"` : ''
       } data-action="mail" ${p.email ? '' : 'aria-disabled="true"'}>Email</a>
 
       <button class="btn-mini primary"
@@ -127,6 +127,16 @@ export function renderAcordeon(sorteos, uiState) {
     return hay.includes(q);
   };
 
+  const matchesSorteoQueryOnly = (s) => {
+    if (!q) return true;
+    const hay = [
+      s.descripcion,
+      s.premio,
+      String(s.sorteoId),
+    ].join(' ').toLowerCase();
+    return hay.includes(q);
+  };
+
   const matchesFilter = (p) => {
     if (filter === 'todos') return true;
     return (p.entregaEstado || 'pendiente') === filter;
@@ -142,7 +152,13 @@ export function renderAcordeon(sorteos, uiState) {
     const entFil  = ent.filter(matchesFilter).filter(p => matchesQuery(s, p));
 
     const totalMostrando = pendFil.length + entFil.length;
-    if (!totalMostrando) continue;
+    const sorteoSinParticipantes = participantes.length === 0;
+    const mostrarSorteoVacio =
+      sorteoSinParticipantes &&
+      filter === 'todos' &&
+      matchesSorteoQueryOnly(s);
+
+    if (!totalMostrando && !mostrarSorteoVacio) continue;
 
     const isOpen = state.open.has(String(s.sorteoId));
 
@@ -160,7 +176,7 @@ export function renderAcordeon(sorteos, uiState) {
         <div class="ac-name">${s.descripcion || `Sorteo #${s.sorteoId}`}</div>
         <div class="ac-sub">
           <span class="muted">#${s.sorteoId}</span>
-          ${s.premio ? `<span class="muted">· Premio: ${s.premio}</span>` : ''}
+          ${s.premio ? `<span class="muted">· Ganador: ${s.premio}</span>` : ''}
         </div>
       </div>
 
@@ -199,3 +215,7 @@ export function renderAcordeon(sorteos, uiState) {
   if (!cont.children.length) empty?.classList.remove('hidden');
   else empty?.classList.add('hidden');
 }
+
+
+
+

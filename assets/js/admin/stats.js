@@ -2,10 +2,12 @@
 
 export async function cargarStats() {
   const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = typeof window.getAuthUser === 'function'
+    ? await window.getAuthUser()
+    : null;
 
   // Solo admin
-  if (!token || user.rol !== 'admin') return;
+  if (!token || !user || user.rol !== 'admin') return;
 
   const statUsuarios = document.getElementById('statUsuarios');
   const statSorteos = document.getElementById('statSorteos');

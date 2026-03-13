@@ -1,4 +1,4 @@
-// assets/js/admin/ruleta.js
+﻿// assets/js/admin/ruleta.js
 
 // URL fija al APP-SERVICE en producción
 
@@ -36,12 +36,14 @@ const elEnJuego = document.getElementById('statParticipantes');
 const elProb = document.getElementById('statProbMedia');
 const topBuyerInfoEl = document.getElementById('topBuyerInfo');
 
-// Programar ruleta
+// Programar sorteo
 const btnProgramar = document.getElementById('btnProgramar');
 const panelProgramar = document.getElementById('panelProgramar');
 const selectPreset = document.getElementById('selectPreset');
 const inputFechaCustom = document.getElementById('inputFechaCustom');
 const btnConfirmProgramar = document.getElementById('btnConfirmProgramar');
+const btnCancelProgramar = document.getElementById('btnCancelProgramar');
+const customDateGroup = document.getElementById('customDateGroup');
 
 // Estado en memoria
 let participantes = [];
@@ -51,14 +53,11 @@ let girando = false;
 let ruletaInfo = null;
 let countdownInterval = null;
 let pollingInterval = null;
+let autoSpinIniciado = false;
+let autoSpinTimer = null;
 
 // Helpers de auth
 const token = localStorage.getItem('token');
-
-const user = JSON.parse(localStorage.getItem('user') || '{}');
-if (!token || user.rol !== 'admin') {
-  location.href = '../login.html'; // ajusta la ruta según tu estructura
-}
 // ==========================
 // 1) Validar y early checks
 // ==========================
@@ -343,7 +342,7 @@ function renderRuletaInfo() {
       }
     }
 
-    // ✅ GANADOR FLOTANTE (premium)
+    // ✅ DESTACADO FLOTANTE (premium)
     const wf = document.getElementById('winnerFloat');
     const wfNum = document.getElementById('winnerFloatNumero');
     const wfName = document.getElementById('winnerFloatNombre');
@@ -397,10 +396,10 @@ function iniciarCountdown() {
   const bigEl = document.getElementById('countdownBig');
   const motivationalEl = document.getElementById('motivationalMsg');
   const frases = [
-    "¡Ya casi llega tu momento!",
-    "La suerte está girando contigo…",
-    "Prepárate, el destino se acerca…",
-    "¿Será tu número el elegido?",
+    "Ya casi llega tu momento.",
+    "La ronda esta en movimiento...",
+    "Preparate, el resultado se acerca...",
+    "Sera tu numero el elegido?",
   ];
 
   function actualizar() {
@@ -413,6 +412,9 @@ function iniciarCountdown() {
         btnGirar.disabled = false;
       }
       if (overlay) overlay.style.display = 'none';
+      if (ruletaInfo && ruletaInfo.ruleta_estado === 'programada') {
+        iniciarRuletaAutomatica();
+      }
       clearInterval(countdownInterval);
       countdownInterval = null;
       return;
@@ -448,9 +450,64 @@ function iniciarCountdown() {
   countdownInterval = setInterval(actualizar, 1000);
 }
 
+async function iniciarRuletaAutomatica() {
+  if (autoSpinIniciado || !sorteoId) return;
+  autoSpinIniciado = true;
+
+  if (btnGirar) btnGirar.disabled = true;
+  if (resultadoRuleta) resultadoRuleta.textContent = 'Girando ruleta... 🎰✨';
+
+  try {
+    const resStart = await fetch(`${API}/sorteos/${sorteoId}/iniciar-ruleta`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    const dataStart = await resStart.json();
+    if (!resStart.ok) {
+      if (resultadoRuleta) {
+        resultadoRuleta.textContent = dataStart?.error || 'Error al iniciar sorteo.';
+      }
+      autoSpinIniciado = false;
+      return;
+    }
+
+    if (autoSpinTimer) clearTimeout(autoSpinTimer);
+    autoSpinTimer = setTimeout(async () => {
+      try {
+        const resFinish = await fetch(`${API}/sorteos/${sorteoId}/spin-finished`, {
+          method: 'POST',
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        const dataFinish = await resFinish.json();
+        if (!resFinish.ok) {
+          if (resultadoRuleta) {
+            resultadoRuleta.textContent = dataFinish?.error || 'Error al finalizar sorteo.';
+          }
+          autoSpinIniciado = false;
+          return;
+        }
+
+        await fetchRuletaInfo();
+        await fetchRuletaParticipantes();
+      } catch (err) {
+        if (resultadoRuleta) {
+          resultadoRuleta.textContent = 'Error de red al finalizar sorteo.';
+        }
+        autoSpinIniciado = false;
+      }
+    }, 7000);
+
+  } catch (err) {
+    if (resultadoRuleta) {
+      resultadoRuleta.textContent = 'Error de red al iniciar sorteo.';
+    }
+    autoSpinIniciado = false;
+  }
+}
 
 // ==========================
-// 6) Programar ruleta
+// 6) Programar sorteo
 // ==========================
 async function programarRuleta() {
   if (!sorteoId) return;
@@ -490,15 +547,19 @@ async function programarRuleta() {
 
     if (!res.ok) {
       console.error('Error programar ruleta:', data);
-      alert(data.error || 'Error al programar la ruleta.');
+      alert(data.error || 'Error al programar la ronda.');
       return;
     }
 
-    alert('Ruleta programada correctamente.');
+    alert('Ronda programada correctamente.');
+    // Desactivar botón tras programar exitosamente
+    if (btnConfirmProgramar) btnConfirmProgramar.disabled = true;
+    // Ocultar panel de programación
+    if (panelProgramar) panelProgramar.style.display = 'none';
     await fetchRuletaInfo();
   } catch (err) {
     console.error('Error programarRuleta:', err);
-    alert('Error de red al programar ruleta.');
+    alert('Error de red al programar sorteo.');
   }
 }
 
@@ -550,7 +611,7 @@ async function girarRuleta() {
   if (!res.ok) {
     console.error('Error al realizar ruleta:', data);
     if (resultadoRuleta) {
-      resultadoRuleta.textContent = data.error || 'Error al realizar ruleta.';
+      resultadoRuleta.textContent = data.error || 'Error al procesar sorteo.';
     }
     girando = false;
     if (btnGirar) btnGirar.disabled = false;
@@ -639,12 +700,21 @@ if (btnProgramar) {
 
 if (selectPreset) {
   selectPreset.addEventListener('change', () => {
-    if (!inputFechaCustom) return;
+    if (!customDateGroup) return;
     if (selectPreset.value === 'custom') {
-      inputFechaCustom.style.display = 'inline-block';
+      customDateGroup.style.display = 'flex';
     } else {
-      inputFechaCustom.style.display = 'none';
+      customDateGroup.style.display = 'none';
     }
+  });
+}
+
+if (btnCancelProgramar) {
+  btnCancelProgramar.addEventListener('click', () => {
+    if (!panelProgramar) return;
+    panelProgramar.style.display = 'none';
+    selectPreset.value = '10';
+    if (customDateGroup) customDateGroup.style.display = 'none';
   });
 }
 
@@ -653,6 +723,14 @@ if (btnConfirmProgramar) {
 }
 
 async function init() {
+  const user = typeof window.getAuthUser === 'function'
+    ? await window.getAuthUser()
+    : null;
+  if (!token || !user || user.rol !== 'admin') {
+    location.href = '../login.html';
+    return;
+  }
+
   if (!sorteoId) return;
 
   // Cargar info de ruleta + participantes una vez
@@ -664,3 +742,9 @@ async function init() {
 }
 
 init();
+
+
+
+
+
+

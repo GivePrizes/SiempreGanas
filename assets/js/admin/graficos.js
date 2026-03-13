@@ -6,10 +6,12 @@ let chartComprobantesInstance = null;
 
 export async function cargarGraficos() {
   const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const user = typeof window.getAuthUser === 'function'
+    ? await window.getAuthUser()
+    : null;
 
   // Solo tiene sentido cargar gráficos si es admin y hay Chart
-  if (!token || user.rol !== 'admin') return;
+  if (!token || !user || user.rol !== 'admin') return;
   if (typeof Chart === 'undefined') {
     console.warn('Chart.js no está disponible en esta página.');
     return;

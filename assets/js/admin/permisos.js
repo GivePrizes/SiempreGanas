@@ -12,8 +12,10 @@ export function getTokenPayload() {
 }
 
 export function hasPerm(perm) {
-  const payload = getTokenPayload();
-  const permisos = Array.isArray(payload?.permisos) ? payload.permisos : [];
+  const cachedUser = window.__AUTH_USER__ || null;
+  const permisos = Array.isArray(cachedUser?.permisos)
+    ? cachedUser.permisos
+    : (Array.isArray(getTokenPayload()?.permisos) ? getTokenPayload().permisos : []);
   return permisos.includes(perm);
 }
 

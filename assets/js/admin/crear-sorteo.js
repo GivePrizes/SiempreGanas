@@ -1,4 +1,4 @@
-// assets/js/admin/crear-sorteo.js
+﻿// assets/js/admin/crear-sorteo.js
 
 const API_URL = window.API_URL; // viene de config.js
 
@@ -239,3 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', enviarFormulario);
   }
 });
+
+
+

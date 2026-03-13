@@ -25,19 +25,20 @@ export async function initAdminChat({ sorteoId, token }) {
   // Store de mensajes (admin)
   const store = createChatStore({ myUsuarioId: 'admin' });
   let unsub = null; // reservado para realtime futuro
-  let canUseChat = true;
-  let soundEnabled = false;
-  let pollId = null;
+  let canUseChat = true;      // permisos para usar el chat
+  let soundEnabled = false;     // sonido deshabilitado hasta interacción
+  let pollId = null;  // ID del polling
 
   /* ===============================
-     Sound
+     Sound notification 
   =============================== */
   function playPing() {
     if (!soundEnabled) return;
     try {
       const audio = new Audio('/assets/sound/new-notification-SG.mp3');
       audio.volume = 0.4;
-      audio.play();
+      const p = audio.play();
+      if (p && typeof p.catch === 'function') p.catch(() => {});
     } catch {}
   }
 

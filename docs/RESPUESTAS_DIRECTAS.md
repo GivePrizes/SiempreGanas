@@ -132,7 +132,7 @@ export const verifyToken = (req, res, next) => {
 
 **Token esperado:**
 ```
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTIzLCJlbWFpbCI6InVzdWFyaW9AZW1haWwuY29tIiwicm9sIjoidXN1YXJpbyJ9.signature
+Authorization: Bearer <JWT_DEMO_TOKEN>
 ```
 
 ---
@@ -302,3 +302,4 @@ Se buscaron y examinaron los siguientes archivos:
 **Análisis realizado:** 26 de enero de 2026  
 **Fuente:** GitHub https://github.com/GivePrizes/app-service (rama main)  
 **Nivel de detalle:** Completo - Se examinó código, rutas, controllers, middleware y servicios
+

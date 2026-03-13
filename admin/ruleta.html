@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Siempre Ganas — Ruleta del Sorteo</title>
+  <link rel="icon" type="image/png" href="../assets/imagenes/mathome-favicon.png">
+  <title>Mathome — Resultado de la Ronda</title>
 
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
@@ -15,8 +16,8 @@
     <div class="sg-brand">
       <span class="sg-logo">SG</span>
       <div>
-        <h1>Ruleta del sorteo</h1>
-        <p class="sg-hero-sub mini-sub">El momento de la verdad ✨</p>
+        <h1>Resultado de la ronda</h1>
+        <p class="sg-hero-sub mini-sub">Panel operativo de resultados</p>
       </div>
     </div>
 
@@ -30,9 +31,9 @@
     <section class="sg-card ruleta-card">
 
       <header class="ruleta-header">
-        <h2 class="sg-hero-title" id="tituloSorteo">Cargando sorteo...</h2>
+        <h2 class="sg-hero-title" id="tituloSorteo">Cargando ronda...</h2>
         <p class="sg-hero-sub" id="subtituloSorteo">
-          Preparada audiencia, la suerte está por girar… 🎰
+          Control de programación y giro en tiempo real.
         </p>
       </header>
 
@@ -42,10 +43,10 @@
           <div class="ruleta-circle-wrapper">
             <div id="ruletaCircle" class="ruleta-circle"></div>
 
-            <!-- ✅ Ganador flotante (aparece solo cuando finaliza) -->
+            <!-- ✅ Resultado destacado flotante (aparece solo cuando finaliza) -->
             <div id="winnerFloat" class="winner-float oculto" aria-live="polite">
               <div class="winner-float__pill">
-                <span class="winner-float__label">GANADOR</span>
+                <span class="winner-float__label">DESTACADO</span>
                 <span id="winnerFloatNumero" class="winner-float__num">—</span>
                 <span id="winnerFloatNombre" class="winner-float__name">—</span>
               </div>
@@ -63,7 +64,7 @@
         <!-- DERECHA: PANEL -->
         <aside class="ruleta-info">
           <div class="ruleta-estado-admin">
-            <p class="mini-sub">Estado de la ruleta</p>
+            <p class="mini-sub">Estado de la ronda</p>
 
             <div class="ruleta-estado-grid">
               <div>
@@ -86,7 +87,7 @@
             </div>
 
             <p class="estado-label">
-              Modo de sorteo: <strong id="modoSorteoTexto">ALEATORIO</strong>
+              Modo de ronda: <strong id="modoSorteoTexto">ALEATORIO</strong>
             </p>
           </div>
 
@@ -94,33 +95,45 @@
           <p id="motivationalMsg" class="motivational-msg"></p>
 
           <div class="ruleta-mini-stats">
-            <h4>Resumen rápido del sorteo</h4>
+            <h4>Resumen rápido de la ronda</h4>
             <p><span class="label">Números totales:</span><span id="statTotalNumeros">-</span></p>
             <p><span class="label">Números en juego:</span><span id="statParticipantes">-</span></p>
             <p><span class="label">Probabilidad por número:</span><span id="statProbMedia">-</span></p>
           </div>
 
           <div class="ruleta-actions">
-            <button id="btnGirar" class="btn-gold btn-girar">🎰 GIRAR RULETA</button>
-            <button id="btnProgramar" class="btn-secondary">⏱ Programar ruleta</button>
-            <p class="ruleta-hint">Este giro es definitivo. El ganador quedará registrado en el sistema.</p>
+            <button id="btnGirar" class="btn-gold btn-girar">🎰 INICIAR RONDA</button>
+            <button id="btnProgramar" class="btn-secondary">⏱ Programar ronda</button>
           </div>
 
-          <div id="panelProgramar" class="programar-panel" style="display:none;">
-            <span>Programar para:</span>
-            <select id="selectPreset">
-              <option value="10">En 10 minutos</option>
-              <option value="30">En 30 minutos</option>
-              <option value="60">En 1 hora</option>
-              <option value="custom">Fecha/hora personalizada</option>
-            </select>
+          <p class="ruleta-hint">Este giro es definitivo. El resultado destacado quedará registrado en el sistema.</p>
 
-            <input type="datetime-local" id="inputFechaCustom" class="programar-input" style="display:none;" />
-            <button id="btnConfirmProgramar" class="btn-gold btn-sm">Guardar programación</button>
+          <div id="panelProgramar" class="programar-panel" style="display:none;">
+            <h3 class="programar-title">⏱ Programar Ronda</h3>
+            
+            <div class="programar-group">
+              <label for="selectPreset" class="programar-label">Programar para:</label>
+              <select id="selectPreset" class="programar-select">
+                <option value="10">En 10 minutos</option>
+                <option value="30">En 30 minutos</option>
+                <option value="60">En 1 hora</option>
+                <option value="custom">Fecha/hora personalizada</option>
+              </select>
+            </div>
+
+            <div class="programar-group" style="display:none;" id="customDateGroup">
+              <label for="inputFechaCustom" class="programar-label">Selecciona fecha y hora:</label>
+              <input type="datetime-local" id="inputFechaCustom" class="programar-input" />
+            </div>
+
+            <div class="programar-actions">
+              <button id="btnConfirmProgramar" class="btn-gold btn-confirm">✓ Guardar programación</button>
+              <button id="btnCancelProgramar" class="btn-secondary btn-cancel">✕ Cancelar</button>
+            </div>
           </div>
 
           <div id="resultadoRuleta" class="resultado-ruleta">
-            Aún no se ha realizado la ruleta para este sorteo.
+            Aún no se ha publicado resultado para esta ronda.
           </div>
 
           <div id="topBuyerInfo" class="ruleta-hint"></div>
@@ -135,9 +148,18 @@
     <div class="countdown-msg" id="countdownMsg">Prepárate…</div>
   </div>
 
+  <script src="../assets/js/app-config.js"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
   <script type="module" src="../assets/js/admin/ruleta.js"></script>
 
 </body>
 </html>
+
+
+
+
+
+
+
+

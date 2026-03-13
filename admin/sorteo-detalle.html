@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Siempre Gana — Sorteo Admin</title>
+  <link rel="icon" type="image/png" href="../assets/imagenes/mathome-favicon.png">
+  <title>Mathome — Sorteo Admin</title>
 
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/admin.css">
@@ -45,6 +46,7 @@
     </main>
   </div>
 
+  <script src="../assets/js/app-config.js"></script>
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js"></script>
 
@@ -56,7 +58,6 @@
     const sorteoId = params.get('id'); // el ID viene por la URL
     const token = localStorage.getItem('token'); // ✅ corregido: usar "token"
 
-    console.log('Sorteo ID:', sorteoId);
 
     // ✅ Cargar datos del sorteo y mostrarlos en la interfaz
     async function cargarDetalleSorteo() {
@@ -68,7 +69,7 @@
 
         if (res.ok) {
           document.getElementById('tituloSorteo').textContent = data.descripcion;
-          document.getElementById('subtituloSorteo').textContent = `Premio: ${data.premio} · Ocupación: ${data.ocupados}/${data.cantidad_numeros}`;
+          document.getElementById('subtituloSorteo').textContent = `Ganador: ${data.premio} · Ocupación: ${data.ocupados}/${data.cantidad_numeros}`;
           document.getElementById('estadoSorteo').textContent = `Estado: ${data.estado}`;
         } else {
           document.getElementById('tituloSorteo').textContent = 'Error cargando sorteo';
@@ -83,7 +84,6 @@
     if (token && sorteoId) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        console.log('Payload JWT:', payload);
 
         if (payload.rol === 'admin') {
           cargarDetalleSorteo();
@@ -101,3 +101,9 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+
