@@ -101,6 +101,7 @@ class WelcomeModal {
     document.addEventListener('keydown', this.handleEscKey);
   }
 
+  // Simula la obtención del usuario autenticado. En producción, se espera que window.getAuthUser() esté definido.
   async getCurrentUser() {
     if (typeof window.getAuthUser !== 'function') return null;
     return await window.getAuthUser();
