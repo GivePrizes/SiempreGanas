@@ -406,6 +406,45 @@ body{
   }
 }
 
+@media (max-width: 520px){
+  .wrap{
+    padding: 14px 12px;
+  }
+
+  .card{
+    border-radius: 14px;
+  }
+
+  .top-actions{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
+
+  .btnBack{
+    min-height: 38px;
+    font-size: 0.9rem;
+    padding: 0.45rem 0.65rem;
+  }
+
+  .badge{
+    grid-column: 1 / -1;
+    justify-self: flex-start;
+  }
+
+  .countdown{
+    font-size: 28px;
+  }
+
+  .numbersList{
+    gap: 6px;
+  }
+
+  .numberChip{
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+}
+
 @media (max-width: 420px){
   .wheelWrap{
     width:92vw;

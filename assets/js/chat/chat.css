@@ -1,4 +1,4 @@
-/* ===============================
+﻿/* ===============================
    CHAT CONTAINER
 =============================== */
 
@@ -114,7 +114,7 @@
 }
 
 /* ===============================
-   ANIMACIÓN NUEVO MENSAJE
+   ANIMACIÃ“N NUEVO MENSAJE
 =============================== */
 
 .chat-row.pop {
@@ -146,6 +146,7 @@
   min-height: 44px;
   position: relative;
   box-sizing: border-box;
+  flex-wrap: nowrap;
 }
 
 #chatInput {
@@ -220,6 +221,7 @@
   font-size: 18px;
   line-height: 1;
   flex-shrink: 0;
+  order: 0;
 }
 
 .chat-emoji-btn:hover {
@@ -228,7 +230,8 @@
 
 .chat-emoji-panel {
   position: absolute;
-  right: 8px;
+  left: 8px;
+  right: auto;
   bottom: calc(100% + 8px);
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -380,13 +383,15 @@
   }
 
   #chatInput {
-    padding: 8px 10px;
+    order: 1;
     font-size: 13px;
+    padding: 9px 10px;
   }
 
   #chatSend {
-    padding: 8px 12px;
-    min-width: 60px;
+    order: 2;
+    min-width: 64px;
+    padding: 9px 12px;
     font-size: 13px;
   }
 
@@ -398,7 +403,8 @@
 
   .chat-emoji-panel {
     width: 190px;
-    right: 6px;
+    left: 6px;
+    right: auto;
   }
 
   #chatContainer {

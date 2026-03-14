@@ -25,6 +25,13 @@ body{
     var(--colour-background);
 }
 
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 /* =============================
    Section: Sorteos disponibles
    ============================= */
@@ -241,6 +248,7 @@ body{
 
 .main-container {
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
 }
@@ -1279,9 +1287,13 @@ body{
 
 /* Flecha custom */
 .info-accordion summary::after {
-  content: "â–¾";
-  font-size: 0.9rem;
+  content: "";
+  width: 8px;
+  height: 8px;
   margin-left: 0.5rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
   transition: transform 0.2s ease;
 }
 
@@ -1434,9 +1446,16 @@ body{
 }
 
 .mini-ayuda summary::after{
-  content:"â–¾";
-  float:right;
+  content:"";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-left: 0.4rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
   opacity:.8;
+  float:right;
 }
 
 .mini-ayuda[open] summary::after{
@@ -2928,5 +2947,172 @@ body {
 
   .sorteos-hero {
     padding: 0.6rem;
+  }
+}
+
+@media (max-width: 520px){
+  .main-container{
+    padding: 1rem 0.75rem 2.5rem;
+  }
+
+  .sorteos-section{
+    padding: 1.4rem 0.75rem;
+  }
+
+  .sorteos-grid{
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .sorteo-card,
+  .summary-card,
+  .stat-card,
+  .status-card,
+  .sorteo-card-premium,
+  .pago-nequi-card,
+  .sorteo-numeros-card,
+  .sorteo-motivos-card,
+  .sorteo-compra-card,
+  .chat-card,
+  .mis-numeros-empty,
+  .info-accordion{
+    width: 100%;
+    min-width: 0;
+    border-radius: 14px;
+  }
+
+  .sorteo-card .sorteo-content{
+    padding: 0.85rem 0.95rem;
+  }
+
+  .sorteo-card .sorteo-title{
+    font-size: 1.05rem;
+  }
+
+  .sorteo-card .cta .btn-primary{
+    width: 100%;
+  }
+
+  .sorteo-card-premium,
+  .pago-nequi-card,
+  .sorteo-compra-card,
+  .sorteo-numeros-card{
+    padding: 0.8rem 0.9rem;
+  }
+
+  .numeros-scroll{
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .status-text,
+  .sorteo-info-line,
+  .pago-nequi-subtitle{
+    font-size: 0.85rem;
+  }
+
+  .stats-row,
+  .stats-row--compact{
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 420px){
+  .numeros-grid{
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .numero-bola{
+    width: 36px;
+    height: 36px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 380px){
+  .sorteo-card .sorteo-title{
+    font-size: 1rem;
+  }
+
+  .sorteo-card .cta .btn-primary{
+    font-size: 0.9rem;
+  }
+}
+
+/* =============================
+   Mobile fine tune por página
+   ============================= */
+@media (max-width: 520px){
+  .app-topbar-left,
+  .dashboard-header > div{
+    width: 100%;
+  }
+
+  .app-title,
+  .dashboard-header h2{
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+
+  .app-subtitle,
+  .dashboard-header p{
+    font-size: 0.9rem;
+  }
+
+  .sorteos-hero h2{
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  .sorteos-hero p.section-description{
+    font-size: 0.9rem;
+  }
+
+  .mis-numeros-header{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mis-numeros-filtros{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+  }
+
+  .chip-filtro{
+    text-align: center;
+  }
+
+  .sorteo-header{
+    gap: 0.6rem;
+  }
+
+  .sorteo-header__text{
+    width: 100%;
+  }
+
+  .sorteo-header__actions{
+    max-width: 100%;
+  }
+
+  .pago-nequi-main{
+    gap: 0.7rem;
+  }
+
+  .chat-card,
+  .chat-sala{
+    padding: 0.85rem;
+  }
+
+  .chat-messages{
+    max-height: 50vh;
+  }
+}
+
+@media (max-width: 360px){
+  .mis-numeros-filtros{
+    grid-template-columns: 1fr;
   }
 }

@@ -708,10 +708,9 @@ if (btnConfirmar) {
       // Opcional: recargar ocupados
       await cargarSorteo();
 
-      if (postConfirmActions) {
-        postConfirmActions.classList.remove('hidden');
-        postConfirmActions.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
+      setTimeout(() => {
+        location.href = 'mis-numeros.html';
+      }, 1200);
     } catch (err) {
       mostrarToast('Error de conexión al enviar tu participación.');
       btnConfirmar.disabled = false;

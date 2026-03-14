@@ -264,7 +264,11 @@ export async function initChat({ sorteoId, token }) {
       emojiPanelEl?.classList.toggle('hidden');
     });
 
-    inputWrapEl.appendChild(emojiBtnEl);
+    if (inputEl && inputEl.parentElement === inputWrapEl) {
+      inputWrapEl.insertBefore(emojiBtnEl, inputEl);
+    } else {
+      inputWrapEl.appendChild(emojiBtnEl);
+    }
     inputWrapEl.appendChild(emojiPanelEl);
 
     onDocClick = e => {
