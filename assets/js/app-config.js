@@ -13,7 +13,7 @@ window.__APP_CONFIG__ = {
     '32': 'https://checkout.nequi.wompi.co/l/cpSDRk'
   },
   // Llave Nequi (opcional): string global o por sorteoId
-  NEQUI_KEY: '',
+  NEQUI_KEY: '0091741173',
   NEQUI_KEYS: {
     // '32': 'TuLlaveNequi'
   }

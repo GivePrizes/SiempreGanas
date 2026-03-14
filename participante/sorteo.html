@@ -27,19 +27,19 @@
       <div class="sorteo-header__actions">
         <div class="sorteo-actions-row sorteo-actions-top">
           <button type="button" class="btn btn-secondary btn-app btn-back has-ico" onclick="location.href='dashboard.html'" aria-label="Volver a rondas" title="Volver">
-            <span class="btn-ico">←</span>
+            <span class="btn-ico" aria-hidden="true">←</span>
             <span class="btn-label">Volver</span>
           </button>
 
           <button id="btnMisNumeros" type="button" class="btn btn-primary btn-app has-ico hidden" onclick="location.href='mis-numeros.html'">
-            <span class="btn-ico">🎟</span>
+            <span class="btn-ico" aria-hidden="true">🎟️</span>
             <span class="btn-label">Mis números</span>
           </button>
         </div>
 
         <div class="sorteo-actions-row sorteo-actions-bottom">
           <button id="btnChatOnline" type="button" class="btn btn-secondary btn-app btn-chat-wide has-ico">
-            <span class="btn-ico">💬</span>
+            <span class="btn-ico" aria-hidden="true">🗨️</span>
             <span class="btn-label">Chat online</span>
           </button>
         </div>
@@ -242,6 +242,20 @@
             <button id="btnConfirmar" class="btn btn-primary btn-full-width">
               Confirmar participación
             </button>
+
+            <div id="postConfirmActions" class="post-confirm-actions hidden">
+              <p class="post-confirm-text">Listo. ¿Quieres entrar al chat o ver la ruleta en vivo?</p>
+              <div class="post-confirm-row">
+                <button id="btnPostChat" type="button" class="btn btn-secondary btn-app has-ico">
+                  <span class="btn-ico" aria-hidden="true">🗨️</span>
+                  <span class="btn-label">Chat en vivo</span>
+                </button>
+                <button id="btnPostLive" type="button" class="btn btn-primary btn-app has-ico">
+                  <span class="btn-ico" aria-hidden="true">🎯</span>
+                  <span class="btn-label">Ruleta en vivo</span>
+                </button>
+              </div>
+            </div>
 
           <details class="mini-ayuda">
             <summary>¿Qué pasa después?</summary>

@@ -475,6 +475,18 @@ body{
   letter-spacing: 0.02em;
 }
 
+.btn-app .btn-ico{
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.16);
+  margin-right: 0.5rem;
+  font-size: 1rem;
+  line-height: 1;
+}
+
 .btn-chat-wide{
   padding: 0.65rem 0.95rem;
   font-size: 0.98rem;
@@ -488,6 +500,28 @@ body{
 
 .sorteo-header__actions .btn{
   min-width: 0;
+}
+
+.post-confirm-actions{
+  margin-top: 0.85rem;
+  padding: 0.75rem 0.8rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(59,130,246,0.3);
+  background: rgba(11, 20, 36, 0.72);
+  display: grid;
+  gap: 0.6rem;
+}
+
+.post-confirm-text{
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--colour-muted);
+}
+
+.post-confirm-row{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
 }
 
 .btn-label{
@@ -1586,6 +1620,9 @@ body{
   .btn-chat-wide{
     padding: 0.6rem 0.85rem;
   }
+  .post-confirm-row{
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 
@@ -2647,6 +2684,11 @@ body {
   border-color: #d3dce8;
 }
 
+.btn-app .btn-ico {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+}
+
 .chip-filtro {
   border-color: #d3dce8;
   background: #f8fafc;
@@ -2682,6 +2724,15 @@ body {
 .chat-messages {
   border-color: var(--colour-border);
   background: var(--colour-surface-alt);
+}
+
+.post-confirm-actions {
+  background: #f8fafc;
+  border-color: #dbeafe;
+}
+
+.post-confirm-text {
+  color: #475569;
 }
 
 .chat-sala input {

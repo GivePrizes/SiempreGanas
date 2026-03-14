@@ -56,6 +56,9 @@ const sinComprobante = document.getElementById('sinComprobante');
 const pagadorDatos = document.getElementById('pagadorDatos');
 const inputPagadorNombre = document.getElementById('inputPagadorNombre');
 const inputPagadorTelefono = document.getElementById('inputPagadorTelefono');
+const postConfirmActions = document.getElementById('postConfirmActions');
+const btnPostChat = document.getElementById('btnPostChat');
+const btnPostLive = document.getElementById('btnPostLive');
 
 
 let sorteoActual = null;
@@ -69,6 +72,18 @@ if (maxNumerosTexto) maxNumerosTexto.textContent = MAX_NUMEROS_POR_COMPRA.toStri
 if (btnChatOnline && sorteoId) {
   btnChatOnline.addEventListener('click', () => {
     location.href = `chat.html?id=${encodeURIComponent(sorteoId)}`;
+  });
+}
+
+if (btnPostChat && sorteoId) {
+  btnPostChat.addEventListener('click', () => {
+    location.href = `chat.html?id=${encodeURIComponent(sorteoId)}`;
+  });
+}
+
+if (btnPostLive && sorteoId) {
+  btnPostLive.addEventListener('click', () => {
+    location.href = `ruleta-live.html?id=${encodeURIComponent(sorteoId)}`;
   });
 }
 
@@ -252,6 +267,8 @@ function configurarLlaveNequi() {
 
   nequiKeyText.textContent = key;
   nequiKeyBlock.classList.remove('hidden');
+  nequiKeyContent.classList.add('hidden');
+  btnToggleNequiKey.textContent = 'Mostrar llave';
 
   btnToggleNequiKey.addEventListener('click', () => {
     const hidden = nequiKeyContent.classList.contains('hidden');
@@ -285,7 +302,7 @@ function configurarNumeroNequi() {
   }
 
   nequiNumeroText.textContent = numero;
-  nequiNumeroBlock.classList.remove('hidden');
+  nequiNumeroBlock.classList.add('hidden');
 
   if (btnCopyNequiNumero) {
     btnCopyNequiNumero.addEventListener('click', async () => {
@@ -311,6 +328,15 @@ function aplicarMetodoPagoUI(metodo) {
   if (btnPagarNequiLink) btnPagarNequiLink.classList.toggle('hidden', !usarQr || !linkSeguro);
 
   if (nequiKeyBlock) nequiKeyBlock.classList.toggle('hidden', !usarLlave);
+  if (nequiKeyContent && btnToggleNequiKey) {
+    if (usarLlave) {
+      nequiKeyContent.classList.remove('hidden');
+      btnToggleNequiKey.textContent = 'Ocultar llave';
+    } else {
+      nequiKeyContent.classList.add('hidden');
+      btnToggleNequiKey.textContent = 'Mostrar llave';
+    }
+  }
   if (nequiNumeroBlock) nequiNumeroBlock.classList.toggle('hidden', !usarNumero);
 }
 
@@ -682,9 +708,10 @@ if (btnConfirmar) {
       // Opcional: recargar ocupados
       await cargarSorteo();
 
-      setTimeout(() => {
-        location.href = 'mis-numeros.html';
-      }, 2000);
+      if (postConfirmActions) {
+        postConfirmActions.classList.remove('hidden');
+        postConfirmActions.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     } catch (err) {
       mostrarToast('Error de conexión al enviar tu participación.');
       btnConfirmar.disabled = false;
