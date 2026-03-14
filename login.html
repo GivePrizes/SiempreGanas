@@ -147,10 +147,14 @@
     }
 
     .brand-logo{
+      --logo-float-base: -8px;
+      --logo-float-peak: -14px;
       width: 100%;
       height: auto;
       display:block;
-      transform: translateY(-8px);
+      animation: logoFloat 6.5s ease-in-out infinite;
+      transform-origin: center;
+      will-change: transform;
       filter: drop-shadow(0 18px 50px rgba(0,0,0,.55));
       opacity: .98;
     }
@@ -286,6 +290,15 @@
       to{
         opacity: 1;
         transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes logoFloat{
+      0%, 100%{
+        transform: translateY(var(--logo-float-base)) scale(1);
+      }
+      50%{
+        transform: translateY(var(--logo-float-peak)) scale(1.02);
       }
     }
 
@@ -541,7 +554,10 @@
         width: min(360px, 90%);
         height: clamp(84px, 14vh, 120px);
       }
-      .brand-logo{ transform: translateY(-6px); }
+      .brand-logo{
+        --logo-float-base: -6px;
+        --logo-float-peak: -10px;
+      }
       .terms-modal__actions{ flex-direction: column; }
       .story-lane{ width: 56vw; }
       .story-lane-right{ display: none; }
@@ -551,6 +567,9 @@
       .chat-float{
         animation: none !important;
         display: none !important;
+      }
+      .brand-logo{
+        animation: none !important;
       }
     }
 
@@ -848,7 +867,7 @@
           <input type="password" id="loginPass" placeholder="********" autocomplete="current-password">
         </div>
 
-        <button class="btn btn-primary btn-wide" onclick="login()">Entra al momento</button>
+        <button id="loginBtn" class="btn btn-primary btn-wide" onclick="login()">Entra al momento</button>
 
         <div class="trust-row">
           <span class="trust-dot"></span>
@@ -912,7 +931,7 @@
           <small id="errorTerms" class="error-msg"></small>
         </div>
 
-        <button class="btn btn-primary btn-wide" onclick="registro()">
+        <button id="registroBtn" class="btn btn-primary btn-wide" onclick="registro()">
           Registrarme
         </button>
 

@@ -23,6 +23,16 @@ function showRegistro() {
 async function login() {
   const email = document.getElementById('loginEmail')?.value?.trim().toLowerCase();
   const password = document.getElementById('loginPass')?.value;
+  const btn = document.getElementById('loginBtn');
+
+  if (!email || !password) {
+    return alert('Ingresa correo y contraseña.');
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+  }
 
   try {
     const res = await fetch(`${AUTH_URL}/api/auth/login`, {
@@ -43,26 +53,28 @@ async function login() {
 
       if (!freshUser) {
         if (typeof window.clearSession === 'function') window.clearSession();
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Entra al momento';
+        }
         return alert('No se pudo validar tu sesión. Intenta nuevamente.');
       }
 
-      // Mostrar modal de bienvenida
-      if (typeof showWelcomeModal === 'function') {
-        showWelcomeModal();
-      }
       const redirectUrl = freshUser.rol === 'admin' 
         ? 'admin/panel.html'
         : 'participante/dashboard.html';
 
-      // Redirección según rol (con delay mayor para permitir ver bien el modal)
-      setTimeout(() => {
-        location.href = redirectUrl;
-      }, 1200);
+      location.href = redirectUrl;
     } else {
       alert('Error: ' + data.message);
     }
   } catch (err) {
     alert('Error de conexión');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Entra al momento';
+    }
   }
 }
 
@@ -121,6 +133,7 @@ async function registro() {
   const termsAccepted = document.getElementById('regTerms')?.checked;
   const errorTerms = document.getElementById('errorTerms') || null;
   const errorAlias = document.getElementById('errorAlias') || null;
+  const btn = document.getElementById('registroBtn');
 
   if (!nombreValido(nombre)) {
     return alert("Error: Ingresa tu nombre real (mínimo nombre y apellido).");
@@ -149,6 +162,10 @@ async function registro() {
   }
 
   try {
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Creando...';
+    }
     const res = await fetch(`${AUTH_URL}/api/auth/registro`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -166,23 +183,24 @@ async function registro() {
         : null;
       if (!freshUser) {
         if (typeof window.clearSession === 'function') window.clearSession();
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = 'Registrarme';
+        }
         return alert('No se pudo validar tu sesión. Intenta nuevamente.');
       }
       
-      // Mostrar modal de bienvenida
-      if (typeof showWelcomeModal === 'function') {
-        showWelcomeModal();
-      }
-      
-      // Redirección con delay mayor
-      setTimeout(() => {
-        location.href = 'participante/dashboard.html';
-      }, 1200);
+      location.href = 'participante/dashboard.html';
     } else {
       alert('Error: ' + data.message);
     }
   } catch (err) {
     alert('Error de conexión');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Registrarme';
+    }
   }
 }
 
