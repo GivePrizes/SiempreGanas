@@ -10,6 +10,10 @@
   font-family: system-ui, -apple-system, sans-serif;
   border-radius: 8px;
   border: 1px solid rgba(246, 208, 111, 0.08);
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* ===============================
@@ -23,6 +27,7 @@
   scroll-behavior: smooth;
   background: rgba(2, 6, 23, 0.8);
   border-radius: 6px;
+  min-height: 260px;
 }
 
 /* Scroll suave */
@@ -140,6 +145,7 @@
   align-items: stretch;
   min-height: 44px;
   position: relative;
+  box-sizing: border-box;
 }
 
 #chatInput {
@@ -234,6 +240,94 @@
   background: rgba(2, 6, 23, 0.97);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   z-index: 20;
+}
+
+/* ===============================
+   CHAT SALA - LIGHT / RESPONSIVE
+=============================== */
+.chat-sala#chatContainer,
+.chat-sala {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.chat-sala #chatBody.chat-messages {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+
+.chat-sala .chat-meta {
+  color: #64748b;
+}
+
+.chat-sala .chat-bubble {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.chat-sala .chat-row.mine .chat-bubble {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.chat-sala .chat-row.system .chat-bubble {
+  background: #fff7ed;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+}
+
+.chat-sala .chat-input-wrap {
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+}
+
+.chat-sala #chatInput {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+}
+
+.chat-sala #chatInput::placeholder {
+  color: #94a3b8;
+}
+
+.chat-sala #chatInput:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+  background: #ffffff;
+}
+
+.chat-sala #chatSend {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.18);
+}
+
+.chat-sala #chatSend:hover:not(:disabled) {
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.26);
+}
+
+.chat-sala .chat-new-btn {
+  width: 100%;
+  margin: 8px 0;
+  border: 1px solid #dbe5f1;
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+
+@media (max-width: 520px) {
+  .chat-input-wrap {
+    flex-direction: column;
+  }
+
+  #chatInput,
+  #chatSend {
+    width: 100%;
+  }
 }
 
 .chat-emoji-item {

@@ -11,6 +11,11 @@ window.__APP_CONFIG__ = {
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndidHBocWN0ZHZ5ZWpqdGd1Y3VrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMDU3MDQsImV4cCI6MjA4NjY2NTcwNH0.WjPIDz6kc0DmglYaS49J64GcnfwyIDJw_O9t4Ba0R_k',
   NEQUI_PAYMENT_LINKS: {
     '32': 'https://checkout.nequi.wompi.co/l/cpSDRk'
+  },
+  // Llave Nequi (opcional): string global o por sorteoId
+  NEQUI_KEY: '',
+  NEQUI_KEYS: {
+    // '32': 'TuLlaveNequi'
   }
 };
 

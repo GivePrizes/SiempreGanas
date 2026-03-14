@@ -128,6 +128,12 @@
 
           <div class="pago-nequi-main">
             <div class="pago-nequi-datos">
+              <p class="pago-nequi-label">Método de pago</p>
+              <div class="pago-nequi-metodos">
+                <button type="button" class="metodo-btn is-active" data-pago-metodo="nequi_qr">QR</button>
+                <button type="button" class="metodo-btn" data-pago-metodo="nequi_key">Llave</button>
+              </div>
+
               <p class="pago-nequi-label">QR de pago</p>
               <img
                 id="imgQrNequi"
@@ -136,12 +142,34 @@
                 loading="lazy"
                 referrerpolicy="no-referrer"
               />
+              <img
+                id="imgQrNequiFallback"
+                class="qr-nequi-img qr-nequi-fallback"
+                src="../assets/imagenes/nequiQR.jpeg"
+                alt="QR de pago Nequi"
+                loading="lazy"
+              />
               <p id="textoQrNequi" class="pago-nequi-value hidden">
                 Escanea el QR desde tu app Nequi.
               </p>
               <button id="btnPagarNequiLink" type="button" class="btn btn-primary btn-nequi-copy hidden">
                 🔗 Pagar con Nequi
               </button>
+
+              <div id="nequiKeyBlock" class="pago-nequi-key hidden">
+                <div class="pago-nequi-key-head">
+                  <p class="pago-nequi-label">Llave Nequi</p>
+                  <button id="btnToggleNequiKey" type="button" class="btn btn-secondary btn-sm">
+                    Mostrar llave
+                  </button>
+                </div>
+                <div id="nequiKeyContent" class="pago-nequi-key-content hidden">
+                  <span id="nequiKeyText" class="pago-nequi-value pago-nequi-value--big"></span>
+                  <button id="btnCopyNequiKey" type="button" class="btn btn-secondary btn-sm">
+                    Copiar llave
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div class="pago-nequi-steps">
@@ -167,22 +195,38 @@
           <span class="pago-nequi-badge">3</span>
         </summary>
 
-        <div class="sorteo-compra-card">
-          <div class="comprobante-upload">
-            <label for="inputComprobante">Comprobante de pago</label>
-            <p class="text-muted microhint">Que se vea <strong>monto</strong> y <strong>referencia</strong>.</p>
+          <div class="sorteo-compra-card">
+            <div class="comprobante-upload">
+              <label for="inputComprobante">Comprobante de pago</label>
+              <p class="text-muted microhint">Que se vea <strong>monto</strong> y <strong>referencia</strong>.</p>
 
-            <input type="file" id="inputComprobante" accept="image/*" />
+              <input type="file" id="inputComprobante" accept="image/*" />
 
-            <div id="previewComprobante" class="comprobante-preview oculto">
-              <p class="comprobante-preview-title">Vista previa:</p>
-              <img id="imgPreview" alt="Comprobante" />
+              <div id="previewComprobante" class="comprobante-preview oculto">
+                <p class="comprobante-preview-title">Vista previa:</p>
+                <img id="imgPreview" alt="Comprobante" />
+              </div>
             </div>
-          </div>
 
-          <button id="btnConfirmar" class="btn btn-primary btn-full-width">
-            Confirmar participación
-          </button>
+            <div class="pago-alternativa">
+              <label class="checkbox-line">
+                <input type="checkbox" id="sinComprobante">
+                <span>Ya pagué y no tengo comprobante</span>
+              </label>
+              <p class="text-muted microhint">Completa nombre y celular de quien pagó para validar.</p>
+            </div>
+
+            <div id="pagadorDatos" class="pagador-datos oculto">
+              <label for="inputPagadorNombre">Nombre completo de quien pagó</label>
+              <input id="inputPagadorNombre" type="text" placeholder="Nombre y apellido" autocomplete="name" />
+
+              <label for="inputPagadorTelefono">Celular de quien pagó</label>
+              <input id="inputPagadorTelefono" type="tel" inputmode="numeric" placeholder="Ej: 3001234567" autocomplete="tel" />
+            </div>
+
+            <button id="btnConfirmar" class="btn btn-primary btn-full-width">
+              Confirmar participación
+            </button>
 
           <details class="mini-ayuda">
             <summary>¿Qué pasa después?</summary>

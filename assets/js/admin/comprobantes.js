@@ -45,6 +45,14 @@ function construirHTML(grupos) {
     return '<p>No hay pendientes.</p>';
   }
 
+  const mapMetodo = (m) => {
+    if (!m) return 'manual';
+    if (m === 'nequi_qr') return 'Nequi QR';
+    if (m === 'nequi_key') return 'Nequi llave';
+    if (m === 'comprobante') return 'Con comprobante';
+    return m;
+  };
+
   return grupos
     .map((grupo) => {
       const items = grupo.comprobantes
@@ -54,9 +62,18 @@ function construirHTML(grupos) {
             <div class="comprobante-info">
               <strong>#${c.numero}</strong> - ${c.usuario} (${c.telefono})
               <br>
-              <a href="${c.comprobante_url}" target="_blank" class="link">
-                Ver comprobante
-              </a>
+              ${
+                c.comprobante_url
+                  ? `<a href="${c.comprobante_url}" target="_blank" class="link">Ver comprobante</a>`
+                  : `<span class="text-muted">Sin comprobante (Ya pagó)</span>`
+              }
+              <br>
+              <small>Método: ${mapMetodo(c.pago_metodo)}</small>
+              ${
+                c.pagador_nombre || c.pagador_telefono
+                  ? `<br><small>Pagador: ${c.pagador_nombre || '—'} · ${c.pagador_telefono || '—'}</small>`
+                  : ''
+              }
               <br>
               <small>${new Date(c.fecha).toLocaleString()}</small>
             </div>
