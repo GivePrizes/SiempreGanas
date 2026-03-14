@@ -1,5 +1,5 @@
-:root {
-  /* Paleta participante: más cálida y descansada */
+﻿:root {
+  /* Paleta participante: mÃ¡s cÃ¡lida y descansada */
   --colour-background: #0c0b10;
   --colour-surface: #171720;
   --colour-surface-alt: #13131a;
@@ -173,7 +173,7 @@ body{
 
 
 
-/* Status badges / chips (e.g. “Sorteo cerrado”, “En progreso”) */
+/* Status badges / chips (e.g. â€œSorteo cerradoâ€, â€œEn progresoâ€) */
 .status-badge {
   display: inline-block;
   padding: 0.25rem 0.5rem;
@@ -245,10 +245,10 @@ body{
   padding: 1.5rem 1rem 3rem;
 }
 
-/* Header de dashboard / mis números */
-/* Flex para alinear título y botón */
+/* Header de dashboard / mis nÃºmeros */
+/* Flex para alinear tÃ­tulo y botÃ³n */
 /*============================= */
-/*   Header de dashboard / mis números
+/*   Header de dashboard / mis nÃºmeros
    ============================= */ 
 .dashboard-header {  
   display: flex;
@@ -270,14 +270,40 @@ body{
   flex-wrap:wrap;
 }
 
-/* Botón tipo “ghost” (secundario premium) */
+/* Botones app-like en headers (dashboard, mis nÃºmeros, sorteo, chat) */
+.app-topbar-actions .btn,
+.dashboard-header__actions .btn,
+.header-actions .btn,
+.sorteo-header__actions .btn{
+  border-radius: 14px;
+  min-height: 40px;
+  padding: 0.5rem 0.85rem;
+  font-weight: 700;
+  gap: 0.45rem;
+}
+
+.app-topbar-actions .btn .btn-ico,
+.dashboard-header__actions .btn .btn-ico,
+.header-actions .btn .btn-ico,
+.sorteo-header__actions .btn .btn-ico{
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.16);
+  font-size: 0.98rem;
+  line-height: 1;
+}
+
+/* BotÃ³n tipo â€œghostâ€ (secundario premium) */
 .btn.btn-ghost{
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.10);
   color: rgba(255,255,255,0.92);
 }
 
-/* Botón icono para salir */
+/* BotÃ³n icono para salir */
 .btn.btn-icon{
   width: 44px;
   height: 44px;
@@ -339,27 +365,24 @@ body{
   }
 }
 
-/* En móvil: acciones en una fila ordenada */
+/* En mÃ³vil: acciones app-like */
 @media (max-width: 768px){
   .header-actions{
     width:100%;
-    justify-content:flex-start;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap:8px;
   }
   .header-actions .btn{
-    height: 42px;
-  }
-  .header-actions .btn.btn-primary{
-    flex: 1;              /* Mis números se vuelve el “principal” */
+    min-height: 38px;
+    padding: 0.48rem 0.65rem;
+    font-size: 0.9rem;
     justify-content:center;
-  }
-  .header-actions .btn.btn-ghost{
-    flex: 0 0 auto;
   }
 }
 
 /* =============================
-   Resumen rápido del dashboard
+   Resumen rÃ¡pido del dashboard
    ============================= */
 
 .dashboard-summary {
@@ -388,7 +411,7 @@ body{
 }
 
 /* =============================
-   Mis números (cards agrupadas)
+   Mis nÃºmeros (cards agrupadas)
    ============================= */
 
 .resumen-linea {
@@ -401,7 +424,7 @@ body{
 */
 
 /* =============================
-   Detalle de sorteo (elegir números)
+   Detalle de sorteo (elegir nÃºmeros)
    ============================= */
 
 .sorteo-page{
@@ -448,9 +471,10 @@ body{
 
 .sorteo-header__actions{
   display: grid;
-  gap: 0.45rem;
+  gap: 0.5rem;
   align-items: stretch;
-  width: min(420px, 100%);
+  width: 100%;
+  max-width: 440px;
   justify-content: flex-start;
 }
 
@@ -478,18 +502,18 @@ body{
 .btn-app .btn-ico{
   display: inline-grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 9px;
   background: rgba(255,255,255,0.16);
-  margin-right: 0.5rem;
-  font-size: 1rem;
+  margin-right: 0.45rem;
+  font-size: 0.98rem;
   line-height: 1;
 }
 
 .btn-chat-wide{
-  padding: 0.65rem 0.95rem;
-  font-size: 0.98rem;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.96rem;
 }
 
 .btn-back{
@@ -658,7 +682,7 @@ body{
 }
 
 .numeros-scroll::after {
-  content: "Desliza para ver más números ↓";
+  content: "Desliza para ver mÃ¡s nÃºmeros â†“";
   display: block;
   text-align: center;
   font-size: 0.75rem;
@@ -666,7 +690,7 @@ body{
   margin-top: 0.5rem;
 }
 
-/* 🧹 2️⃣ LIMPIEZA: Mensaje scroll solo en CSS, eliminar de HTML */
+/* ðŸ§¹ 2ï¸âƒ£ LIMPIEZA: Mensaje scroll solo en CSS, eliminar de HTML */
 
 
 /* Info del sorteo */
@@ -681,7 +705,7 @@ body{
 }
 
 /* =============================
-   Método de pago Nequi (detalle sorteo)
+   MÃ©todo de pago Nequi (detalle sorteo)
    ============================= */
 
 .pago-nequi-card{
@@ -689,7 +713,7 @@ body{
   padding: 0.9rem 1rem;
   border-radius: 0.9rem;
 
-  /* más sobrio */
+  /* mÃ¡s sobrio */
   background: rgba(20,20,28,0.96);
   border: 1px solid rgba(255,255,255,0.12);
   box-shadow: 0 8px 26px rgba(0,0,0,0.65);
@@ -911,7 +935,7 @@ body{
   width: 100%;
 }
 
-/* Animación suave para que sea acogedor, no agresivo */
+/* AnimaciÃ³n suave para que sea acogedor, no agresivo */
 @keyframes pagoNequiGlow {
   0% {
     box-shadow: 0 8px 26px rgba(0, 0, 0, 0.7);
@@ -960,7 +984,7 @@ body{
   margin-bottom: 0.3rem;
 }
 
-/* Columna derecha: números + comprobante */
+/* Columna derecha: nÃºmeros + comprobante */
 
 .sorteo-numeros-card {
   margin-bottom: 0.9rem;
@@ -1066,7 +1090,7 @@ body{
 
 
 /* =============================
-   Bloque "¿Por qué a la gente le gusta este formato?"
+   Bloque "Â¿Por quÃ© a la gente le gusta este formato?"
    ============================= */
 
 .sorteo-motivos-card {
@@ -1111,13 +1135,13 @@ body{
   font-size: 0.7rem;
 }
 
-/* Título dentro del preview de comprobante */
+/* TÃ­tulo dentro del preview de comprobante */
 .comprobante-preview-title {
   font-size: 0.85rem;
   margin-bottom: 0.3rem;
 }
 
-/* Botón ancho para móvil/desktop */
+/* BotÃ³n ancho para mÃ³vil/desktop */
 .btn-full-width {
   width: 100%;
   margin-top: 0.75rem;
@@ -1125,7 +1149,7 @@ body{
 
 
 /* =============================
-   Mis números (vista participante)
+   Mis nÃºmeros (vista participante)
    ============================= */
 
 .mis-numeros-section h3 {
@@ -1174,7 +1198,7 @@ body{
   border-color: var(--colour-primary);
 }
 
-/* Estado vacío de Mis números */
+/* Estado vacÃ­o de Mis nÃºmeros */
 .mis-numeros-empty {
   background-color: var(--colour-surface);
   border-radius: 0.8rem;
@@ -1196,7 +1220,7 @@ body{
   margin-bottom: 0.7rem;
 }
 
-/* Responsive pequeños */
+/* Responsive pequeÃ±os */
 @media (max-width: 600px) {
   .mis-numeros-header {
     align-items: flex-start;
@@ -1220,7 +1244,7 @@ body{
   box-sizing: border-box;
 }
 
-/* separación entre uno y otro */
+/* separaciÃ³n entre uno y otro */
 .info-accordion + .info-accordion {
   margin-top: 0.5rem;
 }
@@ -1255,13 +1279,13 @@ body{
 
 /* Flecha custom */
 .info-accordion summary::after {
-  content: "▾";
+  content: "â–¾";
   font-size: 0.9rem;
   margin-left: 0.5rem;
   transition: transform 0.2s ease;
 }
 
-/* Cuando está abierto, giramos la flecha */
+/* Cuando estÃ¡ abierto, giramos la flecha */
 .info-accordion[open] summary::after {
   transform: rotate(180deg);
 }
@@ -1277,7 +1301,7 @@ body{
   margin-bottom: 0.25rem;
 }
 /* =============================
-   Chips de estado para números
+   Chips de estado para nÃºmeros
    ============================= */
 
 .num-chip{
@@ -1296,7 +1320,7 @@ body{
 
 
 
-/* Chips de números del participante (ruleta) */
+/* Chips de nÃºmeros del participante (ruleta) */
 .chips-wrap {
   display: flex;
   flex-wrap: wrap;
@@ -1324,7 +1348,7 @@ body{
   );
 }
 
-/* actualización suave de estado (sin llamar la atención) */
+/* actualizaciÃ³n suave de estado (sin llamar la atenciÃ³n) */
 .chip-soft-update{
   animation: chipSoft 1.2s ease-out;
 }
@@ -1410,7 +1434,7 @@ body{
 }
 
 .mini-ayuda summary::after{
-  content:"▾";
+  content:"â–¾";
   float:right;
   opacity:.8;
 }
@@ -1420,7 +1444,7 @@ body{
 }
 
 
-/* Grid de números */
+/* Grid de nÃºmeros */
 /*
 .numeros-grid {
   display: grid;
@@ -1437,7 +1461,7 @@ body{
   gap: 0.5rem;
 }
 
-/* Contenedor scroll para números (5x5 visible) */
+/* Contenedor scroll para nÃºmeros (5x5 visible) */
 .numeros-scroll {
   max-height: 310px;              /* 5 filas visibles */
   overflow-y: auto;
@@ -1453,7 +1477,7 @@ body{
 
 
 
-/* bolita base (más premium y clara) */
+/* bolita base (mÃ¡s premium y clara) */
 .numero-bola {
   display: inline-flex;
   align-items: center;
@@ -1496,7 +1520,7 @@ body{
   outline-offset: 2px;
 }
 
-/* número ocupado (ya vendido) */
+/* nÃºmero ocupado (ya vendido) */
 .numero-bola--ocupado {
   background: rgba(46,46,58,0.45);
   color: rgba(245,245,245,0.35);
@@ -1507,7 +1531,7 @@ body{
   box-shadow: none;
 }
 
-/* 2️⃣ Accesibilidad: soporte para aria-disabled */
+/* 2ï¸âƒ£ Accesibilidad: soporte para aria-disabled */
 .numero-bola[aria-disabled="true"]{
   cursor: not-allowed;
   pointer-events: none;
@@ -1535,7 +1559,7 @@ body{
     font-size: 0.9rem;
   }
 }
-/* Apagado suave cuando ya alcanzó el máximo */
+/* Apagado suave cuando ya alcanzÃ³ el mÃ¡ximo */
 .numero-bola--bloqueado{
   opacity: .35;
   filter: grayscale(.55);
@@ -1545,9 +1569,9 @@ body{
   position: relative;
 }
 
-/* 4️⃣ Feedback visual para bloqueado: muestra ✖ indicando no disponible */
+/* 4ï¸âƒ£ Feedback visual para bloqueado: muestra âœ– indicando no disponible */
 .numero-bola--bloqueado::after{
-  content: "✖";
+  content: "âœ–";
   position: absolute;
   font-size: .7rem;
   opacity: .4;
@@ -1557,7 +1581,7 @@ body{
 }
 
 
-/* Ocultar bloques largos en móvil para evitar “ladrillo” */
+/* Ocultar bloques largos en mÃ³vil para evitar â€œladrilloâ€ */
 @media (max-width: 768px) {
   .hide-on-mobile {
     display: none !important;
@@ -1566,7 +1590,7 @@ body{
 
 
 
-/* Header compacto y app-like en móvil */
+/* Header compacto y app-like en mÃ³vil */
 @media (max-width: 768px){
   .dashboard-header h2{
     font-size: 1.25rem;
@@ -1614,11 +1638,18 @@ body{
 }
 
 @media (max-width: 480px){
+  .sorteo-header__actions{
+    gap: 0.45rem;
+  }
   .sorteo-actions-top{
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .btn-chat-wide{
-    padding: 0.6rem 0.85rem;
+    padding: 0.55rem 0.75rem;
+  }
+  .btn-app{
+    font-size: 0.86rem;
+    padding: 0.45rem 0.6rem;
   }
   .post-confirm-row{
     grid-template-columns: minmax(0, 1fr);
@@ -1792,7 +1823,7 @@ body{
   border-radius: 999px;
 }
 
-/* Mobile: aún más compacto */
+/* Mobile: aÃºn mÃ¡s compacto */
 @media (max-width: 480px){
   .bonus-mini{
     font-size: 0.74rem;
@@ -1813,22 +1844,25 @@ body{
   }
   .app-topbar-actions{
     width:100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
   }
   .app-topbar-actions .btn{
-    flex:1 1 140px;
     justify-content:center;
+    min-height: 38px;
+    padding: 0.48rem 0.65rem;
+    font-size: 0.9rem;
   }
-  .app-topbar-actions .btn-icon{
-    flex: 0 0 44px;
+  .app-topbar-actions .btn-logout{
+    grid-column: 1 / -1;
   }
 }
 
-@media (max-width: 480px){
+@media (max-width: 420px){
   .app-topbar-actions .btn{
-    flex: 1 1 100%;
-  }
-  .app-topbar-actions .btn-icon{
-    flex: 1 1 100%;
+    font-size: 0.86rem;
+    padding: 0.45rem 0.6rem;
   }
 }
 
@@ -1845,8 +1879,30 @@ body{
 }
 
 @media (max-width: 480px){
+  .dashboard-header{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .dashboard-header__actions{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+  }
   .dashboard-header__actions .btn{
-    flex: 1 1 100%;
+    min-height: 38px;
+    padding: 0.48rem 0.65rem;
+    font-size: 0.9rem;
+  }
+  .dashboard-header__actions .btn-logout{
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 360px){
+  .dashboard-header__actions{
+    grid-template-columns: 1fr;
   }
 }
 
@@ -2017,7 +2073,7 @@ body{
   }
 }
 
-/* Contraste extra en móvil (mejor lectura en sol) */
+/* Contraste extra en mÃ³vil (mejor lectura en sol) */
 @media (max-width: 768px){
   body{
     background:
@@ -2685,6 +2741,14 @@ body {
 }
 
 .btn-app .btn-ico {
+  background: rgba(37, 99, 235, 0.12);
+  color: #1d4ed8;
+}
+
+.app-topbar-actions .btn .btn-ico,
+.dashboard-header__actions .btn .btn-ico,
+.header-actions .btn .btn-ico,
+.sorteo-header__actions .btn .btn-ico{
   background: rgba(37, 99, 235, 0.12);
   color: #1d4ed8;
 }
