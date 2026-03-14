@@ -25,20 +25,24 @@
       </div>
 
       <div class="sorteo-header__actions">
-        <button type="button" class="btn btn-secondary btn-back has-ico" onclick="location.href='dashboard.html'" aria-label="Volver a rondas" title="Volver">
-          <span class="btn-ico">←</span>
-          <span class="btn-label">Volver</span>
-        </button>
+        <div class="sorteo-actions-row sorteo-actions-top">
+          <button type="button" class="btn btn-secondary btn-app btn-back has-ico" onclick="location.href='dashboard.html'" aria-label="Volver a rondas" title="Volver">
+            <span class="btn-ico">←</span>
+            <span class="btn-label">Volver</span>
+          </button>
 
-        <button id="btnChatOnline" type="button" class="btn btn-secondary has-ico">
-          <span class="btn-ico">💬</span>
-          <span class="btn-label">Chat online</span>
-        </button>
+          <button id="btnMisNumeros" type="button" class="btn btn-primary btn-app has-ico hidden" onclick="location.href='mis-numeros.html'">
+            <span class="btn-ico">🎟</span>
+            <span class="btn-label">Mis números</span>
+          </button>
+        </div>
 
-        <button id="btnMisNumeros" type="button" class="btn btn-primary has-ico hidden" onclick="location.href='mis-numeros.html'">
-          <span class="btn-ico">🎟</span>
-          <span class="btn-label">Mis números</span>
-        </button>
+        <div class="sorteo-actions-row sorteo-actions-bottom">
+          <button id="btnChatOnline" type="button" class="btn btn-secondary btn-app btn-chat-wide has-ico">
+            <span class="btn-ico">💬</span>
+            <span class="btn-label">Chat online</span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -132,6 +136,7 @@
               <div class="pago-nequi-metodos">
                 <button type="button" class="metodo-btn is-active" data-pago-metodo="nequi_qr">QR</button>
                 <button type="button" class="metodo-btn" data-pago-metodo="nequi_key">Llave</button>
+                <button type="button" class="metodo-btn" data-pago-metodo="nequi_numero">Número</button>
               </div>
 
               <p class="pago-nequi-label">QR de pago</p>
@@ -167,6 +172,16 @@
                   <span id="nequiKeyText" class="pago-nequi-value pago-nequi-value--big"></span>
                   <button id="btnCopyNequiKey" type="button" class="btn btn-secondary btn-sm">
                     Copiar llave
+                  </button>
+                </div>
+              </div>
+
+              <div id="nequiNumeroBlock" class="pago-nequi-numero hidden">
+                <p class="pago-nequi-label">Número Nequi</p>
+                <div class="pago-nequi-numero-row">
+                  <span id="nequiNumeroText" class="pago-nequi-value pago-nequi-value--big"></span>
+                  <button id="btnCopyNequiNumero" type="button" class="btn btn-secondary btn-sm">
+                    Copiar número
                   </button>
                 </div>
               </div>

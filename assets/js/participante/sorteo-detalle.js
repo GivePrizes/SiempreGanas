@@ -36,6 +36,9 @@ const nequiKeyText = document.getElementById('nequiKeyText');
 const nequiKeyContent = document.getElementById('nequiKeyContent');
 const btnToggleNequiKey = document.getElementById('btnToggleNequiKey');
 const btnCopyNequiKey = document.getElementById('btnCopyNequiKey');
+const nequiNumeroBlock = document.getElementById('nequiNumeroBlock');
+const nequiNumeroText = document.getElementById('nequiNumeroText');
+const btnCopyNequiNumero = document.getElementById('btnCopyNequiNumero');
 const metodoBtns = Array.from(document.querySelectorAll('[data-pago-metodo]'));
 
 const btnConfirmar = document.getElementById('btnConfirmar');
@@ -268,11 +271,65 @@ function configurarLlaveNequi() {
   }
 }
 
+function obtenerNumeroNequi() {
+  return (window.NEQUI_PHONE || window.NEQUI_NUMBER || '3045538465').toString();
+}
+
+function configurarNumeroNequi() {
+  if (!nequiNumeroBlock || !nequiNumeroText) return;
+  const numero = obtenerNumeroNequi();
+
+  if (!numero) {
+    nequiNumeroBlock.classList.add('hidden');
+    return;
+  }
+
+  nequiNumeroText.textContent = numero;
+  nequiNumeroBlock.classList.remove('hidden');
+
+  if (btnCopyNequiNumero) {
+    btnCopyNequiNumero.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(numero);
+        mostrarToast('Número copiado ✅');
+      } catch {
+        mostrarToast('No se pudo copiar. Copia manualmente.');
+      }
+    });
+  }
+}
+
+function aplicarMetodoPagoUI(metodo) {
+  const usarQr = metodo === 'nequi_qr';
+  const usarLlave = metodo === 'nequi_key';
+  const usarNumero = metodo === 'nequi_numero';
+  const linkSeguro = usarQr ? obtenerLinkNequiSeguro(sorteoId) : null;
+
+  if (imgQrNequi) imgQrNequi.classList.toggle('hidden', !usarQr || !linkSeguro);
+  if (imgQrNequiFallback) imgQrNequiFallback.classList.toggle('hidden', !usarQr || !!linkSeguro);
+  if (textoQrNequi) textoQrNequi.classList.toggle('hidden', !usarQr);
+  if (btnPagarNequiLink) btnPagarNequiLink.classList.toggle('hidden', !usarQr || !linkSeguro);
+
+  if (nequiKeyBlock) nequiKeyBlock.classList.toggle('hidden', !usarLlave);
+  if (nequiNumeroBlock) nequiNumeroBlock.classList.toggle('hidden', !usarNumero);
+}
+
 function configurarMetodoPagoUI() {
   if (!metodoBtns.length) return;
 
   const hasQr = Boolean(obtenerLinkNequiSeguro(sorteoId) || imgQrNequiFallback);
-  pagoMetodoActual = hasQr ? 'nequi_qr' : 'manual';
+  const hasKey = Boolean(obtenerLlaveNequi(sorteoId));
+  const hasNumero = Boolean(obtenerNumeroNequi());
+
+  if (hasQr) {
+    pagoMetodoActual = 'nequi_qr';
+  } else if (hasKey) {
+    pagoMetodoActual = 'nequi_key';
+  } else if (hasNumero) {
+    pagoMetodoActual = 'nequi_numero';
+  } else {
+    pagoMetodoActual = 'manual';
+  }
 
   metodoBtns.forEach((btn) => {
     const method = btn.getAttribute('data-pago-metodo');
@@ -281,8 +338,11 @@ function configurarMetodoPagoUI() {
       pagoMetodoActual = method || 'manual';
       metodoBtns.forEach(b => b.classList.remove('is-active'));
       btn.classList.add('is-active');
+      aplicarMetodoPagoUI(pagoMetodoActual);
     });
   });
+
+  aplicarMetodoPagoUI(pagoMetodoActual);
 }
 
 
@@ -637,6 +697,7 @@ if (btnConfirmar) {
 document.addEventListener('DOMContentLoaded', () => {
   configurarPagoNequiPorLink();
   configurarLlaveNequi();
+  configurarNumeroNequi();
   configurarMetodoPagoUI();
   cargarSorteo();
   cargarMisNumerosDelSorteo();
