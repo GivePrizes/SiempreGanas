@@ -2,8 +2,12 @@ export function createChatStore({ myUsuarioId }) {
   const byId = new Map();
   let filter = 'all';
 
+  function upsert(message) {
+    if (message?.id) byId.set(message.id, message);
+  }
+
   function upsertMany(list = []) {
-    list.forEach(m => m?.id && byId.set(m.id, m));
+    list.forEach(upsert);
   }
 
   function has(id) {
@@ -50,6 +54,7 @@ export function createChatStore({ myUsuarioId }) {
 
 
   return {
+    upsert,
     upsertMany,
     has,
     remove,

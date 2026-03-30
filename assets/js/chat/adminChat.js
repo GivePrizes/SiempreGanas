@@ -5,10 +5,12 @@ import {
   muteUser,
   deleteMessage,
   getUserState,
-  fetchMessages
+  fetchMessages,
+  normalizeChatMessage
 } from './chatApi.js?v=20260329b';
-import { createChatStore } from './store.js?v=20260329b';
-import { renderMessages, isBottom, toBottom } from './ui.js?v=20260329b';
+import { createChatStore } from './store.js?v=20260329c';
+import { renderMessages, isBottom, toBottom } from './ui.js?v=20260329c';
+import { subscribeToSorteoInserts } from './realtime.js?v=20260329c';
 
 /* ===============================
    Init Admin Chat
@@ -23,14 +25,12 @@ export async function initAdminChat({ sorteoId, token }) {
 
   // Store de mensajes (admin)
   const store = createChatStore({ myUsuarioId: 'admin' });
-  let unsub = null; // reservado para realtime futuro
+  let unsub = null;
 
   /* ===============================
      Render con acciones de moderación
   =============================== */
-  function renderAdminMessages() {
-    const atBottom = isBottom(bodyEl);
-
+  function renderAdminMessages({ forceBottom = false } = {}) {
     renderMessages({
       containerEl: bodyEl,
       messages: store.getFiltered(),
@@ -56,7 +56,9 @@ export async function initAdminChat({ sorteoId, token }) {
       }
     });
 
-    if (atBottom) toBottom(bodyEl);
+    if (forceBottom || isBottom(bodyEl)) {
+      toBottom(bodyEl);
+    }
   }
 
   /* ===============================
@@ -64,8 +66,11 @@ export async function initAdminChat({ sorteoId, token }) {
      ⚠️ Aún no se usa si no hay Supabase
   =============================== */
   function appendMessage(msg) {
-    store.upsert(msg);
-    renderAdminMessages();
+    const message = normalizeChatMessage(msg);
+    if (!message || store.has(message.id)) return;
+
+    store.upsert(message);
+    renderAdminMessages({ forceBottom: true });
   }
 
   /* ===============================
@@ -75,10 +80,21 @@ export async function initAdminChat({ sorteoId, token }) {
     const data = await fetchMessages({ sorteoId, token, limit: 50 });
     console.log('Historial recibido:', data);
     store.upsertMany(data.messages || []);
-    renderAdminMessages();
+    renderAdminMessages({ forceBottom: true });
   } catch (err) {
     console.error('Error cargando historial:', err);
     hintEl.textContent = 'No se pudo cargar el chat de admin.';
+  }
+
+  try {
+    unsub = await subscribeToSorteoInserts({
+      sorteoId,
+      token,
+      onInsert: appendMessage
+    });
+  } catch (err) {
+    console.error('Error conectando chat admin realtime:', err);
+    hintEl.textContent = 'El chat se cargó, pero la actualización en vivo no está disponible.';
   }
 
   /* ===============================
@@ -115,7 +131,12 @@ export async function initAdminChat({ sorteoId, token }) {
       }
     }
 
+    if (data?.message) {
+      appendMessage(data.message);
+    }
+
     sendEl.disabled = false;
+    inputEl.focus();
   } 
 
   /* ===============================

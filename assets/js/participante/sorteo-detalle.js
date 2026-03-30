@@ -55,6 +55,8 @@ const inputPagadorNombre = document.getElementById('inputPagadorNombre');
 const inputPagadorTelefono = document.getElementById('inputPagadorTelefono');
 const postConfirmActions = document.getElementById('postConfirmActions');
 const btnPostLive = document.getElementById('btnPostLive');
+const numbersStepAccordion = document.getElementById('numbersStepAccordion');
+const paymentStepAccordion = document.getElementById('paymentStepAccordion');
 
 
 let sorteoActual = null;
@@ -107,6 +109,27 @@ function actualizarResumen() {
 
   actualizarEstadoConfirmar();
 
+}
+
+function scrollToPaymentStep() {
+  if (!paymentStepAccordion) return;
+  window.requestAnimationFrame(() => {
+    paymentStepAccordion.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  });
+}
+
+function openPaymentStep({ scroll = true } = {}) {
+  if (!paymentStepAccordion) return;
+  paymentStepAccordion.open = true;
+  if (numbersStepAccordion) {
+    numbersStepAccordion.open = false;
+  }
+  if (scroll) {
+    scrollToPaymentStep();
+  }
 }
 
 // habilitar/deshabilitar botón confirmar según selección y comprobante
@@ -383,6 +406,10 @@ function toggleNumero(numero, el) {
   }
 
   actualizarResumen();
+
+  if (seleccionados.length > 0) {
+    openPaymentStep();
+  }
 }
 
 
@@ -706,6 +733,14 @@ if (btnConfirmar) {
 
 // --- init ---
 document.addEventListener('DOMContentLoaded', () => {
+  if (paymentStepAccordion) {
+    paymentStepAccordion.addEventListener('toggle', () => {
+      if (paymentStepAccordion.open) {
+        scrollToPaymentStep();
+      }
+    });
+  }
+
   configurarPagoNequiPorLink();
   configurarLlaveNequi();
   configurarNumeroNequi();

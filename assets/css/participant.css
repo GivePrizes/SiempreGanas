@@ -650,6 +650,30 @@ video {
   gap: 0.6rem;
 }
 
+.info-accordion{
+  scroll-margin-top: 104px;
+}
+
+.pago-confirmacion-stack{
+  display: grid;
+  gap: 0.9rem;
+}
+
+.pago-confirmacion-head{
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.pago-confirmacion-head h3{
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.sorteo-compra-card--compact{
+  margin-top: 0;
+}
+
 .sorteo-detalle-layout {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(260px, 1.7fr);

@@ -7,7 +7,7 @@
   <title>Mathome — Elige tus números y participa</title>
 
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225c">
-  <link rel="stylesheet" href="../assets/css/participant.css?v=20260225c">
+  <link rel="stylesheet" href="../assets/css/participant.css?v=20260329c">
 </head>
 <body>
   <div class="main-container sorteo-page">
@@ -81,7 +81,7 @@
     <section class="sorteo-flow">
 
       <!-- PASO 1 -->
-      <details class="info-accordion" open>
+      <details id="numbersStepAccordion" class="info-accordion" open>
         <summary>
           <span>🎯 Paso 1 · Elige tus números</span>
           <span class="pago-nequi-badge">1</span>
@@ -113,101 +113,98 @@
       </details>
 
       <!-- PASO 2 -->
-      <details class="info-accordion">
+      <details id="paymentStepAccordion" class="info-accordion">
         <summary>
-          <span>💳 Paso 2 · Paga por Nequi</span>
+          <span>💳 Paso 2 · Paga y confirma</span>
           <span class="pago-nequi-badge">2</span>
         </summary>
 
-        <div class="pago-nequi-card">
-          <div class="pago-nequi-header">
-            <div>
-              <p class="pago-nequi-title">Paga con Nequi</p>
-              <p class="pago-nequi-subtitle">Escanea el QR o abre el link de pago.</p>
-            </div>
-          </div>
-
-          <div class="pago-nequi-main">
-            <div class="pago-nequi-datos">
-              <p class="pago-nequi-label">Método de pago</p>
-              <div class="pago-nequi-metodos">
-                <button type="button" class="metodo-btn is-active" data-pago-metodo="nequi_qr">QR</button>
-                <button type="button" class="metodo-btn" data-pago-metodo="nequi_key">Llave</button>
-                <button type="button" class="metodo-btn" data-pago-metodo="nequi_numero">Número</button>
-              </div>
-
-              <p class="pago-nequi-label">QR de pago</p>
-              <img
-                id="imgQrNequi"
-                class="qr-nequi-img hidden"
-                alt="QR de pago Nequi"
-                loading="lazy"
-                referrerpolicy="no-referrer"
-              />
-              <img
-                id="imgQrNequiFallback"
-                class="qr-nequi-img qr-nequi-fallback"
-                src="../assets/imagenes/nequiQR.jpeg"
-                alt="QR de pago Nequi"
-                loading="lazy"
-              />
-              <p id="textoQrNequi" class="pago-nequi-value hidden">
-                Escanea el QR desde tu app Nequi.
-              </p>
-              <button id="btnPagarNequiLink" type="button" class="btn btn-primary btn-nequi-copy hidden">
-                🔗 Pagar con Nequi
-              </button>
-
-              <div id="nequiKeyBlock" class="pago-nequi-key hidden">
-                <div class="pago-nequi-key-head">
-                  <p class="pago-nequi-label">Llave Nequi</p>
-                  <button id="btnToggleNequiKey" type="button" class="btn btn-secondary btn-sm">
-                    Mostrar llave
-                  </button>
-                </div>
-                <div id="nequiKeyContent" class="pago-nequi-key-content hidden">
-                  <span id="nequiKeyText" class="pago-nequi-value pago-nequi-value--big"></span>
-                  <button id="btnCopyNequiKey" type="button" class="btn btn-secondary btn-sm">
-                    Copiar llave
-                  </button>
-                </div>
-              </div>
-
-              <div id="nequiNumeroBlock" class="pago-nequi-numero hidden">
-                <p class="pago-nequi-label">Número Nequi</p>
-                <div class="pago-nequi-numero-row">
-                  <span id="nequiNumeroText" class="pago-nequi-value pago-nequi-value--big"></span>
-                  <button id="btnCopyNequiNumero" type="button" class="btn btn-secondary btn-sm">
-                    Copiar número
-                  </button>
-                </div>
+        <div class="pago-confirmacion-stack">
+          <div class="pago-nequi-card">
+            <div class="pago-nequi-header">
+              <div>
+                <p class="pago-nequi-title">Paga con Nequi</p>
+                <p class="pago-nequi-subtitle">Escanea el QR, usa la llave o copia el número desde este mismo paso.</p>
               </div>
             </div>
 
-            <div class="pago-nequi-steps">
-              <ol>
-                <li>Elige tu número.</li>
-                <li>Paga escaneando el QR o tocando <strong>Pagar con Nequi</strong>.</li>
-                <li>Sube el comprobante para validación.</li>
-              </ol>
-              <p class="pago-nequi-seguro">🛡️ Pago seguro + validación de participación.</p>
+            <div class="pago-nequi-main">
+              <div class="pago-nequi-datos">
+                <p class="pago-nequi-label">Método de pago</p>
+                <div class="pago-nequi-metodos">
+                  <button type="button" class="metodo-btn is-active" data-pago-metodo="nequi_qr">QR</button>
+                  <button type="button" class="metodo-btn" data-pago-metodo="nequi_key">Llave</button>
+                  <button type="button" class="metodo-btn" data-pago-metodo="nequi_numero">Número</button>
+                </div>
+
+                <p class="pago-nequi-label">QR de pago</p>
+                <img
+                  id="imgQrNequi"
+                  class="qr-nequi-img hidden"
+                  alt="QR de pago Nequi"
+                  loading="lazy"
+                  referrerpolicy="no-referrer"
+                />
+                <img
+                  id="imgQrNequiFallback"
+                  class="qr-nequi-img qr-nequi-fallback"
+                  src="../assets/imagenes/nequiQR.jpeg"
+                  alt="QR de pago Nequi"
+                  loading="lazy"
+                />
+                <p id="textoQrNequi" class="pago-nequi-value hidden">
+                  Escanea el QR desde tu app Nequi.
+                </p>
+                <button id="btnPagarNequiLink" type="button" class="btn btn-primary btn-nequi-copy hidden">
+                  🔗 Pagar con Nequi
+                </button>
+
+                <div id="nequiKeyBlock" class="pago-nequi-key hidden">
+                  <div class="pago-nequi-key-head">
+                    <p class="pago-nequi-label">Llave Nequi</p>
+                    <button id="btnToggleNequiKey" type="button" class="btn btn-secondary btn-sm">
+                      Mostrar llave
+                    </button>
+                  </div>
+                  <div id="nequiKeyContent" class="pago-nequi-key-content hidden">
+                    <span id="nequiKeyText" class="pago-nequi-value pago-nequi-value--big"></span>
+                    <button id="btnCopyNequiKey" type="button" class="btn btn-secondary btn-sm">
+                      Copiar llave
+                    </button>
+                  </div>
+                </div>
+
+                <div id="nequiNumeroBlock" class="pago-nequi-numero hidden">
+                  <p class="pago-nequi-label">Número Nequi</p>
+                  <div class="pago-nequi-numero-row">
+                    <span id="nequiNumeroText" class="pago-nequi-value pago-nequi-value--big"></span>
+                    <button id="btnCopyNequiNumero" type="button" class="btn btn-secondary btn-sm">
+                      Copiar número
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pago-nequi-steps">
+                <ol>
+                  <li>Elige tu número.</li>
+                  <li>Paga escaneando el QR, usando la llave o copiando el número.</li>
+                  <li>Justo aquí abajo sube tu comprobante o marca que ya pagaste.</li>
+                </ol>
+                <p class="pago-nequi-seguro">🛡️ Pago seguro + validación de participación.</p>
+              </div>
+            </div>
+
+            <div class="pago-nequi-footer">
+              💡 Tip: si te gustan ciertos números, págalos apenas los elijas.
             </div>
           </div>
 
-          <div class="pago-nequi-footer">
-            💡 Tip: si te gustan ciertos números, págalos apenas los elijas.
-          </div>
-        </div>
-      </details>
-
-      <!-- PASO 3 -->
-      <details class="info-accordion">
-        <summary>
-          <span>🧾 Paso 3 · Subir comprobante</span>
-          <span class="pago-nequi-badge">3</span>
-        </summary>
-
-          <div class="sorteo-compra-card">
+          <div class="sorteo-compra-card sorteo-compra-card--compact">
+            <div class="pago-confirmacion-head">
+              <h3>🧾 Confirma tu pago</h3>
+              <p class="text-muted microhint">Sube el comprobante o, si ya pagaste, completa los datos del pagador.</p>
+            </div>
             <div class="comprobante-upload">
               <label for="inputComprobante">Comprobante de pago</label>
               <p class="text-muted microhint">Que se vea <strong>monto</strong> y <strong>referencia</strong>.</p>
@@ -269,7 +266,7 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js?v=20260225c"></script>
   <script src="../assets/js/welcomeModal.js"></script>
-  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260225c"></script>
+  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260329c"></script>
 </body>
 </html>
 

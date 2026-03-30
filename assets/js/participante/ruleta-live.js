@@ -149,11 +149,15 @@ function renderNumbersList(){
   if (!elNumbersList) return;
 
   const nums = Array.isArray(segments) ? segments : [];
+  if (!nums.length) {
+    elNumbersList.innerHTML = '<span class="muted small">Todavía no hay números aprobados visibles en esta ronda.</span>';
+  } else {
   elNumbersList.innerHTML = nums.map(s => {
     const n = Number(s.numero);
     const label = Number.isFinite(n) ? `#${String(n).padStart(2,"0")}` : String(s.numero || '');
     return `<span class="numberChip">${label}</span>`;
   }).join('');
+  }
 
   if (elNumbersCount) {
     elNumbersCount.textContent = String(nums.length || 0);
@@ -439,19 +443,20 @@ async function fetchRuletaInfo(){
   setEstadoBadge(safeUpper(estado));
 
   elSubtitle.textContent =
-    estado === "waiting" ? "La sorteo en vivo aún no ha sido programada." :
-    estado === "countdown" ? "Cuenta regresiva en marcha. Quédate aquí." :
+    estado === "waiting" ? "La ruleta se activará cuando el sorteo se llene y el admin la programe." :
+    estado === "countdown" ? "El sorteo ya se llenó. El admin activó la ruleta y la cuenta regresiva está en marcha." :
     estado === "spinning" ? "🎯 La ruleta está girando…" :
     estado === "finished" ? "🏆 Resultado oficial confirmado." :
     "Actualizando…";
 
   if (lastEstado !== estado) {
     if (estado === "waiting") {
-      pushSystemMessage("⏳ La ruleta comenzará en breve", "estado_waiting");
-      setChatEnabled(false, "El chat se habilita cuando comience el giro.");
+      pushSystemMessage("⏳ La ruleta aún no se activa: primero debe llenarse el sorteo y luego el admin la programará.", "estado_waiting");
+      setChatEnabled(false, "La ruleta se habilita cuando el sorteo se llena y el admin la activa.");
     }
     if (estado === "countdown") {
-      setChatEnabled(true, "Chat activo · la ronda está programada.");
+      pushSystemMessage("✅ El sorteo ya está lleno. El admin activó la ruleta y ya empezó la cuenta regresiva.", "estado_countdown");
+      setChatEnabled(true, "Chat activo · el sorteo ya está lleno y la ruleta fue programada.");
     }
     if (estado === "spinning") {
       pushSystemMessage("🎯 ¡La ruleta está girando!", "estado_spinning");
@@ -499,7 +504,7 @@ function tick(){
       ? "🎯 La ruleta está girando…"
       : estado === "finished"
         ? "🏆 Ya tenemos ganador"
-        : "Prepárate, el sorteo comenzará pronto";
+        : "La ruleta todavía no está activa. Sigue aquí viendo cómo se llenan los números comprados.";
     elBar.style.width = "0%";
     requestAnimationFrame(tick);
     return;
