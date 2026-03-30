@@ -16,6 +16,32 @@ const state = {
   cache: [],             // raw del backend
 };
 
+async function requireCuentasAccess() {
+  const user = typeof window.requireAuthUser === 'function'
+    ? await window.requireAuthUser({ redirectTo: '../index.html' })
+    : null;
+
+  if (!user) return null;
+
+  const permisos = Array.isArray(user?.permisos) ? user.permisos : [];
+  const esAdmin = user?.rol === 'admin';
+  const puedeCuentas = permisos.includes('cuentas:gestionar');
+
+  if (esAdmin && !puedeCuentas) {
+    alert('No tienes permisos para entrar a entrega de cuentas.');
+    location.href = 'panel.html';
+    return null;
+  }
+
+  if (!getToken() || !esAdmin || !puedeCuentas) {
+    alert('No tienes acceso al panel de entrega de cuentas.');
+    location.href = '../index.html';
+    return null;
+  }
+
+  return user;
+}
+
 function toast(msg) {
   const t = document.getElementById('toast');
   if (!t) return;
@@ -179,7 +205,11 @@ function setupAcordeonToggle() {
   });
 }
 
-function init() {
+async function init() {
+  const user = await requireCuentasAccess();
+  if (!user) return;
+
+  document.body.classList.remove('auth-pending');
   setupFilters();
   setupAcordeonToggle();
   cargarCuentas({ silent: false });
