@@ -86,7 +86,7 @@ export function renderMessages({
 
   containerEl.innerHTML = messages
     .map(m => {
-      const isSystem = !!m.is_system;
+      const isSystem = Boolean(m.is_system ?? m.isSystem);
       const isMine = Number(m.usuario?.id) === Number(myUsuarioId);
       const displayName =
         m.usuario?.alias ??
@@ -120,7 +120,7 @@ export function renderMessages({
               ${esc(displayName)}
             </strong>
             <span class="chat-time">
-              ${m.created_at ? time(m.created_at) : ''}
+              ${(m.created_at || m.createdAt) ? time(m.created_at || m.createdAt) : ''}
             </span>
           </div>
 

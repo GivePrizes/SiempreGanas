@@ -12,8 +12,8 @@ export function createChatStore({ myUsuarioId }) {
 
   function getAllSorted() {
     return [...byId.values()].sort((a, b) => {
-      const ta = new Date(a.created_at).getTime();
-      const tb = new Date(b.created_at).getTime();
+      const ta = new Date(a.created_at || a.createdAt || 0).getTime();
+      const tb = new Date(b.created_at || b.createdAt || 0).getTime();
       if (ta !== tb) return ta - tb;
       return String(a.id).localeCompare(String(b.id));
     });
@@ -21,8 +21,10 @@ export function createChatStore({ myUsuarioId }) {
 
   function getFiltered() {
     const all = getAllSorted();
-    if (filter === 'system') return all.filter(m => m.is_system);
-    if (filter === 'mine') return all.filter(m => Number(m.usuario_id) === Number(myUsuarioId));
+    if (filter === 'system') return all.filter(m => Boolean(m.is_system ?? m.isSystem));
+    if (filter === 'mine') {
+      return all.filter(m => Number(m.usuario_id ?? m.usuario?.id) === Number(myUsuarioId));
+    }
     return all;
   }
 

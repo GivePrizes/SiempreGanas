@@ -4,50 +4,38 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/png" href="../assets/imagenes/mathome-favicon.png">
-  <title>Chat online - Mathome</title>
-
+  <title>Redirigiendo a la ruleta - Mathome</title>
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225c">
   <link rel="stylesheet" href="../assets/css/participant.css?v=20260225c">
-  <link rel="stylesheet" href="../assets/js/chat/chat.css?v=20260225c">
 </head>
 <body>
   <main class="main-container sorteo-page">
-    <header class="sorteo-header">
-      <div class="sorteo-header__text">
-        <h1 id="chatOnlineTitle" class="sorteo-title">Chat online</h1>
-        <p class="sorteo-subtitle">Sala por sorteo en tiempo real</p>
-      </div>
-      <div class="sorteo-header__actions">
-        <button id="btnBackToSorteo" type="button" class="btn btn-secondary has-ico">
-          <span class="btn-ico">←</span>
-          <span class="btn-label">Volver al sorteo</span>
-        </button>
-      </div>
-    </header>
-
-    <section id="chatContainer" class="chat-card chat-sala" style="display:block;">
-      <div class="chat-header">
-        <div>
-          <h3>💬 Chat online</h3>
-          <p id="chatStateText" class="text-muted microhint">Cargando sala...</p>
-        </div>
-      </div>
-      <button id="chatNewBtn" class="chat-new-btn hidden" type="button">Nuevos mensajes ↓</button>
-      <div id="chatBody" class="chat-messages"></div>
-      <div class="chat-input-wrap">
-        <input id="chatInput" type="text" placeholder="Escribe aquí..." maxlength="120">
-        <button id="chatSend" class="btn btn-primary has-ico">
-          <span class="btn-ico">➤</span>
-          <span class="btn-label">Enviar</span>
-        </button>
-      </div>
-      <p id="chatHint" class="text-muted chat-hint"></p>
+    <section class="sorteo-card-premium">
+      <p class="sorteo-card__eyebrow">Sala unificada</p>
+      <h1 class="sorteo-title">El chat ahora vive dentro de la ruleta</h1>
+      <p class="sorteo-subtitle">
+        Estamos llevándote a la única sala oficial para evitar rutas duplicadas.
+      </p>
+      <button id="btnContinue" type="button" class="btn btn-primary">Ir ahora</button>
     </section>
   </main>
 
-  <script src="../assets/js/app-config.js"></script>
-  <script src="../assets/js/config.js"></script>
-  <script src="../assets/js/auth.js?v=20260225c"></script>
-  <script type="module" src="../assets/js/participante/chat-online.js?v=20260307a"></script>
+  <script>
+    (function redirectToLiveRoom() {
+      const params = new URLSearchParams(window.location.search);
+      const sorteoId = params.get('id') || params.get('sorteo') || params.get('sorteoId');
+      const target = sorteoId
+        ? `ruleta-live.html?id=${encodeURIComponent(sorteoId)}`
+        : 'dashboard.html';
+
+      document.getElementById('btnContinue')?.addEventListener('click', function () {
+        window.location.href = target;
+      });
+
+      window.setTimeout(function () {
+        window.location.replace(target);
+      }, 150);
+    })();
+  </script>
 </body>
 </html>

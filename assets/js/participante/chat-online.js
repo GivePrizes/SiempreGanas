@@ -1,4 +1,4 @@
-import { initChat } from '../chat/index.js';
+import { initChat } from '../chat/index.js?v=20260329b';
 
 const API_URL = window.API_URL || '';
 const params = new URLSearchParams(window.location.search);

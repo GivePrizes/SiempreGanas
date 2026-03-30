@@ -6,10 +6,9 @@ import {
   deleteMessage,
   getUserState,
   fetchMessages
-} from './chatApi.js';
-
-import { createChatStore } from './store.js';
-import { renderMessages, isBottom, toBottom } from './ui.js';
+} from './chatApi.js?v=20260329b';
+import { createChatStore } from './store.js?v=20260329b';
+import { renderMessages, isBottom, toBottom } from './ui.js?v=20260329b';
 
 /* ===============================
    Init Admin Chat
@@ -38,7 +37,7 @@ export async function initAdminChat({ sorteoId, token }) {
       myUsuarioId: 'admin',
       renderActions: (msg) => {
         // Los botones SOLO para mensajes normales (no sistema)
-        if (!msg.isSystem) {
+        if (!(msg.is_system ?? msg.isSystem)) {
           return `
             <span class="actions">
               <button class="mute-btn" data-user="${msg.usuario.id}">
@@ -73,7 +72,7 @@ export async function initAdminChat({ sorteoId, token }) {
      History (carga inicial)
   =============================== */
   try {
-    const data = await fetchMessages({ sorteoId, limit: 50 });
+    const data = await fetchMessages({ sorteoId, token, limit: 50 });
     console.log('Historial recibido:', data);
     store.upsertMany(data.messages || []);
     renderAdminMessages();

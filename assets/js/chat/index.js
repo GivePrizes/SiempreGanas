@@ -1,9 +1,8 @@
 ﻿//chat/index.js
-import { fetchMessages, postMessage } from './chatApi.js';
-import { createChatStore } from './store.js';
-import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js';
-import { getChatEndpoint } from './config.js';
-import { subscribeToSorteoInserts } from './realtime.js';
+import { fetchMessages, normalizeChatMessage, postMessage } from './chatApi.js?v=20260329b';
+import { createChatStore } from './store.js?v=20260329b';
+import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js?v=20260329b';
+import { subscribeToSorteoInserts } from './realtime.js?v=20260329b';
 
 /* ===============================
    Utils
@@ -39,6 +38,8 @@ export async function initChat({ sorteoId, token }) {
   const filtersEl = document.getElementById('chatFilters');
   const newBtnEl  = document.getElementById('chatNewBtn');
 
+  if (!bodyEl || !inputEl || !sendEl || !hintEl) return;
+
   const store = createChatStore({ myUsuarioId });
 
   let pendingNew = 0;
@@ -51,8 +52,8 @@ export async function initChat({ sorteoId, token }) {
   =============================== */
 
   function updateChatPermission() {
-    inputEl.disabled = !puedeEscribir;
-    sendEl.disabled = !puedeEscribir;
+    if (inputEl) inputEl.disabled = !puedeEscribir;
+    if (sendEl) sendEl.disabled = !puedeEscribir;
 
     if (!hintEl) return;
 
@@ -130,16 +131,8 @@ export async function initChat({ sorteoId, token }) {
   =============================== */
 
   function appendMessage(m) {
-    if (!m || store.has(m.id)) return;
-
-    // 🔥 NORMALIZAR MENSAJE REALTIME
-    const mensaje = {
-      ...m,
-      usuario: {
-        id: m.usuario_id,
-        nombre: m.usuario_id === myUsuarioId ? 'Tú' : 'Usuario'
-      }
-    };
+    const mensaje = normalizeChatMessage(m);
+    if (!mensaje || store.has(mensaje.id)) return;
 
     if (Number(mensaje.usuario.id) === Number(myUsuarioId)) {
       replaceOptimistic(mensaje);
@@ -202,11 +195,11 @@ export async function initChat({ sorteoId, token }) {
   =============================== */
 
   try {
-    const data = await fetchMessages({ sorteoId, limit: 50 });
+    const data = await fetchMessages({ sorteoId, token, limit: 50 });
     store.upsertMany(data.messages || []);
     rerender({ keepBottom: true });
   } catch {
-    hintEl.textContent = 'No se pudo cargar el chat.';
+    if (hintEl) hintEl.textContent = 'No se pudo cargar el chat.';
   }
 
   /* ===============================
@@ -216,6 +209,7 @@ export async function initChat({ sorteoId, token }) {
   try {
     unsub = await subscribeToSorteoInserts({
       sorteoId,
+      token,
       onInsert: appendMessage
     });
   } catch (e) {
@@ -306,5 +300,5 @@ export async function initChat({ sorteoId, token }) {
   window.addEventListener('beforeunload', () => {
     unsub?.();
   });
-  }
+}
 

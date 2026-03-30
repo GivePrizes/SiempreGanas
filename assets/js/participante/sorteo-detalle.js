@@ -1,7 +1,7 @@
 ﻿// assets/js/participante/sorteo-detalle.js
 
 const API_URL = window.API_URL || ''; // viene de config.js
-// El chat se abre en la vista dedicada (chat.html)
+// La conversación oficial vive dentro de ruleta-live.html.
 
 // obtener sorteoId de la URL
 const params = new URLSearchParams(window.location.search);
@@ -49,15 +49,11 @@ const misNumerosEnSorteoChips = document.getElementById('misNumerosEnSorteoChips
 const estadoNoParticipante = document.getElementById('estadoNoParticipante');
 const btnMisNumeros = document.getElementById('btnMisNumeros');
 const btnChatOnline = document.getElementById('btnChatOnline');
-const chatInput = document.getElementById('chatInput');
-const chatSend = document.getElementById('chatSend');
-const chatHint = document.getElementById('chatHint');
 const sinComprobante = document.getElementById('sinComprobante');
 const pagadorDatos = document.getElementById('pagadorDatos');
 const inputPagadorNombre = document.getElementById('inputPagadorNombre');
 const inputPagadorTelefono = document.getElementById('inputPagadorTelefono');
 const postConfirmActions = document.getElementById('postConfirmActions');
-const btnPostChat = document.getElementById('btnPostChat');
 const btnPostLive = document.getElementById('btnPostLive');
 
 
@@ -69,22 +65,17 @@ const NEQUI_PAYMENT_LINKS = window.NEQUI_PAYMENT_LINKS || {};
 let pagoMetodoActual = 'nequi_qr';
 
 if (maxNumerosTexto) maxNumerosTexto.textContent = MAX_NUMEROS_POR_COMPRA.toString();
-if (btnChatOnline && sorteoId) {
-  btnChatOnline.addEventListener('click', () => {
-    location.href = `chat.html?id=${encodeURIComponent(sorteoId)}`;
-  });
+function goToLiveRoom() {
+  if (!sorteoId) return;
+  location.href = `ruleta-live.html?id=${encodeURIComponent(sorteoId)}`;
 }
 
-if (btnPostChat && sorteoId) {
-  btnPostChat.addEventListener('click', () => {
-    location.href = `chat.html?id=${encodeURIComponent(sorteoId)}`;
-  });
+if (btnChatOnline && sorteoId) {
+  btnChatOnline.addEventListener('click', goToLiveRoom);
 }
 
 if (btnPostLive && sorteoId) {
-  btnPostLive.addEventListener('click', () => {
-    location.href = `ruleta-live.html?id=${encodeURIComponent(sorteoId)}`;
-  });
+  btnPostLive.addEventListener('click', goToLiveRoom);
 }
 
 // --- helpers ---
@@ -432,18 +423,12 @@ async function cargarMisNumerosDelSorteo() {
       if (misNumerosEnSorteoCard) misNumerosEnSorteoCard.style.display = 'none';
       if (estadoNoParticipante) estadoNoParticipante.style.display = 'block';
       if (btnMisNumeros) btnMisNumeros.classList.add('hidden');
-      if (chatInput) chatInput.disabled = true;
-      if (chatSend) chatSend.disabled = true;
-      if (chatHint) chatHint.textContent = 'Participa para unirte a la conversación.';
       return;
     }
 
     if (estadoNoParticipante) estadoNoParticipante.style.display = 'none';
     if (misNumerosEnSorteoCard) misNumerosEnSorteoCard.style.display = 'block';
     if (btnMisNumeros) btnMisNumeros.classList.remove('hidden');
-    if (chatInput) chatInput.disabled = false;
-    if (chatSend) chatSend.disabled = false;
-    if (chatHint) chatHint.textContent = '';
     nums.sort((a, b) => Number(a) - Number(b));
 
     misNumerosEnSorteoTexto.textContent = `Aprobados: ${nums.length} número(s)`;
@@ -532,7 +517,7 @@ async function cargarSorteo() {
     renderNumeros();
     actualizarResumen();
 
-    // El chat no se monta aquí. Se abre desde el botón "Chat online".
+    // El chat no se monta aquí. La entrada única es la ruleta en vivo.
 
   } catch (err) {
     tituloSorteo.textContent = 'Error de conexión al cargar el sorteo.';

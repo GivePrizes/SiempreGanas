@@ -1,6 +1,6 @@
 // assets/js/participante/ruleta.js
 // Código para la página de ruleta del participante
-import { initChat } from '../chat/index.js';
+import { initChat } from '../chat/index.js?v=20260329b';
 // API base (usar la global definida en config.js)
 const API = `${(window.API_URL || 'https://app-service-phi.vercel.app').replace(/\/$/, '')}/api`;
 

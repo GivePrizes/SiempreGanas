@@ -1,29 +1,31 @@
-# 🎰 SiempreGana - Sorteos Online Premium
+# SiempreGanas Frontend
 
-Plataforma de sorteos con psicología persuasiva integrada.
+Frontend del participante y administración para la plataforma SiempreGanas.
 
-## URLs en Producción
+## Stack real
 
-- **Frontend:** https://siempregana.vercel.app
-- **Auth Service:** https://auth-service-v5sb.onrender.com
-- **App Service:** https://app-service-kupj.onrender.com
-- **Database:** Supabase PostgreSQL
+- HTML, CSS y JavaScript vanilla
+- Servicios backend Node.js/Express desplegados por separado
+- PostgreSQL/Supabase como base de datos compartida
 
-## Stack
+## Flujo oficial de chat y ruleta
 
-- Frontend: HTML5 + CSS3 + JavaScript Vanilla
-- Backend: Java 17 + Spring Boot 3.5
-- Database: PostgreSQL (Supabase)
-- Hosting: Vercel + Render
+- La única sala oficial del participante es [ruleta-live.html](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/participante/ruleta-live.html).
+- [chat.html](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/participante/chat.html) queda solo como redirección de compatibilidad.
+- [sorteo.html](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/participante/sorteo.html) ya no monta un chat propio ni abre una sala separada.
 
-## Cómo Correr Localmente
+## Documentación recomendada
+
+- [ARQUITECTURA_GENERAL.md](/d:/carpetaRuleta2026/ARQUITECTURA_GENERAL.md)
+- [ARQUITECTURA_CHAT_RULETA.md](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/docs/ARQUITECTURA_CHAT_RULETA.md)
+
+## Desarrollo local
+
+Puedes servir esta carpeta con cualquier servidor estático. Ejemplo:
 
 ```bash
-# Clonar
-git clone https://github.com/GivePrizes/SiempreGanas.git
-cd SiempreGanas
+cd SiempreGanas/frontend/frontend
+python -m http.server 3000
+```
 
-# Abrir frontend localmente
-cd frontend
-python3 -m http.server 3000
-# O abre index.html directamente en el navegador
+Luego abre `http://localhost:3000`.

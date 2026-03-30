@@ -1,20 +1,75 @@
 // frontend/assets/js/chat/chatApi.js
 import { getChatEndpoint } from './config.js';
 
+function resolveToken(token) {
+  return token || localStorage.getItem('token') || '';
+}
+
+export function normalizeChatMessage(message) {
+  if (!message?.id) return null;
+
+  const usuarioId =
+    message.usuario_id ??
+    message.usuario?.id ??
+    null;
+
+  const usuarioNombre =
+    message.usuario_nombre ??
+    message.usuario?.nombre ??
+    null;
+
+  const usuarioAlias =
+    message.usuario_alias ??
+    message.usuario?.alias ??
+    null;
+
+  return {
+    ...message,
+    sorteo_id: message.sorteo_id ?? message.sorteoId ?? null,
+    usuario_id: usuarioId,
+    mensaje: message.mensaje ?? '',
+    is_system: Boolean(message.is_system ?? message.isSystem),
+    created_at: message.created_at ?? message.createdAt ?? null,
+    usuario_nombre: usuarioNombre,
+    usuario_alias: usuarioAlias,
+    usuario: {
+      id: usuarioId,
+      nombre: usuarioNombre,
+      alias: usuarioAlias
+    }
+  };
+}
+
 /* ===============================
    Fetch mensajes (historial)
 ================================ */
-export async function fetchMessages({ sorteoId, limit = 50, cursor = null }) {
+export async function fetchMessages({ sorteoId, token, limit = 50, cursor = null }) {
   const params = new URLSearchParams({ limit: String(limit) });
   if (cursor?.beforeCreatedAt) params.set('beforeCreatedAt', cursor.beforeCreatedAt);
   if (cursor?.beforeId) params.set('beforeId', cursor.beforeId);
 
   try {
-    const res = await fetch(`${getChatEndpoint(sorteoId)}?${params.toString()}`);
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status} - ${res.statusText}`);
+    const authToken = resolveToken(token);
+    const headers = {};
+    if (authToken) {
+      headers.Authorization = `Bearer ${authToken}`;
     }
-    return await res.json();
+
+    const res = await fetch(`${getChatEndpoint(sorteoId)}?${params.toString()}`, {
+      headers
+    });
+    if (!res.ok) {
+      const detail = await res.text().catch(() => '');
+      throw new Error(`HTTP ${res.status} - ${detail || res.statusText}`);
+    }
+
+    const data = await res.json();
+    return {
+      ...data,
+      messages: Array.isArray(data?.messages)
+        ? data.messages.map(normalizeChatMessage).filter(Boolean)
+        : []
+    };
   } catch (err) {
     console.error('fetchMessages error:', err);
     throw err;
@@ -29,11 +84,12 @@ export async function fetchMessages({ sorteoId, limit = 50, cursor = null }) {
 ================================ */
 export async function postMessage({ sorteoId, token, mensaje }) {
   try {
+    const authToken = resolveToken(token);
     const res = await fetch(getChatEndpoint(sorteoId), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${authToken}`
       },
       body: JSON.stringify({ mensaje: mensaje.trim() })
     });
@@ -66,11 +122,12 @@ export async function sendMessage({ sorteoId, token, mensaje, is_system = false 
 ================================ */
 export async function muteUser(sorteoId, token, usuarioId, minutes = 10) {
   try {
+    const authToken = resolveToken(token);
     const res = await fetch(`${getChatEndpoint(sorteoId)}/mute`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${authToken}`
       },
       body: JSON.stringify({ usuarioId, minutes })
     });
@@ -88,10 +145,11 @@ export async function muteUser(sorteoId, token, usuarioId, minutes = 10) {
 ================================ */
 export async function deleteMessage(sorteoId, token, messageId) {
   try {
+    const authToken = resolveToken(token);
     const res = await fetch(`${getChatEndpoint(sorteoId)}/${messageId}`, {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${authToken}`
       }
     });
 
@@ -108,9 +166,10 @@ export async function deleteMessage(sorteoId, token, messageId) {
 ================================ */
 export async function getUserState(sorteoId, token, usuarioId) {
   try {
+    const authToken = resolveToken(token);
     const res = await fetch(`${getChatEndpoint(sorteoId)}/user/${usuarioId}/state`, {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${authToken}`
       }
     });
 

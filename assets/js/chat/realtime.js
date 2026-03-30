@@ -1,6 +1,7 @@
 import { getChatEndpoint } from './config.js';
 
 const RETRY_MS = 2000;
+const resolveToken = (token) => token || localStorage.getItem('token') || '';
 
 function parseEventChunk(rawChunk) {
   const normalized = rawChunk.replace(/\r\n/g, '\n');
@@ -61,6 +62,7 @@ export async function subscribeToSorteoInserts({ sorteoId, token, onInsert }) {
   const controller = new AbortController();
   let closed = false;
   let unavailableNotified = false;
+  const authToken = resolveToken(token);
   const streamUrl = `${getChatEndpoint(sorteoId, { isAdmin: false })}/stream`;
 
   (async () => {
@@ -69,7 +71,7 @@ export async function subscribeToSorteoInserts({ sorteoId, token, onInsert }) {
         const res = await fetch(streamUrl, {
           method: 'GET',
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${authToken}`,
             Accept: 'text/event-stream'
           },
           cache: 'no-store',

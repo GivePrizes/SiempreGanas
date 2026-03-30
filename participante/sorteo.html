@@ -8,9 +8,6 @@
 
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225c">
   <link rel="stylesheet" href="../assets/css/participant.css?v=20260225c">
-  <link rel="stylesheet" href="../assets/js/chat/chat.css?v=20260225c">
-
-
 </head>
 <body>
   <div class="main-container sorteo-page">
@@ -40,7 +37,7 @@
         <div class="sorteo-actions-row sorteo-actions-bottom">
           <button id="btnChatOnline" type="button" class="btn btn-secondary btn-app btn-chat-wide has-ico">
             <span class="btn-ico" aria-hidden="true">🗨️</span>
-            <span class="btn-label">Chat online</span>
+            <span class="btn-label">Sala en vivo</span>
           </button>
         </div>
       </div>
@@ -244,12 +241,8 @@
             </button>
 
             <div id="postConfirmActions" class="post-confirm-actions hidden">
-              <p class="post-confirm-text">Listo. ¿Quieres entrar al chat o ver la ruleta en vivo?</p>
+              <p class="post-confirm-text">Listo. Desde la ruleta en vivo podrás ver el sorteo y usar el único chat oficial.</p>
               <div class="post-confirm-row">
-                <button id="btnPostChat" type="button" class="btn btn-secondary btn-app has-ico">
-                  <span class="btn-ico" aria-hidden="true">🗨️</span>
-                  <span class="btn-label">Chat en vivo</span>
-                </button>
                 <button id="btnPostLive" type="button" class="btn btn-primary btn-app has-ico">
                   <span class="btn-ico" aria-hidden="true">🎯</span>
                   <span class="btn-label">Ruleta en vivo</span>
@@ -266,25 +259,6 @@
         </div>
       </details>
 
-    </section>
-
-    <!-- CHAT -->
-    <section id="chatContainer" class="chat-card chat-sala" style="display: none;">
-      <div class="chat-header">
-        <div>
-          <h3>💬 Sala de la ronda</h3>
-          <p class="text-muted microhint">🔒 Solo participantes pueden escribir</p>
-        </div>
-      </div>
-      <div id="chatBody" class="chat-messages"></div>
-      <div class="chat-input-wrap">
-        <input id="chatInput" type="text" placeholder="Escribe aquí..." maxlength="120">
-        <button id="chatSend" class="btn btn-primary has-ico">
-          <span class="btn-ico">➤</span>
-          <span class="btn-label">Enviar</span>
-        </button>
-      </div>
-      <p id="chatHint" class="text-muted chat-hint"></p>
     </section>
 
   </div>

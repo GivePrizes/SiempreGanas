@@ -22,11 +22,13 @@ if (btnBack) {
 
 const params = new URLSearchParams(location.search);
 const sorteoId = params.get("id") || params.get("sorteo") || params.get("sorteoId");
-const btnChatOnline = document.getElementById("btnChatOnline");
-if (btnChatOnline) {
-  btnChatOnline.addEventListener("click", () => {
-    if (!sorteoId) return;
-    location.href = `chat.html?id=${encodeURIComponent(sorteoId)}&from=live`;
+const btnGoToChat = document.getElementById("btnGoToChat");
+if (btnGoToChat) {
+  btnGoToChat.addEventListener("click", () => {
+    document.getElementById("chatContainer")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
   });
 }
 
