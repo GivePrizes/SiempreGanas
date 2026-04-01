@@ -97,7 +97,7 @@ let lastMotivationSecond = null;
 const lastSystemKeys = new Set();
 const motivationalPhrases = [
   "¡Ya casi llega tu momento!",
-  "La sorteo está en movimiento…",
+  "El sorteo está en movimiento…",
   "Prepárate, el destino se acerca…",
   "¿Será tu número el elegido?",
 ];

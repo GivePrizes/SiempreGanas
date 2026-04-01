@@ -1,4 +1,6 @@
-﻿:root {
+﻿@charset "UTF-8";
+
+:root {
   /* Paleta participante: mÃ¡s cÃ¡lida y descansada */
   --colour-background: #0c0b10;
   --colour-surface: #171720;
@@ -714,7 +716,7 @@ video {
 }
 
 .numeros-scroll::after {
-  content: "Desliza para ver mÃ¡s nÃºmeros â†“";
+  content: "Desliza para ver m\00E1s n\00FAmeros \2193";
   display: block;
   text-align: center;
   font-size: 0.75rem;
@@ -1614,7 +1616,7 @@ video {
 
 /* 4ï¸âƒ£ Feedback visual para bloqueado: muestra âœ– indicando no disponible */
 .numero-bola--bloqueado::after{
-  content: "âœ–";
+  content: "\2716";
   position: absolute;
   font-size: .7rem;
   opacity: .4;
