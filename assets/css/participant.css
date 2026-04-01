@@ -306,6 +306,11 @@ video {
   line-height: 1;
 }
 
+.btn.btn-danger .btn-ico{
+  background: rgba(255,255,255,0.16);
+  color: #ffffff;
+}
+
 /* BotÃ³n tipo â€œghostâ€ (secundario premium) */
 .btn.btn-ghost{
   background: rgba(255,255,255,0.06);
@@ -1816,6 +1821,18 @@ video {
   font-size: 1.35rem;
 }
 
+.stat-note{
+  margin-top: 0.55rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: rgba(226,232,240,.84);
+}
+
+.stat-note--accent{
+  padding-top: 0.55rem;
+  border-top: 1px solid rgba(148,163,184,.18);
+}
+
 
 /* =============================
    Bonus mini (discreto, app-like)
@@ -2809,6 +2826,11 @@ body {
   color: #1d4ed8;
 }
 
+:root[data-app-theme="light"] .btn.btn-danger .btn-ico{
+  background: rgba(220,38,38,0.14);
+  color: #b91c1c;
+}
+
 :root[data-app-theme="light"] .chip-filtro {
   border-color: #d3dce8;
   background: #f8fafc;
@@ -2820,6 +2842,14 @@ body {
   border-color: #2563eb;
   background: #2563eb;
   box-shadow: none;
+}
+
+:root[data-app-theme="light"] .stat-note{
+  color: #475569;
+}
+
+:root[data-app-theme="light"] .stat-note--accent{
+  border-top-color: #dbe5f1;
 }
 
 :root[data-app-theme="light"] .status-open {
