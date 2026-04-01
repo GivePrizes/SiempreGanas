@@ -1,100 +1,18 @@
-﻿// --- Cambio entre login / registro ---
-
-function showLogin() {
-  const loginForm = document.getElementById('loginForm');
-  const registroForm = document.getElementById('registroForm');
-  if (loginForm && registroForm) {
-    loginForm.classList.remove('hidden');
-    registroForm.classList.add('hidden');
-  }
-}
-
-function showRegistro() {
-  const loginForm = document.getElementById('loginForm');
-  const registroForm = document.getElementById('registroForm');
-  if (loginForm && registroForm) {
-    registroForm.classList.remove('hidden');
-    loginForm.classList.add('hidden');
-  }
-}
-
-// --- Login ---
-
-async function login() {
-  const email = document.getElementById('loginEmail')?.value?.trim().toLowerCase();
-  const password = document.getElementById('loginPass')?.value;
-  const btn = document.getElementById('loginBtn');
-
-  if (!email || !password) {
-    return alert('Ingresa correo y contraseña.');
-  }
-
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = 'Entrando...';
-  }
-
-  try {
-    const res = await fetch(`${AUTH_URL}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      localStorage.setItem('token', data.token);
-      localStorage.removeItem('user');
-
-      const freshUser = typeof window.getAuthUser === 'function'
-        ? await window.getAuthUser({ force: true })
-        : null;
-
-      if (!freshUser) {
-        if (typeof window.clearSession === 'function') window.clearSession();
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = 'Entra al momento';
-        }
-        return alert('No se pudo validar tu sesión. Intenta nuevamente.');
-      }
-
-      const redirectUrl = freshUser.rol === 'admin' 
-        ? 'admin/panel.html'
-        : 'participante/dashboard.html';
-
-      location.href = redirectUrl;
-    } else {
-      alert('Error: ' + data.message);
-    }
-  } catch (err) {
-    alert('Error de conexión');
-  } finally {
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = 'Entra al momento';
-    }
-  }
-}
-
-// --- Validaciones ---
-
 function nombreValido(nombre) {
   if (!/^[\p{L} ]+$/u.test(nombre)) return false;
 
-  const partes = nombre.split(" ").filter(p => p.length > 0);
+  const partes = String(nombre || '').split(' ').filter((p) => p.length > 0);
   if (partes.length < 2) return false;
-  if (partes.some(p => p.length < 3)) return false;
+  if (partes.some((p) => p.length < 3)) return false;
 
-  const prohibidos = ["asd", "aaa", "xxx", "test", "fer", "pep", "prueba"];
+  const prohibidos = ['asd', 'aaa', 'xxx', 'test', 'fer', 'pep', 'prueba'];
   if (prohibidos.includes(partes[0].toLowerCase())) return false;
 
   return true;
 }
 
 function telefonoValido(telefono) {
-  if (!/^[0-9]+$/.test(telefono)) return false;
+  if (!/^[0-9]+$/.test(String(telefono || ''))) return false;
   if (telefono.length < 10) return false;
   if (/^0+$/.test(telefono)) return false;
   return true;
@@ -102,14 +20,14 @@ function telefonoValido(telefono) {
 
 function correoValido(email) {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
-  if (!regex.test(email)) return false;
+  if (!regex.test(String(email || ''))) return false;
 
-  const [usuario, dominio] = email.split("@");
+  const [usuario, dominio] = String(email).split('@');
   if (!usuario || !dominio) return false;
   if (usuario.length < 3) return false;
   if (dominio.length < 5) return false;
 
-  const dominiosFalsos = ["example.com", "test.com", "fake.com", "correo.com"];
+  const dominiosFalsos = ['example.com', 'test.com', 'fake.com', 'correo.com'];
   if (dominiosFalsos.includes(dominio.toLowerCase())) return false;
 
   return true;
@@ -117,97 +35,10 @@ function correoValido(email) {
 
 function aliasValido(alias) {
   if (!alias) return true;
-  if (!/^[a-zA-Z0-9_]{3,20}$/.test(alias)) return false;
-  return true;
+  return /^[a-zA-Z0-9_]{3,20}$/.test(alias);
 }
-
-// --- Registro ---
-
-async function registro() {
-  const nombre   = document.getElementById('regNombre')?.value.trim();
-  const email    = document.getElementById('regEmail')?.value?.trim().toLowerCase();
-  const telefono = document.getElementById('regTelefono')?.value.trim();
-  const alias    = document.getElementById('regAlias')?.value.trim();
-  const password = document.getElementById('regPass')?.value;
-  const confirm  = document.getElementById('regPassConfirm')?.value;
-  const termsAccepted = document.getElementById('regTerms')?.checked;
-  const errorTerms = document.getElementById('errorTerms') || null;
-  const errorAlias = document.getElementById('errorAlias') || null;
-  const btn = document.getElementById('registroBtn');
-
-  if (!nombreValido(nombre)) {
-    return alert("Error: Ingresa tu nombre real (mínimo nombre y apellido).");
-  }
-
-  if (!correoValido(email)) {
-    return alert("Error: Ingresa un correo válido.");
-  }
-
-  if (!telefonoValido(telefono)) {
-    return alert("Error: Ingresa un número de teléfono válido (mínimo 10 dígitos).");
-  }
-
-  if (!aliasValido(alias)) {
-    if (errorAlias) errorAlias.textContent = 'Nombre público inválido. Usa 3-20 letras, números o _.';
-    return alert('Error: Nombre público inválido. Usa 3-20 letras, números o _.');
-  }
-
-  if (password !== confirm) {
-    return alert('Error: Las contraseñas no coinciden');
-  }
-
-  if (!termsAccepted) {
-    if (errorTerms) errorTerms.textContent = 'Debes aceptar los términos para continuar.';
-    return alert('Error: Debes aceptar los términos y condiciones.');
-  }
-
-  try {
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = 'Creando...';
-    }
-    const res = await fetch(`${AUTH_URL}/api/auth/registro`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre, email, telefono, alias: alias || null, password, terms_accepted: true })
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      localStorage.setItem('token', data.token);
-      localStorage.removeItem('user');
-
-      const freshUser = typeof window.getAuthUser === 'function'
-        ? await window.getAuthUser({ force: true })
-        : null;
-      if (!freshUser) {
-        if (typeof window.clearSession === 'function') window.clearSession();
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = 'Registrarme';
-        }
-        return alert('No se pudo validar tu sesión. Intenta nuevamente.');
-      }
-      
-      location.href = 'participante/dashboard.html';
-    } else {
-      alert('Error: ' + data.message);
-    }
-  } catch (err) {
-    alert('Error de conexión');
-  } finally {
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = 'Registrarme';
-    }
-  }
-}
-
-// --- Logout ---
 
 function logout() {
-  console.log('Logout ejecutado');
   if (typeof window.clearSession === 'function') {
     window.clearSession();
   } else {
@@ -217,178 +48,11 @@ function logout() {
   location.href = '../index.html';
 }
 
-// --- Validación en vivo SOLO si existe el formulario de registro ---
+window.authValidators = {
+  nombreValido,
+  telefonoValido,
+  correoValido,
+  aliasValido,
+};
 
-document.addEventListener('DOMContentLoaded', () => {
-  const inputNombre   = document.getElementById('regNombre');
-  const inputEmail    = document.getElementById('regEmail');
-  const inputTelefono = document.getElementById('regTelefono');
-  const inputAlias    = document.getElementById('regAlias');
-  const inputPass     = document.getElementById('regPass');
-  const inputPass2    = document.getElementById('regPassConfirm');
-  const inputTerms    = document.getElementById('regTerms');
-
-  // Si no estamos en login.html con el formulario de registro, no hacer nada
-  if (!inputNombre || !inputEmail || !inputTelefono || !inputPass || !inputPass2) {
-    return;
-  }
-
-  const errorNombre   = document.getElementById('errorNombre') || null;
-  const errorEmail    = document.getElementById('errorEmail') || null;
-  const errorTelefono = document.getElementById('errorTelefono') || null;
-  const errorAlias    = document.getElementById('errorAlias') || null;
-  const errorPass     = document.getElementById('errorPass') || null;
-  const errorPass2    = document.getElementById('errorPassConfirm') || null;
-  const errorTerms    = document.getElementById('errorTerms') || null;
-
-  inputNombre.addEventListener('input', () => {
-    const valor = inputNombre.value.trim();
-    if (!valor) {
-      if (errorNombre) errorNombre.textContent = '';
-      inputNombre.classList.remove('input-error', 'input-ok');
-    } else if (!nombreValido(valor)) {
-      if (errorNombre) errorNombre.textContent = 'Ingresa nombre y apellido, sin abreviaturas.';
-      inputNombre.classList.add('input-error');
-      inputNombre.classList.remove('input-ok');
-    } else {
-      if (errorNombre) errorNombre.textContent = 'Nombre válido';
-      inputNombre.classList.add('input-ok');
-      inputNombre.classList.remove('input-error');
-    }
-  });
-
-  inputEmail.addEventListener('input', () => {
-    const valor = inputEmail.value.trim();
-    if (!valor) {
-      if (errorEmail) errorEmail.textContent = '';
-      inputEmail.classList.remove('input-error', 'input-ok');
-    } else if (!correoValido(valor)) {
-      if (errorEmail) errorEmail.textContent = 'Correo no válido.';
-      inputEmail.classList.add('input-error');
-      inputEmail.classList.remove('input-ok');
-    } else {
-      if (errorEmail) errorEmail.textContent = 'Correo válido';
-      inputEmail.classList.add('input-ok');
-      inputEmail.classList.remove('input-error');
-    }
-  });
-
-  inputTelefono.addEventListener('input', () => {
-    const valor = inputTelefono.value.trim();
-    if (!valor) {
-      if (errorTelefono) errorTelefono.textContent = '';
-      inputTelefono.classList.remove('input-error', 'input-ok');
-    } else if (!telefonoValido(valor)) {
-      if (errorTelefono) errorTelefono.textContent = 'Mínimo 10 dígitos, solo números.';
-      inputTelefono.classList.add('input-error');
-      inputTelefono.classList.remove('input-ok');
-    } else {
-      if (errorTelefono) errorTelefono.textContent = 'Teléfono válido';
-      inputTelefono.classList.add('input-ok');
-      inputTelefono.classList.remove('input-error');
-    }
-  });
-
-  if (inputAlias) {
-    inputAlias.addEventListener('input', () => {
-      const valor = inputAlias.value.trim();
-      if (!valor) {
-        if (errorAlias) errorAlias.textContent = '';
-        inputAlias.classList.remove('input-error', 'input-ok');
-      } else if (!aliasValido(valor)) {
-        if (errorAlias) errorAlias.textContent = '3-20 letras, números o _';
-        inputAlias.classList.add('input-error');
-        inputAlias.classList.remove('input-ok');
-      } else {
-        if (errorAlias) errorAlias.textContent = 'Nombre público válido';
-        inputAlias.classList.add('input-ok');
-        inputAlias.classList.remove('input-error');
-      }
-    });
-  }
-
-  inputPass.addEventListener('input', () => {
-    const valor = inputPass.value;
-    if (!valor) {
-      if (errorPass) errorPass.textContent = '';
-      inputPass.classList.remove('input-error', 'input-ok');
-    } else if (valor.length < 6) {
-      if (errorPass) errorPass.textContent = 'Mínimo 6 caracteres.';
-      inputPass.classList.add('input-error');
-      inputPass.classList.remove('input-ok');
-    } else {
-      if (errorPass) errorPass.textContent = 'Contraseña aceptable';
-      inputPass.classList.add('input-ok');
-      inputPass.classList.remove('input-error');
-    }
-  });
-
-  inputPass2.addEventListener('input', () => {
-    const valor = inputPass2.value;
-    if (!valor) {
-      if (errorPass2) errorPass2.textContent = '';
-      inputPass2.classList.remove('input-error', 'input-ok');
-    } else if (valor !== inputPass.value) {
-      if (errorPass2) errorPass2.textContent = 'Las contraseñas no coinciden.';
-      inputPass2.classList.add('input-error');
-      inputPass2.classList.remove('input-ok');
-    } else {
-      if (errorPass2) errorPass2.textContent = 'Coinciden';
-      inputPass2.classList.add('input-ok');
-      inputPass2.classList.remove('input-error');
-    }
-  });
-
-  if (inputTerms) {
-    inputTerms.addEventListener('change', () => {
-      if (!inputTerms.checked) {
-        if (errorTerms) errorTerms.textContent = 'Debes aceptar los términos para continuar.';
-      } else {
-        if (errorTerms) errorTerms.textContent = '';
-      }
-    });
-  }
-
-  // --- Modal términos ---
-  const termsModal = document.getElementById('termsModal');
-  const openTermsBtn = document.getElementById('openTermsModal');
-  const acceptTermsBtn = document.getElementById('termsAcceptBtn');
-
-  const openTermsModal = () => {
-    if (!termsModal) return;
-    termsModal.classList.remove('hidden');
-    termsModal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeTermsModal = () => {
-    if (!termsModal) return;
-    termsModal.classList.add('hidden');
-    termsModal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  };
-
-  if (openTermsBtn) {
-    openTermsBtn.addEventListener('click', openTermsModal);
-  }
-
-  if (termsModal) {
-    const closeBtns = termsModal.querySelectorAll('[data-terms-close]');
-    closeBtns.forEach((btn) => btn.addEventListener('click', closeTermsModal));
-  }
-
-  if (acceptTermsBtn) {
-    acceptTermsBtn.addEventListener('click', () => {
-      if (inputTerms) inputTerms.checked = true;
-      if (errorTerms) errorTerms.textContent = '';
-      closeTermsModal();
-    });
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeTermsModal();
-  });
-});
-
-
-
+window.logout = logout;
