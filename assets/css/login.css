@@ -405,14 +405,20 @@
     }
 
     /* Switch links */
-    .switch-link{
-      margin-top: 12px;
-      font-size: .88rem;
-      color: rgba(255,215,0,.90);
-      cursor:pointer;
-      text-align:center;
-    }
-    .switch-link:hover{ text-decoration: underline; }
+.switch-link{
+  margin-top: 12px;
+  font-size: .88rem;
+  color: rgba(255,215,0,.90);
+  cursor:pointer;
+  text-align:center;
+}
+.switch-link:hover{ text-decoration: underline; }
+
+.switch-link--primary{
+  font-size: 1.04rem;
+  font-weight: 800;
+  margin-top: 14px;
+}
 
     .hidden{ display:none !important; }
 
