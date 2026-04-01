@@ -1087,6 +1087,18 @@
       color: var(--login-copy-soft);
     }
 
+    .error-msg.field-msg--ok{
+      color: #22c55e;
+    }
+
+    .error-msg.field-msg--warn{
+      color: #fbbf24;
+    }
+
+    .error-msg.field-msg--error{
+      color: #f87171;
+    }
+
     .btn.btn-primary{
       background: var(--login-primary-bg);
       border-color: var(--login-primary-border);

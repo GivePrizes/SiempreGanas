@@ -89,6 +89,7 @@ function renderSorteos(lista) {
 // ================================
 async function cargarStatsSorteos() {
   const el = document.getElementById('statSorteosActivos');
+  const note = document.getElementById('statSorteosNota');
 
   try {
     const res = await fetch(`${API_URL}/api/sorteos`);
@@ -96,11 +97,24 @@ async function cargarStatsSorteos() {
     const count = data.filter(s => s.estado !== 'finalizado').length;
     el.textContent = String(count);
     el.style.opacity = '1';
+
+    if (note) {
+      if (count <= 0) {
+        note.textContent = 'Dato curioso: cuando una ronda se active, podrás seguir el giro desde el primer minuto.';
+      } else if (count === 1) {
+        note.textContent = 'Dato curioso: seguir tu ronda activa te ayuda a no perder el momento clave del giro.';
+      } else {
+        note.textContent = `Dato curioso: hoy tienes ${count} rondas activas para seguir y aumentar tus oportunidades.`;
+      }
+    }
   } catch {
     // Error: mostrar 0 atenuado, no guión
     if (el) {
       el.textContent = '0';
       el.style.opacity = '0.5';
+    }
+    if (note) {
+      note.textContent = 'Dato curioso: cada ronda en vivo te acerca al próximo resultado destacado.';
     }
   }
 }

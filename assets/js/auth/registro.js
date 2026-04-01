@@ -1,7 +1,13 @@
 const validators = window.authValidators || {};
 
 function setFieldState(input, errorNode, { message = '', ok = false, error = false } = {}) {
-  if (errorNode) errorNode.textContent = message;
+  if (errorNode) {
+    errorNode.textContent = message;
+    errorNode.classList.toggle('field-msg--ok', ok && !error);
+    errorNode.classList.toggle('field-msg--warn', !ok && !error && Boolean(message));
+    errorNode.classList.toggle('field-msg--error', error);
+  }
+
   if (!input) return;
 
   input.classList.toggle('input-ok', ok);
@@ -9,40 +15,76 @@ function setFieldState(input, errorNode, { message = '', ok = false, error = fal
 }
 
 async function registro() {
-  const nombre = document.getElementById('regNombre')?.value.trim();
-  const email = document.getElementById('regEmail')?.value?.trim().toLowerCase();
-  const telefono = document.getElementById('regTelefono')?.value.trim();
-  const alias = document.getElementById('regAlias')?.value.trim();
-  const password = document.getElementById('regPass')?.value;
-  const confirm = document.getElementById('regPassConfirm')?.value;
-  const termsAccepted = document.getElementById('regTerms')?.checked;
-  const errorTerms = document.getElementById('errorTerms');
+  const inputNombre = document.getElementById('regNombre');
+  const inputEmail = document.getElementById('regEmail');
+  const inputTelefono = document.getElementById('regTelefono');
+  const inputAlias = document.getElementById('regAlias');
+  const inputPass = document.getElementById('regPass');
+  const inputPassConfirm = document.getElementById('regPassConfirm');
+  const inputTerms = document.getElementById('regTerms');
+
+  const nombre = inputNombre?.value.trim();
+  const email = inputEmail?.value?.trim().toLowerCase();
+  const telefono = inputTelefono?.value.trim();
+  const alias = inputAlias?.value.trim();
+  const password = inputPass?.value;
+  const confirm = inputPassConfirm?.value;
+  const termsAccepted = inputTerms?.checked;
+
+  const errorNombre = document.getElementById('errorNombre');
+  const errorEmail = document.getElementById('errorEmail');
+  const errorTelefono = document.getElementById('errorTelefono');
   const errorAlias = document.getElementById('errorAlias');
+  const errorPass = document.getElementById('errorPass');
+  const errorPassConfirm = document.getElementById('errorPassConfirm');
+  const errorTerms = document.getElementById('errorTerms');
   const btn = document.getElementById('registroBtn');
 
   if (!validators.nombreValido?.(nombre)) {
+    setFieldState(inputNombre, errorNombre, {
+      message: 'Ingresa tu nombre real con nombre y apellido.',
+      error: true,
+    });
     return alert('Error: Ingresa tu nombre real (mínimo nombre y apellido).');
   }
 
   if (!validators.correoValido?.(email)) {
+    setFieldState(inputEmail, errorEmail, {
+      message: 'Ingresa un correo válido.',
+      error: true,
+    });
     return alert('Error: Ingresa un correo válido.');
   }
 
   if (!validators.telefonoValido?.(telefono)) {
+    setFieldState(inputTelefono, errorTelefono, {
+      message: 'Ingresa un teléfono válido de mínimo 10 dígitos.',
+      error: true,
+    });
     return alert('Error: Ingresa un número de teléfono válido (mínimo 10 dígitos).');
   }
 
   if (!validators.aliasValido?.(alias)) {
-    if (errorAlias) errorAlias.textContent = 'Nombre público inválido. Usa 3-20 letras, números o _.';
+    setFieldState(inputAlias, errorAlias, {
+      message: 'Nombre público inválido. Usa 3-20 letras, números o _.',
+      error: true,
+    });
     return alert('Error: Nombre público inválido. Usa 3-20 letras, números o _.');
   }
 
   if (password !== confirm) {
+    setFieldState(inputPassConfirm, errorPassConfirm, {
+      message: 'Las contraseñas no coinciden.',
+      error: true,
+    });
     return alert('Error: Las contraseñas no coinciden');
   }
 
   if (!termsAccepted) {
-    if (errorTerms) errorTerms.textContent = 'Debes aceptar los términos para continuar.';
+    setFieldState(inputTerms, errorTerms, {
+      message: 'Debes aceptar los términos para continuar.',
+      error: true,
+    });
     return alert('Error: Debes aceptar los términos y condiciones.');
   }
 
@@ -68,7 +110,19 @@ async function registro() {
     const data = await res.json();
 
     if (!res.ok) {
-      return alert(`Error: ${data.message}`);
+      const message = data.message || 'No se pudo completar el registro.';
+
+      if (/correo|email/i.test(message)) {
+        setFieldState(inputEmail, errorEmail, { message });
+      } else if (/tel[eé]fono|celular/i.test(message)) {
+        setFieldState(inputTelefono, errorTelefono, { message });
+      } else if (/alias|nombre p[uú]blico/i.test(message)) {
+        setFieldState(inputAlias, errorAlias, { message });
+      } else if (/contraseñ|password/i.test(message)) {
+        setFieldState(inputPass, errorPass, { message, error: true });
+      }
+
+      return alert(`Error: ${message}`);
     }
 
     localStorage.setItem('token', data.token);
@@ -127,7 +181,7 @@ function initRegistroForm() {
         error: true,
       });
     }
-    setFieldState(inputNombre, errorNombre, { message: 'Nombre válido', ok: true });
+    setFieldState(inputNombre, errorNombre, { message: 'Nombre válido.', ok: true });
   });
 
   inputEmail.addEventListener('input', () => {
@@ -139,7 +193,7 @@ function initRegistroForm() {
         error: true,
       });
     }
-    setFieldState(inputEmail, errorEmail, { message: 'Correo válido', ok: true });
+    setFieldState(inputEmail, errorEmail, { message: 'Correo válido.', ok: true });
   });
 
   inputTelefono.addEventListener('input', () => {
@@ -151,7 +205,7 @@ function initRegistroForm() {
         error: true,
       });
     }
-    setFieldState(inputTelefono, errorTelefono, { message: 'Teléfono válido', ok: true });
+    setFieldState(inputTelefono, errorTelefono, { message: 'Teléfono válido.', ok: true });
   });
 
   if (inputAlias) {
@@ -160,11 +214,11 @@ function initRegistroForm() {
       if (!valor) return setFieldState(inputAlias, errorAlias);
       if (!validators.aliasValido?.(valor)) {
         return setFieldState(inputAlias, errorAlias, {
-          message: '3-20 letras, números o _',
+          message: '3-20 letras, números o _.',
           error: true,
         });
       }
-      setFieldState(inputAlias, errorAlias, { message: 'Nombre público válido', ok: true });
+      setFieldState(inputAlias, errorAlias, { message: 'Nombre público válido.', ok: true });
     });
   }
 
@@ -177,7 +231,7 @@ function initRegistroForm() {
         error: true,
       });
     }
-    setFieldState(inputPass, errorPass, { message: 'Contraseña aceptable', ok: true });
+    setFieldState(inputPass, errorPass, { message: 'Contraseña aceptable.', ok: true });
   });
 
   inputPass2.addEventListener('input', () => {
@@ -189,15 +243,18 @@ function initRegistroForm() {
         error: true,
       });
     }
-    setFieldState(inputPass2, errorPass2, { message: 'Coinciden', ok: true });
+    setFieldState(inputPass2, errorPass2, { message: 'Coinciden.', ok: true });
   });
 
   if (inputTerms) {
     inputTerms.addEventListener('change', () => {
       if (!inputTerms.checked) {
-        if (errorTerms) errorTerms.textContent = 'Debes aceptar los términos para continuar.';
-      } else if (errorTerms) {
-        errorTerms.textContent = '';
+        setFieldState(inputTerms, errorTerms, {
+          message: 'Debes aceptar los términos para continuar.',
+          error: true,
+        });
+      } else {
+        setFieldState(inputTerms, errorTerms);
       }
     });
   }
@@ -228,7 +285,7 @@ function initRegistroForm() {
   if (acceptTermsBtn) {
     acceptTermsBtn.addEventListener('click', () => {
       if (inputTerms) inputTerms.checked = true;
-      if (errorTerms) errorTerms.textContent = '';
+      setFieldState(inputTerms, errorTerms);
       closeTermsModal();
     });
   }
