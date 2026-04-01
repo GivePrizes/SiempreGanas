@@ -354,10 +354,11 @@ body.admin-body {
 
 @media (max-width: 640px) {
   .app-theme-dock {
-    left: 50%;
+    left: 12px;
+    right: 76px;
     bottom: 14px;
-    transform: translateX(-50%);
-    width: min(92vw, 320px);
+    transform: none;
+    width: auto;
     justify-content: center;
   }
 
