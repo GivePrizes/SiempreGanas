@@ -357,6 +357,8 @@ body.admin-body {
     left: 12px;
     right: 76px;
     bottom: 14px;
+    gap: 4px;
+    padding: 6px;
     transform: none;
     width: auto;
     justify-content: center;
@@ -368,5 +370,7 @@ body.admin-body {
 
   .app-theme-dock__btn {
     flex: 1 1 0;
+    padding: 6px 10px;
+    font-size: .78rem;
   }
 }

@@ -85,7 +85,7 @@ video {
 .sorteo-card .sorteo-image {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 aspect ratio */
+  padding-top: 48%;
   background-color: rgba(18,18,26,0.95);
 }
 
@@ -109,7 +109,7 @@ video {
 
 /* Card content */
 .sorteo-card .sorteo-content {
-  padding: 1rem 1.25rem;
+  padding: 0.85rem 1rem;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -120,7 +120,7 @@ video {
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--colour-primary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
   /* Allow multi-line titles so long titles are visible to users */
   white-space: normal;
   overflow: visible;
@@ -131,7 +131,7 @@ video {
   display: flex;
   align-items: center;
   font-size: 0.875rem;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.25rem;
 }
 
 .sorteo-card .sorteo-info .icon {
@@ -152,7 +152,7 @@ video {
   background-color: var(--colour-progress-bg);
   border-radius: 0.25rem;
   overflow: hidden;
-  margin: 0.8rem 0 0.5rem;
+  margin: 0.65rem 0 0.4rem;
 }
 
 .sorteo-card .progress-bar {
@@ -210,11 +210,26 @@ video {
   .sorteos-section h2 {
     font-size: 1.5rem;
   }
+
+  .sorteo-card .sorteo-image {
+    padding-top: 42%;
+  }
+
+  .sorteo-card .sorteo-content {
+    padding: 0.75rem 0.9rem;
+  }
+
   .sorteo-card .sorteo-title {
     font-size: 1.1rem;
   }
+
+  .sorteo-card .sorteo-info {
+    font-size: 0.83rem;
+  }
+
   .sorteo-card .cta .btn-primary {
     font-size: 0.9rem;
+    padding: 0.55rem 0.85rem;
   }
 }
 
