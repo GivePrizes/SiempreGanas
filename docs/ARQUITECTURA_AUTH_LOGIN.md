@@ -33,7 +33,7 @@ Todavía no es un microservicio completamente desacoplado a nivel de datos, porq
 - `assets/js/auth/login.js`: flujo de inicio de sesión
 - `assets/js/auth/registro.js`: flujo de registro y validaciones del formulario
 - `assets/js/auth/login-page.js`: comportamiento visual y de navegación de la página
-- `assets/js/auth/login-theme.js`: selector de tema y persistencia de preferencia visual
+- `assets/js/theme.js`: selector de tema compartido y persistencia de preferencia visual
 
 ## Tema claro/oscuro y frontera del microservicio
 
@@ -41,7 +41,7 @@ El selector de tema pertenece solo al frontend. Su responsabilidad es visual:
 
 - leer la preferencia guardada en `localStorage`
 - respetar el tema del sistema cuando el usuario no ha elegido uno
-- aplicar `data-login-theme="light|dark"` sobre el documento
+- aplicar `data-app-theme="light|dark"` sobre el documento
 
 Este comportamiento no hace llamadas nuevas a `auth-service`, no cambia contratos HTTP y no mueve lógica de autenticación fuera del microservicio. Es una capacidad de experiencia de usuario, no de identidad.
 

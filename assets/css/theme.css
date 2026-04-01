@@ -1,0 +1,371 @@
+@charset "UTF-8";
+
+:root,
+:root[data-app-theme="dark"] {
+  --colour-background: #050b16;
+  --colour-surface: #0e1729;
+  --colour-surface-alt: #111f37;
+  --colour-border: #2a4369;
+  --colour-primary: #3b82f6;
+  --colour-primary-hover: #60a5fa;
+  --colour-secondary: #1f2f4d;
+  --colour-secondary-hover: #2a4067;
+  --colour-danger: #d32f2f;
+  --colour-danger-hover: #f44336;
+  --colour-text: #eaf2ff;
+  --colour-muted: #9db3d7;
+  --colour-progress-bg: #1a2a45;
+  --colour-progress-bar: #60a5fa;
+  --gold: #60a5fa;
+  --muted: #9db3d7;
+  --shadow-soft: 0 10px 28px rgba(3,8,20,.55);
+  --shadow-strong: 0 24px 66px rgba(0,0,0,.72);
+  --bg: #070a12;
+  --card: rgba(255,255,255,.06);
+  --stroke: rgba(255,255,255,.10);
+  --text: rgba(255,255,255,.92);
+  --app-theme-dock-bg: rgba(9,17,31,.78);
+  --app-theme-dock-border: rgba(148,163,184,.22);
+  --app-theme-dock-shadow: 0 16px 36px rgba(2,8,20,.34);
+  --app-theme-dock-copy: #dbeafe;
+  --app-theme-dock-hover: rgba(96,165,250,.16);
+  --app-theme-dock-active-bg: linear-gradient(180deg, rgba(96,165,250,.96), rgba(59,130,246,.92));
+  --app-theme-dock-active-border: rgba(147,197,253,.44);
+  --app-theme-dock-active-copy: #eff6ff;
+  --app-chat-shell-bg: rgba(15,23,42,.95);
+  --app-chat-panel-bg: rgba(2,6,23,.80);
+  --app-chat-border: rgba(246,208,111,.10);
+  --app-chat-bubble-bg: rgba(30,41,59,.80);
+  --app-chat-bubble-copy: #f2f0eb;
+  --app-chat-meta-copy: #9ca3af;
+  --app-chat-mine-bg: linear-gradient(135deg, #f6d06f, #ffe4a6);
+  --app-chat-mine-copy: #1a1410;
+  --app-chat-system-bg: #78350f;
+  --app-chat-system-copy: #fde68a;
+  --app-chat-input-bg: #020617;
+  --app-chat-input-border: rgba(246,208,111,.20);
+  --app-chat-input-placeholder: rgba(242,240,235,.50);
+  --app-chat-scrollbar: #334155;
+  --app-chat-scrollbar-track: #020617;
+  --app-admin-glow: #020617;
+}
+
+:root[data-app-theme="light"] {
+  --colour-background: #f5f7fb;
+  --colour-surface: #ffffff;
+  --colour-surface-alt: #eef2f7;
+  --colour-border: rgba(71,85,105,.24);
+  --colour-primary: #2563eb;
+  --colour-primary-hover: #1d4ed8;
+  --colour-secondary: #e2e8f0;
+  --colour-secondary-hover: #cbd5e1;
+  --colour-danger: #dc2626;
+  --colour-danger-hover: #b91c1c;
+  --colour-text: #0f172a;
+  --colour-muted: #475569;
+  --colour-progress-bg: #dbe2eb;
+  --colour-progress-bar: #2563eb;
+  --gold: #2563eb;
+  --muted: #64748b;
+  --shadow-soft: 0 12px 28px rgba(15,23,42,.12);
+  --shadow-strong: 0 26px 62px rgba(15,23,42,.18);
+  --bg: #f5f7fb;
+  --card: rgba(255,255,255,.92);
+  --stroke: rgba(71,85,105,.16);
+  --text: #0f172a;
+  --app-theme-dock-bg: rgba(255,255,255,.88);
+  --app-theme-dock-border: rgba(148,163,184,.30);
+  --app-theme-dock-shadow: 0 14px 30px rgba(15,23,42,.14);
+  --app-theme-dock-copy: #334155;
+  --app-theme-dock-hover: rgba(37,99,235,.10);
+  --app-theme-dock-active-bg: linear-gradient(180deg, #2563eb, #1d4ed8);
+  --app-theme-dock-active-border: rgba(37,99,235,.38);
+  --app-theme-dock-active-copy: #eff6ff;
+  --app-chat-shell-bg: rgba(255,255,255,.96);
+  --app-chat-panel-bg: rgba(248,250,252,.96);
+  --app-chat-border: rgba(37,99,235,.14);
+  --app-chat-bubble-bg: rgba(226,232,240,.82);
+  --app-chat-bubble-copy: #0f172a;
+  --app-chat-meta-copy: #64748b;
+  --app-chat-mine-bg: linear-gradient(135deg, #2563eb, #60a5fa);
+  --app-chat-mine-copy: #eff6ff;
+  --app-chat-system-bg: #dbeafe;
+  --app-chat-system-copy: #1e3a8a;
+  --app-chat-input-bg: #ffffff;
+  --app-chat-input-border: rgba(37,99,235,.18);
+  --app-chat-input-placeholder: rgba(71,85,105,.66);
+  --app-chat-scrollbar: #94a3b8;
+  --app-chat-scrollbar-track: #e2e8f0;
+  --app-admin-glow: #dbeafe;
+}
+
+html,
+body {
+  background-color: var(--colour-background);
+  color: var(--colour-text);
+}
+
+body {
+  transition: background-color .22s ease, color .22s ease;
+}
+
+.app-theme-dock {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 999px;
+  border: 1px solid var(--app-theme-dock-border);
+  background: var(--app-theme-dock-bg);
+  box-shadow: var(--app-theme-dock-shadow);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.app-theme-dock__label {
+  font-size: .75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--app-theme-dock-copy);
+  padding: 0 6px 0 4px;
+}
+
+.app-theme-dock__btn {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--app-theme-dock-copy);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+
+.app-theme-dock__btn:hover {
+  background: var(--app-theme-dock-hover);
+}
+
+.app-theme-dock__btn:focus-visible {
+  outline: none;
+  border-color: var(--colour-primary);
+  box-shadow: 0 0 0 4px rgba(59,130,246,.16);
+}
+
+.app-theme-dock__btn[aria-pressed="true"],
+.app-theme-dock__btn.is-active {
+  background: var(--app-theme-dock-active-bg);
+  border-color: var(--app-theme-dock-active-border);
+  color: var(--app-theme-dock-active-copy);
+  box-shadow: 0 10px 18px rgba(37,99,235,.18);
+  transform: translateY(-1px);
+}
+
+body.admin-body {
+  background: radial-gradient(circle at top, var(--app-admin-glow), var(--colour-background) 55%, var(--colour-background) 100%);
+}
+
+#chatContainer {
+  background: var(--app-chat-shell-bg);
+  color: var(--app-chat-bubble-copy);
+  border-color: var(--app-chat-border);
+}
+
+#chatBody.chat-messages {
+  background: var(--app-chat-panel-bg);
+}
+
+#chatBody::-webkit-scrollbar-thumb {
+  background: var(--app-chat-scrollbar);
+}
+
+#chatBody::-webkit-scrollbar-track {
+  background: var(--app-chat-scrollbar-track);
+}
+
+#chatContainer .chat-meta {
+  color: var(--app-chat-meta-copy);
+}
+
+#chatContainer .chat-bubble {
+  background: var(--app-chat-bubble-bg);
+  color: var(--app-chat-bubble-copy);
+}
+
+#chatContainer .chat-row.mine .chat-bubble {
+  background: var(--app-chat-mine-bg);
+  color: var(--app-chat-mine-copy);
+}
+
+#chatContainer .chat-row.system .chat-bubble {
+  background: var(--app-chat-system-bg);
+  color: var(--app-chat-system-copy);
+}
+
+#chatInput {
+  background: var(--app-chat-input-bg);
+  color: var(--app-chat-bubble-copy);
+  border-color: var(--app-chat-input-border);
+}
+
+#chatInput::placeholder {
+  color: var(--app-chat-input-placeholder);
+}
+
+#chatSend {
+  background: var(--app-chat-mine-bg);
+  color: var(--app-chat-mine-copy);
+}
+
+#chatContainer .chat-emoji-btn {
+  background: var(--app-chat-panel-bg);
+  color: var(--app-chat-bubble-copy);
+  border-color: var(--app-chat-input-border);
+}
+
+:root[data-app-theme="light"] .admin-status-pill {
+  background: rgba(248,250,252,.94);
+  border-color: rgba(148,163,184,.34);
+}
+
+:root[data-app-theme="light"] #adminChatContainer {
+  background: rgba(255,255,255,.98);
+  color: #0f172a;
+  border-color: rgba(37,99,235,.28);
+}
+
+:root[data-app-theme="light"] #adminChatBody.chat-messages {
+  background: rgba(248,250,252,.98);
+}
+
+:root[data-app-theme="light"] #adminChatBody::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+}
+
+:root[data-app-theme="light"] #adminChatBody::-webkit-scrollbar-track {
+  background: #e2e8f0;
+}
+
+:root[data-app-theme="light"] .chat-row.admin .chat-bubble {
+  background: #e2e8f0;
+  color: #0f172a;
+  border-left-color: #2563eb;
+}
+
+:root[data-app-theme="light"] #adminChatInput {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(37,99,235,.24);
+}
+
+:root[data-app-theme="light"] #adminChatSend {
+  background: #2563eb;
+}
+
+:root[data-app-theme="light"] #adminChatHint {
+  color: #2563eb;
+}
+
+:root[data-app-theme="light"] .progress {
+  background: rgba(148,163,184,.16);
+  border-color: rgba(148,163,184,.24);
+}
+
+:root[data-app-theme="light"] .result,
+:root[data-app-theme="light"] .ruleta-estado-admin,
+:root[data-app-theme="light"] .programar-panel,
+:root[data-app-theme="light"] .ruleta-mini-stats {
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(241,245,249,.98));
+  border-color: rgba(148,163,184,.30);
+  box-shadow: 0 18px 36px rgba(15,23,42,.10);
+}
+
+:root[data-app-theme="light"] .estado-pill,
+:root[data-app-theme="light"] .salaBadge,
+:root[data-app-theme="light"] .badge {
+  background: rgba(219,234,254,.72);
+  border-color: rgba(37,99,235,.22);
+  color: var(--colour-text);
+}
+
+:root[data-app-theme="light"] .chatCard #chatContainer,
+:root[data-app-theme="light"] .systemFeed,
+:root[data-app-theme="light"] .numbersList {
+  background: rgba(248,250,252,.98);
+  border-color: rgba(148,163,184,.24);
+}
+
+:root[data-app-theme="light"] .chatCard .chat-new-btn,
+:root[data-app-theme="light"] .numberChip {
+  background: rgba(219,234,254,.82);
+  border-color: rgba(37,99,235,.20);
+  color: #1e3a8a;
+}
+
+:root[data-app-theme="light"] .pointer {
+  border-bottom-color: rgba(37,99,235,.92);
+}
+
+:root[data-app-theme="light"] .ruleta-circle,
+:root[data-app-theme="light"] .ruleta-center {
+  background: radial-gradient(circle at top, #ffffff, #f1f5f9);
+  border-color: rgba(37,99,235,.82);
+  box-shadow: 0 16px 34px rgba(15,23,42,.16), inset 0 0 0 2px rgba(37,99,235,.10);
+}
+
+:root[data-app-theme="light"] .ruleta-circle-wrapper::before {
+  border-color: rgba(37,99,235,.78);
+  box-shadow: 0 12px 24px rgba(15,23,42,.14), inset 0 0 0 1px rgba(37,99,235,.08);
+  background: radial-gradient(circle at 30% 20%, rgba(37,99,235,.10), transparent 55%);
+}
+
+:root[data-app-theme="light"] .ruleta-circle-wrapper::after {
+  border-color: rgba(37,99,235,.28);
+  opacity: .42;
+}
+
+:root[data-app-theme="light"] .ruleta-pointer {
+  border-top-color: rgba(37,99,235,.92);
+}
+
+:root[data-app-theme="light"] .ruleta-pointer::after {
+  border-top-color: rgba(255,255,255,.94);
+}
+
+:root[data-app-theme="light"] .winner-float__pill {
+  background: rgba(255,255,255,.94);
+  border-color: rgba(37,99,235,.22);
+  box-shadow: 0 18px 34px rgba(15,23,42,.14);
+}
+
+:root[data-app-theme="light"] .winner-float__label,
+:root[data-app-theme="light"] .winner-float__name {
+  color: #334155;
+}
+
+:root[data-app-theme="light"] .winner-float__num {
+  color: #2563eb;
+}
+
+@media (max-width: 640px) {
+  .app-theme-dock {
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    width: min(92vw, 320px);
+    justify-content: center;
+  }
+
+  .app-theme-dock__label {
+    display: none;
+  }
+
+  .app-theme-dock__btn {
+    flex: 1 1 0;
+  }
+}

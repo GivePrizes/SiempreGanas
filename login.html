@@ -6,24 +6,11 @@
   <link rel="icon" type="image/png" href="assets/imagenes/mathome-favicon.png">
   <title>Mathome - Acceso</title>
 
-  <script>
-    (function initLoginThemeEarly() {
-      try {
-        const key = 'mathome-login-theme';
-        const saved = localStorage.getItem(key);
-        const preferred = saved === 'dark' || saved === 'light'
-          ? saved
-          : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        document.documentElement.setAttribute('data-login-theme', preferred);
-      } catch (_) {
-        document.documentElement.setAttribute('data-login-theme', 'light');
-      }
-    })();
-  </script>
+  <script src="assets/js/theme-init.js?v=20260401b"></script>
 
   <link rel="stylesheet" href="assets/css/common.css?v=20260225c">
   <link rel="stylesheet" href="assets/css/participant.css?v=20260331a">
-
+  <link rel="stylesheet" href="assets/css/theme.css?v=20260401b">
   <link rel="stylesheet" href="assets/css/login.css?v=20260401a">
 </head>
 
@@ -237,7 +224,7 @@
   <script src="assets/js/auth.js?v=20260331a"></script>
   <script src="assets/js/auth/login.js?v=20260401a"></script>
   <script src="assets/js/auth/registro.js?v=20260401a"></script>
-  <script src="assets/js/auth/login-theme.js?v=20260401a"></script>
+  <script src="assets/js/theme.js?v=20260401b"></script>
   <script src="assets/js/auth/login-page.js?v=20260401a"></script>
 
   <!-- Welcome Modal -->

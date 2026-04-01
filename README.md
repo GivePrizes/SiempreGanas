@@ -19,6 +19,7 @@ Frontend del participante y administración para la plataforma SiempreGanas.
 - [ARQUITECTURA_GENERAL.md](/d:/carpetaRuleta2026/ARQUITECTURA_GENERAL.md)
 - [ARQUITECTURA_CHAT_RULETA.md](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/docs/ARQUITECTURA_CHAT_RULETA.md)
 - [ARQUITECTURA_AUTH_LOGIN.md](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/docs/ARQUITECTURA_AUTH_LOGIN.md)
+- [ARQUITECTURA_TEMA_FRONTEND.md](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/docs/ARQUITECTURA_TEMA_FRONTEND.md)
 
 ## Desarrollo local
 
