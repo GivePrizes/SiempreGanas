@@ -2672,7 +2672,7 @@ body {
 /* =========================================================
    Participant Light App Theme
    ========================================================= */
-:root {
+:root[data-app-theme="light"] {
   --colour-background: #f4f7fb;
   --colour-surface: #ffffff;
   --colour-surface-alt: #f8fafc;
@@ -2688,7 +2688,7 @@ body {
   --shadow-strong: 0 20px 44px rgba(15, 23, 42, 0.16);
 }
 
-body {
+:root[data-app-theme="light"] body {
   background:
     radial-gradient(1000px 500px at 0% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
     radial-gradient(900px 460px at 100% 0%, rgba(14, 165, 233, 0.05), transparent 60%),
@@ -2696,22 +2696,22 @@ body {
   color: var(--colour-text);
 }
 
-.app-topbar,
-.dashboard-header,
-.sorteo-header,
-.sorteos-hero,
-.sorteo-card,
-.summary-card,
-.stat-card,
-.status-card,
-.sorteo-card-premium,
-.sorteo-detalle-side,
-.pago-nequi-card,
-.mis-numeros-empty,
-.info-accordion,
-.sorteo-motivos-card,
-.sorteo-compra-card,
-.chat-card {
+:root[data-app-theme="light"] .app-topbar,
+:root[data-app-theme="light"] .dashboard-header,
+:root[data-app-theme="light"] .sorteo-header,
+:root[data-app-theme="light"] .sorteos-hero,
+:root[data-app-theme="light"] .sorteo-card,
+:root[data-app-theme="light"] .summary-card,
+:root[data-app-theme="light"] .stat-card,
+:root[data-app-theme="light"] .status-card,
+:root[data-app-theme="light"] .sorteo-card-premium,
+:root[data-app-theme="light"] .sorteo-detalle-side,
+:root[data-app-theme="light"] .pago-nequi-card,
+:root[data-app-theme="light"] .mis-numeros-empty,
+:root[data-app-theme="light"] .info-accordion,
+:root[data-app-theme="light"] .sorteo-motivos-card,
+:root[data-app-theme="light"] .sorteo-compra-card,
+:root[data-app-theme="light"] .chat-card {
   border: 1px solid var(--colour-border);
   background: #ffffff;
   box-shadow: var(--shadow-soft);
@@ -2729,195 +2729,225 @@ body {
   color: var(--colour-muted);
 }
 
-.sorteos-section h2,
-.sorteos-hero h2,
-.sorteo-card .sorteo-title,
-.sorteo-title,
-.mis-numeros-section h3,
-.dashboard-header h2,
-.app-title {
+:root[data-app-theme="light"] .app-subtitle,
+:root[data-app-theme="light"] .sorteos-section p.section-description,
+:root[data-app-theme="light"] .section-description,
+:root[data-app-theme="light"] .status-text,
+:root[data-app-theme="light"] .progress-tip-text,
+:root[data-app-theme="light"] .chat-hint,
+:root[data-app-theme="light"] .sorteo-subtitle,
+:root[data-app-theme="light"] .stat-top,
+:root[data-app-theme="light"] .stat-hint {
+  color: var(--colour-muted);
+}
+
+:root[data-app-theme="light"] .sorteos-section h2,
+:root[data-app-theme="light"] .sorteos-hero h2,
+:root[data-app-theme="light"] .sorteo-card .sorteo-title,
+:root[data-app-theme="light"] .sorteo-title,
+:root[data-app-theme="light"] .mis-numeros-section h3,
+:root[data-app-theme="light"] .dashboard-header h2,
+:root[data-app-theme="light"] .app-title {
   color: #0f172a;
   text-shadow: none;
 }
 
-.title-badge,
-.pago-nequi-badge {
+:root[data-app-theme="light"] .title-badge,
+:root[data-app-theme="light"] .pago-nequi-badge {
   border-color: #bfdbfe;
   background: #eff6ff;
   color: #1d4ed8;
   box-shadow: none;
 }
 
-.btn.btn-ghost {
+:root[data-app-theme="light"] .btn.btn-ghost {
   background: #f1f5f9;
   border-color: #cfd9e5;
   color: #0f172a;
 }
 
-.btn.btn-icon {
+:root[data-app-theme="light"] .btn.btn-icon {
   background: #ffffff;
   border-color: #d3dce8;
   color: #0f172a;
   box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12);
 }
 
-.btn.btn-icon::after {
+:root[data-app-theme="light"] .btn.btn-icon::after {
   background: #0f172a;
 }
 
-.btn.btn-icon:hover,
-.btn.btn-icon:focus-visible {
+:root[data-app-theme="light"] .btn.btn-icon:hover,
+:root[data-app-theme="light"] .btn.btn-icon:focus-visible {
   border-color: #93c5fd;
   box-shadow: 0 10px 24px rgba(37, 99, 235, 0.2);
 }
 
-.btn-primary {
+:root[data-app-theme="light"] .btn-primary {
   background: linear-gradient(180deg, #3b82f6, #2563eb);
   color: #ffffff;
   border-color: rgba(37, 99, 235, 0.45);
   box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
 }
 
-.btn-secondary {
+:root[data-app-theme="light"] .btn-secondary {
   background: #eef2f7;
   color: #0f172a;
   border-color: #d3dce8;
 }
 
-.btn-app .btn-ico {
+:root[data-app-theme="light"] .btn-app .btn-ico {
   background: rgba(37, 99, 235, 0.12);
   color: #1d4ed8;
 }
 
-.app-topbar-actions .btn .btn-ico,
-.dashboard-header__actions .btn .btn-ico,
-.header-actions .btn .btn-ico,
-.sorteo-header__actions .btn .btn-ico{
+:root[data-app-theme="light"] .app-topbar-actions .btn .btn-ico,
+:root[data-app-theme="light"] .dashboard-header__actions .btn .btn-ico,
+:root[data-app-theme="light"] .header-actions .btn .btn-ico,
+:root[data-app-theme="light"] .sorteo-header__actions .btn .btn-ico{
   background: rgba(37, 99, 235, 0.12);
   color: #1d4ed8;
 }
 
-.chip-filtro {
+:root[data-app-theme="light"] .chip-filtro {
   border-color: #d3dce8;
   background: #f8fafc;
   color: #334155;
 }
 
-.chip-filtro--activo {
+:root[data-app-theme="light"] .chip-filtro--activo {
   color: #ffffff;
   border-color: #2563eb;
   background: #2563eb;
   box-shadow: none;
 }
 
-.status-open {
+:root[data-app-theme="light"] .status-open {
   background-color: #dcfce7;
   color: #166534;
 }
 
-.status-pending {
+:root[data-app-theme="light"] .status-pending {
   background-color: #fef9c3;
   color: #854d0e;
 }
 
-.status-closed {
+:root[data-app-theme="light"] .status-closed {
   background-color: #fee2e2;
   color: #991b1b;
 }
 
-.mini-resumen-compra,
-.pago-nequi-datos,
-.comprobante-preview,
-.numeros-scroll,
-.chat-messages {
+:root[data-app-theme="light"] .mini-resumen-compra,
+:root[data-app-theme="light"] .pago-nequi-datos,
+:root[data-app-theme="light"] .comprobante-preview,
+:root[data-app-theme="light"] .numeros-scroll,
+:root[data-app-theme="light"] .chat-messages {
   border-color: var(--colour-border);
   background: var(--colour-surface-alt);
 }
 
-.post-confirm-actions {
+:root[data-app-theme="light"] .post-confirm-actions {
   background: #f8fafc;
   border-color: #dbeafe;
 }
 
-.post-confirm-text {
+:root[data-app-theme="light"] .post-confirm-text {
   color: #475569;
 }
 
-.chat-sala input {
+:root[data-app-theme="light"] .chat-sala input {
   border-color: var(--colour-border);
   background: #ffffff;
   color: var(--colour-text);
 }
 
-.bonus-mini {
+:root[data-app-theme="light"] .bonus-mini {
   background: #eff6ff;
   border: 1px solid #bfdbfe;
   color: #1e3a8a;
   box-shadow: none;
 }
 
-.bonus-mini strong {
+:root[data-app-theme="light"] .bonus-mini strong {
   color: #1d4ed8;
 }
 
-.bonus-mini-bar {
+:root[data-app-theme="light"] .bonus-mini-bar {
   background: #dbeafe;
 }
 
-.bonus-mini-bar span {
+:root[data-app-theme="light"] .bonus-mini-bar span {
   background: linear-gradient(90deg, #60a5fa, #2563eb);
 }
 
 /* =========================================================
    Participant Cognitive Comfort Mode
    ========================================================= */
-body {
+:root[data-app-theme="light"] body {
   background: #f6f7f9;
 }
 
-.app-topbar,
-.dashboard-header,
-.sorteo-header,
-.sorteos-hero,
-.sorteo-card,
-.summary-card,
-.stat-card,
-.status-card,
-.sorteo-card-premium,
-.sorteo-detalle-side,
-.pago-nequi-card,
-.mis-numeros-empty,
-.info-accordion,
-.sorteo-motivos-card,
-.sorteo-compra-card,
-.chat-card,
-.chat-messages,
-.pago-nequi-datos,
-.comprobante-preview,
-.numeros-scroll {
+:root[data-app-theme="light"] .app-topbar,
+:root[data-app-theme="light"] .dashboard-header,
+:root[data-app-theme="light"] .sorteo-header,
+:root[data-app-theme="light"] .sorteos-hero,
+:root[data-app-theme="light"] .sorteo-card,
+:root[data-app-theme="light"] .summary-card,
+:root[data-app-theme="light"] .stat-card,
+:root[data-app-theme="light"] .status-card,
+:root[data-app-theme="light"] .sorteo-card-premium,
+:root[data-app-theme="light"] .sorteo-detalle-side,
+:root[data-app-theme="light"] .pago-nequi-card,
+:root[data-app-theme="light"] .mis-numeros-empty,
+:root[data-app-theme="light"] .info-accordion,
+:root[data-app-theme="light"] .sorteo-motivos-card,
+:root[data-app-theme="light"] .sorteo-compra-card,
+:root[data-app-theme="light"] .chat-card,
+:root[data-app-theme="light"] .chat-messages,
+:root[data-app-theme="light"] .pago-nequi-datos,
+:root[data-app-theme="light"] .comprobante-preview,
+:root[data-app-theme="light"] .numeros-scroll {
   background: #ffffff;
   border-color: #e5e7eb;
   box-shadow: none;
 }
 
-.btn,
-.chip-filtro,
-.status-badge,
-.title-badge,
-.pago-nequi-badge {
+:root[data-app-theme="light"] .btn,
+:root[data-app-theme="light"] .chip-filtro,
+:root[data-app-theme="light"] .status-badge,
+:root[data-app-theme="light"] .title-badge,
+:root[data-app-theme="light"] .pago-nequi-badge {
   box-shadow: none;
 }
 
-.sorteo-card:hover,
-.btn:hover,
-.chip-filtro:hover {
+:root[data-app-theme="light"] .sorteo-card:hover,
+:root[data-app-theme="light"] .btn:hover,
+:root[data-app-theme="light"] .chip-filtro:hover {
   transform: none;
 }
 
-.chat-typing,
-.live-indicator,
-.typing-dot {
+:root[data-app-theme="light"] .chat-typing,
+:root[data-app-theme="light"] .live-indicator,
+:root[data-app-theme="light"] .typing-dot {
   animation: none !important;
+}
+
+:root[data-app-theme="dark"] .sorteo-card .sorteo-content {
+  background: linear-gradient(180deg, rgba(2,6,23,.08), rgba(2,6,23,.36));
+}
+
+:root[data-app-theme="dark"] .sorteo-card .sorteo-info,
+:root[data-app-theme="dark"] .progress-wrapper .progress-text,
+:root[data-app-theme="dark"] .sorteo-info-line {
+  color: rgba(226,232,240,.95);
+}
+
+:root[data-app-theme="dark"] .sorteo-card .sorteo-info strong,
+:root[data-app-theme="dark"] .sorteo-info-line strong,
+:root[data-app-theme="dark"] #textoPremio,
+:root[data-app-theme="dark"] #textoPrecio,
+:root[data-app-theme="dark"] #textoCantidad {
+  color: #f8fbff;
 }
 
 /* =========================================================
