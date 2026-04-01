@@ -804,3 +804,479 @@
       border-color: #e5e7eb !important;
       background: #ffffff !important;
     }
+
+    /* ===== LOGIN THEME TOGGLE ===== */
+    :root{
+      --login-toolbar-copy: #334155;
+      --login-toolbar-surface: rgba(255,255,255,.74);
+      --login-toolbar-border: rgba(148,163,184,.32);
+      --login-toolbar-shadow: 0 10px 30px rgba(15,23,42,.10);
+      --login-theme-button-copy: #334155;
+      --login-theme-button-hover: rgba(148,163,184,.14);
+      --login-theme-button-active-copy: #eff6ff;
+      --login-theme-button-active-bg: linear-gradient(180deg, #2563eb, #1d4ed8);
+      --login-theme-button-active-border: rgba(37,99,235,.58);
+      --login-shell-bg:
+        radial-gradient(1200px 640px at 18% 10%, rgba(56,189,248,.12), transparent 60%),
+        radial-gradient(900px 520px at 84% 24%, rgba(59,130,246,.08), transparent 60%),
+        radial-gradient(900px 520px at 52% 95%, rgba(16,185,129,.07), transparent 60%),
+        linear-gradient(180deg, #f8fafc, #eef2f7);
+      --login-copy: #0f172a;
+      --login-copy-soft: #334155;
+      --login-copy-muted: #475569;
+      --login-tracker-border: rgba(148,163,184,.35);
+      --login-tracker-bg: linear-gradient(180deg, rgba(255,255,255,.88), rgba(241,245,249,.90));
+      --login-tracker-shadow: 0 10px 28px rgba(15,23,42,.12);
+      --login-bubble-bg: rgba(255,255,255,.90);
+      --login-bubble-border: rgba(148,163,184,.35);
+      --login-bubble-copy: #0f172a;
+      --login-chat-user-copy: #1d4ed8;
+      --login-chat-user-bg: linear-gradient(180deg, rgba(59,130,246,.18), rgba(37,99,235,.12));
+      --login-chat-user-border: rgba(96,165,250,.35);
+      --login-chat-host-bg: linear-gradient(180deg, rgba(241,245,249,.95), rgba(226,232,240,.90));
+      --login-chat-host-border: rgba(148,163,184,.35);
+      --login-typing-bg: rgba(241,245,249,.94);
+      --login-typing-border: rgba(148,163,184,.35);
+      --login-typing-dot: #334155;
+      --login-card-border: rgba(148,163,184,.35);
+      --login-card-bg: linear-gradient(180deg, rgba(255,255,255,.94), rgba(248,250,252,.95));
+      --login-card-shadow: 0 16px 36px rgba(15,23,42,.14);
+      --login-card-glow: radial-gradient(circle at top, rgba(59,130,246,.08), transparent 65%);
+      --login-field-border: rgba(148,163,184,.45);
+      --login-field-bg: rgba(255,255,255,.95);
+      --login-field-copy: #0f172a;
+      --login-field-focus: rgba(59,130,246,.65);
+      --login-field-focus-shadow: 0 0 0 4px rgba(59,130,246,.16);
+      --login-primary-bg: linear-gradient(180deg, rgba(37,99,235,.96), rgba(29,78,216,.94));
+      --login-primary-border: rgba(37,99,235,.60);
+      --login-primary-copy: #ffffff;
+      --login-primary-shadow: 0 8px 20px rgba(37,99,235,.26);
+      --login-link-copy: #1d4ed8;
+      --login-terms-bg: rgba(241,245,249,.80);
+      --login-terms-border: rgba(148,163,184,.35);
+      --login-modal-bg: linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,250,252,.98));
+      --login-modal-border: rgba(148,163,184,.38);
+      --login-modal-shadow: 0 24px 56px rgba(15,23,42,.20);
+      --login-modal-actions-bg: rgba(248,250,252,.96);
+      --login-secondary-bg: rgba(255,255,255,.88);
+      --login-secondary-border: rgba(148,163,184,.40);
+      --login-secondary-copy: #0f172a;
+    }
+
+    :root[data-login-theme="dark"]{
+      --login-toolbar-copy: rgba(219,234,254,.92);
+      --login-toolbar-surface: rgba(10,18,34,.72);
+      --login-toolbar-border: rgba(125,211,252,.20);
+      --login-toolbar-shadow: 0 12px 34px rgba(2,8,20,.34);
+      --login-theme-button-copy: rgba(219,234,254,.88);
+      --login-theme-button-hover: rgba(96,165,250,.16);
+      --login-theme-button-active-copy: #f8fbff;
+      --login-theme-button-active-bg: linear-gradient(180deg, rgba(96,165,250,.96), rgba(59,130,246,.92));
+      --login-theme-button-active-border: rgba(147,197,253,.56);
+      --login-shell-bg:
+        radial-gradient(1200px 600px at 20% 10%, rgba(255,215,0,.08), transparent 60%),
+        radial-gradient(900px 520px at 85% 25%, rgba(56,189,248,.07), transparent 60%),
+        radial-gradient(900px 520px at 55% 95%, rgba(34,197,94,.06), transparent 60%),
+        linear-gradient(180deg, rgba(11,11,15,1), rgba(11,11,15,1));
+      --login-copy: rgba(241,245,249,.96);
+      --login-copy-soft: rgba(203,213,225,.88);
+      --login-copy-muted: rgba(186,230,253,.95);
+      --login-tracker-border: rgba(125,211,252,.34);
+      --login-tracker-bg: linear-gradient(180deg, rgba(15,30,56,.76), rgba(8,16,31,.82));
+      --login-tracker-shadow: 0 14px 34px rgba(0,0,0,.44);
+      --login-bubble-bg: rgba(10,16,30,.78);
+      --login-bubble-border: rgba(255,215,0,.22);
+      --login-bubble-copy: rgba(241,245,249,.95);
+      --login-chat-user-copy: rgba(255,215,0,.90);
+      --login-chat-user-bg: linear-gradient(180deg, rgba(96,165,250,.36), rgba(30,64,175,.34));
+      --login-chat-user-border: rgba(147,197,253,.36);
+      --login-chat-host-bg: linear-gradient(180deg, rgba(30,64,175,.24), rgba(10,20,39,.78));
+      --login-chat-host-border: rgba(125,211,252,.30);
+      --login-typing-bg: rgba(10,20,39,.84);
+      --login-typing-border: rgba(125,211,252,.30);
+      --login-typing-dot: #dbeafe;
+      --login-card-border: rgba(147,197,253,.26);
+      --login-card-bg: linear-gradient(180deg, rgba(23,42,73,.78), rgba(11,21,39,.90));
+      --login-card-shadow: 0 18px 40px rgba(2,8,20,.58);
+      --login-card-glow: radial-gradient(circle at top, rgba(56,189,248,.12), transparent 65%);
+      --login-field-border: rgba(125,211,252,.28);
+      --login-field-bg: rgba(8,19,38,.76);
+      --login-field-copy: rgba(241,245,249,.96);
+      --login-field-focus: rgba(147,197,253,.72);
+      --login-field-focus-shadow: 0 0 0 4px rgba(59,130,246,.18), 0 0 26px rgba(59,130,246,.24);
+      --login-primary-bg: linear-gradient(180deg, rgba(96,165,250,.96), rgba(59,130,246,.92));
+      --login-primary-border: rgba(147,197,253,.56);
+      --login-primary-copy: #eef6ff;
+      --login-primary-shadow: 0 0 22px rgba(59,130,246,.30);
+      --login-link-copy: #93c5fd;
+      --login-terms-bg: rgba(15,23,42,.48);
+      --login-terms-border: rgba(125,211,252,.22);
+      --login-modal-bg: linear-gradient(180deg, rgba(17,33,60,.92), rgba(10,19,35,.94));
+      --login-modal-border: rgba(147,197,253,.28);
+      --login-modal-shadow: 0 24px 56px rgba(2,8,20,.42);
+      --login-modal-actions-bg: rgba(9,17,31,.94);
+      --login-secondary-bg: rgba(15,23,42,.90);
+      --login-secondary-border: rgba(147,197,253,.24);
+      --login-secondary-copy: #dbeafe;
+    }
+
+    .theme-toolbar{
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      margin: 0 auto 10px;
+      padding: 4px 2px 0;
+      color: var(--login-toolbar-copy);
+    }
+
+    .theme-toolbar__label{
+      font-size: .76rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--login-toolbar-copy);
+    }
+
+    .theme-switch{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--login-toolbar-border);
+      background: var(--login-toolbar-surface);
+      box-shadow: var(--login-toolbar-shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .theme-switch__btn{
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--login-theme-button-copy);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+
+    .theme-switch__btn:hover{
+      background: var(--login-theme-button-hover);
+    }
+
+    .theme-switch__btn:focus-visible{
+      outline: none;
+      border-color: var(--login-field-focus);
+      box-shadow: var(--login-field-focus-shadow);
+    }
+
+    .theme-switch__btn[aria-pressed="true"],
+    .theme-switch__btn.is-active{
+      background: var(--login-theme-button-active-bg);
+      border-color: var(--login-theme-button-active-border);
+      color: var(--login-theme-button-active-copy);
+      box-shadow: 0 10px 18px rgba(37,99,235,.20);
+      transform: translateY(-1px);
+    }
+
+    .auth-shell::before{
+      background: var(--login-shell-bg) !important;
+    }
+
+    .auth-wrapper{
+      color: var(--login-copy);
+    }
+
+    .brand-sub{
+      color: var(--login-copy-soft);
+    }
+
+    .live-tracker{
+      border-color: var(--login-tracker-border);
+      background: var(--login-tracker-bg);
+      box-shadow: var(--login-tracker-shadow);
+    }
+
+    .live-tracker__head{
+      color: var(--login-copy);
+    }
+
+    .live-tracker__count{
+      color: var(--login-copy-muted);
+    }
+
+    .chat-bubble{
+      background: var(--login-bubble-bg);
+      border-color: var(--login-bubble-border);
+      color: var(--login-bubble-copy);
+    }
+
+    .chat-user{
+      color: var(--login-chat-user-copy);
+    }
+
+    .chat-msg{
+      color: var(--login-bubble-copy);
+    }
+
+    .chat-msg.user{
+      background: var(--login-chat-user-bg);
+      border-color: var(--login-chat-user-border);
+    }
+
+    .chat-msg.host{
+      background: var(--login-chat-host-bg);
+      border-color: var(--login-chat-host-border);
+    }
+
+    .chat-typing{
+      border-color: var(--login-typing-border);
+      background: var(--login-typing-bg);
+    }
+
+    .typing-dot{
+      background: var(--login-typing-dot);
+    }
+
+    .auth-card{
+      border-color: var(--login-card-border) !important;
+      background: var(--login-card-bg) !important;
+      box-shadow: var(--login-card-shadow) !important;
+    }
+
+    .auth-card::before{
+      background: var(--login-card-glow);
+    }
+
+    .auth-card h3,
+    .terms-modal__title{
+      color: var(--login-copy);
+      text-shadow: none;
+    }
+
+    .auth-field label{
+      color: var(--login-copy);
+    }
+
+    .auth-field input,
+    .auth-field select,
+    .auth-field textarea{
+      border-color: var(--login-field-border);
+      background: var(--login-field-bg);
+      color: var(--login-field-copy);
+    }
+
+    .auth-field input::placeholder,
+    .auth-field select::placeholder,
+    .auth-field textarea::placeholder{
+      color: var(--login-copy-muted);
+    }
+
+    .auth-field input:focus,
+    .auth-field select:focus,
+    .auth-field textarea:focus{
+      border-color: var(--login-field-focus);
+      box-shadow: var(--login-field-focus-shadow);
+    }
+
+    .text-muted,
+    .trust-row{
+      color: var(--login-copy-soft);
+    }
+
+    .btn.btn-primary{
+      background: var(--login-primary-bg);
+      border-color: var(--login-primary-border);
+      color: var(--login-primary-copy);
+      box-shadow: var(--login-primary-shadow);
+    }
+
+    .btn.btn-secondary{
+      background: var(--login-secondary-bg);
+      border-color: var(--login-secondary-border);
+      color: var(--login-secondary-copy);
+    }
+
+    .switch-link,
+    .terms-link{
+      color: var(--login-link-copy);
+    }
+
+    .terms-field{
+      border-color: var(--login-terms-border);
+      background: var(--login-terms-bg);
+    }
+
+    .terms-modal__card{
+      border-color: var(--login-modal-border);
+      background: var(--login-modal-bg);
+      box-shadow: var(--login-modal-shadow);
+    }
+
+    .terms-modal__header h4,
+    .terms-full{
+      color: var(--login-copy);
+    }
+
+    .terms-modal__actions{
+      background: var(--login-modal-actions-bg);
+    }
+
+    .terms-modal__close{
+      color: var(--login-copy);
+    }
+
+    @media (max-width: 640px){
+      .theme-toolbar{
+        justify-content: center;
+        margin-bottom: 12px;
+      }
+
+      .theme-toolbar__label{
+        display: none;
+      }
+
+      .theme-switch{
+        width: 100%;
+        justify-content: center;
+      }
+
+      .theme-switch__btn{
+        flex: 1 1 0;
+      }
+    }
+
+    /* ===== THEME POLISH ===== */
+    body,
+    .auth-wrapper,
+    .brand-sub,
+    .live-tracker,
+    .live-tracker__head,
+    .live-tracker__count,
+    .chat-bubble,
+    .chat-msg,
+    .chat-typing,
+    .auth-card,
+    .auth-card::before,
+    .auth-field label,
+    .auth-field input,
+    .btn.btn-primary,
+    .btn.btn-secondary,
+    .switch-link,
+    .terms-link,
+    .terms-field,
+    .terms-modal__backdrop,
+    .terms-modal__card,
+    .terms-modal__header h4,
+    .terms-modal__actions,
+    .terms-modal__close,
+    .theme-switch,
+    .theme-switch__btn{
+      transition: background .22s ease, background-color .22s ease, border-color .22s ease, box-shadow .22s ease, color .22s ease, transform .22s ease, opacity .22s ease;
+    }
+
+    body{
+      color: var(--login-copy);
+    }
+
+    .auth-field input,
+    .auth-field select,
+    .auth-field textarea{
+      caret-color: var(--login-link-copy);
+    }
+
+    .auth-field input:hover,
+    .auth-field select:hover,
+    .auth-field textarea:hover{
+      border-color: var(--login-field-focus);
+    }
+
+    .auth-field input:-webkit-autofill,
+    .auth-field input:-webkit-autofill:hover,
+    .auth-field input:-webkit-autofill:focus{
+      -webkit-text-fill-color: var(--login-field-copy);
+      box-shadow: 0 0 0 1000px var(--login-field-bg) inset, var(--login-field-focus-shadow);
+      transition: background-color 9999s ease-in-out 0s;
+    }
+
+    .auth-field input::selection,
+    .auth-field textarea::selection{
+      background: rgba(59,130,246,.28);
+      color: var(--login-field-copy);
+    }
+
+    .btn.btn-primary:hover,
+    .btn.btn-primary:focus-visible{
+      filter: brightness(1.04) saturate(1.04);
+      transform: translateY(-1px);
+    }
+
+    .btn.btn-secondary:hover,
+    .btn.btn-secondary:focus-visible{
+      border-color: var(--login-field-focus);
+      box-shadow: 0 10px 22px rgba(15,23,42,.12);
+      transform: translateY(-1px);
+    }
+
+    .btn.btn-primary:focus-visible,
+    .btn.btn-secondary:focus-visible,
+    .terms-modal__close:focus-visible{
+      outline: none;
+    }
+
+    .switch-link{
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 3px;
+    }
+
+    .switch-link--primary{
+      letter-spacing: .01em;
+    }
+
+    .terms-row{
+      color: var(--login-copy);
+    }
+
+    .terms-modal__backdrop{
+      background: rgba(15,23,42,.44);
+    }
+
+    :root[data-login-theme="dark"] .terms-modal__backdrop{
+      background: rgba(2,8,20,.72);
+    }
+
+    .terms-modal__card{
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .terms-modal__header{
+      border-bottom-color: var(--login-modal-border);
+    }
+
+    .terms-modal__body{
+      scrollbar-color: var(--login-link-copy) transparent;
+    }
+
+    .terms-full{
+      color: var(--login-copy-soft);
+    }
+
+    .terms-modal__actions{
+      border-top-color: var(--login-modal-border);
+    }
+
+    .terms-modal__close{
+      background: var(--login-secondary-bg);
+      border-color: var(--login-secondary-border);
+      color: var(--login-secondary-copy);
+    }
+
+    .terms-modal__close:hover{
+      border-color: var(--login-field-focus);
+      box-shadow: 0 8px 16px rgba(15,23,42,.14);
+      transform: translateY(-1px);
+    }

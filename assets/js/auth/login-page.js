@@ -23,15 +23,15 @@ function initStoryBubbles() {
   const users = ['Alex', 'Naty', 'Fer', 'Sofi', 'Leo', 'Majo', 'Dani', 'Pipe', 'Lina', 'Meli'];
   const messages = [
     'Listo el combo para peli, esperando que gire la suerte.',
-    'Entrando a sala, hoy sí cae el premio grande.',
+    'Entrando a sala, hoy s\u00ED cae el premio grande.',
     'Ya prendimos la peli, avisen cuando arranque la ruleta.',
     'Equipo completo en chat, que se active el giro.',
-    'Mi número está caliente, esta noche toca.',
-    'Se siente la energía, a esperar el giro final.',
+    'Mi n\u00FAmero est\u00E1 caliente, esta noche toca.',
+    'Se siente la energ\u00EDa, a esperar el giro final.',
     'Todo en vivo, snacks listos y ojos en la suerte.',
-    'Conectado desde ya, pendiente del próximo giro.',
+    'Conectado desde ya, pendiente del pr\u00F3ximo giro.',
     'Hoy se ve buena racha, vamos con toda.',
-    'Nada de dormirse, que la suerte aparece rápido.',
+    'Nada de dormirse, que la suerte aparece r\u00E1pido.',
   ];
 
   function createBubble(lane) {
@@ -82,8 +82,8 @@ function initLiveTracker() {
 
   const queue = [
     { side: 'host', text: 'Entramos en cuenta regresiva para girar.' },
-    { side: 'user', text: 'Activo, ya tengo mi numero listo.' },
-    { side: 'host', text: 'Mientras esperan, comenten su prediccion.' },
+    { side: 'user', text: 'Activo, ya tengo mi n\u00FAmero listo.' },
+    { side: 'host', text: 'Mientras esperan, comenten su predicci\u00F3n.' },
     { side: 'user', text: 'Yo digo que hoy se prende la racha.' },
     { side: 'host', text: 'Se abre sala completa en segundos.' },
     { side: 'user', text: 'Con snacks y peli, no me pierdo este giro.' },

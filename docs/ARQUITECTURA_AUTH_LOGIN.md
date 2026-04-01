@@ -22,17 +22,28 @@ Todavía no es un microservicio completamente desacoplado a nivel de datos, porq
 3. Guarda el `token` devuelto.
 4. Refresca identidad real con `GET /api/auth/validate`.
 5. Redirige por rol:
-   `admin` → `admin/panel.html`
-   participante → `participante/dashboard.html`
+   `admin` -> `admin/panel.html`
+   participante -> `participante/dashboard.html`
 
 ## Estructura frontend aplicada
 
 - `login.html`: vista de acceso
-- `assets/css/login.css`: estilos propios de la pantalla de acceso
+- `assets/css/login.css`: estilos propios de la pantalla de acceso, incluyendo el sistema de tema claro/oscuro
 - `assets/js/auth.js`: utilidades compartidas de auth en frontend
 - `assets/js/auth/login.js`: flujo de inicio de sesión
 - `assets/js/auth/registro.js`: flujo de registro y validaciones del formulario
 - `assets/js/auth/login-page.js`: comportamiento visual y de navegación de la página
+- `assets/js/auth/login-theme.js`: selector de tema y persistencia de preferencia visual
+
+## Tema claro/oscuro y frontera del microservicio
+
+El selector de tema pertenece solo al frontend. Su responsabilidad es visual:
+
+- leer la preferencia guardada en `localStorage`
+- respetar el tema del sistema cuando el usuario no ha elegido uno
+- aplicar `data-login-theme="light|dark"` sobre el documento
+
+Este comportamiento no hace llamadas nuevas a `auth-service`, no cambia contratos HTTP y no mueve lógica de autenticación fuera del microservicio. Es una capacidad de experiencia de usuario, no de identidad.
 
 ## Qué se logró con esta separación
 
@@ -40,6 +51,7 @@ Todavía no es un microservicio completamente desacoplado a nivel de datos, porq
 - `login` y `registro` quedan desacoplados entre sí
 - `logout()` sigue disponible para el resto del frontend
 - el contrato con `auth-service` no cambia
+- el tema visual se documenta y queda encapsulado en un módulo propio
 
 ## Endpoints usados
 
@@ -51,5 +63,5 @@ Todavía no es un microservicio completamente desacoplado a nivel de datos, porq
 
 - extraer el modal de términos a un partial o componente reutilizable
 - mover mensajes de error y textos de UI a constantes centralizadas
-- agregar smoke tests del flujo `login → validate → redirect`
+- agregar smoke tests del flujo `login -> validate -> redirect`
 - documentar permisos admin derivados de `ADMINS_CUENTAS_EMAILS` y `ADMINS_PAGOS_EMAILS`

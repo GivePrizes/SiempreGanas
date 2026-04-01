@@ -1473,7 +1473,6 @@ video {
 
 .mini-ayuda summary::after{
   content:"";
-  display: inline-block;
   width: 8px;
   height: 8px;
   margin-left: 0.4rem;

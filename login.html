@@ -6,10 +6,25 @@
   <link rel="icon" type="image/png" href="assets/imagenes/mathome-favicon.png">
   <title>Mathome - Acceso</title>
 
+  <script>
+    (function initLoginThemeEarly() {
+      try {
+        const key = 'mathome-login-theme';
+        const saved = localStorage.getItem(key);
+        const preferred = saved === 'dark' || saved === 'light'
+          ? saved
+          : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-login-theme', preferred);
+      } catch (_) {
+        document.documentElement.setAttribute('data-login-theme', 'light');
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="assets/css/common.css?v=20260225c">
   <link rel="stylesheet" href="assets/css/participant.css?v=20260331a">
 
-  <link rel="stylesheet" href="assets/css/login.css?v=20260331a">
+  <link rel="stylesheet" href="assets/css/login.css?v=20260401a">
 </head>
 
 <body>
@@ -20,6 +35,17 @@
     </div>
 
     <div class="auth-wrapper">
+      <div class="theme-toolbar" aria-label="Selector de tema de la página de acceso">
+        <span class="theme-toolbar__label">Tema</span>
+        <div class="theme-switch" role="group" aria-label="Elegir tema">
+          <button type="button" class="theme-switch__btn" data-login-theme-choice="light" aria-pressed="false">
+            Claro
+          </button>
+          <button type="button" class="theme-switch__btn" data-login-theme-choice="dark" aria-pressed="false">
+            Oscuro
+          </button>
+        </div>
+      </div>
 
       <!-- BRAND -->
       <div class="brand">
@@ -209,9 +235,10 @@
   <script src="assets/js/app-config.js"></script>
   <script src="assets/js/config.js"></script>
   <script src="assets/js/auth.js?v=20260331a"></script>
-  <script src="assets/js/auth/login.js?v=20260331a"></script>
-  <script src="assets/js/auth/registro.js?v=20260331a"></script>
-  <script src="assets/js/auth/login-page.js?v=20260331a"></script>
+  <script src="assets/js/auth/login.js?v=20260401a"></script>
+  <script src="assets/js/auth/registro.js?v=20260401a"></script>
+  <script src="assets/js/auth/login-theme.js?v=20260401a"></script>
+  <script src="assets/js/auth/login-page.js?v=20260401a"></script>
 
   <!-- Welcome Modal -->
   <script src="assets/js/welcomeModal.js"></script>
