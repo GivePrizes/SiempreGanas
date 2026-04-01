@@ -327,6 +327,11 @@ button.btn-mini:disabled{
   align-items: end;
 }
 
+.cuentas-toolbar .toolbar-row--secondary{
+  margin-top: 12px;
+  align-items: center;
+}
+
 .cuentas-toolbar .toolbar-left .label{
   display: block;
   margin-bottom: 6px;
@@ -379,6 +384,23 @@ button.btn-mini:disabled{
   box-shadow: 0 0 26px rgba(59, 130, 246, .30);
 }
 
+.mini-note--soft{
+  margin: 0;
+  justify-self: end;
+}
+
+.badge.type-screen{
+  border-color: rgba(96, 165, 250, .42);
+  background: linear-gradient(180deg, rgba(96, 165, 250, .26), rgba(46, 109, 199, .16));
+  color: rgba(239,247,255,.95);
+}
+
+.badge.type-combo{
+  border-color: rgba(250, 204, 21, .38);
+  background: linear-gradient(180deg, rgba(250, 204, 21, .24), rgba(180, 118, 20, .16));
+  color: #fff7db;
+}
+
 /* Empty state */
 .empty{
   margin-top: 14px;
@@ -414,6 +436,10 @@ button.btn-mini:disabled{
   }
   .user-right{
     justify-content: flex-start;
+  }
+
+  .mini-note--soft{
+    justify-self: start;
   }
 }
 

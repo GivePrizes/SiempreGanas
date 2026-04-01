@@ -3,6 +3,13 @@
 // Key para persistir orden en localStorage
 const STORAGE_KEY = 'admin_sorteos_order_v1';
 
+function getTipoBadge(sorteo) {
+  const tipo = sorteo.tipo_producto === 'combo' ? 'combo' : 'pantalla';
+  const label = tipo === 'combo' ? 'Combo' : 'Pantalla';
+  const klass = tipo === 'combo' ? 'badge-warning' : 'badge-success';
+  return `<span class="badge ${klass}">${label}</span>`;
+}
+
 export async function cargarSorteosAdmin() {
   const token = localStorage.getItem('token');
   const user = typeof window.getAuthUser === 'function'
@@ -102,7 +109,10 @@ export async function cargarSorteosAdmin() {
             <div class="sorteo-admin-body">
               <div class="sorteo-header-admin">
                 <h3>${s.descripcion}</h3>
-                ${estadoLabel}
+                <div class="sorteo-admin-badges">
+                  ${getTipoBadge(s)}
+                  ${estadoLabel}
+                </div>
               </div>
               <p class="sorteo-detalle">Ganador: <strong>${s.premio}</strong></p>
               <p class="sorteo-detalle">Ocupación: <strong>${ocupacion}</strong></p>

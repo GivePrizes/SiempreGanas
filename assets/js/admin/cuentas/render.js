@@ -35,6 +35,12 @@ function miniEmpty(text) {
   return el;
 }
 
+function getTipoProductoData(tipoProducto) {
+  return tipoProducto === 'combo'
+    ? { label: 'Combo', className: 'badge type-combo' }
+    : { label: 'Pantalla', className: 'badge type-screen' };
+}
+
 function renderRow(p, s) {
   const estado = (p.entregaEstado || 'pendiente');
   const phoneDigits = sanitizePhone(p.telefono);
@@ -111,12 +117,14 @@ export function renderAcordeon(sorteos, uiState) {
 
   const q = (state.q || '').trim().toLowerCase();
   const filter = state.filter || 'todos';
+  const tipoProductoFilter = state.tipoProducto || 'todos';
 
   const matchesQuery = (s, p) => {
     if (!q) return true;
     const hay = [
       s.descripcion,
       s.premio,
+      s.tipoProducto,
       String(s.sorteoId),
       p.nombre,
       p.email,
@@ -132,6 +140,7 @@ export function renderAcordeon(sorteos, uiState) {
     const hay = [
       s.descripcion,
       s.premio,
+      s.tipoProducto,
       String(s.sorteoId),
     ].join(' ').toLowerCase();
     return hay.includes(q);
@@ -143,6 +152,13 @@ export function renderAcordeon(sorteos, uiState) {
   };
 
   for (const s of sorteos) {
+    const tipoProducto = s.tipoProducto === 'combo' ? 'combo' : 'pantalla';
+    const tipoMeta = getTipoProductoData(tipoProducto);
+
+    if (tipoProductoFilter !== 'todos' && tipoProducto !== tipoProductoFilter) {
+      continue;
+    }
+
     const participantes = Array.isArray(s.participantes) ? s.participantes : [];
 
     const pend = participantes.filter(p => (p.entregaEstado || 'pendiente') === 'pendiente');
@@ -176,6 +192,7 @@ export function renderAcordeon(sorteos, uiState) {
         <div class="ac-name">${s.descripcion || `Sorteo #${s.sorteoId}`}</div>
         <div class="ac-sub">
           <span class="muted">#${s.sorteoId}</span>
+          <span class="${tipoMeta.className}">${tipoMeta.label}</span>
           ${s.premio ? `<span class="muted">· Ganador: ${s.premio}</span>` : ''}
         </div>
       </div>

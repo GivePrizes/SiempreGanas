@@ -68,6 +68,17 @@
                      placeholder="Ej: 1 mes de Netflix, iPhone 15 Pro, etc." required>
             </div>
 
+            <div class="form-group">
+              <label for="tipo_producto">Tipo de producto</label>
+              <select id="tipo_producto" name="tipo_producto" required>
+                <option value="pantalla">Pantalla</option>
+                <option value="combo">Combo</option>
+              </select>
+              <small id="tipoProductoHelp">
+                Pantalla: acceso individual. Combo: paquete con varias plataformas o beneficios.
+              </small>
+            </div>
+
             <div class="form-row-inline">
               <div class="form-group">
                 <label for="cantidad_numeros">Cantidad de números</label>
@@ -104,7 +115,7 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/admin/crear-sorteo.js"></script>
+  <script type="module" src="../assets/js/admin/crear-sorteo.js?v=20260401a"></script>
 </body>
 </html>
 

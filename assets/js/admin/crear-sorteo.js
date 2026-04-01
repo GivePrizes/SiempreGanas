@@ -7,6 +7,20 @@ let sorteoId = null;
 let estadoActual = 'activo';
 let imagenActualUrl = null;
 
+function getTipoProductoValue() {
+  const input = document.getElementById('tipo_producto');
+  return input?.value === 'combo' ? 'combo' : 'pantalla';
+}
+
+function renderTipoProductoHelp() {
+  const help = document.getElementById('tipoProductoHelp');
+  if (!help) return;
+
+  help.textContent = getTipoProductoValue() === 'combo'
+    ? 'Combo: úsalo para paquetes con varias pantallas, beneficios o accesos en una misma ronda.'
+    : 'Pantalla: úsalo para una cuenta individual o acceso principal de una sola plataforma.';
+}
+
 function mostrarToast(mensaje) {
   const toast = document.getElementById('toast');
   if (!toast) return;
@@ -42,6 +56,14 @@ function initPreviewImagen() {
   });
 }
 
+function initTipoProductoUI() {
+  const input = document.getElementById('tipo_producto');
+  if (!input) return;
+
+  renderTipoProductoHelp();
+  input.addEventListener('change', renderTipoProductoHelp);
+}
+
 /**
  * Cargar datos de un sorteo existente para modo EDICIÓN
  */
@@ -70,6 +92,7 @@ async function cargarSorteoParaEditar(id) {
     // Rellenar campos
     document.getElementById('descripcion').value = s.descripcion || '';
     document.getElementById('premio').value = s.premio || '';
+    document.getElementById('tipo_producto').value = s.tipo_producto || 'pantalla';
     document.getElementById('cantidad_numeros').value = s.cantidad_numeros || '';
     document.getElementById('precio_numero').value = s.precio_numero || '';
     if (document.getElementById('fecha_sorteo')) {
@@ -108,6 +131,8 @@ async function cargarSorteoParaEditar(id) {
     if (btn) {
       btn.textContent = 'Guardar cambios';
     }
+
+    renderTipoProductoHelp();
   } catch (err) {
     console.error(err);
     mostrarToast('Error de conexión al cargar el sorteo.');
@@ -122,6 +147,7 @@ async function enviarFormulario(e) {
   const cantidad_numeros = document.getElementById('cantidad_numeros').value;
   const precio_numero = document.getElementById('precio_numero').value;
   const fecha_sorteo = document.getElementById('fecha_sorteo').value;
+  const tipo_producto = getTipoProductoValue();
   const imagenInput = document.getElementById('imagen');
 
   if (!descripcion || !premio || !cantidad_numeros || !precio_numero || !fecha_sorteo) {
@@ -143,6 +169,7 @@ async function enviarFormulario(e) {
     formData.append('cantidad_numeros', cantidad_numeros);
     formData.append('precio_numero', precio_numero);
     formData.append('fecha_sorteo', fecha_sorteo);
+    formData.append('tipo_producto', tipo_producto);
 
     if (imagenInput.files[0]) {
       formData.append('imagen', imagenInput.files[0]);
@@ -186,6 +213,7 @@ async function enviarFormulario(e) {
     formData.append('cantidad_numeros', cantidad_numeros);
     formData.append('precio_numero', precio_numero);
     formData.append('fecha_sorteo', fecha_sorteo);
+    formData.append('tipo_producto', tipo_producto);
     formData.append('estado', estadoActual);
 
     // Si el admin seleccionó una NUEVA imagen, la enviamos
@@ -224,6 +252,7 @@ async function enviarFormulario(e) {
 
 document.addEventListener('DOMContentLoaded', () => {
   initPreviewImagen();
+  initTipoProductoUI();
 
   // Detectar si hay ?id= en la URL
   const params = new URLSearchParams(window.location.search);

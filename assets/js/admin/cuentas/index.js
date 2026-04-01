@@ -7,10 +7,12 @@ const REFRESH_MS = 15000;
 const elAcordeon = document.getElementById('acordeonSorteos');
 const elEmpty = document.getElementById('emptyState');
 const elQ = document.getElementById('q');
+const elTipoProductoFiltro = document.getElementById('tipoProductoFiltro');
 const btnRefrescar = document.getElementById('btnRefrescar');
 
 const state = {
   filter: 'todos',       // todos | pendiente | entregada
+  tipoProducto: 'todos', // todos | pantalla | combo
   q: '',
   open: new Set(),       // sorteos abiertos
   cache: [],             // raw del backend
@@ -148,6 +150,13 @@ function setupFilters() {
   // búsqueda
   elQ?.addEventListener('input', () => {
     state.q = elQ.value || '';
+    renderAcordeon(state.cache, state);
+    const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
+    showEmpty(!hasVisible);
+  });
+
+  elTipoProductoFiltro?.addEventListener('change', () => {
+    state.tipoProducto = elTipoProductoFiltro.value || 'todos';
     renderAcordeon(state.cache, state);
     const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
     showEmpty(!hasVisible);

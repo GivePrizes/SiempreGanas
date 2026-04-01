@@ -4,6 +4,19 @@ import { cargarMisNumerosResumen } from './misNumeros.js';
 import { cargarProgresoBono } from '../bonus.js';
 
 const API_URL = window.API_URL || '';
+const SORTEO_TIPO_DEFAULT = 'pantalla';
+const state = {
+  sorteoTipo: 'todos',
+  sorteos: [],
+};
+
+function normalizarTipoProducto(value) {
+  return value === 'combo' ? 'combo' : SORTEO_TIPO_DEFAULT;
+}
+
+function getTipoProductoLabel(value) {
+  return normalizarTipoProducto(value) === 'combo' ? 'Combo' : 'Pantalla';
+}
 
 // ================================
 // 👋 BIENVENIDA
@@ -27,6 +40,8 @@ function renderSorteoCard(s) {
   const vendidos = s.ocupados ?? s.numeros_vendidos ?? 0;
   const total = s.cantidad_numeros ?? s.total_numeros ?? 0;
   const porcentaje = total ? Math.round((vendidos / total) * 100) : 0;
+  const tipoProducto = normalizarTipoProducto(s.tipo_producto);
+  const tipoLabel = getTipoProductoLabel(tipoProducto);
 
   const imagen = s.imagen_url
     ? `<img src="${s.imagen_url}" alt="${s.descripcion}">`
@@ -52,7 +67,10 @@ function renderSorteoCard(s) {
       <div class="sorteo-content">
         <div class="sorteo-header-row">
           <h3 class="sorteo-title">${s.descripcion}</h3>
-          <span class="status-badge ${estadoClass}">${estadoTxt}</span>
+          <div class="sorteo-badges-row">
+            <span class="sorteo-type-badge sorteo-type-badge--${tipoProducto}">${tipoLabel}</span>
+            <span class="status-badge ${estadoClass}">${estadoTxt}</span>
+          </div>
         </div>
 
         <div class="sorteo-info">🎁 Ganador: ${s.premio}</div>
@@ -75,13 +93,52 @@ function renderSorteoCard(s) {
   `;
 }
 
-function renderSorteos(lista) {
+function renderSorteos(lista, tipoActivo = 'todos') {
   const cont = document.getElementById('sorteosActivos');
   if (!cont) return;
 
-  cont.innerHTML = lista.length
-    ? lista.map(renderSorteoCard).join('')
-    : '<p class="text-muted">No hay sorteos activos.</p>';
+  const filtrados = tipoActivo === 'todos'
+    ? lista
+    : lista.filter(s => normalizarTipoProducto(s.tipo_producto) === tipoActivo);
+
+  if (!filtrados.length) {
+    const emptyText = tipoActivo === 'combo'
+      ? 'Ahora mismo no hay combos activos. Pronto aparecerán aquí.'
+      : tipoActivo === 'pantalla'
+        ? 'Ahora mismo no hay pantallas activas. Pronto aparecerán aquí.'
+        : 'No hay sorteos activos.';
+
+    cont.innerHTML = `<p class="text-muted">${emptyText}</p>`;
+    return;
+  }
+
+  cont.innerHTML = filtrados.map(renderSorteoCard).join('');
+}
+
+function updateTipoSorteoUI() {
+  const chips = document.querySelectorAll('[data-tipo-sorteo]');
+  chips.forEach(chip => {
+    const activo = chip.dataset.tipoSorteo === state.sorteoTipo;
+    chip.classList.toggle('chip-filtro--activo', activo);
+  });
+}
+
+function renderSorteosView() {
+  renderSorteos(state.sorteos, state.sorteoTipo);
+  updateTipoSorteoUI();
+}
+
+function initTipoSorteoFiltros() {
+  const cont = document.getElementById('tipoSorteoFiltros');
+  if (!cont) return;
+
+  cont.addEventListener('click', (event) => {
+    const btn = event.target.closest('[data-tipo-sorteo]');
+    if (!btn) return;
+
+    state.sorteoTipo = btn.dataset.tipoSorteo || 'todos';
+    renderSorteosView();
+  });
 }
 
 // ================================
@@ -126,8 +183,10 @@ async function cargarSorteosActivos() {
   try {
     const res = await fetch(`${API_URL}/api/sorteos`);
     const data = await res.json();
-    renderSorteos(data.filter(s => s.estado !== 'finalizado'));
+    state.sorteos = data.filter(s => s.estado !== 'finalizado');
+    renderSorteosView();
   } catch {
+    state.sorteos = [];
     cont.innerHTML = '<p class="error">No se pudieron cargar las rondas.</p>';
   }
 }
@@ -142,6 +201,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!user) return;
 
   setBienvenida(user);
+  initTipoSorteoFiltros();
   cargarStatsSorteos();
 
   // 🔹 Esto llena “Números adquiridos”
