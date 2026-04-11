@@ -29,6 +29,42 @@ function mostrarToast(mensaje) {
   setTimeout(() => toast.classList.add('hidden'), 3000);
 }
 
+function normalizarNumeroDecimal(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return null;
+
+  const cleaned = raw.replace(/[^\d,.-]/g, '');
+  if (!cleaned) return null;
+
+  const lastComma = cleaned.lastIndexOf(',');
+  const lastDot = cleaned.lastIndexOf('.');
+  const decimalPos = Math.max(lastComma, lastDot);
+
+  if (decimalPos === -1) {
+    return cleaned.replace(/[.,]/g, '');
+  }
+
+  const integerPart = cleaned.slice(0, decimalPos).replace(/[.,]/g, '');
+  const decimalPart = cleaned.slice(decimalPos + 1).replace(/[.,]/g, '');
+  return `${integerPart || '0'}.${decimalPart || '0'}`;
+}
+
+function parseCantidadNumeros(value) {
+  const normalized = String(value ?? '').trim();
+  if (!/^\d+$/.test(normalized)) return null;
+
+  const parsed = Number.parseInt(normalized, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
+function parsePrecioNumero(value) {
+  const normalized = normalizarNumeroDecimal(value);
+  if (!normalized) return null;
+
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) && parsed > 0 ? Number(parsed.toFixed(2)) : null;
+}
+
 function initPreviewImagen() {
   const input = document.getElementById('imagen');
   const preview = document.getElementById('previewImagen');
@@ -149,9 +185,21 @@ async function enviarFormulario(e) {
   const fecha_sorteo = document.getElementById('fecha_sorteo').value;
   const tipo_producto = getTipoProductoValue();
   const imagenInput = document.getElementById('imagen');
+  const cantidadNumeros = parseCantidadNumeros(cantidad_numeros);
+  const precioNumero = parsePrecioNumero(precio_numero);
 
   if (!descripcion || !premio || !cantidad_numeros || !precio_numero || !fecha_sorteo) {
     mostrarToast('Por favor completa todos los campos obligatorios.');
+    return;
+  }
+
+  if (!cantidadNumeros) {
+    mostrarToast('La cantidad de números debe ser un entero mayor que 0.');
+    return;
+  }
+
+  if (!precioNumero) {
+    mostrarToast('El precio por número debe ser mayor que 0.');
     return;
   }
 
@@ -166,8 +214,8 @@ async function enviarFormulario(e) {
     const formData = new FormData();
     formData.append('descripcion', descripcion);
     formData.append('premio', premio);
-    formData.append('cantidad_numeros', cantidad_numeros);
-    formData.append('precio_numero', precio_numero);
+    formData.append('cantidad_numeros', String(cantidadNumeros));
+    formData.append('precio_numero', precioNumero.toFixed(2));
     formData.append('fecha_sorteo', fecha_sorteo);
     formData.append('tipo_producto', tipo_producto);
 
@@ -210,8 +258,8 @@ async function enviarFormulario(e) {
     const formData = new FormData();
     formData.append('descripcion', descripcion);
     formData.append('premio', premio);
-    formData.append('cantidad_numeros', cantidad_numeros);
-    formData.append('precio_numero', precio_numero);
+    formData.append('cantidad_numeros', String(cantidadNumeros));
+    formData.append('precio_numero', precioNumero.toFixed(2));
     formData.append('fecha_sorteo', fecha_sorteo);
     formData.append('tipo_producto', tipo_producto);
     formData.append('estado', estadoActual);

@@ -56,6 +56,7 @@ let countdownEndsAtMs = null;
 let countdownStartSeconds = null;
 let numeroGanador = null;
 let ganadorNombre = null;
+let pollInFlight = false;
 
 let serverSkewMs = 0;
 let audioPrimed = false;
@@ -358,9 +359,9 @@ function stopIdleSpin(){
 
 // Gira hasta el ganador (sin inventarlo)
 function spinToWinner(winnerNumero){
-  if(spinning || !segments.length) return;
+  if (spinning || !segments.length) return Promise.resolve(false);
   const idx = segments.findIndex(s => Number(s.numero) === Number(winnerNumero));
-  if(idx < 0) return;
+  if (idx < 0) return Promise.resolve(false);
 
   const n = segments.length;
   const slice = (Math.PI * 2) / n;
@@ -381,19 +382,22 @@ function spinToWinner(winnerNumero){
 
   function easeOutCubic(t){ return 1 - Math.pow(1-t, 3); }
 
-  function frame(t){
-    const p = Math.min(1, (t - t0) / duration);
-    wheelAngle = start + delta * easeOutCubic(p);
-    drawWheel();
-    if(p < 1) requestAnimationFrame(frame);
-    else{
-      spinning = false;
-      wheelAngle = final % (Math.PI * 2);
+  return new Promise((resolve) => {
+    function frame(t){
+      const p = Math.min(1, (t - t0) / duration);
+      wheelAngle = start + delta * easeOutCubic(p);
       drawWheel();
+      if(p < 1) requestAnimationFrame(frame);
+      else{
+        spinning = false;
+        wheelAngle = final % (Math.PI * 2);
+        drawWheel();
+        resolve(true);
+      }
     }
-  }
 
-  requestAnimationFrame(frame);
+    requestAnimationFrame(frame);
+  });
 }
 
 // =========================
@@ -480,18 +484,37 @@ async function fetchRuletaInfo(){
 }
 
 
-async function fetchNumerosSiHaceFalta(){
-  if (segments.length) return;
-
+async function fetchNumerosRuleta({ force = false } = {}){
+  if (!force && segments.length) return segments;
   const res = await fetch(`${apiBase}/api/sorteos/${sorteoId}/ruleta-numeros`, {
     headers: authHeaders()
-    });
+  });
   if(!res.ok) throw new Error("No se pudo cargar ruleta-numeros");
   const data = await res.json();
 
   const nums = Array.isArray(data.numeros) ? data.numeros : [];
-  segments = nums.map(n => ({ numero: Number(n) })).sort((a,b)=>a.numero-b.numero);
-  drawWheel();
+  const nextSegments = nums
+    .map(n => ({ numero: Number(n) }))
+    .sort((a,b)=>a.numero-b.numero);
+
+  const changed =
+    nextSegments.length !== segments.length ||
+    nextSegments.some((segment, index) => segment.numero !== segments[index]?.numero);
+
+  if (changed) {
+    segments = nextSegments;
+    drawWheel();
+  }
+
+  return segments;
+}
+
+async function ensureWinnerSegmentLoaded(){
+  if (numeroGanador == null) return;
+  const exists = segments.some(segment => Number(segment.numero) === Number(numeroGanador));
+  if (!exists) {
+    await fetchNumerosRuleta({ force: true });
+  }
 }
 
 // =========================
@@ -571,43 +594,62 @@ function tick(){
     await fetchRuletaInfo();
 
     // 2) Si no llegó snapshot, dibujar con números aprobados
-    await fetchNumerosSiHaceFalta();
+    await fetchNumerosRuleta({ force: true });
 
     // 2b) Mis números para el panel lateral
     await fetchMisNumerosParaLista();
+
+    if (estado === "finished" && numeroGanador) {
+      await ensureWinnerSegmentLoaded();
+      showResult(ganadorNombre);
+      didSpin = true;
+    }
 
     // 3) empezar contador
     tick();
 
     // 4) polling
     setInterval(async () => {
+      if (pollInFlight) return;
+      pollInFlight = true;
+
       try{
-        const prevEstado = estado;
         const prevGanador = numeroGanador;
 
-        const data = await fetchRuletaInfo();
+        await fetchRuletaInfo();
 
-        if ((prevEstado !== "finished" && estado === "finished") && !segments.length) {
-          await fetchNumerosSiHaceFalta();
+        if (estado !== "finished") {
+          await fetchNumerosRuleta({ force: true });
+        } else {
+          await ensureWinnerSegmentLoaded();
         }
 
         if (!didSpin && estado === "finished" && numeroGanador) {
           if (!did321) { did321 = true; await show321(); }
           didSpin = true;
           stopIdleSpin();
-          spinToWinner(numeroGanador);
-          // Mostrar resultado después de que la ruleta termine de girar
-          setTimeout(() => showResult(ganadorNombre), 3500);
+          const animated = await spinToWinner(numeroGanador);
+          if (!animated) {
+            drawWheel();
+          }
+          showResult(ganadorNombre);
         }
 
         if (prevGanador && numeroGanador && prevGanador !== numeroGanador && !spinning) {
           didSpin = true;
           stopIdleSpin();
-          spinToWinner(numeroGanador);
+          await ensureWinnerSegmentLoaded();
+          const animated = await spinToWinner(numeroGanador);
+          if (!animated) {
+            drawWheel();
+          }
+          showResult(ganadorNombre);
         }
 
       } catch(_e){
         // silencioso
+      } finally {
+        pollInFlight = false;
       }
     }, 2500);
 

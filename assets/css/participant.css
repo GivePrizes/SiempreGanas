@@ -788,6 +788,77 @@ video {
   margin-top: 0;
 }
 
+.pago-form-accordion{
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 1rem;
+  background: rgba(255,255,255,0.03);
+  overflow: hidden;
+}
+
+.pago-form-accordion__summary{
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 1rem;
+  cursor: pointer;
+}
+
+.pago-form-accordion__summary::-webkit-details-marker{
+  display: none;
+}
+
+.pago-form-accordion__copy{
+  min-width: 0;
+  display: grid;
+  gap: 0.18rem;
+}
+
+.pago-form-accordion__eyebrow{
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--colour-muted);
+}
+
+.pago-form-accordion__summary h3{
+  margin: 0;
+  font-size: 1rem;
+}
+
+.pago-form-accordion__summary .microhint{
+  margin: 0;
+}
+
+.pago-form-accordion__toggle{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(246,208,111,0.95);
+}
+
+.pago-form-accordion__toggle::after{
+  content: "▾";
+  transition: transform 0.2s ease;
+}
+
+.pago-form-accordion[open] .pago-form-accordion__toggle::after{
+  transform: rotate(180deg);
+}
+
+.pago-form-accordion__content{
+  padding: 0 0.9rem 0.9rem;
+}
+
+.pago-form-accordion__content .sorteo-compra-card--compact{
+  margin-top: 0;
+}
+
 .sorteo-detalle-layout {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(260px, 1.7fr);
@@ -1146,17 +1217,40 @@ video {
 /* Comprobante */
 .comprobante-upload {
   margin-top: 0.9rem;
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
 }
 
 .comprobante-upload label {
   font-size: 0.9rem;
-  margin-bottom: 0.25rem;
   display: inline-block;
 }
 
 .comprobante-upload input[type="file"] {
-  margin-top: 0.4rem;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-top: 0.1rem;
+  padding: 0.72rem 0.8rem;
   font-size: 0.85rem;
+  border-radius: 0.85rem;
+  border: 1px dashed rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.04);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.comprobante-upload input[type="file"]::file-selector-button {
+  margin-right: 0.75rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(246,208,111,0.18);
+  color: var(--colour-text);
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .comprobante-preview {
@@ -1185,6 +1279,16 @@ video {
     grid-template-columns: 1fr;
   }
 
+  .pago-form-accordion__summary{
+    align-items: flex-start;
+  }
+
+  .pago-form-accordion__toggle{
+    white-space: normal;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
   .dashboard-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1199,6 +1303,21 @@ video {
   .pago-nequi-card {
     padding: 0.8rem 0.85rem;
     border-radius: 0.75rem;
+  }
+
+  .pago-form-accordion__summary{
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.85rem 0.9rem;
+  }
+
+  .pago-form-accordion__toggle{
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pago-form-accordion__content{
+    padding: 0 0.7rem 0.7rem;
   }
 
   .pago-nequi-title {
@@ -1220,6 +1339,16 @@ video {
   .btn-nequi-copy {
     font-size: 0.85rem;
     padding: 0.5rem 0.7rem;
+  }
+
+  .comprobante-upload input[type="file"]{
+    padding: 0.68rem 0.72rem;
+  }
+
+  .comprobante-upload input[type="file"]::file-selector-button{
+    display: block;
+    width: 100%;
+    margin: 0 0 0.55rem;
   }
 }
 

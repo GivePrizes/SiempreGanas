@@ -57,6 +57,7 @@ const postConfirmActions = document.getElementById('postConfirmActions');
 const btnPostLive = document.getElementById('btnPostLive');
 const numbersStepAccordion = document.getElementById('numbersStepAccordion');
 const paymentStepAccordion = document.getElementById('paymentStepAccordion');
+const paymentFormAccordion = document.getElementById('paymentFormAccordion');
 
 
 let sorteoActual = null;
@@ -124,6 +125,9 @@ function scrollToPaymentStep() {
 function openPaymentStep({ scroll = true } = {}) {
   if (!paymentStepAccordion) return;
   paymentStepAccordion.open = true;
+  if (paymentFormAccordion) {
+    paymentFormAccordion.open = true;
+  }
   if (numbersStepAccordion) {
     numbersStepAccordion.open = false;
   }
@@ -736,6 +740,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (paymentStepAccordion) {
     paymentStepAccordion.addEventListener('toggle', () => {
       if (paymentStepAccordion.open) {
+        scrollToPaymentStep();
+      }
+    });
+  }
+
+  if (paymentFormAccordion) {
+    paymentFormAccordion.addEventListener('toggle', () => {
+      if (paymentFormAccordion.open) {
         scrollToPaymentStep();
       }
     });

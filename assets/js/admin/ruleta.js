@@ -55,6 +55,10 @@ let countdownInterval = null;
 let pollingInterval = null;
 let autoSpinIniciado = false;
 let autoSpinTimer = null;
+let spinVisualActivo = false;
+
+const PRE_SPIN_DURATION_MS = 7000;
+const FINAL_SPIN_DURATION_MS = 4700;
 
 // Helpers de auth
 const token = localStorage.getItem('token');
@@ -162,6 +166,120 @@ function resaltarSliceGanador(numeroGanador) {
   if (idx >= 0 && slices[idx]) slices[idx].classList.add('ganador');
 }
 
+function wait(ms) {
+  return new Promise((resolve) => {
+    autoSpinTimer = setTimeout(resolve, ms);
+  });
+}
+
+function getGanadorVisual(numeroGanador, ganadorData = null) {
+  const numero = Number(numeroGanador);
+  const participante =
+    participantes.find((p) => Number(p.numero) === numero) || null;
+  const nombre = ganadorData?.nombre || participante?.nombre || null;
+
+  return {
+    numero,
+    nombre,
+    nombreCorto: nombre ? nombre.split(' ')[0] : participante?.nombre_corto || 'Ganador',
+  };
+}
+
+function mostrarBannerGanador(numeroGanador, ganadorData = null) {
+  const wf = document.getElementById('winnerFloat');
+  const wfNum = document.getElementById('winnerFloatNumero');
+  const wfName = document.getElementById('winnerFloatNombre');
+
+  if (!wf || !numeroGanador) return;
+
+  const ganadorVisual = getGanadorVisual(numeroGanador, ganadorData);
+  wf.classList.remove('oculto');
+  wf.classList.add('winner-float--show');
+
+  if (wfNum) wfNum.textContent = `N° ${ganadorVisual.numero}`;
+  if (wfName) wfName.textContent = ganadorVisual.nombreCorto;
+}
+
+function mostrarResultadoGanador(numeroGanador, ganadorData = null, { animado = false } = {}) {
+  if (!resultadoRuleta) return;
+
+  if (!numeroGanador) {
+    resultadoRuleta.innerHTML = '✅ Ruleta finalizada.';
+    return;
+  }
+
+  const ganadorVisual = getGanadorVisual(numeroGanador, ganadorData);
+
+  if (animado) {
+    resultadoRuleta.classList.add('ganador-texto');
+    resultadoRuleta.innerHTML = ganadorVisual.nombre
+      ? `
+        🎉 <strong>${ganadorVisual.nombreCorto}</strong> es el ganador con el número <strong>#${ganadorVisual.numero}</strong>.<br/>
+        Llama su nombre, muéstrale el comprobante y celebra el momento: todos vieron la ruleta en pantalla.
+      `
+      : `
+        🎉 Número ganador: <strong>#${ganadorVisual.numero}</strong>.<br/>
+        Revisa en el panel qué usuario tiene este número y anúncialo en voz alta.
+      `;
+
+    setTimeout(() => {
+      resultadoRuleta?.classList.remove('ganador-texto');
+    }, 1400);
+    return;
+  }
+
+  resultadoRuleta.innerHTML = ganadorVisual.nombre
+    ? `✅ Número ganador: <strong>${ganadorVisual.numero}</strong> — <strong>${ganadorVisual.nombreCorto}</strong>`
+    : `✅ Número ganador: <strong>${ganadorVisual.numero}</strong>`;
+}
+
+function iniciarSpinVisual() {
+  if (!ruletaCircle || spinVisualActivo) return;
+
+  spinVisualActivo = true;
+  const rotacionDestino = rotacionActual + 10 * 360;
+  ruletaCircle.style.transition = `transform ${PRE_SPIN_DURATION_MS}ms linear`;
+  ruletaCircle.style.transform = `rotate(${rotacionDestino}deg)`;
+  rotacionActual = rotacionDestino;
+}
+
+function animarGanador(numeroGanador, ganadorData = null) {
+  if (!ruletaCircle || !numeroGanador || !participantes.length) {
+    mostrarBannerGanador(numeroGanador, ganadorData);
+    mostrarResultadoGanador(numeroGanador, ganadorData, { animado: false });
+    spinVisualActivo = false;
+    girando = false;
+    return Promise.resolve();
+  }
+
+  const total = participantes.length;
+  const anguloSlice = 360 / total;
+  const indice = participantes.findIndex((p) => Number(p.numero) === Number(numeroGanador));
+  const indiceFinal = indice >= 0 ? indice : 0;
+  const anguloCentro = indiceFinal * anguloSlice + anguloSlice / 2;
+  const vueltasExtra = 5 + Math.floor(Math.random() * 3);
+  const rotacionDestino =
+    rotacionActual + vueltasExtra * 360 + (360 - anguloCentro);
+
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      ruletaCircle.style.transition =
+        `transform ${FINAL_SPIN_DURATION_MS}ms cubic-bezier(0.17, 0.89, 0.32, 1.28)`;
+      ruletaCircle.style.transform = `rotate(${rotacionDestino}deg)`;
+      rotacionActual = rotacionDestino;
+
+      setTimeout(() => {
+        resaltarSliceGanador(Number(numeroGanador));
+        mostrarBannerGanador(numeroGanador, ganadorData);
+        mostrarResultadoGanador(numeroGanador, ganadorData, { animado: true });
+        spinVisualActivo = false;
+        girando = false;
+        resolve();
+      }, FINAL_SPIN_DURATION_MS);
+    });
+  });
+}
+
 
 async function fetchRuletaInfo() {
   if (!sorteoId) return;
@@ -252,6 +370,21 @@ async function fetchRuletaParticipantes() {
   }
 }
 
+function startRuletaPolling() {
+  if (pollingInterval) clearInterval(pollingInterval);
+
+  pollingInterval = setInterval(async () => {
+    try {
+      await fetchRuletaInfo();
+      if (!ruletaInfo || ruletaInfo.ruleta_estado !== 'finalizada') {
+        await fetchRuletaParticipantes();
+      }
+    } catch (err) {
+      console.error('Error polling ruleta:', err);
+    }
+  }, 3000);
+}
+
 
 // ==========================
 // 4) Render estado / contador
@@ -316,6 +449,23 @@ function renderRuletaInfo() {
   // Botón girar según si ya se puede
   if (btnGirar) btnGirar.disabled = !puedeGirarAhora();
 
+  if (ruleta_estado === 'girando') {
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+      countdownInterval = null;
+    }
+
+    if (btnGirar) btnGirar.disabled = true;
+    if (contadorTextoEl) contadorTextoEl.textContent = '00:00:00';
+    if (resultadoRuleta) {
+      resultadoRuleta.textContent = 'Girando ruleta... 🎰✨';
+    }
+    if (!spinVisualActivo) {
+      iniciarSpinVisual();
+    }
+    return;
+  }
+
   //  FINALIZADA
   if (ruleta_estado === 'finalizada') {
     // parar polling/contador
@@ -330,30 +480,10 @@ function renderRuletaInfo() {
 
     if (btnGirar) btnGirar.disabled = true;
     if (contadorTextoEl) contadorTextoEl.textContent = '00:00:00';
+    spinVisualActivo = false;
 
-    //  Pintar resultado final SIEMPRE (aunque recargues)
-    if (resultadoRuleta) {
-      if (numero_ganador) {
-        const nombreCorto = ganador?.nombre ? ganador.nombre.split(' ')[0] : 'Ganador';
-        resultadoRuleta.innerHTML =
-          `✅ Número ganador: <strong>${numero_ganador}</strong> — <strong>${nombreCorto}</strong>`;
-      } else {
-        resultadoRuleta.innerHTML = `✅ Ruleta finalizada.`;
-      }
-    }
-
-    // ✅ DESTACADO FLOTANTE (premium)
-    const wf = document.getElementById('winnerFloat');
-    const wfNum = document.getElementById('winnerFloatNumero');
-    const wfName = document.getElementById('winnerFloatNombre');
-
-    if (wf && numero_ganador) {
-      wf.classList.remove('oculto');
-      wf.classList.add('winner-float--show');
-
-      if (wfNum) wfNum.textContent = `N° ${numero_ganador}`; // sin "#"
-      if (wfName) wfName.textContent = ganador?.nombre ? ganador.nombre.split(' ')[0] : 'Ganador';
-    }
+    mostrarResultadoGanador(numero_ganador, ganador, { animado: false });
+    mostrarBannerGanador(numero_ganador, ganador);
 
     //  Asegurar que existan slices antes de resaltar
     if (
@@ -450,60 +580,109 @@ function iniciarCountdown() {
   countdownInterval = setInterval(actualizar, 1000);
 }
 
-async function iniciarRuletaAutomatica() {
-  if (autoSpinIniciado || !sorteoId) return;
+async function ejecutarFlujoRuleta({ pedirConfirmacion = false } = {}) {
+  if (girando || autoSpinIniciado || !sorteoId) return;
+
+  if (!participantes.length) {
+    alert('No hay participantes aprobados.');
+    return;
+  }
+
+  if (pedirConfirmacion) {
+    const confirmar = confirm(
+      'Este giro registrará al ganador de forma definitiva.\n\n¿Deseas continuar?'
+    );
+    if (!confirmar) return;
+  }
+
+  girando = true;
   autoSpinIniciado = true;
+
+  if (pollingInterval) {
+    clearInterval(pollingInterval);
+    pollingInterval = null;
+  }
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
 
   if (btnGirar) btnGirar.disabled = true;
   if (resultadoRuleta) resultadoRuleta.textContent = 'Girando ruleta... 🎰✨';
+  iniciarSpinVisual();
 
   try {
     const resStart = await fetch(`${API}/sorteos/${sorteoId}/iniciar-ruleta`, {
       method: 'POST',
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
-
     const dataStart = await resStart.json();
+
     if (!resStart.ok) {
       if (resultadoRuleta) {
         resultadoRuleta.textContent = dataStart?.error || 'Error al iniciar sorteo.';
       }
+      girando = false;
+      spinVisualActivo = false;
       autoSpinIniciado = false;
+      await fetchRuletaInfo();
+      startRuletaPolling();
       return;
     }
 
     if (autoSpinTimer) clearTimeout(autoSpinTimer);
-    autoSpinTimer = setTimeout(async () => {
-      try {
-        const resFinish = await fetch(`${API}/sorteos/${sorteoId}/spin-finished`, {
-          method: 'POST',
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
-        const dataFinish = await resFinish.json();
-        if (!resFinish.ok) {
-          if (resultadoRuleta) {
-            resultadoRuleta.textContent = dataFinish?.error || 'Error al finalizar sorteo.';
-          }
-          autoSpinIniciado = false;
-          return;
-        }
+    await wait(PRE_SPIN_DURATION_MS);
 
-        await fetchRuletaInfo();
-        await fetchRuletaParticipantes();
-      } catch (err) {
-        if (resultadoRuleta) {
-          resultadoRuleta.textContent = 'Error de red al finalizar sorteo.';
-        }
-        autoSpinIniciado = false;
+    const resFinish = await fetch(`${API}/sorteos/${sorteoId}/spin-finished`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    const dataFinish = await resFinish.json();
+
+    if (!resFinish.ok) {
+      await fetchRuletaInfo();
+      await fetchRuletaParticipantes();
+
+      if (ruletaInfo?.ruleta_estado === 'finalizada' && ruletaInfo?.numero_ganador) {
+        await animarGanador(ruletaInfo.numero_ganador, ruletaInfo.ganador);
+        return;
       }
-    }, 7000);
 
-  } catch (err) {
-    if (resultadoRuleta) {
-      resultadoRuleta.textContent = 'Error de red al iniciar sorteo.';
+      if (resultadoRuleta) {
+        resultadoRuleta.textContent = dataFinish?.error || 'Error al finalizar sorteo.';
+      }
+      girando = false;
+      spinVisualActivo = false;
+      autoSpinIniciado = false;
+      startRuletaPolling();
+      return;
     }
+
+    const numeroGanador =
+      dataFinish?.ganador?.numero || dataFinish?.sorteo?.numero_ganador || null;
+
+    await animarGanador(numeroGanador, dataFinish?.ganador || null);
+    await fetchRuletaInfo();
+    await fetchRuletaParticipantes();
+  } catch (err) {
+    console.error('Error en flujo de ruleta:', err);
+    if (resultadoRuleta) {
+      resultadoRuleta.textContent = 'Error de red al ejecutar la ruleta.';
+    }
+    girando = false;
+    spinVisualActivo = false;
     autoSpinIniciado = false;
+    startRuletaPolling();
+  } finally {
+    if (autoSpinTimer) {
+      clearTimeout(autoSpinTimer);
+      autoSpinTimer = null;
+    }
   }
+}
+
+async function iniciarRuletaAutomatica() {
+  await ejecutarFlujoRuleta();
 }
 
 // ==========================
@@ -567,119 +746,7 @@ async function programarRuleta() {
 // 7) Girar ruleta (animación)
 // ==========================
 async function girarRuleta() {
-  if (girando) return;
-  if (!participantes.length) {
-    alert('No hay participantes aprobados.');
-    return;
-  }
-
-  const confirmar = confirm(
-    'Este giro registrará al ganador de forma definitiva.\n\n¿Deseas continuar?'
-  );
-  if (!confirmar) return;
-
-  girando = true;
-  if (btnGirar) btnGirar.disabled = true;
-  if (resultadoRuleta) {
-    resultadoRuleta.textContent = 'Girando ruleta... 🎰✨';
-  }
-
-  let res, data;
-  try {
-    res = await fetch(
-      `${API}/sorteos/${sorteoId}/realizar-ruleta`,
-      {
-        method: 'POST',
-        headers: token
-          ? {
-              Authorization: `Bearer ${token}`,
-            }
-          : {},
-      }
-    );
-    data = await res.json();
-  } catch (err) {
-    console.error('Error al realizar ruleta:', err);
-    if (resultadoRuleta) {
-      resultadoRuleta.textContent = 'Error al conectar con el servidor.';
-    }
-    girando = false;
-    if (btnGirar) btnGirar.disabled = false;
-    return;
-  }
-
-  if (!res.ok) {
-    console.error('Error al realizar ruleta:', data);
-    if (resultadoRuleta) {
-      resultadoRuleta.textContent = data.error || 'Error al procesar sorteo.';
-    }
-    girando = false;
-    if (btnGirar) btnGirar.disabled = false;
-    return;
-  }
-
-  const numeroGanador =
-    data.ganador?.numero || data.sorteo?.numero_ganador || null;
-
-  const idxGanador = participantes.findIndex(
-    (p) => p.numero === numeroGanador
-  );
-  const ganador = idxGanador >= 0 ? participantes[idxGanador] : null;
-
-  if (!ruletaCircle || !numeroGanador) {
-    if (resultadoRuleta) {
-      resultadoRuleta.innerHTML = ganador
-        ? `🎉 Ganador: <strong>${ganador.nombre_corto}</strong> con el número <strong>#${numeroGanador}</strong>.`
-        : `🎉 Número ganador: <strong>#${numeroGanador}</strong>.`;
-    }
-    girando = false;
-    return;
-  }
-
-  const slices = Array.from(
-    ruletaCircle.querySelectorAll('.ruleta-slice')
-  );
-  const total = participantes.length;
-  const anguloSlice = 360 / total;
-
-  const indice = idxGanador >= 0 ? idxGanador : 0;
-  const anguloCentro = indice * anguloSlice + anguloSlice / 2;
-
-  const vueltasExtra = 5 + Math.floor(Math.random() * 3); // 5–7 vueltas
-  const rotacionDestino =
-    rotacionActual + vueltasExtra * 360 + (360 - anguloCentro);
-
-  ruletaCircle.style.transform = `rotate(${rotacionDestino}deg)`;
-  rotacionActual = rotacionDestino;
-
-  setTimeout(() => {
-    slices.forEach((s) => s.classList.remove('ganador'));
-    if (slices[indice]) {
-      slices[indice].classList.add('ganador');
-    }
-
-    if (resultadoRuleta) {
-      resultadoRuleta.classList.add('ganador-texto');
-      resultadoRuleta.innerHTML = ganador
-        ? `
-          🎉 <strong>${ganador.nombre_corto}</strong> es el ganador con el número <strong>#${numeroGanador}</strong>.<br/>
-          Llama su nombre, muéstrale el comprobante y celebra el momento: todos vieron la ruleta en pantalla.
-        `
-        : `
-          🎉 Número ganador: <strong>#${numeroGanador}</strong>.<br/>
-          Revisa en el panel qué usuario tiene este número y anúncialo en voz alta.
-        `;
-
-      setTimeout(() => {
-        resultadoRuleta.classList.remove('ganador-texto');
-      }, 1400);
-    }
-
-    girando = false;
-    // No reactivamos el botón: el giro es definitivo.
-    // Reforzamos estado final desde backend:
-    fetchRuletaInfo();
-  }, 4700);
+  await ejecutarFlujoRuleta({ pedirConfirmacion: true });
 }
 
 // ==========================
@@ -738,7 +805,7 @@ async function init() {
   await fetchRuletaParticipantes();
 
   // Polling suave de ruleta-info cada 3s (sin recargar página, sin "saltos")
-  pollingInterval = setInterval(fetchRuletaInfo, 3000);
+  startRuletaPolling();
 }
 
 init();
