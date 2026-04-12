@@ -36,6 +36,10 @@ function miniEmpty(text) {
 }
 
 function getTipoProductoData(tipoProducto) {
+  if (tipoProducto === 'bonus') {
+    return { label: 'Bonus', className: 'badge type-bonus' };
+  }
+
   return tipoProducto === 'combo'
     ? { label: 'Combo', className: 'badge type-combo' }
     : { label: 'Pantalla', className: 'badge type-screen' };
@@ -46,6 +50,12 @@ function renderRow(p, s) {
   const phoneDigits = sanitizePhone(p.telefono);
   const wa = phoneDigits ? buildWhatsappLink(phoneDigits, p.nombre) : '';
   const numerosTxt = (p.numeros && p.numeros.length) ? p.numeros.join(', ') : '—';
+  const detallePrincipal = p.esBonusGratis
+    ? 'Beneficio: Cuenta gratis por fidelidad'
+    : `Números: ${numerosTxt}`;
+  const detalleSecundario = p.esBonusGratis
+    ? '<div class="muted tiny">No depende de un sorteo puntual.</div>'
+    : '';
 
   const row = document.createElement('div');
   row.className = `user-row ${estado === 'entregada' ? 'is-done' : 'is-pending'}`;
@@ -60,7 +70,8 @@ function renderRow(p, s) {
         <span class="muted">${p.email || 'Sin correo'}</span>
         <span class="muted">${p.telefono || 'Sin teléfono'}</span>
       </div>
-      <div class="numbers">Números: ${numerosTxt}</div>
+      <div class="numbers">${detallePrincipal}</div>
+      ${detalleSecundario}
       ${p.entregadaAt ? `<div class="muted tiny">Entregada: ${new Date(p.entregadaAt).toLocaleString()}</div>` : ''}
     </div>
 
@@ -74,7 +85,7 @@ function renderRow(p, s) {
 
       <button class="btn-mini primary"
         data-action="entregar"
-        data-sorteo="${s.sorteoId}"
+        data-entrega="${p.entregaId}"
         data-user="${p.usuarioId}"
         ${estado === 'entregada' ? 'disabled' : ''}>
         ${estado === 'entregada' ? 'Entregada ✅' : 'Marcar entregada'}
@@ -177,6 +188,10 @@ export function renderAcordeon(sorteos, uiState) {
     if (!totalMostrando && !mostrarSorteoVacio) continue;
 
     const isOpen = state.open.has(String(s.sorteoId));
+    const referenciaLabel = s.tipoProducto === 'bonus' ? 'BONUS' : `#${s.sorteoId}`;
+    const contextoSecundario = s.tipoProducto === 'bonus'
+      ? '<span class="muted">· Beneficio: Cuenta gratis por fidelidad</span>'
+      : (s.premio ? `<span class="muted">· Ganador: ${s.premio}</span>` : '');
 
     const item = document.createElement('div');
     item.className = `ac-item ${isOpen ? 'open' : ''}`;
@@ -191,9 +206,9 @@ export function renderAcordeon(sorteos, uiState) {
       <div class="ac-title">
         <div class="ac-name">${s.descripcion || `Sorteo #${s.sorteoId}`}</div>
         <div class="ac-sub">
-          <span class="muted">#${s.sorteoId}</span>
+          <span class="muted">${referenciaLabel}</span>
           <span class="${tipoMeta.className}">${tipoMeta.label}</span>
-          ${s.premio ? `<span class="muted">· Ganador: ${s.premio}</span>` : ''}
+          ${contextoSecundario}
         </div>
       </div>
 

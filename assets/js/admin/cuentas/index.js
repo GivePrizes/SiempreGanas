@@ -12,7 +12,7 @@ const btnRefrescar = document.getElementById('btnRefrescar');
 
 const state = {
   filter: 'todos',       // todos | pendiente | entregada
-  tipoProducto: 'todos', // todos | pantalla | combo
+  tipoProducto: 'todos', // todos | pantalla | combo | bonus
   q: '',
   open: new Set(),       // sorteos abiertos
   cache: [],             // raw del backend
@@ -118,7 +118,7 @@ async function cargarCuentas({ silent = false } = {}) {
   }
 }
 
-async function marcarEntregada(sorteoId, usuarioId, btn) {
+async function marcarEntregada(entregaId, btn) {
   const token = getToken();
   if (!token) throw new Error('Sesión expirada');
 
@@ -131,7 +131,7 @@ async function marcarEntregada(sorteoId, usuarioId, btn) {
 
   try {
     await fetchJSON(
-      `${API_URL}/api/admin/cuentas/sorteos/${sorteoId}/usuarios/${usuarioId}/entregar`,
+      `${API_URL}/api/admin/cuentas/entregas/${entregaId}/entregar`,
       { method: 'PATCH', headers: { Authorization: `Bearer ${token}` } }
     );
 
@@ -183,13 +183,12 @@ function setupAcordeonToggle() {
   // Delegación: click en el header abre/cierra
   elAcordeon?.addEventListener('click', (ev) => {
     // 1) Acción "marcar entregada"
-    const btnEntregar = ev.target.closest('button[data-action="entregar"][data-sorteo][data-user]');
+    const btnEntregar = ev.target.closest('button[data-action="entregar"][data-entrega]');
     if (btnEntregar) {
       ev.preventDefault();
       ev.stopPropagation();
-      const sorteoId = btnEntregar.dataset.sorteo;
-      const usuarioId = btnEntregar.dataset.user;
-      marcarEntregada(sorteoId, usuarioId, btnEntregar).catch(err => {
+      const entregaId = btnEntregar.dataset.entrega;
+      marcarEntregada(entregaId, btnEntregar).catch(err => {
         console.error(err);
         toast(err.message || 'No se pudo marcar');
         btnEntregar.disabled = false;

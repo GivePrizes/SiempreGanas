@@ -150,24 +150,61 @@ export async function cargarComprobantes() {
   yaPintoAlgo = true;
 }
 
+async function leerRespuesta(res, fallbackMessage) {
+  let payload = null;
+
+  try {
+    payload = await res.json();
+  } catch {
+    payload = null;
+  }
+
+  if (!res.ok) {
+    throw new Error(payload?.error || fallbackMessage);
+  }
+
+  return payload;
+}
+
 async function aprobar(id) {
   if (!confirm('¿Aprobar?')) return;
   const token = localStorage.getItem('token');
-  await fetch(`${API_URL}/api/admin/comprobantes/aprobar/${id}`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  cargarComprobantes();
+
+  try {
+    const res = await fetch(`${API_URL}/api/admin/comprobantes/aprobar/${id}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const data = await leerRespuesta(res, 'No se pudo aprobar el comprobante.');
+
+    if (Array.isArray(data?.warnings) && data.warnings.length) {
+      alert(`Comprobante aprobado.\n\n${data.warnings.join('\n')}`);
+    }
+
+    await cargarComprobantes();
+  } catch (error) {
+    console.error('Error aprobando comprobante:', error);
+    alert(error.message || 'No se pudo aprobar el comprobante.');
+  }
 }
 
 async function rechazar(id) {
   if (!confirm('¿Rechazar?')) return;
   const token = localStorage.getItem('token');
-  await fetch(`${API_URL}/api/admin/comprobantes/rechazar/${id}`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  cargarComprobantes();
+
+  try {
+    const res = await fetch(`${API_URL}/api/admin/comprobantes/rechazar/${id}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    await leerRespuesta(res, 'No se pudo rechazar el comprobante.');
+    await cargarComprobantes();
+  } catch (error) {
+    console.error('Error rechazando comprobante:', error);
+    alert(error.message || 'No se pudo rechazar el comprobante.');
+  }
 }
 
 window.aprobar = aprobar;

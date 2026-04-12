@@ -401,6 +401,12 @@ button.btn-mini:disabled{
   color: #fff7db;
 }
 
+.badge.type-bonus{
+  border-color: rgba(244, 114, 182, .42);
+  background: linear-gradient(180deg, rgba(244, 114, 182, .24), rgba(190, 24, 93, .18));
+  color: #fff1f7;
+}
+
 /* Empty state */
 .empty{
   margin-top: 14px;

@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225b">
   <link rel="stylesheet" href="../assets/css/admin.css?v=20260225b">
   <!-- ✅ CSS aislado de este micro-módulo -->
-  <link rel="stylesheet" href="../assets/css/cuentas-sorteo.css?v=20260401a">
+  <link rel="stylesheet" href="../assets/css/cuentas-sorteo.css?v=20260412a">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
   <style>
     body.auth-pending { visibility: hidden; }
@@ -66,11 +66,12 @@
               <option value="todos">Todos</option>
               <option value="pantalla">Pantallas</option>
               <option value="combo">Combos</option>
+              <option value="bonus">Bonus gratis</option>
             </select>
           </div>
 
           <div class="mini-note mini-note--soft">
-            Filtra rápido qué tipo de cuenta estás entregando hoy.
+            Filtra rapido si hoy estas entregando cuentas de sorteos o bonus gratis.
           </div>
         </div>
 
@@ -82,9 +83,9 @@
       <section class="card" style="margin-top:18px;">
         <div class="card-title-row">
           <div>
-            <h2>📦 Participantes aprobados (por sorteo)</h2>
+            <h2>📦 Participantes aprobados y bonus desbloqueados</h2>
             <p class="text-muted">
-              Cada sorteo se despliega como acordeón. Dentro verás a quién entregar la cuenta, sus números y contacto rápido.
+              Cada sorteo se despliega como acordeon y, cuando aplique, tambien veras el bloque de bonus de fidelidad para entregar la cuenta gratis.
             </p>
           </div>
 
@@ -98,8 +99,8 @@
 
         <!-- Estado vacío -->
         <div id="emptyState" class="empty hidden">
-          <div class="empty-title">No hay participantes aprobados para mostrar</div>
-          <div class="empty-sub">Cuando apruebes pagos, aparecerán aquí como “pendiente”.</div>
+          <div class="empty-title">No hay cuentas pendientes para mostrar</div>
+          <div class="empty-sub">Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.</div>
         </div>
       </section>
     </main>
@@ -114,7 +115,7 @@
   <script src="../assets/js/theme.js?v=20260401b"></script>
 
   <!-- ✅ Entry point del micro-módulo -->
-<script type="module" src="../assets/js/admin/cuentas/index.js?v=20260401a"></script>
+<script type="module" src="../assets/js/admin/cuentas/index.js?v=20260412a"></script>
 </body>
 </html>
 
