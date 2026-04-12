@@ -105,6 +105,15 @@ const motivationalPhrases = [
 
 let chatWindowEndsAt = null;
 let chatWindowTimer = null;
+let pollTimer = null;
+let ruletaLiveEndpoint = "live";
+let zeroEdgeTriggered = false;
+
+const DEFAULT_POLL_INTERVAL_MS = 2500;
+const COUNTDOWN_POLL_INTERVAL_MS = 1000;
+const SPINNING_POLL_INTERVAL_MS = 700;
+const ZERO_EDGE_POLL_INTERVAL_MS = 180;
+const TWO_PI = Math.PI * 2;
 
 function nowServerMs(){
   return Date.now() + (serverSkewMs || 0);
@@ -123,6 +132,131 @@ function setEstadoBadge(txt){
 
 function safeUpper(s){
   return String(s || "").toUpperCase().replaceAll("_"," ");
+}
+
+function normalizeAngle(angle){
+  const normalized = angle % TWO_PI;
+  return normalized >= 0 ? normalized : normalized + TWO_PI;
+}
+
+function mapRuletaEstadoToLive(raw){
+  if (raw === "no_programada") return "waiting";
+  if (raw === "programada") return "countdown";
+  if (raw === "girando") return "spinning";
+  if (raw === "finalizada") return "finished";
+  if (raw === "en_curso") return "legacy";
+  return "waiting";
+}
+
+function normalizeLivePayload(data){
+  const serverTimeIso = data.server_time || data.serverTime || new Date().toISOString();
+
+  let normalizedEstado = data.estado;
+  if (!normalizedEstado) {
+    normalizedEstado = mapRuletaEstadoToLive(data.ruleta_estado_raw || data.ruleta_estado);
+  }
+
+  if (normalizedEstado === "legacy") {
+    normalizedEstado = "waiting";
+  }
+
+  let countdownSeconds = Number.isFinite(Number(data.countdown_seconds))
+    ? Number(data.countdown_seconds)
+    : null;
+
+  if (
+    countdownSeconds == null &&
+    normalizedEstado === "countdown" &&
+    data.ruleta_hora_programada
+  ) {
+    const diffMs =
+      new Date(data.ruleta_hora_programada).getTime() -
+      new Date(serverTimeIso).getTime();
+    countdownSeconds = Math.max(0, Math.ceil(diffMs / 1000));
+  }
+
+  let ganador = data.ganador ?? null;
+  if (ganador != null && typeof ganador !== "object") {
+    ganador = { numero: ganador, nombre: null, alias: null };
+  }
+
+  if (!ganador && data.numero_ganador != null) {
+    ganador = {
+      numero: data.numero_ganador,
+      nombre: data.ganador?.nombre ?? null,
+      alias: data.ganador?.alias ?? data.ganador?.nombre ?? null,
+    };
+  }
+
+  return {
+    ...data,
+    estado: normalizedEstado || "waiting",
+    countdown_seconds: countdownSeconds ?? 0,
+    server_time: serverTimeIso,
+    ganador,
+  };
+}
+
+async function fetchRuletaPayload(endpoint){
+  const res = await fetch(`${apiBase}/api/sorteos/${sorteoId}/${endpoint}`, {
+    headers: authHeaders()
+  });
+
+  if (!res.ok) {
+    const error = new Error(`No se pudo cargar ${endpoint}`);
+    error.status = res.status;
+    throw error;
+  }
+
+  const data = await res.json();
+  return normalizeLivePayload(data);
+}
+
+async function fetchRuletaPayloadWithFallback(){
+  const endpoints = ruletaLiveEndpoint === "ruleta-info"
+    ? ["ruleta-info"]
+    : ["live", "ruleta-info"];
+
+  let lastError = null;
+
+  for (const endpoint of endpoints) {
+    try {
+      const data = await fetchRuletaPayload(endpoint);
+      ruletaLiveEndpoint = endpoint;
+      return data;
+    } catch (error) {
+      lastError = error;
+
+      if (endpoint === "live" && error.status === 404) {
+        ruletaLiveEndpoint = "ruleta-info";
+        continue;
+      }
+
+      break;
+    }
+  }
+
+  throw lastError || new Error("No se pudo cargar la ruleta en vivo");
+}
+
+function getPollIntervalMs(){
+  if (estado === "spinning") return SPINNING_POLL_INTERVAL_MS;
+
+  if (countdownEndsAtMs) {
+    const diff = countdownEndsAtMs - nowServerMs();
+    if (diff <= 0) return ZERO_EDGE_POLL_INTERVAL_MS;
+    if (diff <= 6000) return COUNTDOWN_POLL_INTERVAL_MS;
+  }
+
+  return DEFAULT_POLL_INTERVAL_MS;
+}
+
+function scheduleNextPoll(delayMs = getPollIntervalMs()){
+  if (pollTimer) {
+    clearTimeout(pollTimer);
+  }
+
+  pollTimer = setTimeout(runPollCycle, delayMs);
 }
 
 function pushSystemMessage(text, key){
@@ -230,10 +364,52 @@ function startChatCountdown(){
 // =========================
 // DRAW WHEEL (REAL)
 // =========================
+function getWinnerIndex(){
+  if (numeroGanador == null) return -1;
+  return segments.findIndex(segment => Number(segment.numero) === Number(numeroGanador));
+}
+
+function getWheelStopAngle(winnerNumero){
+  if (!segments.length) return null;
+  const idx = segments.findIndex(segment => Number(segment.numero) === Number(winnerNumero));
+  if (idx < 0) return null;
+
+  const slice = TWO_PI / segments.length;
+  const targetAngle = idx * slice + slice / 2;
+  const pointerAngle = -Math.PI / 2;
+  return normalizeAngle(pointerAngle - targetAngle);
+}
+
+function setWheelToWinner(winnerNumero){
+  const finalAngle = getWheelStopAngle(winnerNumero);
+  if (finalAngle == null) return false;
+
+  wheelAngle = finalAngle;
+  drawWheel();
+  return true;
+}
+
+function getLabelStep(totalSegments){
+  if (totalSegments <= 40) return 1;
+  if (totalSegments <= 80) return 2;
+  if (totalSegments <= 160) return 4;
+  if (totalSegments <= 320) return 8;
+  return Math.max(10, Math.ceil(totalSegments / 48));
+}
+
+function getLabelFontSize(totalSegments){
+  if (totalSegments <= 36) return 22;
+  if (totalSegments <= 72) return 16;
+  if (totalSegments <= 140) return 11;
+  if (totalSegments <= 260) return 9;
+  return 0;
+}
+
 function drawWheel(){
   const w = canvas.width, h = canvas.height;
   const cx = w/2, cy = h/2;
   const radius = Math.min(cx, cy) - 14;
+  const winnerIndex = getWinnerIndex();
 
   ctx.clearRect(0, 0, w, h);
 
@@ -242,54 +418,64 @@ function drawWheel(){
   ctx.rotate(wheelAngle);
 
   const n = Math.max(1, segments.length);
-  const slice = (Math.PI * 2) / n;
+  const slice = TWO_PI / n;
+  const labelStep = getLabelStep(n);
+  const labelFontSize = getLabelFontSize(n);
+  const baseStrokeWidth = n > 320 ? 0.45 : n > 180 ? 0.75 : n > 96 ? 1.1 : 2;
 
   for(let i=0;i<n;i++){
     const a0 = i * slice;
     const a1 = a0 + slice;
+    const isWinner = i === winnerIndex;
 
     ctx.beginPath();
     ctx.moveTo(0,0);
     ctx.arc(0,0,radius,a0,a1);
     ctx.closePath();
 
-    ctx.fillStyle = (i % 2 === 0)
-      ? "rgba(250,204,21,.18)"
-      : "rgba(255,255,255,.08)";
+    ctx.fillStyle = isWinner
+      ? "rgba(250,204,21,.92)"
+      : (i % 2 === 0)
+        ? "rgba(250,204,21,.18)"
+        : "rgba(255,255,255,.08)";
     ctx.fill();
 
-    ctx.strokeStyle = "rgba(255,255,255,.12)";
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = isWinner
+      ? "rgba(255,255,255,.94)"
+      : "rgba(255,255,255,.12)";
+    ctx.lineWidth = isWinner ? Math.max(1.8, baseStrokeWidth + 1.3) : baseStrokeWidth;
     ctx.stroke();
 
-    const numero = segments[i]?.numero ?? (i+1);
-    const label = `#${String(numero).padStart(2,"0")}`;
+    if (labelFontSize > 0 && (isWinner || i % labelStep === 0)) {
+      const numero = segments[i]?.numero ?? (i+1);
+      const label = `#${String(numero).padStart(2,"0")}`;
 
-    ctx.save();
-    ctx.rotate(a0 + slice/2);
-    ctx.translate(radius * 0.70, 0);
-    ctx.rotate(Math.PI/2);
+      ctx.save();
+      ctx.rotate(a0 + slice/2);
+      ctx.translate(radius * (n > 140 ? 0.84 : 0.72), 0);
+      ctx.rotate(Math.PI/2);
 
-    ctx.fillStyle = "rgba(255,255,255,.92)";
-    ctx.font = "900 22px system-ui";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(label, 0, 0);
+      ctx.fillStyle = isWinner ? "rgba(20,18,10,.96)" : "rgba(255,255,255,.92)";
+      ctx.font = `900 ${labelFontSize}px system-ui`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(label, 0, 0);
 
-    ctx.restore();
+      ctx.restore();
+    }
   }
 
   // ring
   ctx.rotate(-wheelAngle);
   ctx.beginPath();
-  ctx.arc(0,0,radius+6,0,Math.PI*2);
+  ctx.arc(0,0,radius+6,0,TWO_PI);
   ctx.strokeStyle = "rgba(250,204,21,.95)";
   ctx.lineWidth = 6;
   ctx.stroke();
 
   // center
   ctx.beginPath();
-  ctx.arc(0,0,46,0,Math.PI*2);
+  ctx.arc(0,0,46,0,TWO_PI);
   ctx.fillStyle = "rgba(0,0,0,.45)";
   ctx.fill();
   ctx.strokeStyle = "rgba(255,255,255,.10)";
@@ -360,37 +546,36 @@ function stopIdleSpin(){
 // Gira hasta el ganador (sin inventarlo)
 function spinToWinner(winnerNumero){
   if (spinning || !segments.length) return Promise.resolve(false);
-  const idx = segments.findIndex(s => Number(s.numero) === Number(winnerNumero));
-  if (idx < 0) return Promise.resolve(false);
-
-  const n = segments.length;
-  const slice = (Math.PI * 2) / n;
-
-  // puntero arriba (-90°)
-  const targetAngle = idx * slice + slice/2;
-  const up = -Math.PI/2;
-
-  const extraTurns = 6 + Math.floor(Math.random() * 3); // 6-8 vueltas
-  const final = up - targetAngle + extraTurns * Math.PI * 2;
+  const finalStopAngle = getWheelStopAngle(winnerNumero);
+  if (finalStopAngle == null) return Promise.resolve(false);
 
   const start = wheelAngle;
-  const delta = final - start;
+  let delta = finalStopAngle - normalizeAngle(start);
+  if (delta < 0) delta += TWO_PI;
 
-  const duration = 5200;
+  const extraTurns = 6 + Math.floor(Math.random() * 3);
+  delta += extraTurns * TWO_PI;
+
+  const final = start + delta;
+  const duration = segments.length >= 320
+    ? 6800
+    : segments.length >= 180
+      ? 6200
+      : 5200;
   const t0 = performance.now();
   spinning = true;
 
-  function easeOutCubic(t){ return 1 - Math.pow(1-t, 3); }
+  function easeOutQuint(t){ return 1 - Math.pow(1 - t, 5); }
 
   return new Promise((resolve) => {
     function frame(t){
       const p = Math.min(1, (t - t0) / duration);
-      wheelAngle = start + delta * easeOutCubic(p);
+      wheelAngle = start + delta * easeOutQuint(p);
       drawWheel();
       if(p < 1) requestAnimationFrame(frame);
       else{
         spinning = false;
-        wheelAngle = final % (Math.PI * 2);
+        wheelAngle = normalizeAngle(final);
         drawWheel();
         resolve(true);
       }
@@ -404,12 +589,7 @@ function spinToWinner(winnerNumero){
 // FETCH LIVE STATE
 // =========================
 async function fetchRuletaInfo(){
-  const res = await fetch(`${apiBase}/api/sorteos/${sorteoId}/live`, {
-    headers: authHeaders()
-  });
-
-  if(!res.ok) throw new Error("No se pudo cargar live");
-  const data = await res.json();
+  const data = await fetchRuletaPayloadWithFallback();
 
   if (data.server_time) {
     serverSkewMs = new Date(data.server_time).getTime() - Date.now();
@@ -417,24 +597,26 @@ async function fetchRuletaInfo(){
 
   estado = data.estado || "waiting";
 
-  if (estado === "legacy") {
-    estado = "waiting";
-  }
-
   if (estado === "countdown" && typeof data.countdown_seconds === "number") {
     const serverMs = data.server_time ? new Date(data.server_time).getTime() : Date.now();
     countdownEndsAtMs = serverMs + data.countdown_seconds * 1000;
+    zeroEdgeTriggered = data.countdown_seconds <= 0;
 
     if (countdownStartSeconds == null || data.countdown_seconds > countdownStartSeconds) {
       countdownStartSeconds = data.countdown_seconds;
     }
+  } else {
+    countdownEndsAtMs = null;
+    countdownStartSeconds = null;
+    lastCountdownSecond = null;
+    zeroEdgeTriggered = false;
   }
 
   if (estado === "finished") {
     const ganador = data.ganador ?? null;
     if (ganador && typeof ganador === "object") {
       numeroGanador = ganador.numero ?? ganador.numero_ganador ?? null;
-      ganadorNombre = ganador.nombre ?? null;
+      ganadorNombre = ganador.alias ?? ganador.nombre ?? null;
     } else if (ganador != null) {
       numeroGanador = ganador;
       ganadorNombre = null;
@@ -474,7 +656,7 @@ async function fetchRuletaInfo(){
   }
 
   if (estado === "spinning") startIdleSpin();
-  else stopIdleSpin();
+  else if (!(estado === "countdown" && zeroEdgeTriggered)) stopIdleSpin();
 
   if (estado !== "finished") {
     elResult.classList.add("hidden");
@@ -536,6 +718,7 @@ function tick(){
   const diff = countdownEndsAtMs - nowServerMs();
 
   if(diff > 0){
+    zeroEdgeTriggered = false;
     elCountdown.textContent = fmtMMSS(diff);
     const secondsLeft = Math.ceil(diff / 1000);
     elHint.textContent = `⏳ La ruleta comienza en ${secondsLeft} segundos`;
@@ -562,12 +745,66 @@ function tick(){
     }
 
   } else {
+    startIdleSpin();
+    if (!zeroEdgeTriggered) {
+      zeroEdgeTriggered = true;
+      scheduleNextPoll(ZERO_EDGE_POLL_INTERVAL_MS);
+    }
     elCountdown.textContent = "00:00";
     elHint.textContent = "🎯 La ruleta está girando…";
     elBar.style.width = "100%";
   }
 
   requestAnimationFrame(tick);
+}
+
+async function runPollCycle(){
+  if (pollInFlight) {
+    scheduleNextPoll(220);
+    return;
+  }
+
+  pollInFlight = true;
+
+  try{
+    const prevGanador = numeroGanador;
+
+    await fetchRuletaInfo();
+
+    if (estado !== "finished") {
+      await fetchNumerosRuleta({ force: true });
+    } else {
+      await ensureWinnerSegmentLoaded();
+    }
+
+    if (!didSpin && estado === "finished" && numeroGanador) {
+      if (!did321) { did321 = true; await show321(); }
+      didSpin = true;
+      stopIdleSpin();
+      const animated = await spinToWinner(numeroGanador);
+      if (!animated) {
+        setWheelToWinner(numeroGanador);
+      }
+      showResult(ganadorNombre);
+    }
+
+    if (prevGanador && numeroGanador && prevGanador !== numeroGanador && !spinning) {
+      didSpin = true;
+      stopIdleSpin();
+      await ensureWinnerSegmentLoaded();
+      const animated = await spinToWinner(numeroGanador);
+      if (!animated) {
+        setWheelToWinner(numeroGanador);
+      }
+      showResult(ganadorNombre);
+    }
+
+  } catch(_e){
+    // silencioso
+  } finally {
+    pollInFlight = false;
+    scheduleNextPoll();
+  }
 }
 
 // =========================
@@ -601,6 +838,7 @@ function tick(){
 
     if (estado === "finished" && numeroGanador) {
       await ensureWinnerSegmentLoaded();
+      setWheelToWinner(numeroGanador);
       showResult(ganadorNombre);
       didSpin = true;
     }
@@ -609,49 +847,7 @@ function tick(){
     tick();
 
     // 4) polling
-    setInterval(async () => {
-      if (pollInFlight) return;
-      pollInFlight = true;
-
-      try{
-        const prevGanador = numeroGanador;
-
-        await fetchRuletaInfo();
-
-        if (estado !== "finished") {
-          await fetchNumerosRuleta({ force: true });
-        } else {
-          await ensureWinnerSegmentLoaded();
-        }
-
-        if (!didSpin && estado === "finished" && numeroGanador) {
-          if (!did321) { did321 = true; await show321(); }
-          didSpin = true;
-          stopIdleSpin();
-          const animated = await spinToWinner(numeroGanador);
-          if (!animated) {
-            drawWheel();
-          }
-          showResult(ganadorNombre);
-        }
-
-        if (prevGanador && numeroGanador && prevGanador !== numeroGanador && !spinning) {
-          didSpin = true;
-          stopIdleSpin();
-          await ensureWinnerSegmentLoaded();
-          const animated = await spinToWinner(numeroGanador);
-          if (!animated) {
-            drawWheel();
-          }
-          showResult(ganadorNombre);
-        }
-
-      } catch(_e){
-        // silencioso
-      } finally {
-        pollInFlight = false;
-      }
-    }, 2500);
+    scheduleNextPoll();
 
   }catch(err){
     elSubtitle.textContent = "No se pudo conectar con la ronda en vivo.";
