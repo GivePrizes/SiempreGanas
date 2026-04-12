@@ -3237,6 +3237,72 @@ body {
   color: #f8fbff;
 }
 
+.pago-form-accordion input:not([type="checkbox"]):not([type="radio"]),
+.pago-form-accordion textarea,
+.pago-form-accordion select,
+.pagador-datos input,
+.comprobante-upload input[type="file"],
+.chat-sala input {
+  background: var(--app-field-bg);
+  color: var(--app-field-copy);
+  border-color: var(--app-field-border);
+  caret-color: var(--app-field-copy);
+}
+
+.pago-form-accordion input:not([type="checkbox"]):not([type="radio"])::placeholder,
+.pago-form-accordion textarea::placeholder,
+.pagador-datos input::placeholder,
+.chat-sala input::placeholder {
+  color: var(--app-field-placeholder);
+}
+
+.pago-form-accordion input:not([type="checkbox"]):not([type="radio"]):focus,
+.pago-form-accordion textarea:focus,
+.pago-form-accordion select:focus,
+.pagador-datos input:focus,
+.comprobante-upload input[type="file"]:focus,
+.chat-sala input:focus {
+  border-color: var(--app-field-focus);
+  box-shadow: var(--app-field-ring);
+}
+
+.pago-form-accordion input:not([type="checkbox"]):not([type="radio"]):disabled,
+.pago-form-accordion textarea:disabled,
+.pago-form-accordion select:disabled,
+.pagador-datos input:disabled,
+.comprobante-upload input[type="file"]:disabled,
+.chat-sala input:disabled {
+  background: var(--app-field-disabled-bg);
+  color: var(--app-field-copy);
+}
+
+.pago-form-accordion input:-webkit-autofill,
+.pago-form-accordion input:-webkit-autofill:hover,
+.pago-form-accordion input:-webkit-autofill:focus,
+.pagador-datos input:-webkit-autofill,
+.pagador-datos input:-webkit-autofill:hover,
+.pagador-datos input:-webkit-autofill:focus,
+.chat-sala input:-webkit-autofill,
+.chat-sala input:-webkit-autofill:hover,
+.chat-sala input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--app-field-autofill-copy);
+  box-shadow: inset 0 0 0 1000px var(--app-field-autofill-bg);
+  transition: background-color 9999s ease-out 0s;
+}
+
+.checkbox-line input {
+  accent-color: var(--colour-primary);
+}
+
+.comprobante-upload input[type="file"] {
+  color: var(--app-field-copy);
+}
+
+.comprobante-upload input[type="file"]::file-selector-button {
+  border: 1px solid var(--app-field-border);
+  color: var(--app-field-copy);
+}
+
 /* =========================================================
    Responsive Participant (100%)
    ========================================================= */

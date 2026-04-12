@@ -2,6 +2,7 @@
 
 :root,
 :root[data-app-theme="dark"] {
+  color-scheme: dark;
   --colour-background: #050b16;
   --colour-surface: #0e1729;
   --colour-surface-alt: #111f37;
@@ -48,9 +49,19 @@
   --app-chat-scrollbar: #334155;
   --app-chat-scrollbar-track: #020617;
   --app-admin-glow: #020617;
+  --app-field-bg: linear-gradient(180deg, rgba(25,42,73,.55), rgba(11,22,40,.62));
+  --app-field-copy: #eaf2ff;
+  --app-field-border: rgba(128,171,236,.28);
+  --app-field-placeholder: rgba(214,229,255,.52);
+  --app-field-focus: rgba(124,185,255,.68);
+  --app-field-ring: 0 0 0 4px rgba(59,130,246,.16), 0 0 28px rgba(59,130,246,.24);
+  --app-field-disabled-bg: rgba(11,22,40,.72);
+  --app-field-autofill-bg: #0f1a2c;
+  --app-field-autofill-copy: #eaf2ff;
 }
 
 :root[data-app-theme="light"] {
+  color-scheme: light;
   --colour-background: #f5f7fb;
   --colour-surface: #ffffff;
   --colour-surface-alt: #eef2f7;
@@ -97,6 +108,15 @@
   --app-chat-scrollbar: #94a3b8;
   --app-chat-scrollbar-track: #e2e8f0;
   --app-admin-glow: #dbeafe;
+  --app-field-bg: #ffffff;
+  --app-field-copy: #0f172a;
+  --app-field-border: rgba(71,85,105,.24);
+  --app-field-placeholder: rgba(100,116,139,.78);
+  --app-field-focus: rgba(37,99,235,.38);
+  --app-field-ring: 0 0 0 4px rgba(37,99,235,.12), 0 0 18px rgba(37,99,235,.10);
+  --app-field-disabled-bg: #e2e8f0;
+  --app-field-autofill-bg: #eff6ff;
+  --app-field-autofill-copy: #0f172a;
 }
 
 html,
@@ -211,10 +231,28 @@ body.admin-body {
   background: var(--app-chat-input-bg);
   color: var(--app-chat-bubble-copy);
   border-color: var(--app-chat-input-border);
+  caret-color: var(--app-chat-bubble-copy);
 }
 
 #chatInput::placeholder {
   color: var(--app-chat-input-placeholder);
+}
+
+#chatInput:focus {
+  border-color: var(--app-field-focus);
+  box-shadow: var(--app-field-ring);
+}
+
+#chatInput:disabled {
+  background: var(--app-field-disabled-bg);
+}
+
+#chatInput:-webkit-autofill,
+#chatInput:-webkit-autofill:hover,
+#chatInput:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--app-chat-bubble-copy);
+  box-shadow: inset 0 0 0 1000px var(--app-field-autofill-bg);
+  transition: background-color 9999s ease-out 0s;
 }
 
 #chatSend {
