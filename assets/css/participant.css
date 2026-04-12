@@ -87,6 +87,16 @@ video {
   width: 100%;
   padding-top: 48%;
   background-color: rgba(18,18,26,0.95);
+  overflow: hidden;
+}
+
+.sorteo-card .sorteo-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(7,10,18,0.24));
+  pointer-events: none;
+  z-index: 2;
 }
 
 .sorteo-card .sorteo-image img {
@@ -96,6 +106,36 @@ video {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity .28s ease, transform .42s ease;
+  z-index: 1;
+}
+
+.sorteo-card .sorteo-image.is-loaded img {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.sorteo-card .sorteo-image .sorteo-image-skeleton {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(110deg, rgba(255,255,255,0.04) 8%, rgba(255,255,255,0.15) 18%, rgba(255,255,255,0.04) 33%),
+    linear-gradient(135deg, rgba(246,208,111,0.14), rgba(59,130,246,0.14));
+  background-size: 220% 100%, 100% 100%;
+  animation: sorteoImageShimmer 1.35s linear infinite;
+  transition: opacity .24s ease;
+  z-index: 0;
+}
+
+.sorteo-card .sorteo-image.is-loaded .sorteo-image-skeleton {
+  opacity: 0;
+}
+
+.sorteo-card .sorteo-image.is-error .sorteo-image-skeleton {
+  animation: none;
+  opacity: .55;
 }
 
 .sorteo-card .sorteo-image .placeholder {
@@ -105,6 +145,15 @@ video {
   transform: translate(-50%, -50%);
   color: var(--colour-muted);
   font-size: var(--font-size-small);
+}
+
+@keyframes sorteoImageShimmer {
+  0% {
+    background-position: 200% 0, 0 0;
+  }
+  100% {
+    background-position: -20% 0, 0 0;
+  }
 }
 
 /* Card content */
@@ -212,11 +261,57 @@ video {
   text-align: center;
 }
 
-.sorteo-card .cta .btn-primary {
+.sorteo-card .cta .btn-primary,
+.sorteo-card .cta .btn-secondary {
   width: 100%;
+}
+
+.sorteo-enter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  padding: 0.8rem 0.95rem;
+  border-radius: 0.95rem;
+  text-align: left;
+  min-height: 68px;
+}
+
+.sorteo-enter-btn__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.sorteo-enter-btn__title {
+  font-size: 0.98rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+.sorteo-enter-btn__meta {
+  font-size: 0.75rem;
+  line-height: 1.3;
+  opacity: 0.82;
+}
+
+.sorteo-enter-btn__arrow {
+  flex-shrink: 0;
+  min-width: 2.2rem;
+  height: 2.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
   font-size: 1rem;
-  padding: 0.6rem 1rem;
-  border-radius: 0.5rem;
+  font-weight: 900;
+  background: rgba(255,255,255,0.14);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.sorteo-enter-btn--live .sorteo-enter-btn__meta {
+  opacity: 0.9;
 }
 
 
@@ -286,9 +381,22 @@ video {
     font-size: 0.83rem;
   }
 
-  .sorteo-card .cta .btn-primary {
-    font-size: 0.9rem;
-    padding: 0.55rem 0.85rem;
+  .sorteo-enter-btn {
+    min-height: 64px;
+    padding: 0.72rem 0.85rem;
+  }
+
+  .sorteo-enter-btn__title {
+    font-size: 0.92rem;
+  }
+
+  .sorteo-enter-btn__meta {
+    font-size: 0.71rem;
+  }
+
+  .sorteo-enter-btn__arrow {
+    min-width: 2rem;
+    height: 2rem;
   }
 }
 

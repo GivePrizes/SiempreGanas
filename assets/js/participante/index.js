@@ -10,12 +10,102 @@ const state = {
   sorteos: [],
 };
 
+function optimizarImagenUrl(url, { width = 720, quality = 72 } = {}) {
+  const raw = String(url || '').trim();
+  if (!raw) return '';
+
+  try {
+    const parsed = new URL(raw, window.location.origin);
+    const publicPath = '/storage/v1/object/public/';
+
+    if (!parsed.pathname.includes(publicPath)) {
+      return parsed.toString();
+    }
+
+    parsed.pathname = parsed.pathname.replace(
+      publicPath,
+      '/storage/v1/render/image/public/'
+    );
+    parsed.searchParams.set('width', String(width));
+    parsed.searchParams.set('quality', String(quality));
+    parsed.searchParams.set('resize', 'cover');
+
+    return parsed.toString();
+  } catch {
+    return raw;
+  }
+}
+
 function normalizarTipoProducto(value) {
   return value === 'combo' ? 'combo' : SORTEO_TIPO_DEFAULT;
 }
 
 function getTipoProductoLabel(value) {
   return normalizarTipoProducto(value) === 'combo' ? 'Combo' : 'Pantalla';
+}
+
+function renderSorteoImage(s, index) {
+  if (!s.imagen_url) {
+    return '<span class="placeholder">Imagen</span>';
+  }
+
+  const originalUrl = String(s.imagen_url).trim();
+  const prioridadAlta = index < 2;
+  const optimizedUrl = optimizarImagenUrl(originalUrl, {
+    width: prioridadAlta ? 960 : 720,
+    quality: prioridadAlta ? 78 : 70,
+  });
+
+  return `
+    <span class="sorteo-image-skeleton" aria-hidden="true"></span>
+    <img
+      src="${optimizedUrl}"
+      data-sorteo-img
+      data-fallback-src="${originalUrl}"
+      alt="${s.descripcion}"
+      class="sorteo-image-media"
+      loading="${prioridadAlta ? 'eager' : 'lazy'}"
+      decoding="async"
+      fetchpriority="${prioridadAlta ? 'high' : 'low'}"
+      width="1200"
+      height="576"
+    >
+  `;
+}
+
+function hydrateSorteoImages(root) {
+  root.querySelectorAll('[data-sorteo-img]').forEach((img) => {
+    const wrapper = img.closest('.sorteo-image');
+    if (!wrapper) return;
+
+    const markLoaded = () => wrapper.classList.add('is-loaded');
+
+    const handleError = () => {
+      const fallbackSrc = img.dataset.fallbackSrc;
+      const alreadyRetried = img.dataset.retryFallback === 'true';
+
+      if (!alreadyRetried && fallbackSrc && img.currentSrc !== fallbackSrc) {
+        img.dataset.retryFallback = 'true';
+        img.src = fallbackSrc;
+        return;
+      }
+
+      wrapper.classList.add('is-error', 'is-loaded');
+    };
+
+    if (img.complete && img.naturalWidth > 0) {
+      markLoaded();
+      return;
+    }
+
+    if (img.complete && img.naturalWidth === 0) {
+      handleError();
+      return;
+    }
+
+    img.addEventListener('load', markLoaded, { once: true });
+    img.addEventListener('error', handleError);
+  });
 }
 
 // ================================
@@ -36,16 +126,13 @@ function setBienvenida(user) {
 // ================================
 // 🎟️ TARJETAS DE SORTEO
 // ================================
-function renderSorteoCard(s) {
+function renderSorteoCard(s, index = 0) {
   const vendidos = s.ocupados ?? s.numeros_vendidos ?? 0;
   const total = s.cantidad_numeros ?? s.total_numeros ?? 0;
   const porcentaje = total ? Math.round((vendidos / total) * 100) : 0;
   const tipoProducto = normalizarTipoProducto(s.tipo_producto);
   const tipoLabel = getTipoProductoLabel(tipoProducto);
-
-  const imagen = s.imagen_url
-    ? `<img src="${s.imagen_url}" alt="${s.descripcion}">`
-    : `<span class="placeholder">Imagen</span>`;
+  const imagen = renderSorteoImage(s, index);
 
   const precio = Number(s.precio_numero ?? s.precio ?? 0).toLocaleString('es-CO');
 
@@ -84,8 +171,24 @@ function renderSorteoCard(s) {
         <div class="cta">
           ${
             porcentaje >= 100
-              ? `<a class="btn btn-secondary" href="ruleta-live.html?id=${s.id}">🎰 Ver sorteo en vivo</a>`
-              : `<a class="btn btn-primary" href="sorteo.html?id=${s.id}">Participar ahora</a>`
+              ? `
+                <a class="btn btn-secondary sorteo-enter-btn sorteo-enter-btn--live" href="ruleta-live.html?id=${s.id}">
+                  <span class="sorteo-enter-btn__copy">
+                    <span class="sorteo-enter-btn__title">Entrar al vivo</span>
+                    <span class="sorteo-enter-btn__meta">Mira la ruleta y sigue el resultado en tiempo real</span>
+                  </span>
+                  <span class="sorteo-enter-btn__arrow" aria-hidden="true">>></span>
+                </a>
+              `
+              : `
+                <a class="btn btn-primary sorteo-enter-btn" href="sorteo.html?id=${s.id}">
+                  <span class="sorteo-enter-btn__copy">
+                    <span class="sorteo-enter-btn__title">Entrar al sorteo</span>
+                    <span class="sorteo-enter-btn__meta">Elige tus numeros y confirma tu pago sin salirte del flujo</span>
+                  </span>
+                  <span class="sorteo-enter-btn__arrow" aria-hidden="true">-></span>
+                </a>
+              `
           }
         </div>
       </div>
@@ -112,7 +215,8 @@ function renderSorteos(lista, tipoActivo = 'todos') {
     return;
   }
 
-  cont.innerHTML = filtrados.map(renderSorteoCard).join('');
+  cont.innerHTML = filtrados.map((s, index) => renderSorteoCard(s, index)).join('');
+  hydrateSorteoImages(cont);
 }
 
 function updateTipoSorteoUI() {
