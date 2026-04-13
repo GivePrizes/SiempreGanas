@@ -6,6 +6,8 @@ const REFRESH_MS = 15000;
 
 const elAcordeon = document.getElementById('acordeonSorteos');
 const elEmpty = document.getElementById('emptyState');
+const elEmptyTitle = document.getElementById('emptyTitle');
+const elEmptySub = document.getElementById('emptySub');
 const elQ = document.getElementById('q');
 const elTipoProductoFiltro = document.getElementById('tipoProductoFiltro');
 const btnRefrescar = document.getElementById('btnRefrescar');
@@ -58,6 +60,15 @@ function showEmpty(show) {
   elEmpty.classList.toggle('hidden', !show);
 }
 
+function setEmptyMessage(title, subtitle) {
+  if (elEmptyTitle) {
+    elEmptyTitle.textContent = title || 'No hay cuentas pendientes para mostrar';
+  }
+  if (elEmptySub) {
+    elEmptySub.textContent = subtitle || 'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.';
+  }
+}
+
 function getToken() {
   return localStorage.getItem('token') || '';
 }
@@ -99,6 +110,10 @@ async function cargarCuentas({ silent = false } = {}) {
 
     // Empty si no hay nada (o si filtros dejan todo vacío)
     const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
+    setEmptyMessage(
+      'No hay cuentas pendientes para mostrar',
+      'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.'
+    );
     showEmpty(!hasVisible);
 
     // mantener scroll (suave)
@@ -109,6 +124,10 @@ async function cargarCuentas({ silent = false } = {}) {
     toast(e.message || 'Error cargando cuentas');
     state.cache = [];
     renderAcordeon([], state);
+    setEmptyMessage(
+      'No se pudieron cargar las cuentas',
+      e.message || 'Revisa la conexion o refresca el panel.'
+    );
     showEmpty(true);
   } finally {
     if (!silent && btnRefrescar) {
@@ -152,6 +171,10 @@ function setupFilters() {
     state.q = elQ.value || '';
     renderAcordeon(state.cache, state);
     const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
+    setEmptyMessage(
+      'No hay cuentas pendientes para mostrar',
+      'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.'
+    );
     showEmpty(!hasVisible);
   });
 
@@ -159,6 +182,10 @@ function setupFilters() {
     state.tipoProducto = elTipoProductoFiltro.value || 'todos';
     renderAcordeon(state.cache, state);
     const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
+    setEmptyMessage(
+      'No hay cuentas pendientes para mostrar',
+      'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.'
+    );
     showEmpty(!hasVisible);
   });
 
@@ -172,6 +199,10 @@ function setupFilters() {
 
       renderAcordeon(state.cache, state);
       const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
+      setEmptyMessage(
+        'No hay cuentas pendientes para mostrar',
+        'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.'
+      );
       showEmpty(!hasVisible);
     });
   });
@@ -209,6 +240,10 @@ function setupAcordeonToggle() {
 
     // Mantener empty correcto
     const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
+    setEmptyMessage(
+      'No hay cuentas pendientes para mostrar',
+      'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.'
+    );
     showEmpty(!hasVisible);
   });
 }

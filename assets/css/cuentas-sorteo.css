@@ -18,6 +18,70 @@
   --radius-sm: 12px;
 }
 
+:root[data-app-theme="light"]{
+  --bg-card: rgba(255, 255, 255, .96);
+  --bg-card-2: rgba(248, 250, 252, .98);
+  --border: rgba(71, 85, 105, .18);
+  --border-2: rgba(37, 99, 235, .24);
+  --text: #0f172a;
+  --muted: #334155;
+  --muted-2: #64748b;
+  --shadow: 0 18px 34px rgba(15, 23, 42, .10);
+  --glow-soft: 0 0 0 1px rgba(37, 99, 235, .08), 0 12px 24px rgba(37, 99, 235, .10);
+}
+
+.admin-header-left h1,
+.card-title-row h2,
+.ac-name,
+.user-name,
+.numbers,
+.empty-title,
+.section-name{
+  color: var(--text);
+}
+
+.admin-header-left .admin-subtitle,
+.admin-status-pill,
+.card-title-row .text-muted,
+.card-title-right,
+.mini-hint,
+.cuentas-toolbar .label,
+.mini-note,
+.mini-note--soft,
+.empty-sub,
+.section-count,
+.mini-empty,
+.ac-sub,
+.ac-sub .muted,
+.user-meta,
+.user-meta .muted,
+.muted,
+.tiny{
+  color: var(--muted);
+}
+
+.admin-status-pill{
+  border-color: var(--border-2);
+  background: rgba(11, 22, 40, .72);
+}
+
+:root[data-app-theme="light"] .admin-status-pill{
+  background: rgba(248, 250, 252, .96);
+}
+
+.mini-note{
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(90, 144, 223, .10), rgba(24, 49, 98, .10));
+  box-shadow: inset 0 1px 0 rgba(184, 214, 255, .08);
+}
+
+.mini-note--soft{
+  margin-top: 0;
+}
+
 /* contenedor acordeón */
 #acordeonSorteos.acordeon{
   display: grid;
@@ -343,15 +407,35 @@ button.btn-mini:disabled{
   width: 100%;
   padding: 10px 12px;
   border-radius: 14px;
-  border: 1px solid rgba(145, 192, 255, .26);
-  background: linear-gradient(180deg, rgba(90, 144, 223, .12), rgba(24, 49, 98, .18));
-  color: var(--text);
+  border: 1px solid var(--app-field-border, rgba(145, 192, 255, .26));
+  background: var(--app-field-bg, linear-gradient(180deg, rgba(90, 144, 223, .12), rgba(24, 49, 98, .18)));
+  color: var(--app-field-copy, var(--text));
   outline: none;
+  caret-color: var(--app-field-copy, var(--text));
+}
+
+.cuentas-toolbar .input::placeholder{
+  color: var(--app-field-placeholder, var(--muted-2));
+  opacity: 1;
+}
+
+.cuentas-toolbar select.input,
+.cuentas-toolbar select.input option{
+  color: var(--app-field-copy, var(--text));
+}
+
+.cuentas-toolbar select.input option{
+  background: #0f172a;
+}
+
+:root[data-app-theme="light"] .cuentas-toolbar select.input option{
+  background: #ffffff;
+  color: #0f172a;
 }
 
 .cuentas-toolbar .input:focus{
-  border-color: rgba(126, 189, 255, .72);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, .20), 0 0 28px rgba(59, 130, 246, .24);
+  border-color: var(--app-field-focus, rgba(126, 189, 255, .72));
+  box-shadow: var(--app-field-ring, 0 0 0 2px rgba(59, 130, 246, .20), 0 0 28px rgba(59, 130, 246, .24));
 }
 
 .cuentas-toolbar .toolbar-right{
@@ -364,7 +448,7 @@ button.btn-mini:disabled{
 .chip{
   border: 1px solid rgba(144, 191, 255, .30);
   background: linear-gradient(180deg, rgba(85, 137, 212, .18), rgba(31, 63, 119, .16));
-  color: var(--muted);
+  color: var(--text);
   padding: 8px 12px;
   border-radius: 999px;
   font-size: 12px;
@@ -413,7 +497,7 @@ button.btn-mini:disabled{
   padding: 18px;
   border-radius: var(--radius);
   border: 1px dashed var(--border);
-  background: rgba(255,255,255,.02);
+  background: linear-gradient(180deg, rgba(90, 144, 223, .08), rgba(24, 49, 98, .10));
   color: var(--muted);
 }
 
@@ -421,6 +505,10 @@ button.btn-mini:disabled{
   font-weight: 800;
   color: var(--text);
   margin-bottom: 6px;
+}
+
+.empty-sub{
+  color: var(--muted);
 }
 
 .empty.hidden{ display:none; }

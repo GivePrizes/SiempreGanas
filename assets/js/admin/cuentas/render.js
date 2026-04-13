@@ -163,7 +163,11 @@ export function renderAcordeon(sorteos, uiState) {
   };
 
   for (const s of sorteos) {
-    const tipoProducto = s.tipoProducto === 'combo' ? 'combo' : 'pantalla';
+    const tipoProducto = s.tipoProducto === 'bonus'
+      ? 'bonus'
+      : s.tipoProducto === 'combo'
+        ? 'combo'
+        : 'pantalla';
     const tipoMeta = getTipoProductoData(tipoProducto);
 
     if (tipoProductoFilter !== 'todos' && tipoProducto !== tipoProductoFilter) {
