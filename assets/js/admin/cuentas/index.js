@@ -149,12 +149,16 @@ async function marcarEntregada(entregaId, btn) {
   }
 
   try {
-    await fetchJSON(
+    const response = await fetchJSON(
       `${API_URL}/api/admin/cuentas/entregas/${entregaId}/entregar`,
       { method: 'PATCH', headers: { Authorization: `Bearer ${token}` } }
     );
 
     toast('Marcado como entregada ✅');
+    const bonusReiniciado = response?.data?.bonusReiniciado === true;
+    if (bonusReiniciado) {
+      toast('Bonus entregado y contador reiniciado');
+    }
     await cargarCuentas({ silent: true });
 
   } finally {
