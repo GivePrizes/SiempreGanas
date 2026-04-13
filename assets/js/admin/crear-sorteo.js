@@ -9,16 +9,27 @@ let imagenActualUrl = null;
 
 function getTipoProductoValue() {
   const input = document.getElementById('tipo_producto');
-  return input?.value === 'combo' ? 'combo' : 'pantalla';
+  const value = String(input?.value || '').trim().toLowerCase();
+  return ['pantalla', 'combo', 'juegos'].includes(value) ? value : 'pantalla';
 }
 
 function renderTipoProductoHelp() {
   const help = document.getElementById('tipoProductoHelp');
   if (!help) return;
 
-  help.textContent = getTipoProductoValue() === 'combo'
-    ? 'Combo: úsalo para paquetes con varias pantallas, beneficios o accesos en una misma ronda.'
-    : 'Pantalla: úsalo para una cuenta individual o acceso principal de una sola plataforma.';
+  const tipoProducto = getTipoProductoValue();
+
+  if (tipoProducto === 'combo') {
+    help.textContent = 'Combo: usalo para paquetes con varias pantallas, beneficios o accesos en una misma ronda.';
+    return;
+  }
+
+  if (tipoProducto === 'juegos') {
+    help.textContent = 'Juegos: usalo para cuentas gamer, monedas, membresias, keys o beneficios relacionados con gaming.';
+    return;
+  }
+
+  help.textContent = 'Pantalla: usalo para una cuenta individual o acceso principal de una sola plataforma.';
 }
 
 function mostrarToast(mensaje) {

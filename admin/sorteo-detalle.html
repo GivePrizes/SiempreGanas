@@ -8,7 +8,7 @@
 
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css">
-  <link rel="stylesheet" href="../assets/css/admin.css">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=20260413a">
   <link rel="stylesheet" href="../assets/js/chat/chat.css">
   <link rel="stylesheet" href="../assets/js/chat/chat-admin.css?v=20260329c">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
@@ -71,7 +71,11 @@
         const data = await res.json();
 
         if (res.ok) {
-          const tipo = data.tipo_producto === 'combo' ? 'Combo' : 'Pantalla';
+          const tipo = data.tipo_producto === 'combo'
+            ? 'Combo'
+            : data.tipo_producto === 'juegos'
+              ? 'Juegos'
+              : 'Pantalla';
           document.getElementById('tituloSorteo').textContent = data.descripcion;
           document.getElementById('subtituloSorteo').textContent = `Tipo: ${tipo} · Ganador: ${data.premio} · Ocupación: ${data.ocupados}/${data.cantidad_numeros}`;
           document.getElementById('estadoSorteo').textContent = `Estado: ${data.estado}`;

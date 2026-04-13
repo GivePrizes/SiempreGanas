@@ -4,9 +4,10 @@
 const STORAGE_KEY = 'admin_sorteos_order_v1';
 
 function getTipoBadge(sorteo) {
-  const tipo = sorteo.tipo_producto === 'combo' ? 'combo' : 'pantalla';
-  const label = tipo === 'combo' ? 'Combo' : 'Pantalla';
-  const klass = tipo === 'combo' ? 'badge-warning' : 'badge-success';
+  const raw = String(sorteo.tipo_producto || '').trim().toLowerCase();
+  const tipo = raw === 'combo' || raw === 'juegos' ? raw : 'pantalla';
+  const label = tipo === 'combo' ? 'Combo' : tipo === 'juegos' ? 'Juegos' : 'Pantalla';
+  const klass = tipo === 'combo' ? 'badge-warning' : tipo === 'juegos' ? 'badge-game' : 'badge-success';
   return `<span class="badge ${klass}">${label}</span>`;
 }
 

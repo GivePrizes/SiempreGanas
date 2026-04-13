@@ -40,6 +40,10 @@ function getTipoProductoData(tipoProducto) {
     return { label: 'Bonus', className: 'badge type-bonus' };
   }
 
+  if (tipoProducto === 'juegos') {
+    return { label: 'Juegos', className: 'badge type-game' };
+  }
+
   return tipoProducto === 'combo'
     ? { label: 'Combo', className: 'badge type-combo' }
     : { label: 'Pantalla', className: 'badge type-screen' };
@@ -165,6 +169,8 @@ export function renderAcordeon(sorteos, uiState) {
   for (const s of sorteos) {
     const tipoProducto = s.tipoProducto === 'bonus'
       ? 'bonus'
+      : s.tipoProducto === 'juegos'
+        ? 'juegos'
       : s.tipoProducto === 'combo'
         ? 'combo'
         : 'pantalla';

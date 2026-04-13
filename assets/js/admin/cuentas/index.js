@@ -1,5 +1,5 @@
 // frontend/assets/js/admin/cuentas/index.js
-import { renderAcordeon } from './render.js';
+import { renderAcordeon } from './render.js?v=20260413a';
 
 const API_URL = window.API_URL || '';
 const REFRESH_MS = 15000;
@@ -14,7 +14,7 @@ const btnRefrescar = document.getElementById('btnRefrescar');
 
 const state = {
   filter: 'todos',       // todos | pendiente | entregada
-  tipoProducto: 'todos', // todos | pantalla | combo | bonus
+  tipoProducto: 'todos', // todos | pantalla | combo | juegos | bonus
   q: '',
   open: new Set(),       // sorteos abiertos
   cache: [],             // raw del backend

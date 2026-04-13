@@ -3,7 +3,7 @@ import { cargarProgresoBono } from '../bonus.js';
 
 const API_URL = window.API_URL || '';
 const SORTEO_TIPO_DEFAULT = 'pantalla';
-const VALID_TIPOS = new Set(['todos', 'pantalla', 'combo']);
+const VALID_TIPOS = new Set(['todos', 'pantalla', 'combo', 'juegos']);
 const VALID_ESTADOS = new Set(['todos', 'comprables', 'casi_lleno', 'vivo']);
 const VALID_ORDENES = new Set(['destacados', 'avance', 'precio_bajo', 'ultimos_cupos']);
 
@@ -127,11 +127,14 @@ function optimizarImagenUrl(url, { width = 720, quality = 72 } = {}) {
 }
 
 function normalizarTipoProducto(value) {
-  return value === 'combo' ? 'combo' : SORTEO_TIPO_DEFAULT;
+  return value === 'combo' || value === 'juegos' ? value : SORTEO_TIPO_DEFAULT;
 }
 
 function getTipoProductoLabel(value) {
-  return normalizarTipoProducto(value) === 'combo' ? 'Combo' : 'Pantalla';
+  const tipoProducto = normalizarTipoProducto(value);
+  if (tipoProducto === 'combo') return 'Combo';
+  if (tipoProducto === 'juegos') return 'Juegos';
+  return 'Pantalla';
 }
 
 function formatCurrency(value) {

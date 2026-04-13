@@ -485,6 +485,12 @@ button.btn-mini:disabled{
   color: #fff7db;
 }
 
+.badge.type-game{
+  border-color: rgba(45, 212, 191, .42);
+  background: linear-gradient(180deg, rgba(45, 212, 191, .22), rgba(13, 148, 136, .18));
+  color: #ecfeff;
+}
+
 .badge.type-bonus{
   border-color: rgba(244, 114, 182, .42);
   background: linear-gradient(180deg, rgba(244, 114, 182, .24), rgba(190, 24, 93, .18));

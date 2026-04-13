@@ -1,7 +1,7 @@
 // assets/js/admin/index.js
 import { cargarComprobantes } from './comprobantes.js';
 import { cargarStats } from './stats.js';
-import { cargarSorteosAdmin } from './sorteos-admin.js?v=20260401a';
+import { cargarSorteosAdmin } from './sorteos-admin.js?v=20260413a';
 
 // Al cargar el panel admin, verificamos que haya token y que sea admin
 document.addEventListener('DOMContentLoaded', async () => {

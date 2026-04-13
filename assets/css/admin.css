@@ -367,6 +367,11 @@
   color: #eaf2ff;
 }
 
+.badge-game {
+  background-color: #0f766e;
+  color: #ecfeff;
+}
+
 .badge-danger {
   background-color: #d32f2f; /* rojo */
   color: #fff;
@@ -604,6 +609,11 @@
   color: #eff6ff;
 }
 
+.badge-game {
+  background: linear-gradient(180deg, rgba(45,212,191,.84), rgba(13,148,136,.84));
+  color: #ecfeff;
+}
+
 .badge-danger {
   background: linear-gradient(180deg, rgba(251,113,133,.85), rgba(190,24,93,.86));
 }
@@ -751,6 +761,11 @@
 .badge-warning {
   background: #fef9c3;
   color: #854d0e;
+}
+
+.badge-game {
+  background: #ccfbf1;
+  color: #115e59;
 }
 
 .badge-danger {
