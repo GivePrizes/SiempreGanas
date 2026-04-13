@@ -27,7 +27,7 @@ const liveEntryReason = sessionStorage.getItem("ruletaLiveEntryReason") || "";
 if (liveEntryReason) {
   sessionStorage.removeItem("ruletaLiveEntryReason");
 }
-const btnGoToChat = document.getElementById("btnGoToChat");
+const btnBuyAnother = document.getElementById("btnBuyAnother");
 function scrollToChat({ behavior = "smooth" } = {}) {
   document.getElementById("chatContainer")?.scrollIntoView({
     behavior,
@@ -35,9 +35,13 @@ function scrollToChat({ behavior = "smooth" } = {}) {
   });
 }
 
-if (btnGoToChat) {
-  btnGoToChat.addEventListener("click", () => {
-    scrollToChat({ behavior: "smooth" });
+if (btnBuyAnother) {
+  btnBuyAnother.addEventListener("click", () => {
+    if (!sorteoId) return;
+    const nextUrl = new URL("sorteo.html", location.href);
+    nextUrl.searchParams.set("id", sorteoId);
+    nextUrl.searchParams.set("comprar", "1");
+    location.href = nextUrl.toString();
   });
 }
 
@@ -62,7 +66,7 @@ if (focusTarget === "chat") {
     window.setTimeout(() => {
       scrollToChat({ behavior: "smooth" });
       if (chatHintEl && liveEntryReason === "approved_participant_redirect") {
-        chatHintEl.textContent = "Ya tienes un numero aprobado. Esta es tu sala en vivo y aqui puedes usar el chat.";
+        chatHintEl.textContent = "Ya tienes un numero aprobado. Esta es tu sala en vivo. Si quieres otro cupo, usa Comprar otro.";
       }
     }, 220);
   }, { once: true });

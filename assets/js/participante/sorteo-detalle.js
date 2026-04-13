@@ -6,6 +6,9 @@ const API_URL = window.API_URL || ''; // viene de config.js
 // obtener sorteoId de la URL
 const params = new URLSearchParams(window.location.search);
 const sorteoId = params.get('id');
+const comprarOtroNumero = ['1', 'true', 'si'].includes(
+  String(params.get('comprar') || '').toLowerCase()
+);
 
 const MAX_NUMEROS_POR_COMPRA = 1;
 
@@ -540,6 +543,10 @@ async function cargarMisNumerosDelSorteo() {
     misNumerosEnSorteoChips.innerHTML = nums.map(n => `
       <span class="chip-numero">#${n}</span>
     `).join('');
+
+    if (comprarOtroNumero) {
+      return;
+    }
 
     goToLiveRoom({
       focusChat: true,
