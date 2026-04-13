@@ -40,6 +40,17 @@ function mostrarToast(mensaje) {
   setTimeout(() => toast.classList.add('hidden'), 3000);
 }
 
+async function readResponseData(resp) {
+  const text = await resp.text();
+  if (!text) return null;
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { error: text };
+  }
+}
+
 function normalizarNumeroDecimal(value) {
   const raw = String(value ?? '').trim();
   if (!raw) return null;
@@ -196,6 +207,7 @@ async function enviarFormulario(e) {
   const fecha_sorteo = document.getElementById('fecha_sorteo').value;
   const tipo_producto = getTipoProductoValue();
   const imagenInput = document.getElementById('imagen');
+  const submitBtn = document.querySelector('#formCrearSorteo button[type="submit"]');
   const cantidadNumeros = parseCantidadNumeros(cantidad_numeros);
   const precioNumero = parsePrecioNumero(precio_numero);
 
@@ -220,21 +232,27 @@ async function enviarFormulario(e) {
     return;
   }
 
-  // 🔹 MODO CREAR (sin id en la URL)
-  if (!modoEdicion) {
-    const formData = new FormData();
-    formData.append('descripcion', descripcion);
-    formData.append('premio', premio);
-    formData.append('cantidad_numeros', String(cantidadNumeros));
-    formData.append('precio_numero', precioNumero.toFixed(2));
-    formData.append('fecha_sorteo', fecha_sorteo);
-    formData.append('tipo_producto', tipo_producto);
+  const oldBtnText = submitBtn?.textContent || 'Guardar sorteo';
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = modoEdicion ? 'Guardando cambios...' : 'Guardando...';
+  }
 
-    if (imagenInput.files[0]) {
-      formData.append('imagen', imagenInput.files[0]);
-    }
+  try {
+    // 🔹 MODO CREAR (sin id en la URL)
+    if (!modoEdicion) {
+      const formData = new FormData();
+      formData.append('descripcion', descripcion);
+      formData.append('premio', premio);
+      formData.append('cantidad_numeros', String(cantidadNumeros));
+      formData.append('precio_numero', precioNumero.toFixed(2));
+      formData.append('fecha_sorteo', fecha_sorteo);
+      formData.append('tipo_producto', tipo_producto);
 
-    try {
+      if (imagenInput.files[0]) {
+        formData.append('imagen', imagenInput.files[0]);
+      }
+
       const resp = await fetch(`${API_URL}/api/sorteos/crear`, {
         method: 'POST',
         headers: {
@@ -244,7 +262,7 @@ async function enviarFormulario(e) {
         body: formData,
       });
 
-      const data = await resp.json();
+      const data = await readResponseData(resp);
 
       if (!resp.ok || data.error) {
         console.error('Error creando sorteo:', data.error || data);
@@ -256,41 +274,49 @@ async function enviarFormulario(e) {
       setTimeout(() => {
         window.location.href = 'panel.html';
       }, 1200);
-    } catch (err) {
-      console.error(err);
-      mostrarToast('Error de conexión al crear el sorteo.');
+      return;
     }
 
-    return;
-  }
+    // 🔹 MODO EDICIÓN (hay id en la URL → PUT /api/sorteos/:id)
+    const payload = {
+      descripcion,
+      premio,
+      cantidad_numeros: String(cantidadNumeros),
+      precio_numero: precioNumero.toFixed(2),
+      fecha_sorteo,
+      tipo_producto,
+      estado: estadoActual,
+    };
 
-  // 🔹 MODO EDICIÓN (hay id en la URL → PUT /api/sorteos/:id)
-  try {
-    const formData = new FormData();
-    formData.append('descripcion', descripcion);
-    formData.append('premio', premio);
-    formData.append('cantidad_numeros', String(cantidadNumeros));
-    formData.append('precio_numero', precioNumero.toFixed(2));
-    formData.append('fecha_sorteo', fecha_sorteo);
-    formData.append('tipo_producto', tipo_producto);
-    formData.append('estado', estadoActual);
+    const hasNewImage = Boolean(imagenInput.files[0]);
+    let resp;
 
-    // Si el admin seleccionó una NUEVA imagen, la enviamos
-    if (imagenInput.files[0]) {
+    if (hasNewImage) {
+      const formData = new FormData();
+      Object.entries(payload).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
       formData.append('imagen', imagenInput.files[0]);
+
+      resp = await fetch(`${API_URL}/api/sorteos/${sorteoId}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+    } else {
+      resp = await fetch(`${API_URL}/api/sorteos/${sorteoId}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
     }
-    // Si no hay archivo nuevo, el backend mantendrá la imagen_url actual
 
-    const resp = await fetch(`${API_URL}/api/sorteos/${sorteoId}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        // 🚫 No pongas 'Content-Type' aquí, el navegador lo arma para multipart/form-data
-      },
-      body: formData,
-    });
-
-    const data = await resp.json();
+    const data = await readResponseData(resp);
 
     if (!resp.ok || data.error) {
       console.error('Error actualizando sorteo:', data.error || data);
@@ -304,9 +330,17 @@ async function enviarFormulario(e) {
     }, 1200);
   } catch (err) {
     console.error(err);
-    mostrarToast('Error de conexión al actualizar el sorteo.');
+    mostrarToast(
+      modoEdicion
+        ? 'Error de conexión al actualizar el sorteo.'
+        : 'Error de conexión al crear el sorteo.'
+    );
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = oldBtnText;
+    }
   }
-
 }
 
 document.addEventListener('DOMContentLoaded', () => {
