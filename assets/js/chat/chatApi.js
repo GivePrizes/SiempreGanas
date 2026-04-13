@@ -82,10 +82,10 @@ export async function fetchMessages({ sorteoId, token, limit = 50, cursor = null
    - Usa JWT en Authorization header
    - Devuelve { ok, status, data } para manejo en UI
 ================================ */
-export async function postMessage({ sorteoId, token, mensaje }) {
+export async function postMessage({ sorteoId, token, mensaje, isAdmin = false }) {
   try {
     const authToken = resolveToken(token);
-    const res = await fetch(getChatEndpoint(sorteoId), {
+    const res = await fetch(getChatEndpoint(sorteoId, { isAdmin }), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -108,13 +108,13 @@ export async function postMessage({ sorteoId, token, mensaje }) {
    Los admins envían por la misma ruta de usuario usando su JWT.
    Si se pasa is_system se ignora y se envía por la ruta normal.
 ================================ */
-export async function sendMessage({ sorteoId, token, mensaje, is_system = false }) {
+export async function sendMessage({ sorteoId, token, mensaje, is_system = false, isAdmin = false }) {
   if (is_system) {
-    console.warn('sendMessage: is_system flag ignored. Sending through regular chat endpoint with JWT.');
+    console.warn('sendMessage: is_system flag ignored. Admin/system behavior depends on the JWT role.');
   }
 
   // Reutiliza postMessage para asegurar contrato { mensaje } y headers
-  return await postMessage({ sorteoId, token, mensaje });
+  return await postMessage({ sorteoId, token, mensaje, isAdmin });
 } 
 
 /* ===============================

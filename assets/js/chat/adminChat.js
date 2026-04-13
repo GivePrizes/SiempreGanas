@@ -7,7 +7,7 @@ import {
   getUserState,
   fetchMessages,
   normalizeChatMessage
-} from './chatApi.js?v=20260329b';
+} from './chatApi.js?v=20260412a';
 import { createChatStore } from './store.js?v=20260329c';
 import { renderMessages, isBottom, toBottom } from './ui.js?v=20260329c';
 import { subscribeToSorteoInserts } from './realtime.js?v=20260329c';
@@ -99,7 +99,7 @@ export async function initAdminChat({ sorteoId, token }) {
 
   /* ===============================
      Enviar mensaje (ADMIN)
-     IMPORTANTE: los admins envían por la misma ruta de usuario usando su JWT.
+     IMPORTANTE: los admins usan su ruta dedicada para evitar reglas de participante.
   =============================== */
   async function send() {
     const text = inputEl.value.trim();
@@ -109,7 +109,12 @@ export async function initAdminChat({ sorteoId, token }) {
     sendEl.disabled = true;
     hintEl.textContent = '';
 
-    const { ok, status, data } = await postMessage({ sorteoId, token, mensaje: text });
+    const { ok, status, data } = await postMessage({
+      sorteoId,
+      token,
+      mensaje: text,
+      isAdmin: true
+    });
 
     if (!ok) {
       if (status === 403 && data?.code === 'participation_required') {
@@ -126,7 +131,7 @@ export async function initAdminChat({ sorteoId, token }) {
         hintEl.style.color = '#f87171';
       } else {
         console.error('postMessage failed', status, data);
-        hintEl.textContent = data?.error || 'Error enviando mensaje';
+        hintEl.textContent = data?.error || data?.message || 'Error enviando mensaje';
         hintEl.style.color = '#f87171';
       }
     }
