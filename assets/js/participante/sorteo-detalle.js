@@ -76,19 +76,44 @@ let precioNumero = 0;
 const NEQUI_PAYMENT_LINKS = window.NEQUI_PAYMENT_LINKS || {};
 let pagoMetodoActual = '';
 let linkSeguroActual = null;
+let redirectingToLiveRoom = false;
 
 if (maxNumerosTexto) maxNumerosTexto.textContent = MAX_NUMEROS_POR_COMPRA.toString();
-function goToLiveRoom() {
-  if (!sorteoId) return;
-  location.href = `ruleta-live.html?id=${encodeURIComponent(sorteoId)}`;
+
+function buildLiveRoomUrl({ focusChat = false } = {}) {
+  const nextUrl = new URL('ruleta-live.html', window.location.href);
+  nextUrl.searchParams.set('id', sorteoId);
+  if (focusChat) nextUrl.searchParams.set('focus', 'chat');
+  return nextUrl.toString();
+}
+
+function goToLiveRoom({ focusChat = false, replace = false, reason = '' } = {}) {
+  if (!sorteoId || redirectingToLiveRoom) return;
+
+  redirectingToLiveRoom = true;
+  if (reason) {
+    sessionStorage.setItem('ruletaLiveEntryReason', reason);
+  }
+
+  const nextUrl = buildLiveRoomUrl({ focusChat });
+  if (replace) {
+    location.replace(nextUrl);
+    return;
+  }
+
+  location.href = nextUrl;
 }
 
 if (btnChatOnline && sorteoId) {
-  btnChatOnline.addEventListener('click', goToLiveRoom);
+  btnChatOnline.addEventListener('click', () => {
+    goToLiveRoom({ focusChat: true, reason: 'manual_chat_entry' });
+  });
 }
 
 if (btnPostLive && sorteoId) {
-  btnPostLive.addEventListener('click', goToLiveRoom);
+  btnPostLive.addEventListener('click', () => {
+    goToLiveRoom({ focusChat: true, reason: 'post_confirm_chat_entry' });
+  });
 }
 
 // --- helpers ---
@@ -515,6 +540,12 @@ async function cargarMisNumerosDelSorteo() {
     misNumerosEnSorteoChips.innerHTML = nums.map(n => `
       <span class="chip-numero">#${n}</span>
     `).join('');
+
+    goToLiveRoom({
+      focusChat: true,
+      replace: true,
+      reason: 'approved_participant_redirect',
+    });
 
   } catch (err) {
   }

@@ -12,6 +12,10 @@ import { createChatStore } from './store.js?v=20260329c';
 import { renderMessages, isBottom, toBottom } from './ui.js?v=20260329c';
 import { subscribeToSorteoInserts } from './realtime.js?v=20260329c';
 
+const CHAT_SYNC_VISIBLE_MS = 2500;
+const CHAT_SYNC_HIDDEN_MS = 7000;
+const CHAT_STREAM_RECOVERY_MS = 900;
+
 /* ===============================
    Init Admin Chat
 ================================ */
@@ -26,6 +30,9 @@ export async function initAdminChat({ sorteoId, token }) {
   // Store de mensajes (admin)
   const store = createChatStore({ myUsuarioId: 'admin' });
   let unsub = null;
+  let syncTimer = null;
+  let syncInFlight = false;
+  let disposed = false;
 
   /* ===============================
      Render con acciones de moderación
@@ -73,6 +80,54 @@ export async function initAdminChat({ sorteoId, token }) {
     renderAdminMessages({ forceBottom: true });
   }
 
+  function getSyncDelay() {
+    return document.visibilityState === 'visible'
+      ? CHAT_SYNC_VISIBLE_MS
+      : CHAT_SYNC_HIDDEN_MS;
+  }
+
+  function scheduleSync(delay = getSyncDelay()) {
+    if (disposed) return;
+    if (syncTimer) clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
+      syncLatestMessages();
+    }, delay);
+  }
+
+  async function syncLatestMessages() {
+    if (disposed || syncInFlight) return;
+
+    syncInFlight = true;
+
+    try {
+      const data = await fetchMessages({ sorteoId, token, limit: 50 });
+      const incoming = Array.isArray(data?.messages) ? data.messages : [];
+      const unseen = incoming.filter((message) => message?.id && !store.has(message.id));
+
+      if (unseen.length) {
+        unseen.forEach(appendMessage);
+      }
+    } catch (err) {
+      console.error('admin chat fallback sync error:', err);
+    } finally {
+      syncInFlight = false;
+      scheduleSync();
+    }
+  }
+
+  function handleStreamUnavailable(event) {
+    if (String(event?.detail?.sorteoId || '') !== String(sorteoId)) return;
+    scheduleSync(CHAT_STREAM_RECOVERY_MS);
+  }
+
+  function handleVisibilityRefresh() {
+    if (document.visibilityState === 'visible') {
+      syncLatestMessages();
+      return;
+    }
+    scheduleSync();
+  }
+
   /* ===============================
      History (carga inicial)
   =============================== */
@@ -96,6 +151,8 @@ export async function initAdminChat({ sorteoId, token }) {
     console.error('Error conectando chat admin realtime:', err);
     hintEl.textContent = 'El chat se cargó, pero la actualización en vivo no está disponible.';
   }
+
+  scheduleSync();
 
   /* ===============================
      Enviar mensaje (ADMIN)
@@ -136,8 +193,12 @@ export async function initAdminChat({ sorteoId, token }) {
       }
     }
 
-    if (data?.message) {
+    if (data?.id) {
+      appendMessage(data);
+    } else if (data?.message?.id) {
       appendMessage(data.message);
+    } else {
+      scheduleSync(CHAT_STREAM_RECOVERY_MS);
     }
 
     sendEl.disabled = false;
@@ -187,7 +248,16 @@ export async function initAdminChat({ sorteoId, token }) {
     }
   });
 
+  window.addEventListener('chat-stream-unavailable', handleStreamUnavailable);
+  document.addEventListener('visibilitychange', handleVisibilityRefresh);
+  window.addEventListener('focus', handleVisibilityRefresh);
+
   window.addEventListener('beforeunload', () => {
+    disposed = true;
+    if (syncTimer) clearTimeout(syncTimer);
     unsub?.();
+    window.removeEventListener('chat-stream-unavailable', handleStreamUnavailable);
+    document.removeEventListener('visibilitychange', handleVisibilityRefresh);
+    window.removeEventListener('focus', handleVisibilityRefresh);
   });
 }

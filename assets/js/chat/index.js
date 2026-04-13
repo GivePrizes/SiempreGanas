@@ -4,6 +4,10 @@ import { createChatStore } from './store.js?v=20260329b';
 import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js?v=20260329b';
 import { subscribeToSorteoInserts } from './realtime.js?v=20260329b';
 
+const CHAT_SYNC_VISIBLE_MS = 2500;
+const CHAT_SYNC_HIDDEN_MS = 7000;
+const CHAT_STREAM_RECOVERY_MS = 900;
+
 /* ===============================
    Utils
 =============================== */
@@ -46,6 +50,9 @@ export async function initChat({ sorteoId, token }) {
   let puedeEscribir = false;
   let unsub = null;
   let soundEnabled = false;
+  let syncTimer = null;
+  let syncInFlight = false;
+  let disposed = false;
 
   /* ===============================
      UI helpers
@@ -166,6 +173,56 @@ export async function initChat({ sorteoId, token }) {
     }
   }
 
+  function getSyncDelay() {
+    return document.visibilityState === 'visible'
+      ? CHAT_SYNC_VISIBLE_MS
+      : CHAT_SYNC_HIDDEN_MS;
+  }
+
+  function scheduleSync(delay = getSyncDelay()) {
+    if (disposed) return;
+    if (syncTimer) clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
+      syncLatestMessages();
+    }, delay);
+  }
+
+  async function syncLatestMessages() {
+    if (disposed || syncInFlight) {
+      return;
+    }
+
+    syncInFlight = true;
+
+    try {
+      const data = await fetchMessages({ sorteoId, token, limit: 50 });
+      const incoming = Array.isArray(data?.messages) ? data.messages : [];
+      const unseen = incoming.filter((message) => message?.id && !store.has(message.id));
+
+      if (unseen.length) {
+        unseen.forEach(appendMessage);
+      }
+    } catch (err) {
+      console.error('chat fallback sync error:', err);
+    } finally {
+      syncInFlight = false;
+      scheduleSync();
+    }
+  }
+
+  function handleStreamUnavailable(event) {
+    if (String(event?.detail?.sorteoId || '') !== String(sorteoId)) return;
+    scheduleSync(CHAT_STREAM_RECOVERY_MS);
+  }
+
+  function handleVisibilityRefresh() {
+    if (document.visibilityState === 'visible') {
+      syncLatestMessages();
+      return;
+    }
+    scheduleSync();
+  }
+
 
   /* ===============================
      Filters & buttons
@@ -215,6 +272,8 @@ export async function initChat({ sorteoId, token }) {
   } catch (e) {
     console.error('❌ Error realtime', e);
   }
+
+  scheduleSync();
 
   /* ===============================
      3) SEND
@@ -275,6 +334,14 @@ export async function initChat({ sorteoId, token }) {
       return;
     }
 
+    if (data?.id) {
+      appendMessage(data);
+    } else if (data?.message?.id) {
+      appendMessage(data.message);
+    } else {
+      scheduleSync(CHAT_STREAM_RECOVERY_MS);
+    }
+
     sendEl.disabled = false;
   }
 
@@ -297,8 +364,17 @@ export async function initChat({ sorteoId, token }) {
     soundEnabled = true;
   }, { once: true });
 
+  window.addEventListener('chat-stream-unavailable', handleStreamUnavailable);
+  document.addEventListener('visibilitychange', handleVisibilityRefresh);
+  window.addEventListener('focus', handleVisibilityRefresh);
+
   window.addEventListener('beforeunload', () => {
+    disposed = true;
+    if (syncTimer) clearTimeout(syncTimer);
     unsub?.();
+    window.removeEventListener('chat-stream-unavailable', handleStreamUnavailable);
+    document.removeEventListener('visibilitychange', handleVisibilityRefresh);
+    window.removeEventListener('focus', handleVisibilityRefresh);
   });
 }
 

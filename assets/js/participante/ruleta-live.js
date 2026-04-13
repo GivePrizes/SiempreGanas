@@ -22,13 +22,22 @@ if (btnBack) {
 
 const params = new URLSearchParams(location.search);
 const sorteoId = params.get("id") || params.get("sorteo") || params.get("sorteoId");
+const focusTarget = params.get("focus") || (location.hash === "#chatContainer" ? "chat" : "");
+const liveEntryReason = sessionStorage.getItem("ruletaLiveEntryReason") || "";
+if (liveEntryReason) {
+  sessionStorage.removeItem("ruletaLiveEntryReason");
+}
 const btnGoToChat = document.getElementById("btnGoToChat");
+function scrollToChat({ behavior = "smooth" } = {}) {
+  document.getElementById("chatContainer")?.scrollIntoView({
+    behavior,
+    block: "start"
+  });
+}
+
 if (btnGoToChat) {
   btnGoToChat.addEventListener("click", () => {
-    document.getElementById("chatContainer")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
+    scrollToChat({ behavior: "smooth" });
   });
 }
 
@@ -47,6 +56,17 @@ const elNumbersCount = document.getElementById("numbersCount");
 const chatInputEl = document.getElementById("chatInput");
 const chatSendEl = document.getElementById("chatSend");
 const chatHintEl = document.getElementById("chatHint");
+
+if (focusTarget === "chat") {
+  window.addEventListener("load", () => {
+    window.setTimeout(() => {
+      scrollToChat({ behavior: "smooth" });
+      if (chatHintEl && liveEntryReason === "approved_participant_redirect") {
+        chatHintEl.textContent = "Ya tienes un numero aprobado. Esta es tu sala en vivo y aqui puedes usar el chat.";
+      }
+    }, 220);
+  }, { once: true });
+}
 
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
