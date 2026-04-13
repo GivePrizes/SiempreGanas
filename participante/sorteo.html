@@ -8,7 +8,7 @@
 
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225c">
-  <link rel="stylesheet" href="../assets/css/participant.css?v=20260412b">
+  <link rel="stylesheet" href="../assets/css/participant.css?v=20260412c">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260412b">
 </head>
 <body>
@@ -121,155 +121,162 @@
           <span class="pago-nequi-badge">2</span>
         </summary>
 
-        <div class="pago-confirmacion-stack">
-          <div class="pago-nequi-card">
-            <div class="pago-nequi-header">
-              <div>
-                <p class="pago-nequi-title">Paga con Nequi</p>
-                <p class="pago-nequi-subtitle">Escanea el QR, usa la llave o copia el número desde este mismo paso.</p>
-              </div>
+        <div class="payment-workflow-card">
+          <div class="payment-workflow-card__head">
+            <div>
+              <p class="payment-workflow-card__eyebrow">Transferencia bancaria nacional</p>
+              <h3>Confirma tu pago desde aqui</h3>
+              <p class="text-muted microhint">Escoge como vas a pagar y abajo mismo carga el comprobante.</p>
             </div>
 
-            <div class="pago-nequi-main">
-              <div class="pago-nequi-datos">
-                <p class="pago-nequi-label">Método de pago</p>
-                <div class="pago-nequi-metodos">
-                  <button type="button" class="metodo-btn is-active" data-pago-metodo="nequi_qr">QR</button>
-                  <button type="button" class="metodo-btn" data-pago-metodo="nequi_key">Llave</button>
-                  <button type="button" class="metodo-btn" data-pago-metodo="nequi_numero">Número</button>
-                </div>
-
-                <p class="pago-nequi-label">QR de pago</p>
-                <img
-                  id="imgQrNequi"
-                  class="qr-nequi-img hidden"
-                  alt="QR de pago Nequi"
-                  loading="lazy"
-                  referrerpolicy="no-referrer"
-                />
-                <img
-                  id="imgQrNequiFallback"
-                  class="qr-nequi-img qr-nequi-fallback"
-                  src="../assets/imagenes/nequiQR.jpeg"
-                  alt="QR de pago Nequi"
-                  loading="lazy"
-                />
-                <p id="textoQrNequi" class="pago-nequi-value hidden">
-                  Escanea el QR desde tu app Nequi.
-                </p>
-                <button id="btnPagarNequiLink" type="button" class="btn btn-primary btn-nequi-copy hidden">
-                  🔗 Pagar con Nequi
-                </button>
-
-                <div id="nequiKeyBlock" class="pago-nequi-key hidden">
-                  <div class="pago-nequi-key-head">
-                    <p class="pago-nequi-label">Llave Nequi</p>
-                    <button id="btnToggleNequiKey" type="button" class="btn btn-secondary btn-sm">
-                      Mostrar llave
-                    </button>
-                  </div>
-                  <div id="nequiKeyContent" class="pago-nequi-key-content hidden">
-                    <span id="nequiKeyText" class="pago-nequi-value pago-nequi-value--big"></span>
-                    <button id="btnCopyNequiKey" type="button" class="btn btn-secondary btn-sm">
-                      Copiar llave
-                    </button>
-                  </div>
-                </div>
-
-                <div id="nequiNumeroBlock" class="pago-nequi-numero hidden">
-                  <p class="pago-nequi-label">Número Nequi</p>
-                  <div class="pago-nequi-numero-row">
-                    <span id="nequiNumeroText" class="pago-nequi-value pago-nequi-value--big"></span>
-                    <button id="btnCopyNequiNumero" type="button" class="btn btn-secondary btn-sm">
-                      Copiar número
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="pago-nequi-steps">
-                <ol>
-                  <li>Elige tu número.</li>
-                  <li>Paga escaneando el QR, usando la llave o copiando el número.</li>
-                  <li>Justo aquí abajo sube tu comprobante o marca que ya pagaste.</li>
-                </ol>
-                <p class="pago-nequi-seguro">🛡️ Pago seguro + validación de participación.</p>
-              </div>
-            </div>
-
-            <div class="pago-nequi-footer">
-              💡 Tip: si te gustan ciertos números, págalos apenas los elijas.
+            <div class="payment-selection-pill">
+              <span>Número elegido</span>
+              <strong id="paymentSelectedNumbers">Sin seleccionar</strong>
             </div>
           </div>
 
-          <details id="paymentFormAccordion" class="pago-form-accordion">
-            <summary class="pago-form-accordion__summary">
-              <div class="pago-form-accordion__copy">
-                <p class="pago-form-accordion__eyebrow">Formulario</p>
-                <h3>🧾 Confirma tu pago</h3>
-                <p class="text-muted microhint">Ábrelo para subir el comprobante o reportar que ya pagaste.</p>
+          <div class="payment-method-grid">
+            <div class="payment-method-column">
+              <label class="payment-method-label" for="paymentMethodSelect">Tipo de cuenta</label>
+              <select id="paymentMethodSelect" class="payment-method-select">
+                <option value="">Selecciona una opcion</option>
+              </select>
+
+              <p class="text-muted microhint">Selecciona QR, llave o numero y a la derecha veras los datos exactos.</p>
+
+              <div class="payment-method-summary">
+                <div class="payment-method-summary__item">
+                  <span>Seleccion</span>
+                  <strong id="paymentSelectedCount">0 numero</strong>
+                </div>
+                <div class="payment-method-summary__item">
+                  <span>Total</span>
+                  <strong id="paymentSelectedTotal">$0</strong>
+                </div>
               </div>
-              <span class="pago-form-accordion__toggle">Abrir / cerrar</span>
-            </summary>
+            </div>
 
-            <div class="pago-form-accordion__content">
-              <div class="sorteo-compra-card sorteo-compra-card--compact">
-                <div class="pago-confirmacion-head">
-                  <h3>🧾 Envía la confirmación</h3>
-                  <p class="text-muted microhint">Primero paga arriba y luego completa este paso.</p>
+            <div id="paymentPreviewCard" class="payment-preview-card is-empty">
+              <div id="paymentPreviewEmpty" class="payment-preview-empty">
+                <span class="payment-preview-empty__icon" aria-hidden="true">⌁</span>
+                <p class="payment-preview-empty__title">Selecciona un tipo de pago</p>
+                <p class="payment-preview-empty__text">Aqui te mostraremos el QR, la llave o el numero con el nombre del titular.</p>
+              </div>
+
+              <div id="paymentPreviewContent" class="payment-preview-content hidden">
+                <div class="payment-preview-head">
+                  <span id="paymentPreviewBadge" class="payment-preview-badge">QR</span>
+                  <h4 id="paymentPreviewTitle" class="payment-preview-title">Datos de pago</h4>
+                  <p id="paymentPreviewText" class="payment-preview-text">Selecciona una opcion para ver sus datos.</p>
                 </div>
 
-                <div class="comprobante-upload">
-                  <label for="inputComprobante">Comprobante de pago</label>
-                  <p class="text-muted microhint">Que se vea <strong>monto</strong> y <strong>referencia</strong>.</p>
-
-                  <input type="file" id="inputComprobante" accept="image/*" />
-
-                  <div id="previewComprobante" class="comprobante-preview oculto">
-                    <p class="comprobante-preview-title">Vista previa:</p>
-                    <img id="imgPreview" alt="Comprobante" />
-                  </div>
+                <div id="paymentQrPanel" class="payment-preview-panel hidden">
+                  <img
+                    id="imgQrNequi"
+                    class="payment-preview-qr hidden"
+                    alt="QR de pago Nequi"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                  />
+                  <img
+                    id="imgQrNequiFallback"
+                    class="payment-preview-qr"
+                    src="../assets/imagenes/nequiQR.jpeg"
+                    alt="QR de pago Nequi"
+                    loading="lazy"
+                  />
+                  <button id="btnPagarNequiLink" type="button" class="btn btn-primary btn-full-width hidden">
+                    Abrir pago Nequi
+                  </button>
                 </div>
 
-                <div class="pago-alternativa">
-                  <label class="checkbox-line">
-                    <input type="checkbox" id="sinComprobante">
-                    <span>Ya pagué y no tengo comprobante</span>
-                  </label>
-                  <p class="text-muted microhint">Completa nombre y celular de quien pagó para validar.</p>
-                </div>
-
-                <div id="pagadorDatos" class="pagador-datos oculto">
-                  <label for="inputPagadorNombre">Nombre completo de quien pagó</label>
-                  <input id="inputPagadorNombre" type="text" placeholder="Nombre y apellido" autocomplete="name" />
-
-                  <label for="inputPagadorTelefono">Celular de quien pagó</label>
-                  <input id="inputPagadorTelefono" type="tel" inputmode="numeric" placeholder="Ej: 3001234567" autocomplete="tel" />
-                </div>
-
-                <button id="btnConfirmar" class="btn btn-primary btn-full-width">
-                  Confirmar participación
-                </button>
-
-                <div id="postConfirmActions" class="post-confirm-actions hidden">
-                  <p class="post-confirm-text">Listo. Desde la ruleta en vivo podrás ver el sorteo y usar el único chat oficial.</p>
-                  <div class="post-confirm-row">
-                    <button id="btnPostLive" type="button" class="btn btn-primary btn-app has-ico">
-                      <span class="btn-ico" aria-hidden="true">🎯</span>
-                      <span class="btn-label">Ruleta en vivo</span>
+                <div id="paymentKeyPanel" class="payment-preview-panel hidden">
+                  <p class="payment-preview-caption">Llave de pago</p>
+                  <div class="payment-preview-value-row">
+                    <span id="nequiKeyText" class="payment-preview-value"></span>
+                    <button id="btnCopyNequiKey" type="button" class="btn btn-secondary btn-sm">
+                      Copiar
                     </button>
                   </div>
                 </div>
 
-                <details class="mini-ayuda">
-                  <summary>¿Qué pasa después?</summary>
-                  <p class="text-muted">
-                    Tus números quedan <strong>pendientes</strong> hasta revisión. Al aprobar, quedan <strong>activos</strong>.
-                  </p>
-                </details>
+                <div id="paymentNumberPanel" class="payment-preview-panel hidden">
+                  <div class="payment-preview-detail">
+                    <span class="payment-preview-caption">Titular</span>
+                    <strong id="nequiHolderNameText" class="payment-preview-name">MATHOME JENNY PORRAS</strong>
+                  </div>
+
+                  <div class="payment-preview-detail">
+                    <span class="payment-preview-caption">Numero Nequi</span>
+                    <div class="payment-preview-value-row">
+                      <span id="nequiNumeroText" class="payment-preview-value"></span>
+                      <button id="btnCopyNequiNumero" type="button" class="btn btn-secondary btn-sm">
+                        Copiar
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </details>
+          </div>
+
+          <div class="payment-proof-card">
+            <div class="pago-confirmacion-head">
+              <h3>🧾 Carga tu comprobante</h3>
+              <p class="text-muted microhint">Que se vea monto, referencia y la cuenta usada para pagar.</p>
+            </div>
+
+            <div class="comprobante-upload">
+              <input type="file" id="inputComprobante" accept="image/*" class="payment-hidden-file-input" />
+              <label for="inputComprobante" id="paymentUploadDropzone" class="payment-upload-dropzone">
+                <span class="payment-upload-dropzone__icon" aria-hidden="true">⇪</span>
+                <strong>Arrastra aqui tu comprobante</strong>
+                <span id="paymentUploadFileText">o haz clic para seleccionar</span>
+              </label>
+
+              <div id="previewComprobante" class="comprobante-preview oculto">
+                <p class="comprobante-preview-title">Vista previa:</p>
+                <img id="imgPreview" alt="Comprobante" />
+              </div>
+            </div>
+
+            <div class="pago-alternativa">
+              <label class="checkbox-line">
+                <input type="checkbox" id="sinComprobante">
+                <span>Ya pague y no tengo comprobante</span>
+              </label>
+              <p class="text-muted microhint">Si marcas esta opcion, completa nombre y celular de quien hizo el pago.</p>
+            </div>
+
+            <div id="pagadorDatos" class="pagador-datos oculto">
+              <label for="inputPagadorNombre">Nombre completo de quien pago</label>
+              <input id="inputPagadorNombre" type="text" placeholder="Nombre y apellido" autocomplete="name" />
+
+              <label for="inputPagadorTelefono">Celular de quien pago</label>
+              <input id="inputPagadorTelefono" type="tel" inputmode="numeric" placeholder="Ej: 3001234567" autocomplete="tel" />
+            </div>
+
+            <button id="btnConfirmar" class="btn btn-primary btn-full-width">
+              Confirmar participación
+            </button>
+
+            <div id="postConfirmActions" class="post-confirm-actions hidden">
+              <p class="post-confirm-text">Listo. Desde la ruleta en vivo podrás ver el sorteo y usar el único chat oficial.</p>
+              <div class="post-confirm-row">
+                <button id="btnPostLive" type="button" class="btn btn-primary btn-app has-ico">
+                  <span class="btn-ico" aria-hidden="true">🎯</span>
+                  <span class="btn-label">Ruleta en vivo</span>
+                </button>
+              </div>
+            </div>
+
+            <details class="mini-ayuda">
+              <summary>¿Que pasa despues?</summary>
+              <p class="text-muted">
+                Tus números quedan <strong>pendientes</strong> hasta revisión. Al aprobar, quedan <strong>activos</strong>.
+              </p>
+            </details>
+          </div>
         </div>
       </details>
 
@@ -279,12 +286,12 @@
 
   <div id="toast" class="toast hidden">Mensaje</div>
 
-  <script src="../assets/js/app-config.js"></script>
-  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/app-config.js?v=20260412d"></script>
+  <script src="../assets/js/config.js?v=20260412d"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
   <script src="../assets/js/welcomeModal.js"></script>
-  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260329c"></script>
+  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260412d"></script>
 </body>
 </html>
 

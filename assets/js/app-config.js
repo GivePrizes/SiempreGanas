@@ -14,6 +14,8 @@ window.__APP_CONFIG__ = {
   },
   // Llave Nequi (opcional): string global o por sorteoId
   NEQUI_KEY: '0091741173',
+  NEQUI_PHONE: '3017680062',
+  NEQUI_HOLDER_NAME: 'MATHOME JENNY PORRAS',
   NEQUI_KEYS: {
     // '32': 'TuLlaveNequi'
   }

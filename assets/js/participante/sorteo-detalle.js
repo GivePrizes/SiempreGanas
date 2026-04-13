@@ -23,23 +23,33 @@ const maxNumerosTexto = document.getElementById('maxNumerosTexto');
 const gridNumeros = document.getElementById('gridNumeros');
 const resumenNumeros = document.getElementById('resumenNumeros');
 const resumenTotal = document.getElementById('resumenTotal');
+const paymentSelectedNumbers = document.getElementById('paymentSelectedNumbers');
+const paymentSelectedCount = document.getElementById('paymentSelectedCount');
+const paymentSelectedTotal = document.getElementById('paymentSelectedTotal');
+const paymentMethodSelect = document.getElementById('paymentMethodSelect');
+const paymentPreviewCard = document.getElementById('paymentPreviewCard');
+const paymentPreviewEmpty = document.getElementById('paymentPreviewEmpty');
+const paymentPreviewContent = document.getElementById('paymentPreviewContent');
+const paymentPreviewBadge = document.getElementById('paymentPreviewBadge');
+const paymentPreviewTitle = document.getElementById('paymentPreviewTitle');
+const paymentPreviewText = document.getElementById('paymentPreviewText');
+const paymentQrPanel = document.getElementById('paymentQrPanel');
+const paymentKeyPanel = document.getElementById('paymentKeyPanel');
+const paymentNumberPanel = document.getElementById('paymentNumberPanel');
 
 const inputComprobante = document.getElementById('inputComprobante');
+const paymentUploadDropzone = document.getElementById('paymentUploadDropzone');
+const paymentUploadFileText = document.getElementById('paymentUploadFileText');
 const previewComprobante = document.getElementById('previewComprobante');
 const imgPreview = document.getElementById('imgPreview');
 const btnPagarNequiLink = document.getElementById('btnPagarNequiLink');
 const imgQrNequi = document.getElementById('imgQrNequi');
 const imgQrNequiFallback = document.getElementById('imgQrNequiFallback');
-const textoQrNequi = document.getElementById('textoQrNequi');
-const nequiKeyBlock = document.getElementById('nequiKeyBlock');
 const nequiKeyText = document.getElementById('nequiKeyText');
-const nequiKeyContent = document.getElementById('nequiKeyContent');
-const btnToggleNequiKey = document.getElementById('btnToggleNequiKey');
 const btnCopyNequiKey = document.getElementById('btnCopyNequiKey');
-const nequiNumeroBlock = document.getElementById('nequiNumeroBlock');
+const nequiHolderNameText = document.getElementById('nequiHolderNameText');
 const nequiNumeroText = document.getElementById('nequiNumeroText');
 const btnCopyNequiNumero = document.getElementById('btnCopyNequiNumero');
-const metodoBtns = Array.from(document.querySelectorAll('[data-pago-metodo]'));
 
 const btnConfirmar = document.getElementById('btnConfirmar');
 const toast = document.getElementById('toast');
@@ -57,7 +67,6 @@ const postConfirmActions = document.getElementById('postConfirmActions');
 const btnPostLive = document.getElementById('btnPostLive');
 const numbersStepAccordion = document.getElementById('numbersStepAccordion');
 const paymentStepAccordion = document.getElementById('paymentStepAccordion');
-const paymentFormAccordion = document.getElementById('paymentFormAccordion');
 
 
 let sorteoActual = null;
@@ -65,7 +74,8 @@ let numerosOcupados = [];
 let seleccionados = [];
 let precioNumero = 0;
 const NEQUI_PAYMENT_LINKS = window.NEQUI_PAYMENT_LINKS || {};
-let pagoMetodoActual = 'nequi_qr';
+let pagoMetodoActual = '';
+let linkSeguroActual = null;
 
 if (maxNumerosTexto) maxNumerosTexto.textContent = MAX_NUMEROS_POR_COMPRA.toString();
 function goToLiveRoom() {
@@ -98,18 +108,44 @@ function mostrarToast(msg) {
   }, 2500);
 }
 
+function getNumeroPadding() {
+  const total = Number(sorteoActual?.cantidad_numeros || 0);
+  return total >= 100 ? 3 : 2;
+}
+
+function formatearNumero(numero) {
+  return `#${String(numero).padStart(getNumeroPadding(), '0')}`;
+}
+
 function actualizarResumen() {
+  const total = seleccionados.length * precioNumero;
+
   if (seleccionados.length === 0) {
     resumenNumeros.textContent = 'Ninguno todavía';
     resumenTotal.textContent = '$0';
   } else {
-    resumenNumeros.textContent = seleccionados.join(', ');
-    const total = seleccionados.length * precioNumero;
+    resumenNumeros.textContent = seleccionados.map(formatearNumero).join(', ');
     resumenTotal.textContent = `$${total.toLocaleString('es-CO')}`;
   }
 
-  actualizarEstadoConfirmar();
+  if (paymentSelectedNumbers) {
+    paymentSelectedNumbers.textContent = seleccionados.length
+      ? seleccionados.map(formatearNumero).join(', ')
+      : 'Sin seleccionar';
+  }
 
+  if (paymentSelectedCount) {
+    paymentSelectedCount.textContent = seleccionados.length
+      ? `${seleccionados.length} numero${seleccionados.length === 1 ? '' : 's'}`
+      : '0 numero';
+  }
+
+  if (paymentSelectedTotal) {
+    paymentSelectedTotal.textContent = `$${total.toLocaleString('es-CO')}`;
+  }
+
+  actualizarEstadoConfirmar();
+  aplicarMetodoPagoUI(pagoMetodoActual);
 }
 
 function scrollToPaymentStep() {
@@ -125,14 +161,16 @@ function scrollToPaymentStep() {
 function openPaymentStep({ scroll = true } = {}) {
   if (!paymentStepAccordion) return;
   paymentStepAccordion.open = true;
-  if (paymentFormAccordion) {
-    paymentFormAccordion.open = true;
-  }
   if (numbersStepAccordion) {
     numbersStepAccordion.open = false;
   }
   if (scroll) {
     scrollToPaymentStep();
+  }
+  if (paymentMethodSelect && !pagoMetodoActual) {
+    window.setTimeout(() => {
+      paymentMethodSelect.focus({ preventScroll: true });
+    }, 180);
   }
 }
 
@@ -151,9 +189,20 @@ function actualizarEstadoConfirmar() {
   const pagadorNombre = (inputPagadorNombre?.value || '').trim();
   const pagadorTelefono = (inputPagadorTelefono?.value || '').replace(/\D+/g, '');
   const pagadorOk = pagadorNombre.length >= 3 && pagadorTelefono.length >= 10;
-  const listo = (seleccionados.length > 0) && (!!file || pagadorOk);
+  const metodoSeleccionado = Boolean(pagoMetodoActual);
+  const listo = (seleccionados.length > 0) && metodoSeleccionado && (!!file || pagadorOk);
 
   btnConfirmar.disabled = !listo;
+  if (seleccionados.length === 0) {
+    btnConfirmar.textContent = 'Selecciona un numero para continuar';
+    return;
+  }
+
+  if (!metodoSeleccionado) {
+    btnConfirmar.textContent = 'Selecciona tipo de cuenta';
+    return;
+  }
+
   btnConfirmar.textContent = listo
     ? 'Confirmar participación'
     : 'Sube comprobante o confirma con nombre y celular';
@@ -245,92 +294,80 @@ function construirQrDesdeLink(linkSeguro) {
   return `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encoded}`;
 }
 
-function configurarPagoNequiPorLink() {
-  if (!btnPagarNequiLink || !imgQrNequi || !textoQrNequi || !sorteoId) return;
-
-  const linkSeguro = obtenerLinkNequiSeguro(sorteoId);
-  if (!linkSeguro) {
-    btnPagarNequiLink.classList.add('hidden');
-    imgQrNequi.classList.add('hidden');
-    textoQrNequi.classList.add('hidden');
-    if (imgQrNequiFallback) imgQrNequiFallback.classList.remove('hidden');
-    return;
-  }
-
-  imgQrNequi.src = construirQrDesdeLink(linkSeguro);
-  imgQrNequi.classList.remove('hidden');
-  textoQrNequi.classList.remove('hidden');
-  if (imgQrNequiFallback) imgQrNequiFallback.classList.add('hidden');
-  btnPagarNequiLink.classList.remove('hidden');
-  btnPagarNequiLink.addEventListener('click', () => {
-    window.open(linkSeguro, '_blank', 'noopener,noreferrer');
-  });
-}
-
 function obtenerLlaveNequi(sorteoIdValue) {
   const map = window.NEQUI_KEYS || {};
   const byId = map?.[String(sorteoIdValue)] || map?.[sorteoIdValue];
   return byId || window.NEQUI_KEY || '';
 }
 
-function configurarLlaveNequi() {
-  if (!nequiKeyBlock || !nequiKeyText || !btnToggleNequiKey || !nequiKeyContent) return;
-  if (!sorteoId) return;
-
-  const key = obtenerLlaveNequi(sorteoId);
-  if (!key) {
-    nequiKeyBlock.classList.add('hidden');
-    return;
-  }
-
-  nequiKeyText.textContent = key;
-  nequiKeyBlock.classList.remove('hidden');
-  nequiKeyContent.classList.add('hidden');
-  btnToggleNequiKey.textContent = 'Mostrar llave';
-
-  btnToggleNequiKey.addEventListener('click', () => {
-    const hidden = nequiKeyContent.classList.contains('hidden');
-    nequiKeyContent.classList.toggle('hidden');
-    btnToggleNequiKey.textContent = hidden ? 'Ocultar llave' : 'Mostrar llave';
-  });
-
-  if (btnCopyNequiKey) {
-    btnCopyNequiKey.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(key);
-        mostrarToast('Llave copiada ✅');
-      } catch {
-        mostrarToast('No se pudo copiar. Copia manualmente.');
-      }
-    });
-  }
-}
-
 function obtenerNumeroNequi() {
-  return (window.NEQUI_PHONE || window.NEQUI_NUMBER || '3045538465').toString();
+  return (window.NEQUI_PHONE || window.NEQUI_NUMBER || '3017680062').toString();
 }
 
-function configurarNumeroNequi() {
-  if (!nequiNumeroBlock || !nequiNumeroText) return;
-  const numero = obtenerNumeroNequi();
+function obtenerTitularNequi(sorteoIdValue) {
+  const map = window.NEQUI_HOLDER_NAMES || {};
+  const byId = map?.[String(sorteoIdValue)] || map?.[sorteoIdValue];
+  return byId || window.NEQUI_HOLDER_NAME || 'MATHOME JENNY PORRAS';
+}
 
-  if (!numero) {
-    nequiNumeroBlock.classList.add('hidden');
+function getMetodosPagoDisponibles() {
+  const metodos = [];
+  const hasQr = Boolean(obtenerLinkNequiSeguro(sorteoId) || imgQrNequiFallback);
+  const hasKey = Boolean(obtenerLlaveNequi(sorteoId));
+  const hasNumero = Boolean(obtenerNumeroNequi());
+
+  if (hasQr) {
+    metodos.push({ value: 'nequi_qr', label: 'QR Nequi' });
+  }
+  if (hasKey) {
+    metodos.push({ value: 'nequi_key', label: 'Llave Nequi' });
+  }
+  if (hasNumero) {
+    metodos.push({ value: 'nequi_numero', label: 'Numero Nequi' });
+  }
+
+  return metodos;
+}
+
+function renderMetodoPagoOptions() {
+  if (!paymentMethodSelect) return;
+
+  const metodos = getMetodosPagoDisponibles();
+  const current = pagoMetodoActual;
+
+  if (!metodos.length) {
+    paymentMethodSelect.innerHTML = '<option value="">No hay datos de pago configurados</option>';
+    paymentMethodSelect.disabled = true;
+    pagoMetodoActual = '';
+    aplicarMetodoPagoUI('');
+    actualizarEstadoConfirmar();
     return;
   }
 
-  nequiNumeroText.textContent = numero;
-  nequiNumeroBlock.classList.add('hidden');
+  paymentMethodSelect.disabled = false;
+  paymentMethodSelect.innerHTML = [
+    '<option value="">Selecciona una opcion</option>',
+    ...metodos.map((metodo) => `<option value="${metodo.value}">${metodo.label}</option>`)
+  ].join('');
 
-  if (btnCopyNequiNumero) {
-    btnCopyNequiNumero.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(numero);
-        mostrarToast('Número copiado ✅');
-      } catch {
-        mostrarToast('No se pudo copiar. Copia manualmente.');
-      }
-    });
+  if (metodos.some((metodo) => metodo.value === current)) {
+    paymentMethodSelect.value = current;
+    pagoMetodoActual = current;
+  } else {
+    paymentMethodSelect.value = '';
+    pagoMetodoActual = '';
+  }
+
+  aplicarMetodoPagoUI(pagoMetodoActual);
+  actualizarEstadoConfirmar();
+}
+
+async function copiarTexto(texto, mensajeOk) {
+  try {
+    await navigator.clipboard.writeText(texto);
+    mostrarToast(mensajeOk);
+  } catch {
+    mostrarToast('No se pudo copiar. Copia manualmente.');
   }
 }
 
@@ -338,55 +375,66 @@ function aplicarMetodoPagoUI(metodo) {
   const usarQr = metodo === 'nequi_qr';
   const usarLlave = metodo === 'nequi_key';
   const usarNumero = metodo === 'nequi_numero';
-  const linkSeguro = usarQr ? obtenerLinkNequiSeguro(sorteoId) : null;
+  const holderName = obtenerTitularNequi(sorteoId);
+  const totalSeleccion = seleccionados.length * precioNumero;
+  const resumenSeleccion = seleccionados.length
+    ? `Total a pagar: $${totalSeleccion.toLocaleString('es-CO')}`
+    : 'Selecciona tu numero y luego realiza el pago.';
 
-  if (imgQrNequi) imgQrNequi.classList.toggle('hidden', !usarQr || !linkSeguro);
-  if (imgQrNequiFallback) imgQrNequiFallback.classList.toggle('hidden', !usarQr || !!linkSeguro);
-  if (textoQrNequi) textoQrNequi.classList.toggle('hidden', !usarQr);
-  if (btnPagarNequiLink) btnPagarNequiLink.classList.toggle('hidden', !usarQr || !linkSeguro);
+  if (paymentPreviewCard) paymentPreviewCard.classList.toggle('is-empty', !metodo);
+  if (paymentPreviewEmpty) paymentPreviewEmpty.classList.toggle('hidden', Boolean(metodo));
+  if (paymentPreviewContent) paymentPreviewContent.classList.toggle('hidden', !metodo);
+  if (paymentQrPanel) paymentQrPanel.classList.toggle('hidden', !usarQr);
+  if (paymentKeyPanel) paymentKeyPanel.classList.toggle('hidden', !usarLlave);
+  if (paymentNumberPanel) paymentNumberPanel.classList.toggle('hidden', !usarNumero);
 
-  if (nequiKeyBlock) nequiKeyBlock.classList.toggle('hidden', !usarLlave);
-  if (nequiKeyContent && btnToggleNequiKey) {
-    if (usarLlave) {
-      nequiKeyContent.classList.remove('hidden');
-      btnToggleNequiKey.textContent = 'Ocultar llave';
-    } else {
-      nequiKeyContent.classList.add('hidden');
-      btnToggleNequiKey.textContent = 'Mostrar llave';
+  if (!metodo) {
+    if (paymentPreviewBadge) paymentPreviewBadge.textContent = 'INFO';
+    if (paymentPreviewTitle) paymentPreviewTitle.textContent = 'Datos de pago';
+    if (paymentPreviewText) paymentPreviewText.textContent = 'Selecciona una opcion para ver sus datos.';
+    return;
+  }
+
+  if (usarQr) {
+    linkSeguroActual = obtenerLinkNequiSeguro(sorteoId);
+    if (imgQrNequi) {
+      if (linkSeguroActual) {
+        imgQrNequi.src = construirQrDesdeLink(linkSeguroActual);
+        imgQrNequi.classList.remove('hidden');
+      } else {
+        imgQrNequi.classList.add('hidden');
+      }
     }
-  }
-  if (nequiNumeroBlock) nequiNumeroBlock.classList.toggle('hidden', !usarNumero);
-}
-
-function configurarMetodoPagoUI() {
-  if (!metodoBtns.length) return;
-
-  const hasQr = Boolean(obtenerLinkNequiSeguro(sorteoId) || imgQrNequiFallback);
-  const hasKey = Boolean(obtenerLlaveNequi(sorteoId));
-  const hasNumero = Boolean(obtenerNumeroNequi());
-
-  if (hasQr) {
-    pagoMetodoActual = 'nequi_qr';
-  } else if (hasKey) {
-    pagoMetodoActual = 'nequi_key';
-  } else if (hasNumero) {
-    pagoMetodoActual = 'nequi_numero';
-  } else {
-    pagoMetodoActual = 'manual';
+    if (imgQrNequiFallback) {
+      imgQrNequiFallback.classList.toggle('hidden', Boolean(linkSeguroActual));
+    }
+    if (btnPagarNequiLink) {
+      btnPagarNequiLink.classList.toggle('hidden', !linkSeguroActual);
+      btnPagarNequiLink.onclick = linkSeguroActual
+        ? () => window.open(linkSeguroActual, '_blank', 'noopener,noreferrer')
+        : null;
+    }
+    if (paymentPreviewBadge) paymentPreviewBadge.textContent = 'QR';
+    if (paymentPreviewTitle) paymentPreviewTitle.textContent = 'Escanea el QR Nequi';
+    if (paymentPreviewText) paymentPreviewText.textContent = resumenSeleccion;
   }
 
-  metodoBtns.forEach((btn) => {
-    const method = btn.getAttribute('data-pago-metodo');
-    if (method === pagoMetodoActual) btn.classList.add('is-active');
-    btn.addEventListener('click', () => {
-      pagoMetodoActual = method || 'manual';
-      metodoBtns.forEach(b => b.classList.remove('is-active'));
-      btn.classList.add('is-active');
-      aplicarMetodoPagoUI(pagoMetodoActual);
-    });
-  });
+  if (usarLlave) {
+    const key = obtenerLlaveNequi(sorteoId);
+    if (nequiKeyText) nequiKeyText.textContent = key || 'Llave no configurada';
+    if (paymentPreviewBadge) paymentPreviewBadge.textContent = 'LLAVE';
+    if (paymentPreviewTitle) paymentPreviewTitle.textContent = 'Paga con la llave';
+    if (paymentPreviewText) paymentPreviewText.textContent = `${resumenSeleccion} Verifica la llave antes de transferir.`;
+  }
 
-  aplicarMetodoPagoUI(pagoMetodoActual);
+  if (usarNumero) {
+    const numero = obtenerNumeroNequi();
+    if (nequiNumeroText) nequiNumeroText.textContent = numero || 'Numero no configurado';
+    if (nequiHolderNameText) nequiHolderNameText.textContent = holderName;
+    if (paymentPreviewBadge) paymentPreviewBadge.textContent = 'NUMERO';
+    if (paymentPreviewTitle) paymentPreviewTitle.textContent = 'Paga al numero registrado';
+    if (paymentPreviewText) paymentPreviewText.textContent = `${resumenSeleccion} Confirma que el titular sea ${holderName}.`;
+  }
 }
 
 
@@ -569,6 +617,9 @@ if (inputComprobante) {
     if (!file) {
       previewComprobante.classList.add('oculto');
       imgPreview.src = '';
+      if (paymentUploadFileText) {
+        paymentUploadFileText.textContent = 'o haz clic para seleccionar';
+      }
       actualizarEstadoConfirmar();
       return;
     }
@@ -580,6 +631,9 @@ if (inputComprobante) {
       inputComprobante.value = '';
       previewComprobante.classList.add('oculto');
       imgPreview.src = '';
+      if (paymentUploadFileText) {
+        paymentUploadFileText.textContent = 'o haz clic para seleccionar';
+      }
       return;
     }
 
@@ -589,6 +643,9 @@ if (inputComprobante) {
       inputComprobante.value = '';
       previewComprobante.classList.add('oculto');
       imgPreview.src = '';
+      if (paymentUploadFileText) {
+        paymentUploadFileText.textContent = 'o haz clic para seleccionar';
+      }
       return;
     }
 
@@ -597,6 +654,9 @@ if (inputComprobante) {
     _currentObjectUrl = url;
     imgPreview.src = url;
     previewComprobante.classList.remove('oculto');
+    if (paymentUploadFileText) {
+      paymentUploadFileText.textContent = file.name;
+    }
     actualizarEstadoConfirmar();
 
   });
@@ -608,10 +668,18 @@ if (sinComprobante) {
     if (pagadorDatos) pagadorDatos.classList.toggle('oculto', !activo);
     if (inputComprobante) {
       inputComprobante.disabled = activo;
+      if (paymentUploadDropzone) {
+        paymentUploadDropzone.classList.toggle('is-disabled', activo);
+      }
       if (activo) {
         inputComprobante.value = '';
         if (previewComprobante) previewComprobante.classList.add('oculto');
         if (imgPreview) imgPreview.src = '';
+        if (paymentUploadFileText) {
+          paymentUploadFileText.textContent = 'Usa nombre y celular para validar el pago';
+        }
+      } else if (paymentUploadFileText) {
+        paymentUploadFileText.textContent = 'o haz clic para seleccionar';
       }
     }
     actualizarEstadoConfirmar();
@@ -623,6 +691,43 @@ if (inputPagadorNombre) {
 }
 if (inputPagadorTelefono) {
   inputPagadorTelefono.addEventListener('input', actualizarEstadoConfirmar);
+}
+
+if (paymentMethodSelect) {
+  paymentMethodSelect.addEventListener('change', () => {
+    pagoMetodoActual = paymentMethodSelect.value || '';
+    aplicarMetodoPagoUI(pagoMetodoActual);
+    actualizarEstadoConfirmar();
+  });
+}
+
+if (btnCopyNequiKey) {
+  btnCopyNequiKey.addEventListener('click', async () => {
+    const key = (nequiKeyText?.textContent || '').trim();
+    if (!key) {
+      mostrarToast('No hay llave disponible para copiar.');
+      return;
+    }
+    await copiarTexto(key, 'Llave copiada');
+  });
+}
+
+if (btnCopyNequiNumero) {
+  btnCopyNequiNumero.addEventListener('click', async () => {
+    const numero = (nequiNumeroText?.textContent || '').trim();
+    if (!numero) {
+      mostrarToast('No hay numero disponible para copiar.');
+      return;
+    }
+    await copiarTexto(numero, 'Numero copiado');
+  });
+}
+
+if (imgQrNequi && imgQrNequiFallback) {
+  imgQrNequi.addEventListener('error', () => {
+    imgQrNequi.classList.add('hidden');
+    imgQrNequiFallback.classList.remove('hidden');
+  });
 }
 
 // --- confirmar participación ---
@@ -648,11 +753,16 @@ if (btnConfirmar) {
       return;
     }
 
+    if (!pagoMetodoActual) {
+      mostrarToast('Selecciona primero el tipo de cuenta.');
+      return;
+    }
+
     const file = inputComprobante?.files?.[0];
     const pagadorNombre = (inputPagadorNombre?.value || '').trim();
     const pagadorTelefono = (inputPagadorTelefono?.value || '').replace(/\D+/g, '');
     const pagadorOk = pagadorNombre.length >= 3 && pagadorTelefono.length >= 10;
-    const metodo = pagoMetodoActual || (file ? 'comprobante' : 'manual');
+    const metodo = pagoMetodoActual;
 
     if (!file && !pagadorOk) {
       mostrarToast('Sube comprobante o confirma con nombre y celular.');
@@ -703,8 +813,7 @@ if (btnConfirmar) {
 
       if (!res.ok) {
         mostrarToast(data.error || data.message || 'Error al guardar tu participación.');
-        btnConfirmar.disabled = false;
-        btnConfirmar.textContent = 'Confirmar participación';
+        actualizarEstadoConfirmar();
         return;
       }
 
@@ -712,9 +821,17 @@ if (btnConfirmar) {
 
       // reset selección
       seleccionados = [];
+      pagoMetodoActual = '';
+      if (paymentMethodSelect) paymentMethodSelect.value = '';
       if (inputComprobante) inputComprobante.value = '';
       if (previewComprobante) previewComprobante.classList.add('oculto');
       if (imgPreview) imgPreview.src = '';
+      if (paymentUploadFileText) {
+        paymentUploadFileText.textContent = 'o haz clic para seleccionar';
+      }
+      if (paymentUploadDropzone) {
+        paymentUploadDropzone.classList.remove('is-disabled');
+      }
       if (sinComprobante) sinComprobante.checked = false;
       if (pagadorDatos) pagadorDatos.classList.add('oculto');
       if (inputPagadorNombre) inputPagadorNombre.value = '';
@@ -729,8 +846,7 @@ if (btnConfirmar) {
       }, 1200);
     } catch (err) {
       mostrarToast('Error de conexión al enviar tu participación.');
-      btnConfirmar.disabled = false;
-      btnConfirmar.textContent = 'Confirmar participación';
+      actualizarEstadoConfirmar();
     }
   });
 }
@@ -745,18 +861,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (paymentFormAccordion) {
-    paymentFormAccordion.addEventListener('toggle', () => {
-      if (paymentFormAccordion.open) {
-        scrollToPaymentStep();
-      }
-    });
-  }
-
-  configurarPagoNequiPorLink();
-  configurarLlaveNequi();
-  configurarNumeroNequi();
-  configurarMetodoPagoUI();
+  renderMetodoPagoOptions();
   cargarSorteo();
   cargarMisNumerosDelSorteo();
 });
