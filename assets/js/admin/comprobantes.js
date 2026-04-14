@@ -24,6 +24,12 @@ function agruparComprobantesPorSorteo(comprobantes) {
 let yaPintoAlgo = false;
 let ultimoHTML = '';
 
+function formatMoney(value) {
+  const amount = Number(value || 0);
+  if (!Number.isFinite(amount)) return '$0';
+  return `$${amount.toLocaleString('es-CO')}`;
+}
+
 // Mini estado "actualizando..." sin borrar el contenedor
 function setMiniEstado(texto) {
   const contenedor = document.getElementById('comprobantes');
@@ -166,6 +172,43 @@ async function leerRespuesta(res, fallbackMessage) {
   return payload;
 }
 
+function buildApprovalAlertMessage(data) {
+  const blocks = [];
+  const referral = data?.live_referidos?.referral;
+  const totalAprobados = Number(data?.live_referidos?.total_aprobados || 0);
+  const nuevasOperaciones = Array.isArray(data?.live_referidos?.nuevas_operaciones)
+    ? data.live_referidos.nuevas_operaciones
+    : [];
+
+  if (referral?.referidorAlias || referral?.referidorNombre) {
+    const referidor = referral.referidorAlias
+      ? `@${referral.referidorAlias}`
+      : referral.referidorNombre;
+    const totalText = totalAprobados > 0
+      ? ` Ya va en ${totalAprobados} referido${totalAprobados === 1 ? '' : 's'} aprobado${totalAprobados === 1 ? '' : 's'}.`
+      : '';
+    blocks.push(`Referido Live reconocido para ${referidor}.${totalText}`);
+  }
+
+  if (nuevasOperaciones.length) {
+    const resumen = nuevasOperaciones
+      .map((op) => {
+        const meta = Number(op.minimoReferidos || 0);
+        const monto = formatMoney(op.monto);
+        return `- Pago Live creado: ${meta} referidos -> ${monto}`;
+      })
+      .join('\n');
+    blocks.push(`Se generaron operaciones en admin cuentas:\n${resumen}`);
+  }
+
+  if (Array.isArray(data?.warnings) && data.warnings.length) {
+    blocks.push(data.warnings.join('\n'));
+  }
+
+  if (!blocks.length) return '';
+  return `Comprobante aprobado.\n\n${blocks.join('\n\n')}`;
+}
+
 async function aprobar(id) {
   if (!confirm('¿Aprobar?')) return;
   const token = localStorage.getItem('token');
@@ -178,8 +221,9 @@ async function aprobar(id) {
 
     const data = await leerRespuesta(res, 'No se pudo aprobar el comprobante.');
 
-    if (Array.isArray(data?.warnings) && data.warnings.length) {
-      alert(`Comprobante aprobado.\n\n${data.warnings.join('\n')}`);
+    const approvalMessage = buildApprovalAlertMessage(data);
+    if (approvalMessage) {
+      alert(approvalMessage);
     }
 
     await cargarComprobantes();

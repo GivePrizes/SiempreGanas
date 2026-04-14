@@ -622,6 +622,76 @@
   overflow-wrap: anywhere;
 }
 
+.live-referral-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  background: linear-gradient(180deg, rgba(8, 28, 31, 0.78), rgba(9, 20, 26, 0.86));
+}
+
+.live-referral-card.hidden {
+  display: none;
+}
+
+.live-referral-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.live-referral-card__head h3 {
+  margin: 0.15rem 0 0;
+}
+
+.live-referral-card__eyebrow {
+  margin: 0;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(110, 231, 183, 0.9);
+}
+
+.live-referral-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(52, 211, 153, 0.24);
+  background: rgba(16, 185, 129, 0.12);
+  color: #bbf7d0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.live-referral-card label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--colour-text);
+}
+
+.live-referral-card input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.78rem 0.9rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.04);
+  color: var(--colour-text);
+}
+
+.live-referral-card input:focus {
+  outline: none;
+  border-color: rgba(52, 211, 153, 0.55);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.14);
+}
+
 .payment-proof-card {
   padding: 1rem;
   display: grid;
@@ -845,6 +915,7 @@
 :root[data-app-theme="light"] .chip-numero,
 :root[data-app-theme="light"] .payment-selection-pill,
 :root[data-app-theme="light"] .payment-method-summary__item,
+:root[data-app-theme="light"] .live-referral-card,
 :root[data-app-theme="light"] .payment-preview-card,
 :root[data-app-theme="light"] .payment-proof-card,
 :root[data-app-theme="light"] .payment-method-column,
@@ -906,6 +977,10 @@
 
   .payment-method-grid {
     grid-template-columns: 1fr;
+  }
+
+  .live-referral-card__head {
+    flex-direction: column;
   }
 
   .payment-selection-pill {

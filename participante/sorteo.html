@@ -9,7 +9,7 @@
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225c">
   <link rel="stylesheet" href="../assets/css/participant-shared.css?v=20260414a">
-  <link rel="stylesheet" href="../assets/css/participant-sorteo.css?v=20260413d">
+  <link rel="stylesheet" href="../assets/css/participant-sorteo.css?v=20260414b">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260412b">
 </head>
 <body>
@@ -221,6 +221,29 @@
             </div>
           </div>
 
+          <section id="liveReferralCard" class="live-referral-card hidden">
+            <div class="live-referral-card__head">
+              <div>
+                <p class="live-referral-card__eyebrow">Referido Live</p>
+                <h3>Invitacion opcional</h3>
+              </div>
+              <span id="liveReferralBadge" class="live-referral-badge">LIVE</span>
+            </div>
+
+            <label for="inputReferralAlias">Alias de quien te invito</label>
+            <input
+              id="inputReferralAlias"
+              type="text"
+              inputmode="text"
+              autocomplete="off"
+              placeholder="Ej: mathome123"
+              maxlength="20"
+            />
+            <p id="liveReferralHint" class="text-muted microhint">
+              Si vienes invitado por alguien, escribe aqui su alias antes de confirmar el pago.
+            </p>
+          </section>
+
           <div class="payment-proof-card">
             <div class="pago-confirmacion-head">
               <h3>🧾 Carga tu comprobante</h3>
@@ -291,7 +314,7 @@
   <script src="../assets/js/config.js?v=20260412d"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260413b"></script>
+  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260414c"></script>
 </body>
 </html>
 

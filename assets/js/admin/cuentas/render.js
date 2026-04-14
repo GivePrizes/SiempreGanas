@@ -30,6 +30,43 @@ function getLiveOperationTypeData(tipo) {
   return { label: 'Ajuste' };
 }
 
+function normalizeMetadata(value) {
+  if (!value || Array.isArray(value) || typeof value !== 'object') {
+    return {};
+  }
+  return value;
+}
+
+function buildLiveOperationMetaLines(op) {
+  const metadata = normalizeMetadata(op?.metadata);
+  const lines = [];
+
+  if (op?.tipo === 'referido') {
+    const minimo = Number(metadata.minimo_referidos || 0);
+    const total = Number(metadata.total_aprobados || 0);
+
+    if (minimo > 0) {
+      lines.push(`Meta alcanzada: ${minimo} referidos aprobados.`);
+    }
+
+    if (total > minimo) {
+      lines.push(`Total aprobado actual: ${total} referidos.`);
+    } else if (total > 0 && minimo <= 0) {
+      lines.push(`Total aprobado actual: ${total} referidos.`);
+    }
+  }
+
+  if (op?.tipo === 'premio_efectivo' && metadata.premio_nombre) {
+    lines.push(`Premio: ${metadata.premio_nombre}.`);
+  }
+
+  if (op?.tipo === 'premio_extra' && metadata.servicio) {
+    lines.push(`Premio extra: ${metadata.servicio}.`);
+  }
+
+  return lines;
+}
+
 function buildWhatsappLink(phoneDigits, nombre = '', context = {}) {
   if (!phoneDigits) return '';
   const texto = buildWhatsappMessage(nombre, context);
@@ -46,6 +83,16 @@ function buildWhatsappMessage(nombre = '', context = {}) {
   }
 
   if (context.liveOperationType) {
+    if (context.liveOperationType === 'referido') {
+      const metadata = normalizeMetadata(context.metadata);
+      const minimo = Number(metadata.minimo_referidos || 0);
+      const total = Number(metadata.total_aprobados || 0);
+      const monto = context.monto ? ` por ${formatMoney(context.monto)}` : '';
+      const meta = minimo > 0 ? ` por completar ${minimo} referidos aprobados` : '';
+      const totalTexto = total > 0 ? ` Tu total aprobado en este Live va en ${total}.` : '';
+      return `${saludo}, felicitaciones. Tienes un pago pendiente${monto}${meta}${sorteo} en Mathome Live.${totalTexto}`;
+    }
+
     const typeLabel = getLiveOperationTypeData(context.liveOperationType).label.toLowerCase();
     const monto = context.monto ? ` por ${formatMoney(context.monto)}` : '';
     const descripcion = context.descripcion ? ` Detalle: ${context.descripcion}` : '';
@@ -203,12 +250,14 @@ function renderParticipanteRow(p, s) {
 function renderLiveOperationRow(op, s) {
   const estado = op.estado || 'pendiente';
   const tipoMeta = getLiveOperationTypeData(op.tipo);
+  const metadataLines = buildLiveOperationMetaLines(op);
   const phoneDigits = sanitizePhone(op.telefono);
   const wa = phoneDigits
     ? buildWhatsappLink(phoneDigits, op.nombre, {
         liveOperationType: op.tipo,
         monto: op.monto,
         descripcion: op.descripcion,
+        metadata: op.metadata,
         sorteoDescripcion: s.descripcion,
       })
     : '';
@@ -231,6 +280,7 @@ function renderLiveOperationRow(op, s) {
         ${op.monto != null ? `<span>${formatMoney(op.monto)}</span>` : ''}
       </div>
       <div class="live-op-description">${escapeHtml(op.descripcion || 'Sin descripcion')}</div>
+      ${metadataLines.map((line) => `<div class="muted tiny">${escapeHtml(line)}</div>`).join('')}
       ${op.completadaAt ? `<div class="muted tiny">Completada: ${new Date(op.completadaAt).toLocaleString()}</div>` : ''}
     </div>
 

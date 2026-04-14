@@ -6,6 +6,9 @@ const API_URL = window.API_URL || ''; // viene de config.js
 // obtener sorteoId de la URL
 const params = new URLSearchParams(window.location.search);
 const sorteoId = params.get('id');
+const referidoAliasParam = String(
+  params.get('ref') || params.get('referido') || params.get('alias') || ''
+).trim().toLowerCase();
 const comprarOtroNumero = ['1', 'true', 'si'].includes(
   String(params.get('comprar') || '').toLowerCase()
 );
@@ -70,6 +73,10 @@ const postConfirmActions = document.getElementById('postConfirmActions');
 const btnPostLive = document.getElementById('btnPostLive');
 const numbersStepAccordion = document.getElementById('numbersStepAccordion');
 const paymentStepAccordion = document.getElementById('paymentStepAccordion');
+const liveReferralCard = document.getElementById('liveReferralCard');
+const liveReferralBadge = document.getElementById('liveReferralBadge');
+const inputReferralAlias = document.getElementById('inputReferralAlias');
+const liveReferralHint = document.getElementById('liveReferralHint');
 
 
 let sorteoActual = null;
@@ -134,6 +141,50 @@ function mostrarToast(msg) {
     toast.classList.remove('show');
     setTimeout(() => toast.classList.add('hidden'), 200);
   }, 2500);
+}
+
+function normalizeReferralAlias(value) {
+  return String(value || '').trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
+}
+
+function formatLiveReferralRules(rules = []) {
+  if (!Array.isArray(rules) || !rules.length) {
+    return 'Si vienes invitado por alguien, escribe aqui su alias antes de confirmar el pago.';
+  }
+
+  const summary = rules
+    .slice()
+    .sort((a, b) => Number(a.minimo_referidos || 0) - Number(b.minimo_referidos || 0))
+    .slice(0, 3)
+    .map((rule) => {
+      const minimo = Number(rule.minimo_referidos || 0);
+      const monto = Number(rule.recompensa_monto || 0);
+      const money = monto > 0 ? `$${monto.toLocaleString('es-CO')}` : 'sin monto';
+      return `${minimo} referidos: ${money}`;
+    })
+    .join(' · ');
+
+  return summary || 'Si vienes invitado por alguien, escribe aqui su alias antes de confirmar el pago.';
+}
+
+function renderLiveReferralCard() {
+  if (!liveReferralCard || !inputReferralAlias || !liveReferralHint) return;
+
+  const isLive = sorteoActual?.modalidad === 'live';
+  liveReferralCard.classList.toggle('hidden', !isLive);
+  if (!isLive) return;
+
+  if (referidoAliasParam && !inputReferralAlias.value.trim()) {
+    inputReferralAlias.value = referidoAliasParam;
+  }
+
+  if (liveReferralBadge) {
+    liveReferralBadge.textContent = Array.isArray(sorteoActual?.live_referral_rules)
+      ? `${sorteoActual.live_referral_rules.length} reglas`
+      : 'LIVE';
+  }
+
+  liveReferralHint.textContent = formatLiveReferralRules(sorteoActual?.live_referral_rules || []);
 }
 
 function getNumeroPadding() {
@@ -631,6 +682,7 @@ async function cargarSorteo() {
       }
     }
 
+    renderLiveReferralCard();
     renderNumeros();
     actualizarResumen();
 
@@ -827,6 +879,7 @@ if (btnConfirmar) {
     try {
       // 1️⃣ convertir archivo a base64 (data URL)
       const base64 = file ? await fileToBase64(file) : null;
+      const referidoAlias = normalizeReferralAlias(inputReferralAlias?.value || '');
 
       // 2️⃣ armar body JSON como lo espera el backend
       const body = {
@@ -835,7 +888,8 @@ if (btnConfirmar) {
         comprobante: base64,
         pagador_nombre: pagadorNombre || null,
         pagador_telefono: pagadorTelefono || null,
-        pago_metodo: metodo
+        pago_metodo: metodo,
+        referido_alias: referidoAlias || null,
       };
 
       const res = await fetch(`${API_URL}/api/participante/guardar-numeros`, {
@@ -855,7 +909,16 @@ if (btnConfirmar) {
         return;
       }
 
-      mostrarToast('¡Listo! Tu participación quedó registrada como pendiente ✅');
+      const referidoGuardado = data?.referido?.registrado && data?.referido?.referidor?.alias;
+      const successMessage = referidoGuardado
+        ? `Listo. Tu participacion quedo pendiente y el referido @${data.referido.referidor.alias} fue guardado.`
+        : 'Listo. Tu participacion quedo registrada como pendiente.';
+      mostrarToast(successMessage);
+      if (Array.isArray(data?.warnings) && data.warnings.length) {
+        window.setTimeout(() => {
+          mostrarToast(data.warnings[0]);
+        }, 1800);
+      }
 
       // reset selección
       seleccionados = [];
