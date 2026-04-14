@@ -24,8 +24,6 @@ const dom = {
   prevPage: document.getElementById('sorteosPrevPage'),
   nextPage: document.getElementById('sorteosNextPage'),
   pageNumbers: document.getElementById('sorteosPageNumbers'),
-  statSorteosActivos: document.getElementById('statSorteosActivos'),
-  statSorteosNota: document.getElementById('statSorteosNota'),
 };
 
 const state = {
@@ -382,27 +380,6 @@ function renderLoadingCards() {
   if (dom.paginaInfo) dom.paginaInfo.textContent = 'Preparando catalogo';
 }
 
-function updateSorteosStats() {
-  const el = dom.statSorteosActivos;
-  const note = dom.statSorteosNota;
-  const count = state.sorteos.length;
-
-  if (el) {
-    el.textContent = String(count);
-    el.style.opacity = '1';
-  }
-
-  if (!note) return;
-
-  if (count <= 0) {
-    note.textContent = 'Cuando abramos una nueva ronda, la veras aqui sin tener que buscarla entre ruido.';
-  } else if (count === 1) {
-    note.textContent = 'Tienes 1 ronda lista para revisar con un flujo mas ordenado y directo.';
-  } else {
-    note.textContent = `Tienes ${count} rondas activas. Usa filtros y paginas para encontrar la indicada mas rapido.`;
-  }
-}
-
 function updateTipoSorteoUI() {
   document.querySelectorAll('[data-tipo-sorteo]').forEach((chip) => {
     chip.classList.toggle(
@@ -505,7 +482,7 @@ function getPreparedVisibleSorteos() {
 function getEmptyStateCopy() {
   if (!state.sorteos.length) {
     return {
-      title: 'No hay rondas activas por ahora',
+      title: 'No hay sorteos por ahora',
       text: 'Cuando abramos nuevas rondas, apareceran aqui listas para filtrar y explorar.',
       showReset: false,
     };
@@ -752,15 +729,6 @@ function showLoadError() {
     showReset: false,
   });
 
-  if (dom.statSorteosActivos) {
-    dom.statSorteosActivos.textContent = '0';
-    dom.statSorteosActivos.style.opacity = '0.5';
-  }
-
-  if (dom.statSorteosNota) {
-    dom.statSorteosNota.textContent =
-      'Cuando la conexion vuelva, el tablero mostrara las rondas activas con filtros y paginas.';
-  }
 }
 
 async function cargarSorteosActivos() {
@@ -777,7 +745,6 @@ async function cargarSorteosActivos() {
       ? data.filter((sorteo) => String(sorteo.estado || '').toLowerCase() !== 'finalizado')
       : [];
 
-    updateSorteosStats();
     renderSorteosView();
   } catch (err) {
     console.error('Error cargando rondas del dashboard:', err);

@@ -226,9 +226,15 @@ function getProgramacionHint() {
   const isLive = ruletaInfo.modalidad === 'live';
   const estadoSorteo = ruletaInfo.estado_sorteo;
   const estadoRuleta = ruletaInfo.ruleta_estado;
+  const liveMeta = getLiveMeta();
   const currentLivePrize = getCurrentLivePrize();
 
   if (isLive) {
+    if (liveMeta?.schema_incomplete) {
+      return Array.isArray(liveMeta.warnings) && liveMeta.warnings.length
+        ? liveMeta.warnings[0]
+        : 'Faltan migraciones Live en la base de datos y no se puede programar esta ronda todavia.';
+    }
     if (estadoSorteo !== 'lleno') {
       return 'Este Live primero debe llenarse. La fecha y hora real se programa despues, desde este panel.';
     }
@@ -300,23 +306,37 @@ function renderLivePanel() {
   const restantes = Number(liveMeta.premios_restantes || 0);
   const total = Number(liveMeta.total_premios || 0);
   const elegibles = Number(liveMeta.participantes_elegibles || 0);
+  const schemaIncomplete = Boolean(liveMeta.schema_incomplete);
+  const schemaWarning = Array.isArray(liveMeta.warnings) && liveMeta.warnings.length
+    ? liveMeta.warnings[0]
+    : 'Faltan migraciones Live en la base de datos.';
 
   if (livePremioPanelTitleEl) {
-    livePremioPanelTitleEl.textContent = premioActual
+    livePremioPanelTitleEl.textContent = schemaIncomplete
+      ? 'Live pendiente de migraciones'
+      : premioActual
       ? `Premio actual: ${premioActual.nombre}`
       : 'Live listo para cierre';
   }
 
   if (livePremioBadgeEl) {
-    livePremioBadgeEl.textContent = `${restantes} pendientes`;
+    livePremioBadgeEl.textContent = schemaIncomplete ? 'Migraciones' : `${restantes} pendientes`;
   }
 
   if (livePremioResumenEl) {
-    livePremioResumenEl.textContent = `${entregados}/${total} entregados · ${elegibles} elegibles`;
+    livePremioResumenEl.textContent = schemaIncomplete
+      ? 'La vista Live esta en modo de respaldo hasta completar las migraciones.'
+      : `${entregados}/${total} entregados · ${elegibles} elegibles`;
   }
 
   if (livePremioActualEl) {
-    if (premioActual) {
+    if (schemaIncomplete) {
+      livePremioActualEl.innerHTML = `
+        <div class="live-prize-current__eyebrow">Migracion pendiente</div>
+        <div class="live-prize-current__name">No se pudo cargar la configuracion Live completa.</div>
+        <p>${escapeHtml(schemaWarning)}</p>
+      `;
+    } else if (premioActual) {
       const amount = formatMoney(premioActual.monto);
       livePremioActualEl.innerHTML = `
         <div class="live-prize-current__eyebrow">Siguiente premio</div>
@@ -338,7 +358,9 @@ function renderLivePanel() {
   }
 
   if (livePremioHintEl) {
-    livePremioHintEl.textContent = premioActual
+    livePremioHintEl.textContent = schemaIncomplete
+      ? schemaWarning
+      : premioActual
       ? elegibles > 0
         ? 'El giro sacara un ganador nuevo y lo enviara directo a Live cuentas.'
         : 'Ya no quedan participantes elegibles para seguir girando este Live.'
@@ -347,7 +369,9 @@ function renderLivePanel() {
 
   if (livePremioHistorialEl) {
     const historial = Array.isArray(liveMeta.historial) ? [...liveMeta.historial].reverse() : [];
-    if (!historial.length) {
+    if (schemaIncomplete) {
+      livePremioHistorialEl.innerHTML = `<p class="live-prize-empty">${escapeHtml(schemaWarning)}</p>`;
+    } else if (!historial.length) {
       livePremioHistorialEl.innerHTML = '<p class="live-prize-empty">Todavia no se han registrado premios en vivo.</p>';
     } else {
       livePremioHistorialEl.innerHTML = historial
