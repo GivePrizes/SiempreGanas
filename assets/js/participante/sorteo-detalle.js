@@ -147,9 +147,15 @@ function normalizeReferralAlias(value) {
   return String(value || '').trim().toLowerCase().replace(/[^a-z0-9_]/g, '');
 }
 
+function formatReferralIdentifierLabel(value) {
+  const normalized = normalizeReferralAlias(value);
+  if (!normalized) return '';
+  return /^\d+$/.test(normalized) ? `ID ${normalized}` : `@${normalized}`;
+}
+
 function formatLiveReferralRules(rules = []) {
   if (!Array.isArray(rules) || !rules.length) {
-    return 'Si vienes invitado por alguien, escribe aqui su alias antes de confirmar el pago.';
+    return 'Si vienes invitado por alguien, escribe aqui su ID o alias antes de confirmar el pago.';
   }
 
   const summary = rules
@@ -164,7 +170,7 @@ function formatLiveReferralRules(rules = []) {
     })
     .join(' · ');
 
-  return summary || 'Si vienes invitado por alguien, escribe aqui su alias antes de confirmar el pago.';
+  return summary || 'Si vienes invitado por alguien, escribe aqui su ID o alias antes de confirmar el pago.';
 }
 
 function renderLiveReferralCard() {
@@ -911,7 +917,7 @@ if (btnConfirmar) {
 
       const referidoGuardado = data?.referido?.registrado && data?.referido?.referidor?.alias;
       const successMessage = referidoGuardado
-        ? `Listo. Tu participacion quedo pendiente y el referido @${data.referido.referidor.alias} fue guardado.`
+        ? `Listo. Tu participacion quedo pendiente y el referido ${formatReferralIdentifierLabel(data.referido.referidor.alias)} fue guardado.`
         : 'Listo. Tu participacion quedo registrada como pendiente.';
       mostrarToast(successMessage);
       if (Array.isArray(data?.warnings) && data.warnings.length) {

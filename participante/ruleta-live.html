@@ -8,7 +8,7 @@
 
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225c">
-  <link rel="stylesheet" href="../assets/css/ruleta-live.css?v=20260225c">
+  <link rel="stylesheet" href="../assets/css/ruleta-live.css?v=20260414d">
   <link rel="stylesheet" href="../assets/js/chat/chat.css?v=20260331a">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260412b">
 </head>
@@ -74,6 +74,60 @@
       <div id="numbersList" class="numbersList" aria-live="polite"></div>
     </section>
 
+    <section id="liveReferralCard" class="card referralCard hidden">
+      <div class="salaHeader">
+        <div>
+          <h2 class="salaTitle">Tu panel Live</h2>
+          <p id="liveReferralShareHint" class="muted small">
+            Comparte tu ID para que tus invitados entren con tu referido.
+          </p>
+        </div>
+        <span id="liveReferralStatusBadge" class="salaBadge">Live</span>
+      </div>
+
+      <div class="liveReferralGrid">
+        <article class="liveReferralMini">
+          <span class="liveReferralMini__label">Tu ID de referido</span>
+          <strong id="liveReferralUserId" class="referralCode">--</strong>
+          <p class="muted small">Este ID numerico ya funciona para registrar compras con tu referido.</p>
+        </article>
+
+        <article class="liveReferralMini">
+          <span class="liveReferralMini__label">Alias publico</span>
+          <strong id="liveReferralAlias" class="referralCode referralCode--soft">Sin alias</strong>
+          <p id="liveReferralReferrer" class="muted small hidden"></p>
+        </article>
+      </div>
+
+      <div class="liveReferralActions">
+        <button id="btnCopyLiveReferralId" class="btnBack" type="button" aria-label="Copiar ID de referido">
+          <span class="btn-ico">#</span>
+          <span class="btn-label">Copiar ID</span>
+        </button>
+        <button id="btnCopyLiveReferralLink" class="btnBack" type="button" aria-label="Copiar enlace de referido">
+          <span class="btn-ico">↗</span>
+          <span class="btn-label">Copiar link</span>
+        </button>
+      </div>
+
+      <div class="liveReferralStats">
+        <article class="liveReferralStat">
+          <span>Aprobados</span>
+          <strong id="liveReferralApprovedCount">0</strong>
+        </article>
+        <article class="liveReferralStat">
+          <span>Pendientes</span>
+          <strong id="liveReferralPendingCount">0</strong>
+        </article>
+        <article class="liveReferralStat">
+          <span>Por cobrar</span>
+          <strong id="liveReferralPendingMoney">$0</strong>
+        </article>
+      </div>
+
+      <div id="liveReferralRules" class="liveReferralRules"></div>
+    </section>
+
     <!-- Chat en vivo -->
     <section class="card chatCard">
       <div class="salaHeader">
@@ -108,7 +162,7 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
   <script type="module" src="../assets/js/participante/ruleta-live-chat.js?v=20260413a"></script>
-  <script src="../assets/js/participante/ruleta-live.js?v=20260413b"></script>
+  <script src="../assets/js/participante/ruleta-live.js?v=20260414d"></script>
     <!-- 🔊 Sonido resultado destacado -->
   <audio id="audioWin" src="../assets/sound/sonidoWin.mp3" preload="auto"></audio>
 

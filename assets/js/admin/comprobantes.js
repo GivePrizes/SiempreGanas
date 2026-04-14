@@ -30,6 +30,12 @@ function formatMoney(value) {
   return `$${amount.toLocaleString('es-CO')}`;
 }
 
+function formatReferralIdentifier(value) {
+  const normalized = String(value || '').trim();
+  if (!normalized) return '';
+  return /^\d+$/.test(normalized) ? `ID ${normalized}` : `@${normalized}`;
+}
+
 // Mini estado "actualizando..." sin borrar el contenedor
 function setMiniEstado(texto) {
   const contenedor = document.getElementById('comprobantes');
@@ -182,7 +188,7 @@ function buildApprovalAlertMessage(data) {
 
   if (referral?.referidorAlias || referral?.referidorNombre) {
     const referidor = referral.referidorAlias
-      ? `@${referral.referidorAlias}`
+      ? formatReferralIdentifier(referral.referidorAlias)
       : referral.referidorNombre;
     const totalText = totalAprobados > 0
       ? ` Ya va en ${totalAprobados} referido${totalAprobados === 1 ? '' : 's'} aprobado${totalAprobados === 1 ? '' : 's'}.`
