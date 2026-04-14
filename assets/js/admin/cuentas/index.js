@@ -2,6 +2,7 @@ import { renderAcordeon } from './render.js?v=20260414c';
 
 const API_URL = window.API_URL || '';
 const REFRESH_MS = 15000;
+const AUTO_REFRESH_GRACE_MS = 8000;
 
 const elAcordeon = document.getElementById('acordeonSorteos');
 const elEmpty = document.getElementById('emptyState');
@@ -27,7 +28,83 @@ const state = {
   q: '',
   open: new Set(),
   cache: [],
+  suspendAutoRefreshUntil: 0,
+  lastViewportAnchor: null,
 };
+
+function cssEscape(value) {
+  const raw = String(value ?? '');
+  if (window.CSS && typeof window.CSS.escape === 'function') {
+    return window.CSS.escape(raw);
+  }
+  return raw.replace(/"/g, '\\"');
+}
+
+function captureViewportAnchorFromElement(element) {
+  const item = element?.closest?.('.ac-item');
+  const head = item?.querySelector?.('.ac-head[data-sorteo-id]');
+  if (!item || !head?.dataset?.sorteoId) return null;
+
+  return {
+    sorteoId: String(head.dataset.sorteoId),
+    viewportTop: item.getBoundingClientRect().top,
+  };
+}
+
+function captureViewportAnchorBySorteoId(sorteoId) {
+  if (!elAcordeon || !sorteoId) return null;
+  const head = elAcordeon.querySelector(`.ac-head[data-sorteo-id="${cssEscape(sorteoId)}"]`);
+  return head ? captureViewportAnchorFromElement(head) : null;
+}
+
+function captureBestViewportAnchor() {
+  if (!elAcordeon) return null;
+
+  const openItems = Array.from(elAcordeon.querySelectorAll('.ac-item.open .ac-head[data-sorteo-id]'));
+  if (openItems.length) {
+    const preferred = openItems.find((head) => head.getBoundingClientRect().bottom > 120) || openItems[0];
+    return captureViewportAnchorFromElement(preferred);
+  }
+
+  const firstHead = elAcordeon.querySelector('.ac-head[data-sorteo-id]');
+  return firstHead ? captureViewportAnchorFromElement(firstHead) : null;
+}
+
+function rememberViewportContext(element = null, sorteoId = '') {
+  state.lastViewportAnchor =
+    captureViewportAnchorFromElement(element)
+    || captureViewportAnchorBySorteoId(sorteoId)
+    || captureBestViewportAnchor();
+
+  state.suspendAutoRefreshUntil = Date.now() + AUTO_REFRESH_GRACE_MS;
+}
+
+function restoreViewportContext(anchor, fallbackScroll) {
+  if (!elAcordeon) {
+    window.scrollTo({ top: fallbackScroll });
+    return;
+  }
+
+  const sorteoId = anchor?.sorteoId;
+  if (!sorteoId) {
+    window.scrollTo({ top: fallbackScroll });
+    return;
+  }
+
+  const head = elAcordeon.querySelector(`.ac-head[data-sorteo-id="${cssEscape(sorteoId)}"]`);
+  const item = head?.closest?.('.ac-item');
+  if (!item) {
+    window.scrollTo({ top: fallbackScroll });
+    return;
+  }
+
+  const targetTop = Math.max(
+    0,
+    window.scrollY + item.getBoundingClientRect().top - Number(anchor?.viewportTop || 0)
+  );
+
+  window.scrollTo({ top: targetTop });
+}
 
 function getToken() {
   return localStorage.getItem('token') || '';
@@ -108,7 +185,7 @@ async function fetchJSON(url, options = {}) {
   return data;
 }
 
-async function cargarCuentas({ silent = false } = {}) {
+async function cargarCuentas({ silent = false, force = false } = {}) {
   const token = getToken();
   if (!token) {
     toast('Sesion expirada. Inicia sesion.');
@@ -116,6 +193,11 @@ async function cargarCuentas({ silent = false } = {}) {
   }
 
   const prevScroll = window.scrollY;
+  const viewportAnchor = state.lastViewportAnchor || captureBestViewportAnchor();
+  if (!force && Date.now() < state.suspendAutoRefreshUntil) {
+    return;
+  }
+
   if (!silent && btnRefrescar) {
     btnRefrescar.disabled = true;
     btnRefrescar.textContent = 'Actualizando...';
@@ -133,7 +215,7 @@ async function cargarCuentas({ silent = false } = {}) {
     refreshEmptyStateCopy();
     showEmpty(!hasVisible);
 
-    window.scrollTo({ top: prevScroll });
+    restoreViewportContext(viewportAnchor, prevScroll);
   } catch (e) {
     console.error('[CUENTAS] Error:', e);
     toast(e.message || 'Error cargando cuentas');
@@ -145,6 +227,7 @@ async function cargarCuentas({ silent = false } = {}) {
     );
     showEmpty(true);
   } finally {
+    state.lastViewportAnchor = null;
     if (!silent && btnRefrescar) {
       btnRefrescar.disabled = false;
       btnRefrescar.textContent = 'Refrescar';
@@ -156,6 +239,7 @@ async function marcarEntregada(entregaId, btn) {
   const token = getToken();
   if (!token) throw new Error('Sesion expirada');
 
+  rememberViewportContext(btn);
   const oldText = btn?.textContent;
   if (btn) {
     btn.disabled = true;
@@ -172,7 +256,7 @@ async function marcarEntregada(entregaId, btn) {
     if (response?.data?.bonusReiniciado === true) {
       toast('Bonus entregado y contador reiniciado');
     }
-    await cargarCuentas({ silent: true });
+    await cargarCuentas({ silent: true, force: true });
   } finally {
     if (btn) {
       btn.textContent = oldText || 'Marcar entregada';
@@ -184,6 +268,7 @@ async function completarLiveOperacion(operacionId, btn) {
   const token = getToken();
   if (!token) throw new Error('Sesion expirada');
 
+  rememberViewportContext(btn);
   const oldText = btn?.textContent;
   if (btn) {
     btn.disabled = true;
@@ -197,7 +282,7 @@ async function completarLiveOperacion(operacionId, btn) {
     );
 
     toast('Operacion Live marcada como completada');
-    await cargarCuentas({ silent: true });
+    await cargarCuentas({ silent: true, force: true });
   } finally {
     if (btn) {
       btn.textContent = oldText || 'Marcar completada';
@@ -280,6 +365,7 @@ async function submitLiveOperacionForm(event) {
   }
 
   try {
+    rememberViewportContext(null, liveOpSorteoId.value);
     await fetchJSON(`${API_URL}/api/admin/cuentas/live-operaciones`, {
       method: 'POST',
       headers: {
@@ -291,7 +377,7 @@ async function submitLiveOperacionForm(event) {
 
     toast('Operacion Live creada');
     closeLiveOperacionModal();
-    await cargarCuentas({ silent: true });
+    await cargarCuentas({ silent: true, force: true });
   } catch (err) {
     console.error(err);
     toast(err.message || 'No se pudo crear la operacion Live');
@@ -324,7 +410,7 @@ function setupFilters() {
     });
   });
 
-  btnRefrescar?.addEventListener('click', () => cargarCuentas({ silent: false }));
+  btnRefrescar?.addEventListener('click', () => cargarCuentas({ silent: false, force: true }));
 }
 
 function setupAcordeonToggle() {
@@ -409,8 +495,11 @@ async function init() {
   setupAcordeonToggle();
   setupLiveOperacionModal();
   refreshEmptyStateCopy();
-  cargarCuentas({ silent: false });
-  setInterval(() => cargarCuentas({ silent: true }), REFRESH_MS);
+  cargarCuentas({ silent: false, force: true });
+  setInterval(() => {
+    if (!liveOpModal?.classList.contains('hidden')) return;
+    cargarCuentas({ silent: true });
+  }, REFRESH_MS);
 }
 
 document.addEventListener('DOMContentLoaded', init);
