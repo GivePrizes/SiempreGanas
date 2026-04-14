@@ -1,4 +1,4 @@
-import { initChat } from '../chat/index.js?v=20260413a';
+import { initChat } from '../chat/index.js?v=20260414e';
 
 const API_URL = (window.API_URL || '').replace(/\/$/, '');
 

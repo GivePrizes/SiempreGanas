@@ -74,6 +74,7 @@ let girando = false;
 
 let ruletaInfo = null;
 let liveLiquidacion = null;
+let liveLiquidacionLastFetchedAt = 0;
 let countdownInterval = null;
 let pollingInterval = null;
 let autoSpinIniciado = false;
@@ -82,6 +83,7 @@ let spinVisualActivo = false;
 
 const PRE_SPIN_DURATION_MS = 7000;
 const FINAL_SPIN_DURATION_MS = 4700;
+const LIVE_LIQUIDACION_MIN_REFRESH_MS = 15000;
 
 // Helpers de auth
 const token = localStorage.getItem('token');
@@ -761,10 +763,20 @@ function buildLiquidacionReportHtml(report) {
   `;
 }
 
-async function fetchLiveLiquidacion() {
+async function fetchLiveLiquidacion(force = false) {
   if (!sorteoId || ruletaInfo?.modalidad !== 'live') {
     liveLiquidacion = null;
+    liveLiquidacionLastFetchedAt = 0;
     renderLiveLiquidacion();
+    return;
+  }
+
+  const now = Date.now();
+  if (
+    !force &&
+    liveLiquidacionLastFetchedAt &&
+    now - liveLiquidacionLastFetchedAt < LIVE_LIQUIDACION_MIN_REFRESH_MS
+  ) {
     return;
   }
 
@@ -782,6 +794,7 @@ async function fetchLiveLiquidacion() {
     }
 
     liveLiquidacion = data;
+    liveLiquidacionLastFetchedAt = now;
     renderLiveLiquidacion();
   } catch (err) {
     console.error('Error fetchLiveLiquidacion:', err);
@@ -1610,7 +1623,7 @@ if (btnConfirmProgramar) {
 }
 
 if (btnRefreshLiquidacion) {
-  btnRefreshLiquidacion.addEventListener('click', fetchLiveLiquidacion);
+  btnRefreshLiquidacion.addEventListener('click', () => fetchLiveLiquidacion(true));
 }
 
 if (btnFinalizarLive) {

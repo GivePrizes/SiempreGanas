@@ -4,8 +4,8 @@ import { createChatStore } from './store.js?v=20260329b';
 import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js?v=20260329b';
 import { subscribeToSorteoInserts } from './realtime.js?v=20260329b';
 
-const CHAT_SYNC_VISIBLE_MS = 2500;
-const CHAT_SYNC_HIDDEN_MS = 7000;
+const CHAT_SYNC_VISIBLE_MS = 5000;
+const CHAT_SYNC_HIDDEN_MS = 12000;
 const CHAT_STREAM_RECOVERY_MS = 900;
 
 /* ===============================
