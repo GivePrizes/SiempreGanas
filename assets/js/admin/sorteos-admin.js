@@ -306,7 +306,9 @@ async function eliminarSorteo(id) {
     return;
   }
 
-  const confirmar = confirm('¿Seguro que quieres ELIMINAR esta ronda? Esta acción no se puede deshacer.');
+  const confirmar = confirm(
+    '¿Seguro que quieres eliminar esta ronda?\n\nSe borraran tambien sus numeros, historial Live, chat, operaciones y entregas asociadas. Esta accion no se puede deshacer.'
+  );
   if (!confirmar) return;
 
   try {
@@ -315,8 +317,9 @@ async function eliminarSorteo(id) {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
+    const data = await res.json().catch(() => ({}));
+
     if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
       console.error('Error al eliminar sorteo:', data);
       alert(data.error || 'No se pudo eliminar la ronda.');
       return;
@@ -326,6 +329,17 @@ async function eliminarSorteo(id) {
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     const filtered = stored.filter(x => String(x) !== String(id));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+
+    const readyStored = readLiveReadyIds().filter((value) => value !== String(id));
+    persistLiveReadyIds(readyStored);
+
+    const cleanup = data.cleanup || {};
+    const totalRegistros = Object.values(cleanup).reduce((acc, value) => acc + Number(value || 0), 0);
+    showAdminToast(
+      totalRegistros > 0
+        ? `Ronda eliminada con su historial. Registros limpiados: ${totalRegistros}.`
+        : (data.message || 'Ronda eliminada correctamente.')
+    );
 
     await cargarSorteosAdmin();
   } catch (err) {

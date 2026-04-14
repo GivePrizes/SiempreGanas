@@ -40,6 +40,7 @@ function normalizeMetadata(value) {
 function buildLiveOperationMetaLines(op) {
   const metadata = normalizeMetadata(op?.metadata);
   const lines = [];
+  const origin = String(metadata.origen || '').trim().toLowerCase();
 
   if (op?.tipo === 'referido') {
     const minimo = Number(metadata.minimo_referidos || 0);
@@ -53,6 +54,10 @@ function buildLiveOperationMetaLines(op) {
       lines.push(`Total aprobado actual: ${total} referidos.`);
     } else if (total > 0 && minimo <= 0) {
       lines.push(`Total aprobado actual: ${total} referidos.`);
+    }
+
+    if (origin === 'referidos_live_cierre') {
+      lines.push('Generado automaticamente al cerrar el Live.');
     }
   }
 
@@ -87,10 +92,14 @@ function buildWhatsappMessage(nombre = '', context = {}) {
       const metadata = normalizeMetadata(context.metadata);
       const minimo = Number(metadata.minimo_referidos || 0);
       const total = Number(metadata.total_aprobados || 0);
+      const origin = String(metadata.origen || '').trim().toLowerCase();
       const monto = context.monto ? ` por ${formatMoney(context.monto)}` : '';
       const meta = minimo > 0 ? ` por completar ${minimo} referidos aprobados` : '';
       const totalTexto = total > 0 ? ` Tu total aprobado en este Live va en ${total}.` : '';
-      return `${saludo}, felicitaciones. Tienes un pago pendiente${monto}${meta}${sorteo} en Mathome Live.${totalTexto}`;
+      const cierreTexto = origin === 'referidos_live_cierre'
+        ? ' Este pago quedo listo al cierre del Live.'
+        : '';
+      return `${saludo}, felicitaciones. Tienes un pago pendiente${monto}${meta}${sorteo} en Mathome Live.${totalTexto}${cierreTexto}`;
     }
 
     const typeLabel = getLiveOperationTypeData(context.liveOperationType).label.toLowerCase();

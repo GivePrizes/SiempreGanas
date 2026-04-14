@@ -9,7 +9,7 @@
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/admin.css?v=20260414a">
-  <link rel="stylesheet" href="../assets/css/ruleta.css?v=20260414a" />
+  <link rel="stylesheet" href="../assets/css/ruleta.css?v=20260414d" />
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
 </head>
 
@@ -131,6 +131,49 @@
             </div>
           </section>
 
+          <section id="liveLiquidacionPanel" class="live-liquidation-panel" hidden>
+            <div class="live-liquidation-panel__header">
+              <div>
+                <p class="estado-label">Cierre y liquidacion</p>
+                <h4 id="liveLiquidacionTitle">Resumen del Live</h4>
+              </div>
+              <span id="liveLiquidacionStatus" class="live-liquidation-status">Abierto</span>
+            </div>
+
+            <p id="liveLiquidacionHint" class="ruleta-hint live-liquidation-hint">
+              Aqui veras el cierre financiero del Live, los pendientes y la opcion de exportar el informe.
+            </p>
+
+            <div id="liveLiquidacionStats" class="live-liquidation-stats"></div>
+
+            <div class="live-liquidation-columns">
+              <div class="live-liquidation-card">
+                <div class="live-liquidation-card__header">
+                  <strong>Ganadores</strong>
+                  <span id="liveLiquidacionGanadoresCount">0</span>
+                </div>
+                <div id="liveLiquidacionGanadores" class="live-liquidation-list"></div>
+              </div>
+
+              <div class="live-liquidation-card">
+                <div class="live-liquidation-card__header">
+                  <strong>Referidos con progreso</strong>
+                  <span id="liveLiquidacionReferidosCount">0</span>
+                </div>
+                <div id="liveLiquidacionReferidos" class="live-liquidation-list"></div>
+              </div>
+            </div>
+
+            <div id="liveLiquidacionWarnings" class="live-liquidation-warnings"></div>
+
+            <div class="live-liquidation-actions">
+              <button id="btnRefreshLiquidacion" class="btn-secondary">↻ Actualizar cierre</button>
+              <button id="btnFinalizarLive" class="btn-gold">✓ Finalizar Live</button>
+              <button id="btnExportarLiquidacionPdf" class="btn-secondary">🖨 Exportar PDF</button>
+              <button id="btnDescargarLiquidacionHtml" class="btn-secondary">⬇ Descargar archivo</button>
+            </div>
+          </section>
+
           <div class="ruleta-actions">
             <button id="btnGirar" class="btn-gold btn-girar">🎰 INICIAR RONDA</button>
             <button id="btnProgramar" class="btn-secondary">⏱ Programar ronda</button>
@@ -187,7 +230,7 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/admin/ruleta.js?v=20260414b"></script>
+  <script type="module" src="../assets/js/admin/ruleta.js?v=20260414d"></script>
 
 </body>
 </html>

@@ -409,6 +409,189 @@
   font-size: 0.85rem;
 }
 
+.live-liquidation-panel{
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(11, 17, 30, 0.96), rgba(7, 10, 18, 0.92));
+  border: 1px solid rgba(251, 191, 36, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.live-liquidation-panel__header{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.live-liquidation-panel__header h4{
+  margin: 0.2rem 0 0;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.live-liquidation-status{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.32rem 0.72rem;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.14);
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  color: #bfdbfe;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.live-liquidation-status.is-finalizado{
+  background: rgba(34, 197, 94, 0.14);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #86efac;
+}
+
+.live-liquidation-status.is-blocked{
+  background: rgba(251, 191, 36, 0.14);
+  border-color: rgba(251, 191, 36, 0.32);
+  color: #fde68a;
+}
+
+.live-liquidation-stats{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.live-liquidation-stat{
+  padding: 0.85rem 0.9rem;
+  border-radius: 0.9rem;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.live-liquidation-stat__label{
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #93c5fd;
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+}
+
+.live-liquidation-stat__value{
+  display: block;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.live-liquidation-stat__meta{
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.live-liquidation-columns{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.live-liquidation-card{
+  padding: 0.9rem;
+  border-radius: 0.9rem;
+  background: rgba(2, 6, 23, 0.68);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+}
+
+.live-liquidation-card__header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.65rem;
+  color: #e2e8f0;
+  font-size: 0.84rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.live-liquidation-list{
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.live-liquidation-item{
+  padding: 0.72rem 0.78rem;
+  border-radius: 0.8rem;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.live-liquidation-item__top,
+.live-liquidation-item__meta{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.live-liquidation-item__top{
+  color: #f8fafc;
+  font-size: 0.9rem;
+}
+
+.live-liquidation-item__meta{
+  margin-top: 0.35rem;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.live-liquidation-empty{
+  margin: 0;
+  padding: 0.8rem 0.85rem;
+  border-radius: 0.8rem;
+  border: 1px dashed rgba(148, 163, 184, 0.18);
+  color: #94a3b8;
+  background: rgba(2, 6, 23, 0.52);
+  font-size: 0.84rem;
+}
+
+.live-liquidation-warnings{
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.live-liquidation-warning{
+  padding: 0.8rem 0.9rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(251, 191, 36, 0.24);
+  background: rgba(251, 191, 36, 0.08);
+  color: #fde68a;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.live-liquidation-actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.live-liquidation-actions .btn-secondary,
+.live-liquidation-actions .btn-gold{
+  width: auto;
+  flex: 1 1 190px;
+}
+
 .ruleta-mini-stats .label { 
   color: var(--muted);
   opacity: 0.85;
@@ -627,10 +810,18 @@
 
 @media (max-width: 900px){
   .ruleta-estado-grid{ grid-template-columns: 1fr; }
+  .live-liquidation-stats,
+  .live-liquidation-columns{
+    grid-template-columns: 1fr;
+  }
   .live-prize-panel__header,
+  .live-liquidation-panel__header,
   .live-prize-history__title,
+  .live-liquidation-card__header,
   .live-prize-item__top,
-  .live-prize-item__meta{
+  .live-prize-item__meta,
+  .live-liquidation-item__top,
+  .live-liquidation-item__meta{
     flex-direction: column;
     align-items: flex-start;
   }

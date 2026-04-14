@@ -52,6 +52,20 @@ const btnConfirmProgramar = document.getElementById('btnConfirmProgramar');
 const btnCancelProgramar = document.getElementById('btnCancelProgramar');
 const customDateGroup = document.getElementById('customDateGroup');
 const programacionLiveHintEl = document.getElementById('programacionLiveHint');
+const liveLiquidacionPanelEl = document.getElementById('liveLiquidacionPanel');
+const liveLiquidacionTitleEl = document.getElementById('liveLiquidacionTitle');
+const liveLiquidacionStatusEl = document.getElementById('liveLiquidacionStatus');
+const liveLiquidacionHintEl = document.getElementById('liveLiquidacionHint');
+const liveLiquidacionStatsEl = document.getElementById('liveLiquidacionStats');
+const liveLiquidacionGanadoresEl = document.getElementById('liveLiquidacionGanadores');
+const liveLiquidacionGanadoresCountEl = document.getElementById('liveLiquidacionGanadoresCount');
+const liveLiquidacionReferidosEl = document.getElementById('liveLiquidacionReferidos');
+const liveLiquidacionReferidosCountEl = document.getElementById('liveLiquidacionReferidosCount');
+const liveLiquidacionWarningsEl = document.getElementById('liveLiquidacionWarnings');
+const btnRefreshLiquidacion = document.getElementById('btnRefreshLiquidacion');
+const btnFinalizarLive = document.getElementById('btnFinalizarLive');
+const btnExportarLiquidacionPdf = document.getElementById('btnExportarLiquidacionPdf');
+const btnDescargarLiquidacionHtml = document.getElementById('btnDescargarLiquidacionHtml');
 
 // Estado en memoria
 let participantes = [];
@@ -59,6 +73,7 @@ let rotacionActual = 0;
 let girando = false;
 
 let ruletaInfo = null;
+let liveLiquidacion = null;
 let countdownInterval = null;
 let pollingInterval = null;
 let autoSpinIniciado = false;
@@ -143,6 +158,28 @@ function formatMoney(value) {
     currency: 'COP',
     maximumFractionDigits: 0,
   }).format(numeric);
+}
+
+function formatDateTime(value) {
+  if (!value) return 'Sin fecha';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Sin fecha';
+  return date.toLocaleString('es-CO', {
+    timeZone: 'America/Bogota',
+    hour12: false,
+  });
+}
+
+function downloadTextFile(filename, content, mimeType = 'text/plain;charset=utf-8') {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }
 
 function getLiveMeta() {
@@ -335,6 +372,475 @@ function renderLivePanel() {
   }
 }
 
+function renderLiquidacionStats(report) {
+  if (!liveLiquidacionStatsEl) return;
+
+  const resumen = report?.resumen;
+  if (!resumen) {
+    liveLiquidacionStatsEl.innerHTML = '';
+    return;
+  }
+
+  const items = [
+    {
+      label: 'Recaudo confirmado',
+      value: formatMoney(resumen.recaudoConfirmado) || '$0',
+      meta: `${resumen.participantesAprobados || 0} participantes aprobados`,
+    },
+    {
+      label: 'Utilidad confirmada',
+      value: formatMoney(resumen.utilidadNetaConfirmada) || '$0',
+      meta: 'Solo toma pagos ya completados',
+    },
+    {
+      label: 'Utilidad proyectada',
+      value: formatMoney(resumen.utilidadNetaProyectada) || '$0',
+      meta: 'Incluye pendientes Live actuales',
+    },
+    {
+      label: 'Pagos por referidos',
+      value: formatMoney(resumen.referidosPagados) || '$0',
+      meta: `Pendiente: ${formatMoney(resumen.referidosPendientes) || '$0'}`,
+    },
+    {
+      label: 'Premios de efectivo',
+      value: formatMoney(resumen.premiosEfectivoPagados) || '$0',
+      meta: `Sorteados: ${formatMoney(resumen.premiosEfectivoSorteados) || '$0'}`,
+    },
+    {
+      label: 'Premios extra',
+      value: formatMoney(resumen.premiosExtraPagados) || '$0',
+      meta: `Pendiente: ${formatMoney(resumen.premiosExtraPendientes) || '$0'}`,
+    },
+    {
+      label: 'Beneficios de entrada',
+      value: `${resumen.beneficiosEntradaEntregados || 0} entregados`,
+      meta: `${resumen.beneficiosEntradaPendientes || 0} pendientes`,
+    },
+    {
+      label: 'Operaciones Live',
+      value: `${resumen.operacionesCompletadasCantidad || 0} completadas`,
+      meta: `${resumen.operacionesPendientesCantidad || 0} pendientes`,
+    },
+  ];
+
+  liveLiquidacionStatsEl.innerHTML = items
+    .map((item) => `
+      <article class="live-liquidation-stat">
+        <span class="live-liquidation-stat__label">${escapeHtml(item.label)}</span>
+        <span class="live-liquidation-stat__value">${escapeHtml(item.value)}</span>
+        <span class="live-liquidation-stat__meta">${escapeHtml(item.meta)}</span>
+      </article>
+    `)
+    .join('');
+}
+
+function renderLiquidacionGanadores(report) {
+  const ganadores = Array.isArray(report?.ganadores) ? report.ganadores : [];
+  if (liveLiquidacionGanadoresCountEl) {
+    liveLiquidacionGanadoresCountEl.textContent = String(ganadores.length);
+  }
+
+  if (!liveLiquidacionGanadoresEl) return;
+
+  if (!ganadores.length) {
+    liveLiquidacionGanadoresEl.innerHTML =
+      '<p class="live-liquidation-empty">Todavia no hay ganadores registrados en este Live.</p>';
+    return;
+  }
+
+  liveLiquidacionGanadoresEl.innerHTML = ganadores
+    .map((item) => {
+      const amount = formatMoney(item.premioMonto);
+      const ganador = item.usuarioAlias || item.usuarioNombre || `Usuario ${item.usuarioId}`;
+      return `
+        <article class="live-liquidation-item">
+          <div class="live-liquidation-item__top">
+            <strong>${escapeHtml(item.premioNombre || 'Premio')}</strong>
+            <span>#${escapeHtml(item.numero)}</span>
+          </div>
+          <div class="live-liquidation-item__meta">
+            <span>${escapeHtml(ganador)}</span>
+            <span>${escapeHtml(amount || (item.premioTipo || 'otro').toUpperCase())}</span>
+          </div>
+        </article>
+      `;
+    })
+    .join('');
+}
+
+function renderLiquidacionReferidos(report) {
+  const referidosPendientes = Array.isArray(report?.referidos?.pendientesLiquidacion)
+    ? report.referidos.pendientesLiquidacion
+    : [];
+  const referidos = referidosPendientes.length
+    ? referidosPendientes
+    : (Array.isArray(report?.referidos?.resumen) ? report.referidos.resumen : []);
+  if (liveLiquidacionReferidosCountEl) {
+    liveLiquidacionReferidosCountEl.textContent = String(referidos.length);
+  }
+
+  if (!liveLiquidacionReferidosEl) return;
+
+  if (!referidos.length) {
+    liveLiquidacionReferidosEl.innerHTML =
+      '<p class="live-liquidation-empty">Todavia no hay progreso de referidos para este Live.</p>';
+    return;
+  }
+
+  liveLiquidacionReferidosEl.innerHTML = referidos
+    .map((item) => {
+      const currentRule = item.reglaActual
+        ? `Regla actual: ${item.reglaActual.minimoReferidos} (${formatMoney(item.reglaActual.recompensaMonto) || '$0'})`
+        : 'Sin regla de pago configurada';
+      const queueStatus = item.enColaAdminCuentas
+        ? `En cola admin cuentas: ${formatMoney(item.referidoPendiente) || '$0'}`
+        : item.siguienteObjetivo
+          ? `Le faltan ${item.siguienteObjetivo.faltan} para la meta ${item.siguienteObjetivo.minimoReferidos}`
+          : 'Sin pagos pendientes en cola';
+      const alias = item.usuarioAlias ? `@${item.usuarioAlias}` : item.usuarioNombre;
+      return `
+        <article class="live-liquidation-item">
+          <div class="live-liquidation-item__top">
+            <strong>${escapeHtml(alias || `Usuario ${item.usuarioId}`)}</strong>
+            <span>${escapeHtml(String(item.totalAprobados))} aprobados</span>
+          </div>
+          <div class="live-liquidation-item__meta">
+            <span>${escapeHtml(currentRule)}</span>
+            <span>${escapeHtml(queueStatus)}</span>
+          </div>
+        </article>
+      `;
+    })
+    .join('');
+}
+
+function renderLiquidacionWarnings(report) {
+  if (!liveLiquidacionWarningsEl) return;
+
+  const blocks = [];
+  const blockingReasons = Array.isArray(report?.blockingReasons) ? report.blockingReasons : [];
+  const warnings = Array.isArray(report?.warnings) ? report.warnings : [];
+
+  blocks.push(
+    ...blockingReasons.map((message) => ({
+      className: 'live-liquidation-warning',
+      message,
+    }))
+  );
+  blocks.push(
+    ...warnings.map((message) => ({
+      className: 'live-liquidation-warning',
+      message,
+    }))
+  );
+
+  if (!blocks.length) {
+    liveLiquidacionWarningsEl.innerHTML = '';
+    return;
+  }
+
+  liveLiquidacionWarningsEl.innerHTML = blocks
+    .map((item) => `<div class="${item.className}">${escapeHtml(item.message)}</div>`)
+    .join('');
+}
+
+function renderLiveLiquidacion() {
+  if (!liveLiquidacionPanelEl) return;
+
+  if (ruletaInfo?.modalidad !== 'live') {
+    liveLiquidacionPanelEl.hidden = true;
+    return;
+  }
+
+  liveLiquidacionPanelEl.hidden = false;
+
+  if (!liveLiquidacion) {
+    if (liveLiquidacionTitleEl) {
+      liveLiquidacionTitleEl.textContent = 'Resumen del Live';
+    }
+    if (liveLiquidacionStatusEl) {
+      liveLiquidacionStatusEl.textContent = 'Cargando';
+      liveLiquidacionStatusEl.classList.remove('is-finalizado', 'is-blocked');
+    }
+    if (liveLiquidacionHintEl) {
+      liveLiquidacionHintEl.textContent =
+        'Cargando la liquidacion del Live para mostrarte el cierre, los pendientes y las exportaciones.';
+    }
+    if (liveLiquidacionStatsEl) liveLiquidacionStatsEl.innerHTML = '';
+    if (liveLiquidacionGanadoresEl) {
+      liveLiquidacionGanadoresEl.innerHTML =
+        '<p class="live-liquidation-empty">Cargando ganadores...</p>';
+    }
+    if (liveLiquidacionReferidosEl) {
+      liveLiquidacionReferidosEl.innerHTML =
+        '<p class="live-liquidation-empty">Cargando referidos...</p>';
+    }
+    if (liveLiquidacionWarningsEl) liveLiquidacionWarningsEl.innerHTML = '';
+    if (btnFinalizarLive) btnFinalizarLive.disabled = true;
+    return;
+  }
+
+  const isFinalizado = liveLiquidacion?.sorteo?.estado === 'finalizado';
+  const canFinalize = Boolean(liveLiquidacion?.canFinalize);
+
+  if (liveLiquidacionTitleEl) {
+    liveLiquidacionTitleEl.textContent = isFinalizado
+      ? 'Live cerrado y liquidado'
+      : 'Resumen del cierre Live';
+  }
+
+  if (liveLiquidacionStatusEl) {
+    liveLiquidacionStatusEl.classList.remove('is-finalizado', 'is-blocked');
+    if (isFinalizado) {
+      liveLiquidacionStatusEl.textContent = 'Finalizado';
+      liveLiquidacionStatusEl.classList.add('is-finalizado');
+    } else if (!canFinalize) {
+      liveLiquidacionStatusEl.textContent = 'Pendiente de cierre';
+      liveLiquidacionStatusEl.classList.add('is-blocked');
+    } else {
+      liveLiquidacionStatusEl.textContent = 'Listo para cerrar';
+    }
+  }
+
+  if (liveLiquidacionHintEl) {
+    liveLiquidacionHintEl.textContent = isFinalizado
+      ? `Cierre generado el ${formatDateTime(liveLiquidacion.generatedAt)}. Puedes exportarlo en archivo o imprimirlo a PDF.`
+      : canFinalize
+        ? 'El Live ya no tiene premios pendientes. Si todo esta correcto, puedes finalizarlo y exportar el reporte.'
+        : 'Todavia hay elementos abiertos. Revisa el bloqueo abajo antes de cerrar este Live.';
+  }
+
+  renderLiquidacionStats(liveLiquidacion);
+  renderLiquidacionGanadores(liveLiquidacion);
+  renderLiquidacionReferidos(liveLiquidacion);
+  renderLiquidacionWarnings(liveLiquidacion);
+
+  if (btnFinalizarLive) {
+    btnFinalizarLive.disabled = isFinalizado || !canFinalize;
+  }
+}
+
+function buildLiquidacionReportHtml(report) {
+  const title = report?.sorteo?.descripcion || `Live ${sorteoId}`;
+  const rowsGanadores = Array.isArray(report?.ganadores) ? report.ganadores : [];
+  const rowsOperaciones = Array.isArray(report?.operaciones) ? report.operaciones : [];
+  const rowsReferidos = Array.isArray(report?.referidos?.resumen) ? report.referidos.resumen : [];
+
+  return `
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8" />
+      <title>Liquidacion ${escapeHtml(title)}</title>
+      <style>
+        body { font-family: Arial, sans-serif; margin: 28px; color: #111827; }
+        h1, h2 { margin-bottom: 8px; }
+        p { margin: 4px 0; line-height: 1.45; }
+        .meta { color: #4b5563; margin-bottom: 18px; }
+        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+        .card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; background: #f9fafb; }
+        .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: #2563eb; font-weight: 700; }
+        .value { font-size: 18px; font-weight: 700; margin-top: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #e5e7eb; padding: 8px 10px; text-align: left; font-size: 13px; }
+        th { background: #eff6ff; }
+        .section { margin-top: 24px; }
+        .warn { border-radius: 10px; padding: 10px 12px; background: #fffbeb; border: 1px solid #fcd34d; margin-top: 8px; }
+      </style>
+    </head>
+    <body>
+      <h1>Liquidacion Live</h1>
+      <p class="meta">${escapeHtml(title)} · generado ${escapeHtml(formatDateTime(report?.generatedAt))}</p>
+      <p><strong>Estado:</strong> ${escapeHtml(report?.sorteo?.estado || '')}</p>
+      <p><strong>Premio resumen:</strong> ${escapeHtml(report?.sorteo?.premio || '')}</p>
+      <div class="grid">
+        <div class="card"><div class="label">Recaudo confirmado</div><div class="value">${escapeHtml(formatMoney(report?.resumen?.recaudoConfirmado) || '$0')}</div></div>
+        <div class="card"><div class="label">Utilidad confirmada</div><div class="value">${escapeHtml(formatMoney(report?.resumen?.utilidadNetaConfirmada) || '$0')}</div></div>
+        <div class="card"><div class="label">Utilidad proyectada</div><div class="value">${escapeHtml(formatMoney(report?.resumen?.utilidadNetaProyectada) || '$0')}</div></div>
+        <div class="card"><div class="label">Referidos pagados</div><div class="value">${escapeHtml(formatMoney(report?.resumen?.referidosPagados) || '$0')}</div></div>
+      </div>
+
+      <div class="section">
+        <h2>Ganadores</h2>
+        <table>
+          <thead>
+            <tr><th>Premio</th><th>Tipo</th><th>Ganador</th><th>Numero</th><th>Monto</th></tr>
+          </thead>
+          <tbody>
+            ${rowsGanadores.length
+              ? rowsGanadores.map((item) => `
+                <tr>
+                  <td>${escapeHtml(item.premioNombre || '')}</td>
+                  <td>${escapeHtml((item.premioTipo || '').toUpperCase())}</td>
+                  <td>${escapeHtml(item.usuarioAlias || item.usuarioNombre || `Usuario ${item.usuarioId}`)}</td>
+                  <td>#${escapeHtml(item.numero)}</td>
+                  <td>${escapeHtml(formatMoney(item.premioMonto) || '-')}</td>
+                </tr>
+              `).join('')
+              : '<tr><td colspan="5">Sin ganadores registrados.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Operaciones Live</h2>
+        <table>
+          <thead>
+            <tr><th>Tipo</th><th>Estado</th><th>Usuario</th><th>Monto</th><th>Descripcion</th></tr>
+          </thead>
+          <tbody>
+            ${rowsOperaciones.length
+              ? rowsOperaciones.map((item) => `
+                <tr>
+                  <td>${escapeHtml(item.tipo || '')}</td>
+                  <td>${escapeHtml(item.estado || '')}</td>
+                  <td>${escapeHtml(item.usuarioAlias || item.usuarioNombre || `Usuario ${item.usuarioId}`)}</td>
+                  <td>${escapeHtml(formatMoney(item.monto) || '-')}</td>
+                  <td>${escapeHtml(item.descripcion || '')}</td>
+                </tr>
+              `).join('')
+              : '<tr><td colspan="5">Sin operaciones registradas.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Referidos</h2>
+        <table>
+          <thead>
+            <tr><th>Usuario</th><th>Aprobados</th><th>Pendientes</th><th>Pagado</th><th>Pendiente</th><th>Siguiente meta</th></tr>
+          </thead>
+          <tbody>
+            ${rowsReferidos.length
+              ? rowsReferidos.map((item) => `
+                <tr>
+                  <td>${escapeHtml(item.usuarioAlias || item.usuarioNombre || `Usuario ${item.usuarioId}`)}</td>
+                  <td>${escapeHtml(item.totalAprobados)}</td>
+                  <td>${escapeHtml(item.totalPendientes)}</td>
+                  <td>${escapeHtml(formatMoney(item.referidoPagado) || '$0')}</td>
+                  <td>${escapeHtml(formatMoney(item.referidoPendiente) || '$0')}</td>
+                  <td>${escapeHtml(item.siguienteObjetivo ? `${item.siguienteObjetivo.minimoReferidos} referidos` : 'Sin meta pendiente')}</td>
+                </tr>
+              `).join('')
+              : '<tr><td colspan="6">Sin progreso de referidos.</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Notas</h2>
+        ${(Array.isArray(report?.warnings) ? report.warnings : []).map((warning) => `<div class="warn">${escapeHtml(warning)}</div>`).join('') || '<p>Sin notas adicionales.</p>'}
+      </div>
+    </body>
+    </html>
+  `;
+}
+
+async function fetchLiveLiquidacion() {
+  if (!sorteoId || ruletaInfo?.modalidad !== 'live') {
+    liveLiquidacion = null;
+    renderLiveLiquidacion();
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/sorteos/${sorteoId}/live-liquidacion`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      console.error('Error live-liquidacion:', data);
+      liveLiquidacion = null;
+      renderLiveLiquidacion();
+      return;
+    }
+
+    liveLiquidacion = data;
+    renderLiveLiquidacion();
+  } catch (err) {
+    console.error('Error fetchLiveLiquidacion:', err);
+    liveLiquidacion = null;
+    renderLiveLiquidacion();
+  }
+}
+
+async function finalizarLiveActual() {
+  if (!sorteoId || !liveLiquidacion) return;
+  if (!liveLiquidacion.canFinalize) {
+    alert((liveLiquidacion.blockingReasons || []).join('\n') || 'Este Live todavia no se puede cerrar.');
+    return;
+  }
+
+  const ok = confirm('Vas a finalizar este Live y dejar cerrada la liquidacion actual. ¿Deseas continuar?');
+  if (!ok) return;
+
+  if (btnFinalizarLive) btnFinalizarLive.disabled = true;
+
+  try {
+    const res = await fetch(`${API}/sorteos/${sorteoId}/finalizar-live`, {
+      method: 'POST',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      console.error('Error finalizar-live:', data);
+      alert(data.error || 'No se pudo finalizar el Live.');
+      renderLiveLiquidacion();
+      return;
+    }
+
+    liveLiquidacion = data.report || liveLiquidacion;
+    const opsCreadas = Number(data?.referidos?.operacionesCreadas || 0);
+    const resumenExtra = opsCreadas > 0
+      ? `\n\nReferidos listos en admin cuentas: ${opsCreadas}.`
+      : '';
+    alert((data.message || 'Live finalizado correctamente.') + resumenExtra);
+    await fetchRuletaInfo();
+    await fetchRuletaParticipantes();
+  } catch (err) {
+    console.error('Error finalizarLiveActual:', err);
+    alert('Error de red al finalizar el Live.');
+  } finally {
+    renderLiveLiquidacion();
+  }
+}
+
+function exportLiveLiquidacionPdf() {
+  if (!liveLiquidacion) {
+    alert('Todavia no hay liquidacion cargada para exportar.');
+    return;
+  }
+
+  const popup = window.open('', '_blank');
+  if (!popup) {
+    alert('Tu navegador bloqueo la ventana de impresion. Prueba permitir ventanas emergentes.');
+    return;
+  }
+
+  popup.document.open();
+  popup.document.write(buildLiquidacionReportHtml(liveLiquidacion));
+  popup.document.close();
+  popup.focus();
+  setTimeout(() => popup.print(), 250);
+}
+
+function downloadLiveLiquidacionHtml() {
+  if (!liveLiquidacion) {
+    alert('Todavia no hay liquidacion cargada para descargar.');
+    return;
+  }
+
+  const sorteoLabel = (liveLiquidacion.sorteo?.descripcion || `live-${sorteoId}`)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+  const filename = `liquidacion-${sorteoLabel || `live-${sorteoId}`}.html`;
+  downloadTextFile(filename, buildLiquidacionReportHtml(liveLiquidacion), 'text/html;charset=utf-8');
+}
+
 // ==========================
 // 3) Llamadas a backend
 // ==========================
@@ -524,6 +1030,7 @@ async function fetchRuletaInfo() {
 
     ruletaInfo = data;
     renderRuletaInfo();
+    await fetchLiveLiquidacion();
   } catch (err) {
     console.error('Error fetchRuletaInfo:', err);
   }
@@ -1078,7 +1585,24 @@ if (btnConfirmProgramar) {
   btnConfirmProgramar.addEventListener('click', programarRuleta);
 }
 
+if (btnRefreshLiquidacion) {
+  btnRefreshLiquidacion.addEventListener('click', fetchLiveLiquidacion);
+}
+
+if (btnFinalizarLive) {
+  btnFinalizarLive.addEventListener('click', finalizarLiveActual);
+}
+
+if (btnExportarLiquidacionPdf) {
+  btnExportarLiquidacionPdf.addEventListener('click', exportLiveLiquidacionPdf);
+}
+
+if (btnDescargarLiquidacionHtml) {
+  btnDescargarLiquidacionHtml.addEventListener('click', downloadLiveLiquidacionHtml);
+}
+
 syncProgramarControls();
+renderLiveLiquidacion();
 
 async function init() {
   const user = typeof window.getAuthUser === 'function'
