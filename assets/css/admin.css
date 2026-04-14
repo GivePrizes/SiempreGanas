@@ -461,6 +461,139 @@
   color: #fff;
 }
 
+.badge-live-ready {
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.95), rgba(245, 158, 11, 0.95));
+  color: #1f2937;
+}
+
+.live-ready-hub {
+  margin-top: 0.85rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  background:
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.16), transparent 36%),
+    linear-gradient(180deg, rgba(22, 39, 68, 0.82), rgba(11, 21, 39, 0.9));
+}
+
+.live-ready-hub__header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.live-ready-hub__eyebrow {
+  margin: 0 0 0.2rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #fbbf24;
+}
+
+.live-ready-hub__copy {
+  margin: 0.35rem 0 0;
+  color: var(--colour-muted);
+  font-size: 0.88rem;
+}
+
+.live-ready-hub__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.live-ready-hub__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(15, 23, 42, 0.34);
+}
+
+.live-ready-hub__item.is-fresh {
+  border-color: rgba(251, 191, 36, 0.48);
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.14), 0 18px 38px rgba(15, 23, 42, 0.2);
+}
+
+.live-ready-hub__item-main {
+  flex: 1;
+}
+
+.live-ready-hub__item-top {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.live-ready-hub__item-main p {
+  margin: 0.3rem 0 0;
+  font-size: 0.92rem;
+}
+
+.live-ready-hub__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.45rem;
+  font-size: 0.8rem;
+  color: var(--colour-muted);
+}
+
+.live-ready-hub__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  justify-content: flex-end;
+}
+
+.sorteo-card-admin--live-ready {
+  border: 1px solid rgba(251, 191, 36, 0.26);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.24);
+}
+
+.sorteo-live-callout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.8rem;
+  border: 1px solid rgba(251, 191, 36, 0.24);
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.sorteo-live-callout.is-fresh {
+  animation: live-ready-pulse 2.6s ease-in-out infinite;
+}
+
+.sorteo-live-callout strong {
+  display: block;
+  margin-bottom: 0.18rem;
+  color: #fbbf24;
+}
+
+.sorteo-live-callout p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--colour-muted);
+}
+
+@keyframes live-ready-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.12);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.04);
+  }
+}
+
 /* Ruleta admin: acciones secundarias */
 .ruleta-actions-admin{
   display:flex;
@@ -707,6 +840,19 @@
   background: linear-gradient(180deg, rgba(251,113,133,.85), rgba(190,24,93,.86));
 }
 
+.badge-live-ready {
+  background: linear-gradient(180deg, rgba(251,191,36,.92), rgba(245,158,11,.94));
+  color: #1f2937;
+}
+
+.live-ready-hub {
+  border-color: rgba(251, 191, 36, 0.34);
+}
+
+.live-ready-hub__item {
+  background: rgba(15, 23, 42, 0.34);
+}
+
 .stat-card {
   border: 1px solid rgba(152,198,255,.28);
   overflow: hidden;
@@ -902,6 +1048,36 @@
   box-shadow: none;
 }
 
+.live-ready-hub {
+  background: #fffaf0;
+  border-color: #fde68a;
+}
+
+.live-ready-hub__eyebrow,
+.sorteo-live-callout strong {
+  color: #b45309;
+}
+
+.live-ready-hub__item {
+  background: #ffffff;
+  border-color: #fde68a;
+}
+
+.live-ready-hub__copy,
+.live-ready-hub__meta,
+.sorteo-live-callout p {
+  color: #64748b;
+}
+
+.sorteo-live-callout {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.sorteo-card-admin--live-ready {
+  border-color: #fde68a;
+}
+
 .table thead,
 .table tr:nth-child(even) {
   background: #f7f8fa;
@@ -989,6 +1165,17 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.35rem;
+  }
+
+  .live-ready-hub__item,
+  .sorteo-live-callout {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .live-ready-hub__actions {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .comprobante-item {

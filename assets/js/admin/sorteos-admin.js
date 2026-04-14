@@ -2,6 +2,103 @@
 
 // Key para persistir orden en localStorage
 const STORAGE_KEY = 'admin_sorteos_order_v1';
+const LIVE_READY_KEY = 'admin_live_ready_ids_v1';
+let adminToastTimer = null;
+
+function isLiveReadyToSchedule(sorteo) {
+  return String(sorteo?.modalidad || '').trim().toLowerCase() === 'live'
+    && String(sorteo?.estado || '').trim().toLowerCase() === 'lleno';
+}
+
+function normalizeIds(values) {
+  return Array.isArray(values) ? values.map((value) => String(value)) : [];
+}
+
+function readLiveReadyIds() {
+  try {
+    return normalizeIds(JSON.parse(localStorage.getItem(LIVE_READY_KEY) || '[]'));
+  } catch {
+    return [];
+  }
+}
+
+function persistLiveReadyIds(ids) {
+  localStorage.setItem(LIVE_READY_KEY, JSON.stringify(normalizeIds(ids)));
+}
+
+function showAdminToast(message) {
+  const toast = document.getElementById('toast');
+  if (!toast || !message) return;
+
+  if (adminToastTimer) {
+    clearTimeout(adminToastTimer);
+    adminToastTimer = null;
+  }
+
+  toast.textContent = message;
+  toast.classList.remove('hidden');
+  adminToastTimer = setTimeout(() => {
+    toast.classList.add('hidden');
+    adminToastTimer = null;
+  }, 3800);
+}
+
+function renderLiveReadyHub(readyLives, freshReadyIds = new Set()) {
+  const hub = document.getElementById('liveReadyHub');
+  if (!hub) return;
+
+  if (!Array.isArray(readyLives) || !readyLives.length) {
+    hub.hidden = true;
+    hub.innerHTML = '';
+    return;
+  }
+
+  const countLabel = readyLives.length === 1
+    ? '1 Live listo para programar'
+    : `${readyLives.length} Lives listos para programar`;
+
+  hub.hidden = false;
+  hub.innerHTML = `
+    <div class="live-ready-hub__header">
+      <div>
+        <p class="live-ready-hub__eyebrow">Momento clave</p>
+        <h3>${countLabel}</h3>
+        <p class="live-ready-hub__copy">
+          Estas rondas ya completaron cupos. Desde aqui puedes entrar directo a programar la hora real del evento.
+        </p>
+      </div>
+    </div>
+    <div class="live-ready-hub__list">
+      ${readyLives.map((sorteo) => {
+        const fresh = freshReadyIds.has(String(sorteo.id));
+        const ocupacion = `${sorteo.ocupados} / ${sorteo.cantidad_numeros}`;
+        return `
+          <article class="live-ready-hub__item${fresh ? ' is-fresh' : ''}">
+            <div class="live-ready-hub__item-main">
+              <div class="live-ready-hub__item-top">
+                <strong>${sorteo.descripcion}</strong>
+                <span class="badge badge-live-ready">${fresh ? 'Listo ahora' : 'Listo'}</span>
+              </div>
+              <p>${sorteo.premio}</p>
+              <div class="live-ready-hub__meta">
+                <span>Cupos completos: ${ocupacion}</span>
+                <span>Modalidad Live</span>
+              </div>
+            </div>
+            <div class="live-ready-hub__actions">
+              <button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${sorteo.id}'">
+                ⏱ Programar Live
+              </button>
+              <button class="btn btn-ghost btn-sm" onclick="window.open('../participante/ruleta-live.html?id=${sorteo.id}', '_blank', 'noopener')">
+                👁 Ver sala
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
 
 function getTipoBadge(sorteo) {
   const raw = String(sorteo.tipo_producto || '').trim().toLowerCase();
@@ -42,12 +139,15 @@ export async function cargarSorteosAdmin() {
     if (!res.ok) {
       console.error('Error cargando sorteos para admin:', data);
       cont.innerHTML = '<p>Error al cargar sorteos.</p>';
+      renderLiveReadyHub([]);
       cont.style.opacity = '1';
       return;
     }
 
     if (!Array.isArray(data) || data.length === 0) {
       cont.innerHTML = '<p>Aún no tienes sorteos creados. Empieza con el botón “Crear sorteo”.</p>';
+      renderLiveReadyHub([]);
+      persistLiveReadyIds([]);
       cont.style.opacity = '1';
       return;
     }
@@ -84,15 +184,39 @@ export async function cargarSorteosAdmin() {
     }
 
     // Renderizar con atributos para drag & drop
+    const readyLives = ordered.filter((sorteo) => isLiveReadyToSchedule(sorteo));
+    const previousReadyIds = readLiveReadyIds();
+    const currentReadyIds = readyLives.map((sorteo) => String(sorteo.id));
+    const freshReadyIds = new Set(currentReadyIds.filter((id) => !previousReadyIds.includes(id)));
+
+    renderLiveReadyHub(readyLives, freshReadyIds);
+
+    if (freshReadyIds.size) {
+      const freshNames = readyLives
+        .filter((sorteo) => freshReadyIds.has(String(sorteo.id)))
+        .map((sorteo) => sorteo.descripcion);
+      const toastLabel = freshNames.length === 1
+        ? `Live listo para programar: ${freshNames[0]}`
+        : `${freshNames.length} Lives ya quedaron llenos y listos para programar.`;
+      showAdminToast(toastLabel);
+    }
+
+    persistLiveReadyIds(currentReadyIds);
+
     cont.innerHTML = ordered
-      .map(s => {
+      .map((s) => {
         const ocupacion = `${s.ocupados} / ${s.cantidad_numeros}`;
         const lleno = s.estado === 'lleno';
         const finalizado = s.estado === 'finalizado';
+        const isLive = String(s.modalidad || '').trim().toLowerCase() === 'live';
+        const liveReady = isLiveReadyToSchedule(s);
+        const liveReadyFresh = freshReadyIds.has(String(s.id));
 
         let estadoLabel = '';
         if (finalizado) {
           estadoLabel = '<span class="badge badge-danger">Finalizado</span>';
+        } else if (liveReady) {
+          estadoLabel = `<span class="badge badge-live-ready">${liveReadyFresh ? 'Live listo ahora' : 'Live listo para programar'}</span>`;
         } else if (lleno) {
           estadoLabel = '<span class="badge badge-warning">Lleno — Listo para resultado en vivo</span>';
         } else {
@@ -101,17 +225,39 @@ export async function cargarSorteosAdmin() {
 
         const btnRuleta = lleno
           ? `<div class="ruleta-actions-admin">
-              <button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">🎰 Iniciar sorteo</button>
+              <button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">${isLive ? '⏱ Programar Live' : '🎰 Iniciar sorteo'}</button>
               <button class="btn btn-ghost btn-sm" onclick="window.open('../participante/ruleta-live.html?id=${s.id}', '_blank', 'noopener')">👁 Ver resultado en vivo</button>
             </div>`
           : '';
+
+        const liveReadyCallout = liveReady
+          ? `
+            <div class="sorteo-live-callout${liveReadyFresh ? ' is-fresh' : ''}">
+              <div>
+                <strong>${liveReadyFresh ? 'Acaba de llenarse.' : 'Live listo para programar.'}</strong>
+                <p>Ya puedes abrir la ruleta, definir la hora real y arrancar la cuenta regresiva del evento.</p>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">
+                ⏱ Ir a programar
+              </button>
+            </div>
+          `
+          : '';
+
+        const guidanceText = liveReady
+          ? 'Todos los cupos ya estan vendidos. El siguiente paso natural es programar la hora real del Live desde la ruleta.'
+          : lleno
+            ? 'Esta ronda ya está completa. Puedes publicar el resultado en vivo y generar expectativa.'
+            : isLive
+              ? 'Este Live se programa cuando complete cupos. Mientras tanto, sigue moviendo ventas y referidos.'
+              : 'Aún se están vendiendo números. Cuantos más participen, más fuerte se siente el momento de la ronda.';
 
         const imagenHtml = s.imagen_url
           ? `<div class="sorteo-admin-image"><img src="${s.imagen_url}" alt="Imagen sorteo ${s.descripcion}"></div>`
           : '';
 
         return `
-          <article class="sorteo-card-admin draggable-sorteo" draggable="true" data-id="${s.id}">
+          <article class="sorteo-card-admin draggable-sorteo${liveReady ? ' sorteo-card-admin--live-ready' : ''}" draggable="true" data-id="${s.id}">
             ${imagenHtml}
             <div class="sorteo-admin-body">
               <div class="sorteo-header-admin">
@@ -124,11 +270,8 @@ export async function cargarSorteosAdmin() {
               </div>
               <p class="sorteo-detalle">Ganador: <strong>${s.premio}</strong></p>
               <p class="sorteo-detalle">Ocupación: <strong>${ocupacion}</strong></p>
-              <p class="sorteo-detalle-mini">${
-                lleno
-                  ? 'Esta ronda ya está completa. Puedes publicar el resultado en vivo y generar expectativa.'
-                  : 'Aún se están vendiendo números. Cuantos más participen, más fuerte se siente el momento de la ronda.'
-              }</p>
+              ${liveReadyCallout}
+              <p class="sorteo-detalle-mini">${guidanceText}</p>
               <div class="sorteo-actions-admin">
                 ${btnRuleta}
                 <button class="btn btn-warning btn-sm" onclick="editarSorteo(${s.id})">✏️ Editar</button>
@@ -147,6 +290,7 @@ export async function cargarSorteosAdmin() {
   } catch (err) {
     console.error(err);
     cont.innerHTML = '<p>Error de conexión al cargar los sorteos.</p>';
+    renderLiveReadyHub([]);
     cont.style.opacity = '1';
   }
 }

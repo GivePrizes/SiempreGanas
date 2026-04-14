@@ -174,6 +174,25 @@ function renderModalidadHelp() {
   help.textContent = 'Normal: sorteo clasico del flujo actual, sin configuracion avanzada de evento en vivo.';
 }
 
+function renderFechaSorteoHelp() {
+  const label = document.getElementById('fechaSorteoLabel');
+  const help = document.getElementById('fechaSorteoHelp');
+  const input = document.getElementById('fecha_sorteo');
+  if (!label || !help || !input) return;
+
+  if (getModalidadValue() === 'live') {
+    label.textContent = 'Fecha estimada del Live (opcional)';
+    help.textContent =
+      'Opcional. La fecha y hora real del evento se programa despues, cuando el sorteo ya este lleno.';
+    input.required = false;
+    return;
+  }
+
+  label.textContent = 'Fecha del sorteo';
+  help.textContent = 'Para sorteos normales, esta fecha sigue siendo obligatoria.';
+  input.required = true;
+}
+
 function initPreviewImagen() {
   const input = document.getElementById('imagen');
   const preview = document.getElementById('previewImagen');
@@ -346,6 +365,7 @@ function renderLiveSection({ seedDefaults = false } = {}) {
   section.hidden = !isLive;
 
   renderModalidadHelp();
+  renderFechaSorteoHelp();
 
   if (!isLive) return;
 
@@ -590,6 +610,7 @@ async function cargarSorteoParaEditar(id) {
 
     renderTipoProductoHelp();
     renderLiveSection({ seedDefaults: false });
+    renderFechaSorteoHelp();
   } catch (err) {
     console.error(err);
     mostrarToast('Error de conexion al cargar el sorteo.');
@@ -609,9 +630,10 @@ async function enviarFormulario(event) {
   const submitBtn = document.querySelector('#formCrearSorteo button[type="submit"]');
   const cantidadNumeros = parseCantidadNumeros(cantidad_numeros);
   const precioNumero = parsePrecioNumero(precio_numero);
+  const isLive = getModalidadValue() === 'live';
   const livePayload = collectLivePayload();
 
-  if (!descripcion || !premio || !cantidad_numeros || !precio_numero || !fecha_sorteo) {
+  if (!descripcion || !premio || !cantidad_numeros || !precio_numero || (!fecha_sorteo && !isLive)) {
     mostrarToast('Por favor completa todos los campos obligatorios.');
     return;
   }
@@ -648,7 +670,7 @@ async function enviarFormulario(event) {
     premio,
     cantidad_numeros: String(cantidadNumeros),
     precio_numero: precioNumero.toFixed(2),
-    fecha_sorteo,
+    fecha_sorteo: fecha_sorteo || '',
     tipo_producto,
     modalidad: livePayload.modalidad,
     live_config: livePayload.live_config,
@@ -753,6 +775,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTipoProductoUI();
   initLiveBuilders();
   initModalidadUI();
+  renderFechaSorteoHelp();
 
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');

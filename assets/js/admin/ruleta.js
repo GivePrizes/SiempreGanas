@@ -51,6 +51,7 @@ const inputFechaCustom = document.getElementById('inputFechaCustom');
 const btnConfirmProgramar = document.getElementById('btnConfirmProgramar');
 const btnCancelProgramar = document.getElementById('btnCancelProgramar');
 const customDateGroup = document.getElementById('customDateGroup');
+const programacionLiveHintEl = document.getElementById('programacionLiveHint');
 
 // Estado en memoria
 let participantes = [];
@@ -161,6 +162,78 @@ function getLivePrizeLabel(prize) {
   if (!prize) return '';
   const amount = formatMoney(prize.premio_monto ?? prize.monto);
   return amount ? `${prize.premio_nombre || prize.nombre} · ${amount}` : (prize.premio_nombre || prize.nombre || '');
+}
+
+function canProgramCurrentRound() {
+  if (!ruletaInfo) return false;
+
+  const estadoSorteo = ruletaInfo.estado_sorteo;
+  const estadoRuleta = ruletaInfo.ruleta_estado;
+  const isLive = ruletaInfo.modalidad === 'live';
+
+  if (estadoSorteo !== 'lleno') return false;
+  if (estadoRuleta === 'girando' || estadoRuleta === 'programada') return false;
+
+  if (isLive) {
+    return Boolean(getCurrentLivePrize()) && ['no_programada', 'finalizada'].includes(estadoRuleta);
+  }
+
+  return estadoRuleta === 'no_programada';
+}
+
+function getProgramacionHint() {
+  if (!ruletaInfo) {
+    return 'La hora real de esta ronda se programa aqui cuando el sorteo ya este lleno.';
+  }
+
+  const isLive = ruletaInfo.modalidad === 'live';
+  const estadoSorteo = ruletaInfo.estado_sorteo;
+  const estadoRuleta = ruletaInfo.ruleta_estado;
+  const currentLivePrize = getCurrentLivePrize();
+
+  if (isLive) {
+    if (estadoSorteo !== 'lleno') {
+      return 'Este Live primero debe llenarse. La fecha y hora real se programa despues, desde este panel.';
+    }
+    if (!currentLivePrize) {
+      return 'Este Live ya no tiene premios pendientes. Puedes cerrar el evento o dejar el chat abierto.';
+    }
+    if (estadoRuleta === 'programada') {
+      return 'La ronda Live ya esta programada. Espera el contador o cambia la programacion cuando cierre.';
+    }
+    if (estadoRuleta === 'girando') {
+      return 'La ronda Live esta girando ahora mismo.';
+    }
+    return 'Listo: ya puedes programar la fecha y hora real de este premio Live.';
+  }
+
+  if (estadoSorteo !== 'lleno') {
+    return 'La ruleta solo se puede programar cuando el sorteo ya este lleno.';
+  }
+  if (estadoRuleta === 'programada') {
+    return 'Esta ronda ya esta programada.';
+  }
+  if (estadoRuleta === 'girando') {
+    return 'La ronda esta girando ahora mismo.';
+  }
+  if (estadoRuleta === 'finalizada') {
+    return 'Esta ronda ya finalizo.';
+  }
+  return 'Ya puedes programar esta ronda.';
+}
+
+function syncProgramarControls() {
+  if (btnProgramar) {
+    btnProgramar.disabled = !canProgramCurrentRound();
+  }
+
+  if (programacionLiveHintEl) {
+    programacionLiveHintEl.textContent = getProgramacionHint();
+  }
+
+  if (panelProgramar && btnProgramar?.disabled) {
+    panelProgramar.style.display = 'none';
+  }
 }
 
 function syncActionButtons() {
@@ -572,6 +645,7 @@ function renderRuletaInfo() {
 
   syncActionButtons();
   renderLivePanel();
+  syncProgramarControls();
 
   if (tituloSorteo) {
     tituloSorteo.textContent = descripcion || premio || `Ronda #${sorteoId}`;
@@ -899,6 +973,10 @@ async function iniciarRuletaAutomatica() {
 // ==========================
 async function programarRuleta() {
   if (!sorteoId) return;
+  if (!canProgramCurrentRound()) {
+    alert(getProgramacionHint());
+    return;
+  }
 
   const body = {};
 
@@ -968,7 +1046,7 @@ if (btnGirar) {
 
 if (btnProgramar) {
   btnProgramar.addEventListener('click', () => {
-    if (!panelProgramar) return;
+    if (!panelProgramar || btnProgramar.disabled) return;
     const visible = panelProgramar.style.display !== 'none';
     panelProgramar.style.display = visible ? 'none' : 'flex';
     if (btnConfirmProgramar) btnConfirmProgramar.disabled = false;
@@ -999,6 +1077,8 @@ if (btnCancelProgramar) {
 if (btnConfirmProgramar) {
   btnConfirmProgramar.addEventListener('click', programarRuleta);
 }
+
+syncProgramarControls();
 
 async function init() {
   const user = typeof window.getAuthUser === 'function'
