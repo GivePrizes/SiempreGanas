@@ -1,5 +1,4 @@
-// frontend/assets/js/admin/cuentas/index.js
-import { renderAcordeon } from './render.js?v=20260413a';
+import { renderAcordeon } from './render.js?v=20260414a';
 
 const API_URL = window.API_URL || '';
 const REFRESH_MS = 15000;
@@ -12,13 +11,27 @@ const elQ = document.getElementById('q');
 const elTipoProductoFiltro = document.getElementById('tipoProductoFiltro');
 const btnRefrescar = document.getElementById('btnRefrescar');
 
+const liveOpModal = document.getElementById('liveOperacionModal');
+const liveOpModalSub = document.getElementById('liveOperacionModalSub');
+const liveOpForm = document.getElementById('liveOperacionForm');
+const liveOpSorteoId = document.getElementById('liveOperacionSorteoId');
+const liveOpUsuarioId = document.getElementById('liveOperacionUsuarioId');
+const liveOpTipo = document.getElementById('liveOperacionTipo');
+const liveOpMonto = document.getElementById('liveOperacionMonto');
+const liveOpDescripcion = document.getElementById('liveOperacionDescripcion');
+const liveOpSubmit = document.getElementById('liveOperacionSubmit');
+
 const state = {
-  filter: 'todos',       // todos | pendiente | entregada
-  tipoProducto: 'todos', // todos | pantalla | combo | juegos | bonus
+  filter: 'todos',
+  tipoProducto: 'todos',
   q: '',
-  open: new Set(),       // sorteos abiertos
-  cache: [],             // raw del backend
+  open: new Set(),
+  cache: [],
 };
+
+function getToken() {
+  return localStorage.getItem('token') || '';
+}
 
 async function requireCuentasAccess() {
   const user = typeof window.requireAuthUser === 'function'
@@ -69,26 +82,36 @@ function setEmptyMessage(title, subtitle) {
   }
 }
 
-function getToken() {
-  return localStorage.getItem('token') || '';
+function refreshEmptyStateCopy() {
+  const subtitle = state.tipoProducto === 'live'
+    ? 'Cuando apruebes pagos en sorteos Live, apareceran aqui los beneficios de entrada y pagos Live pendientes.'
+    : 'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.';
+
+  setEmptyMessage('No hay cuentas pendientes para mostrar', subtitle);
 }
 
 async function fetchJSON(url, options = {}) {
   const r = await fetch(url, options);
   const text = await r.text();
   let data = null;
-  try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text;
+  }
+
   if (!r.ok) {
     const msg = (data && typeof data === 'object' && data.error) ? data.error : `HTTP ${r.status}`;
     throw new Error(msg);
   }
+
   return data;
 }
 
 async function cargarCuentas({ silent = false } = {}) {
   const token = getToken();
   if (!token) {
-    toast('Sesión expirada. Inicia sesión.');
+    toast('Sesion expirada. Inicia sesion.');
     return;
   }
 
@@ -104,21 +127,13 @@ async function cargarCuentas({ silent = false } = {}) {
     });
 
     state.cache = Array.isArray(raw) ? raw : [];
-
-    // Render con estado UI (filtro + búsqueda + abiertos)
     renderAcordeon(state.cache, state);
 
-    // Empty si no hay nada (o si filtros dejan todo vacío)
     const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
-    setEmptyMessage(
-      'No hay cuentas pendientes para mostrar',
-      'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.'
-    );
+    refreshEmptyStateCopy();
     showEmpty(!hasVisible);
 
-    // mantener scroll (suave)
     window.scrollTo({ top: prevScroll });
-
   } catch (e) {
     console.error('[CUENTAS] Error:', e);
     toast(e.message || 'Error cargando cuentas');
@@ -132,16 +147,15 @@ async function cargarCuentas({ silent = false } = {}) {
   } finally {
     if (!silent && btnRefrescar) {
       btnRefrescar.disabled = false;
-      btnRefrescar.textContent = '🔄 Refrescar';
+      btnRefrescar.textContent = 'Refrescar';
     }
   }
 }
 
 async function marcarEntregada(entregaId, btn) {
   const token = getToken();
-  if (!token) throw new Error('Sesión expirada');
+  if (!token) throw new Error('Sesion expirada');
 
-  // UX: feedback inmediato
   const oldText = btn?.textContent;
   if (btn) {
     btn.disabled = true;
@@ -154,60 +168,159 @@ async function marcarEntregada(entregaId, btn) {
       { method: 'PATCH', headers: { Authorization: `Bearer ${token}` } }
     );
 
-    toast('Marcado como entregada ✅');
-    const bonusReiniciado = response?.data?.bonusReiniciado === true;
-    if (bonusReiniciado) {
+    toast('Marcado como entregada');
+    if (response?.data?.bonusReiniciado === true) {
       toast('Bonus entregado y contador reiniciado');
     }
     await cargarCuentas({ silent: true });
-
   } finally {
     if (btn) {
-      // si quedó entregada, el render la deshabilita igual, pero devolvemos texto por si falla el refresh
       btn.textContent = oldText || 'Marcar entregada';
     }
   }
 }
 
+async function completarLiveOperacion(operacionId, btn) {
+  const token = getToken();
+  if (!token) throw new Error('Sesion expirada');
+
+  const oldText = btn?.textContent;
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
+  }
+
+  try {
+    await fetchJSON(
+      `${API_URL}/api/admin/cuentas/live-operaciones/${operacionId}/completar`,
+      { method: 'PATCH', headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    toast('Operacion Live marcada como completada');
+    await cargarCuentas({ silent: true });
+  } finally {
+    if (btn) {
+      btn.textContent = oldText || 'Marcar completada';
+    }
+  }
+}
+
+function rerenderAndRefreshEmpty() {
+  renderAcordeon(state.cache, state);
+  const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
+  refreshEmptyStateCopy();
+  showEmpty(!hasVisible);
+}
+
+function getLiveOperationDefaultDescription(tipo) {
+  if (tipo === 'referido') return 'Pago por referidos aprobados en el Live.';
+  if (tipo === 'premio_efectivo') return 'Pago de premio en efectivo del sorteo Live.';
+  if (tipo === 'premio_extra') return 'Entrega o compensacion por premio extra del Live.';
+  return 'Ajuste manual del sorteo Live.';
+}
+
+function openLiveOperacionModal(trigger) {
+  if (!liveOpModal || !liveOpForm) return;
+
+  const sorteoId = trigger?.dataset?.sorteo || '';
+  const usuarioId = trigger?.dataset?.usuario || '';
+  const nombre = trigger?.dataset?.nombre || '';
+  const sorteoDesc = trigger?.dataset?.sorteoDesc || '';
+
+  liveOpSorteoId.value = sorteoId;
+  liveOpUsuarioId.value = usuarioId;
+  liveOpTipo.value = 'referido';
+  liveOpMonto.value = '';
+  liveOpDescripcion.value = getLiveOperationDefaultDescription('referido');
+
+  if (liveOpModalSub) {
+    liveOpModalSub.textContent = nombre
+      ? `Vas a registrar una operacion Live para ${nombre} en ${sorteoDesc || 'este sorteo'}.`
+      : 'Deja listo un pago de referido o premio para operarlo desde admin cuentas.';
+  }
+
+  liveOpModal.classList.remove('hidden');
+  liveOpModal.setAttribute('aria-hidden', 'false');
+}
+
+function closeLiveOperacionModal() {
+  if (!liveOpModal || !liveOpForm) return;
+  liveOpModal.classList.add('hidden');
+  liveOpModal.setAttribute('aria-hidden', 'true');
+  liveOpForm.reset();
+}
+
+async function submitLiveOperacionForm(event) {
+  event.preventDefault();
+
+  const token = getToken();
+  if (!token) {
+    toast('Sesion expirada. Inicia sesion.');
+    return;
+  }
+
+  const payload = {
+    sorteo_id: liveOpSorteoId.value,
+    usuario_id: liveOpUsuarioId.value,
+    tipo: liveOpTipo.value,
+    monto: liveOpMonto.value,
+    descripcion: liveOpDescripcion.value.trim(),
+    metadata: {},
+  };
+
+  if (!payload.sorteo_id || !payload.usuario_id || !payload.tipo || !payload.descripcion) {
+    toast('Completa los datos basicos de la operacion Live.');
+    return;
+  }
+
+  const oldText = liveOpSubmit?.textContent || 'Guardar operacion';
+  if (liveOpSubmit) {
+    liveOpSubmit.disabled = true;
+    liveOpSubmit.textContent = 'Guardando...';
+  }
+
+  try {
+    await fetchJSON(`${API_URL}/api/admin/cuentas/live-operaciones`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    toast('Operacion Live creada');
+    closeLiveOperacionModal();
+    await cargarCuentas({ silent: true });
+  } catch (err) {
+    console.error(err);
+    toast(err.message || 'No se pudo crear la operacion Live');
+  } finally {
+    if (liveOpSubmit) {
+      liveOpSubmit.disabled = false;
+      liveOpSubmit.textContent = oldText;
+    }
+  }
+}
+
 function setupFilters() {
-  // búsqueda
   elQ?.addEventListener('input', () => {
     state.q = elQ.value || '';
-    renderAcordeon(state.cache, state);
-    const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
-    setEmptyMessage(
-      'No hay cuentas pendientes para mostrar',
-      'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.'
-    );
-    showEmpty(!hasVisible);
+    rerenderAndRefreshEmpty();
   });
 
   elTipoProductoFiltro?.addEventListener('change', () => {
     state.tipoProducto = elTipoProductoFiltro.value || 'todos';
-    renderAcordeon(state.cache, state);
-    const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
-    setEmptyMessage(
-      'No hay cuentas pendientes para mostrar',
-      'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.'
-    );
-    showEmpty(!hasVisible);
+    rerenderAndRefreshEmpty();
   });
 
-  // chips
   const chips = document.querySelectorAll('.chip');
-  chips.forEach(chip => {
+  chips.forEach((chip) => {
     chip.addEventListener('click', () => {
-      chips.forEach(c => c.classList.remove('active'));
+      chips.forEach((c) => c.classList.remove('active'));
       chip.classList.add('active');
       state.filter = chip.dataset.filter || 'todos';
-
-      renderAcordeon(state.cache, state);
-      const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
-      setEmptyMessage(
-        'No hay cuentas pendientes para mostrar',
-        'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.'
-      );
-      showEmpty(!hasVisible);
+      rerenderAndRefreshEmpty();
     });
   });
 
@@ -215,15 +328,13 @@ function setupFilters() {
 }
 
 function setupAcordeonToggle() {
-  // Delegación: click en el header abre/cierra
   elAcordeon?.addEventListener('click', (ev) => {
-    // 1) Acción "marcar entregada"
     const btnEntregar = ev.target.closest('button[data-action="entregar"][data-entrega]');
     if (btnEntregar) {
       ev.preventDefault();
       ev.stopPropagation();
       const entregaId = btnEntregar.dataset.entrega;
-      marcarEntregada(entregaId, btnEntregar).catch(err => {
+      marcarEntregada(entregaId, btnEntregar).catch((err) => {
         console.error(err);
         toast(err.message || 'No se pudo marcar');
         btnEntregar.disabled = false;
@@ -232,7 +343,28 @@ function setupAcordeonToggle() {
       return;
     }
 
-    // 2) Toggle acordeón (click en .ac-head)
+    const btnLiveOp = ev.target.closest('button[data-action="crear-live-op"]');
+    if (btnLiveOp) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      openLiveOperacionModal(btnLiveOp);
+      return;
+    }
+
+    const btnCompletarLiveOp = ev.target.closest('button[data-action="completar-live-op"][data-operacion]');
+    if (btnCompletarLiveOp) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const operacionId = btnCompletarLiveOp.dataset.operacion;
+      completarLiveOperacion(operacionId, btnCompletarLiveOp).catch((err) => {
+        console.error(err);
+        toast(err.message || 'No se pudo marcar la operacion');
+        btnCompletarLiveOp.disabled = false;
+        btnCompletarLiveOp.textContent = 'Marcar completada';
+      });
+      return;
+    }
+
     const head = ev.target.closest('.ac-head[data-sorteo-id]');
     if (!head) return;
 
@@ -240,16 +372,32 @@ function setupAcordeonToggle() {
     if (state.open.has(id)) state.open.delete(id);
     else state.open.add(id);
 
-    renderAcordeon(state.cache, state);
-
-    // Mantener empty correcto
-    const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
-    setEmptyMessage(
-      'No hay cuentas pendientes para mostrar',
-      'Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.'
-    );
-    showEmpty(!hasVisible);
+    rerenderAndRefreshEmpty();
   });
+}
+
+function setupLiveOperacionModal() {
+  if (!liveOpModal || !liveOpForm) return;
+
+  liveOpTipo?.addEventListener('change', () => {
+    if (!liveOpDescripcion.value.trim()) {
+      liveOpDescripcion.value = getLiveOperationDefaultDescription(liveOpTipo.value);
+    }
+  });
+
+  liveOpModal.addEventListener('click', (event) => {
+    if (event.target.closest('[data-live-op-close]')) {
+      closeLiveOperacionModal();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !liveOpModal.classList.contains('hidden')) {
+      closeLiveOperacionModal();
+    }
+  });
+
+  liveOpForm.addEventListener('submit', submitLiveOperacionForm);
 }
 
 async function init() {
@@ -259,6 +407,8 @@ async function init() {
   document.body.classList.remove('auth-pending');
   setupFilters();
   setupAcordeonToggle();
+  setupLiveOperacionModal();
+  refreshEmptyStateCopy();
   cargarCuentas({ silent: false });
   setInterval(() => cargarCuentas({ silent: true }), REFRESH_MS);
 }

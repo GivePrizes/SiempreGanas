@@ -8,7 +8,7 @@
 
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=20260413a">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=20260414a">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
 </head>
 <body class="admin-body">
@@ -18,7 +18,7 @@
     <header class="admin-header">
       <div class="admin-header-left">
         <h1>Crear nuevo sorteo</h1>
-        <span class="admin-subtitle">Configura el premio, los números y la imagen del sorteo.</span>
+        <span class="admin-subtitle">Configura la modalidad, los premios, los numeros y la imagen del sorteo.</span>
       </div>
       <div class="admin-header-right">
         <button type="button" class="btn btn-secondary"
@@ -63,9 +63,12 @@
             </div>
 
             <div class="form-group">
-              <label for="premio">Ganador</label>
+              <label for="premio">Resumen visible del premio</label>
               <input type="text" id="premio" name="premio"
-                     placeholder="Ej: 1 mes de Netflix, iPhone 15 Pro, etc." required>
+                     placeholder="Ej: Live de 200 mil + extras, 1 mes de Netflix, iPhone 15 Pro" required>
+              <small>
+                Este texto es el que verá el usuario como resumen general del sorteo.
+              </small>
             </div>
 
             <div class="form-group">
@@ -77,6 +80,17 @@
               </select>
               <small id="tipoProductoHelp">
                 Pantalla: acceso individual. Combo: paquete con varias plataformas o beneficios. Juegos: cuentas o beneficios gamer.
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="modalidad">Modalidad del sorteo</label>
+              <select id="modalidad" name="modalidad" required>
+                <option value="normal">Normal</option>
+                <option value="live">Live</option>
+              </select>
+              <small id="modalidadHelp">
+                Normal: sorteo clasico. Live: evento en vivo con premios ordenados, reglas de referidos y cierre manual.
               </small>
             </div>
 
@@ -98,6 +112,73 @@
               <input type="date" id="fecha_sorteo" name="fecha_sorteo" required>
             </div>
 
+            <section id="liveConfigSection" class="live-config-panel" hidden>
+              <div class="form-section-title">Configuracion Live</div>
+              <p class="mini-hint live-section-hint">
+                Aqui dejas la base del evento: beneficio de entrada, premios a rifar y reglas de referidos.
+              </p>
+
+              <div class="form-group">
+                <label for="beneficio_entrada_nombre">Beneficio de entrada</label>
+                <input
+                  type="text"
+                  id="beneficio_entrada_nombre"
+                  name="beneficio_entrada_nombre"
+                  placeholder="Ej: Cuenta Disney entregada por WhatsApp"
+                >
+                <small>
+                  Opcional. Solo se guarda la referencia; la entrega real la hace el admin manualmente.
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label for="beneficio_entrada_descripcion">Nota interna de entrega</label>
+                <textarea
+                  id="beneficio_entrada_descripcion"
+                  name="beneficio_entrada_descripcion"
+                  rows="3"
+                  placeholder="Ej: El admin entrega la cuenta por WhatsApp despues de aprobar el pago."
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="admin-check-row" for="live_permite_premios_extra">
+                  <input type="checkbox" id="live_permite_premios_extra" name="live_permite_premios_extra" checked>
+                  <span>Permitir premios extra despues de los premios principales</span>
+                </label>
+              </div>
+
+              <div class="live-builder-block">
+                <div class="card-title-row">
+                  <div>
+                    <h3>Premios del Live</h3>
+                    <p class="mini-hint">
+                      Define el orden exacto en que se van a rifar cuando el sorteo se llene.
+                    </p>
+                  </div>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnAgregarPremioLive">
+                    + Agregar premio
+                  </button>
+                </div>
+                <div id="livePremiosList" class="live-repeater-list"></div>
+              </div>
+
+              <div class="live-builder-block">
+                <div class="card-title-row">
+                  <div>
+                    <h3>Reglas de referidos</h3>
+                    <p class="mini-hint">
+                      Configura cuántos referidos activan pago y cuánto se paga en cada meta.
+                    </p>
+                  </div>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btnAgregarReglaReferido">
+                    + Agregar regla
+                  </button>
+                </div>
+                <div id="liveReferidosList" class="live-repeater-list"></div>
+              </div>
+            </section>
+
             <div class="form-actions">
               <button type="submit" class="btn btn-primary">
                 Guardar sorteo
@@ -116,7 +197,7 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/admin/crear-sorteo.js?v=20260413b"></script>
+  <script type="module" src="../assets/js/admin/crear-sorteo.js?v=20260414a"></script>
 </body>
 </html>
 

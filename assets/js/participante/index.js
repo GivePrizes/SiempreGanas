@@ -3,7 +3,8 @@ import { cargarProgresoBono } from '../bonus.js';
 
 const API_URL = window.API_URL || '';
 const SORTEO_TIPO_DEFAULT = 'pantalla';
-const VALID_TIPOS = new Set(['todos', 'pantalla', 'combo', 'juegos']);
+const SORTEO_MODALIDAD_DEFAULT = 'normal';
+const VALID_TIPOS = new Set(['todos', 'pantalla', 'combo', 'juegos', 'live']);
 const VALID_ESTADOS = new Set(['todos', 'comprables', 'casi_lleno', 'vivo']);
 const VALID_ORDENES = new Set(['destacados', 'avance', 'precio_bajo', 'ultimos_cupos']);
 
@@ -130,11 +131,19 @@ function normalizarTipoProducto(value) {
   return value === 'combo' || value === 'juegos' ? value : SORTEO_TIPO_DEFAULT;
 }
 
+function normalizarModalidad(value) {
+  return value === 'live' ? 'live' : SORTEO_MODALIDAD_DEFAULT;
+}
+
 function getTipoProductoLabel(value) {
   const tipoProducto = normalizarTipoProducto(value);
   if (tipoProducto === 'combo') return 'Combo';
   if (tipoProducto === 'juegos') return 'Juegos';
   return 'Pantalla';
+}
+
+function getModalidadLabel(value) {
+  return normalizarModalidad(value) === 'live' ? 'Live' : 'Normal';
 }
 
 function formatCurrency(value) {
@@ -182,7 +191,9 @@ function getSorteoMetrics(sorteo) {
 
 function buildSorteoItem(sorteo, index) {
   const tipoProducto = normalizarTipoProducto(sorteo.tipo_producto);
+  const modalidad = normalizarModalidad(sorteo.modalidad);
   const tipoLabel = getTipoProductoLabel(tipoProducto);
+  const modalidadLabel = getModalidadLabel(modalidad);
   const metrics = getSorteoMetrics(sorteo);
   const precioRaw = Number(sorteo.precio_numero ?? sorteo.precio ?? 0) || 0;
   const precioText = formatCurrency(precioRaw);
@@ -191,6 +202,7 @@ function buildSorteoItem(sorteo, index) {
     sorteo.descripcion,
     sorteo.premio,
     tipoLabel,
+    modalidadLabel,
     metrics.statusLabel,
     precioText,
     `ronda ${sorteo.id}`,
@@ -201,7 +213,9 @@ function buildSorteoItem(sorteo, index) {
     sorteo,
     index,
     tipoProducto,
+    modalidad,
     tipoLabel,
+    modalidadLabel,
     metrics,
     precioRaw,
     precioText,
@@ -287,7 +301,7 @@ function setBienvenida(user) {
 }
 
 function renderSorteoCard(item, index = 0) {
-  const { sorteo, tipoProducto, tipoLabel, metrics, precioText } = item;
+  const { sorteo, tipoProducto, modalidad, tipoLabel, metrics, precioText } = item;
   const imagen = renderSorteoImage(sorteo, index);
 
   return `
@@ -299,6 +313,11 @@ function renderSorteoCard(item, index = 0) {
           <h3 class="sorteo-title">${sorteo.descripcion}</h3>
           <div class="sorteo-badges-row">
             <span class="sorteo-type-badge sorteo-type-badge--${tipoProducto}">${tipoLabel}</span>
+            ${
+              modalidad === 'live'
+                ? '<span class="sorteo-type-badge sorteo-type-badge--live">Live</span>'
+                : ''
+            }
             <span class="status-badge ${metrics.statusClass}">${metrics.statusLabel}</span>
           </div>
         </div>
@@ -422,7 +441,9 @@ function matchesSearch(item) {
 }
 
 function matchesTipo(item) {
-  return state.sorteoTipo === 'todos' || item.tipoProducto === state.sorteoTipo;
+  if (state.sorteoTipo === 'todos') return true;
+  if (state.sorteoTipo === 'live') return item.modalidad === 'live';
+  return item.tipoProducto === state.sorteoTipo;
 }
 
 function matchesEstado(item) {

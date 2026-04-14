@@ -8,9 +8,9 @@
 
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225b">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=20260413a">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=20260414a">
   <!-- ✅ CSS aislado de este micro-módulo -->
-  <link rel="stylesheet" href="../assets/css/cuentas-sorteo.css?v=20260413a">
+  <link rel="stylesheet" href="../assets/css/cuentas-sorteo.css?v=20260414a">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
   <style>
     body.auth-pending { visibility: hidden; }
@@ -24,7 +24,7 @@
       <div class="admin-header-left">
         <h1>Entrega de cuentas</h1>
         <span class="admin-subtitle">
-          Aquí ves participantes aprobados por sorteo y marcas cuando ya se les entregó la cuenta.
+          Aqui ves entregas pendientes por sorteo, incluyendo bonus y beneficios de entrada para Lives.
         </span>
 
         <div class="admin-status-pill">
@@ -67,12 +67,13 @@
               <option value="pantalla">Pantallas</option>
               <option value="combo">Combos</option>
               <option value="juegos">Juegos</option>
+              <option value="live">Live cuentas</option>
               <option value="bonus">Bonus gratis</option>
             </select>
           </div>
 
           <div class="mini-note mini-note--soft">
-            Filtra rapido si hoy estas entregando pantallas, combos, juegos o bonus gratis.
+            Filtra rapido si hoy estas entregando pantallas, combos, juegos, beneficios de Live o bonus gratis.
           </div>
         </div>
 
@@ -84,9 +85,9 @@
       <section class="card" style="margin-top:18px;">
         <div class="card-title-row">
           <div>
-            <h2>📦 Participantes aprobados y bonus desbloqueados</h2>
+            <h2>📦 Entregas pendientes por sorteo</h2>
             <p class="text-muted">
-              Cada sorteo se despliega como acordeon y, cuando aplique, tambien veras el bloque de bonus de fidelidad para entregar la cuenta gratis.
+              Cada sorteo se despliega como acordeon y, cuando aplique, tambien veras bloques de Live y bonus de fidelidad para entregar por WhatsApp o marcar como resueltos.
             </p>
           </div>
 
@@ -109,6 +110,50 @@
 
   <div id="toast" class="toast hidden">Acción realizada</div>
 
+  <div id="liveOperacionModal" class="live-op-modal hidden" aria-hidden="true">
+    <div class="live-op-modal__backdrop" data-live-op-close></div>
+    <div class="live-op-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="liveOperacionModalTitle">
+      <div class="live-op-modal__header">
+        <div>
+          <h3 id="liveOperacionModalTitle">Registrar operacion Live</h3>
+          <p id="liveOperacionModalSub" class="mini-hint">Deja listo un pago de referido o premio para operarlo desde admin cuentas.</p>
+        </div>
+        <button type="button" class="btn btn-danger btn-sm" data-live-op-close>Cerrar</button>
+      </div>
+
+      <form id="liveOperacionForm" class="live-op-form">
+        <input type="hidden" id="liveOperacionSorteoId" name="sorteo_id">
+        <input type="hidden" id="liveOperacionUsuarioId" name="usuario_id">
+
+        <div class="form-row-inline">
+          <div class="form-group">
+            <label for="liveOperacionTipo">Tipo de pago</label>
+            <select id="liveOperacionTipo" name="tipo" required>
+              <option value="referido">Referido</option>
+              <option value="premio_efectivo">Premio en efectivo</option>
+              <option value="premio_extra">Premio extra</option>
+              <option value="ajuste">Ajuste manual</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="liveOperacionMonto">Monto</label>
+            <input type="number" id="liveOperacionMonto" name="monto" min="0" step="0.01" placeholder="Ej: 5000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="liveOperacionDescripcion">Descripcion</label>
+          <textarea id="liveOperacionDescripcion" name="descripcion" rows="3" placeholder="Ej: Pago parcial por 2 referidos aprobados." required></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" data-live-op-close>Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="liveOperacionSubmit">Guardar operacion</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Base -->
   <script src="../assets/js/app-config.js"></script>
   <script src="../assets/js/config.js"></script>
@@ -116,7 +161,7 @@
   <script src="../assets/js/theme.js?v=20260401b"></script>
 
   <!-- ✅ Entry point del micro-módulo -->
-<script type="module" src="../assets/js/admin/cuentas/index.js?v=20260413a"></script>
+<script type="module" src="../assets/js/admin/cuentas/index.js?v=20260414a"></script>
 </body>
 </html>
 

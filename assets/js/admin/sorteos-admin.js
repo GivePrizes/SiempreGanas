@@ -11,6 +11,12 @@ function getTipoBadge(sorteo) {
   return `<span class="badge ${klass}">${label}</span>`;
 }
 
+function getModalidadBadge(sorteo) {
+  return String(sorteo.modalidad || '').trim().toLowerCase() === 'live'
+    ? '<span class="badge badge-live">Live</span>'
+    : '';
+}
+
 export async function cargarSorteosAdmin() {
   const token = localStorage.getItem('token');
   const user = typeof window.getAuthUser === 'function'
@@ -112,6 +118,7 @@ export async function cargarSorteosAdmin() {
                 <h3>${s.descripcion}</h3>
                 <div class="sorteo-admin-badges">
                   ${getTipoBadge(s)}
+                  ${getModalidadBadge(s)}
                   ${estadoLabel}
                 </div>
               </div>

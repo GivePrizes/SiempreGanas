@@ -309,6 +309,12 @@ video {
   border-color: rgba(45,212,191,.34);
 }
 
+.sorteo-type-badge--live {
+  color: #f5f3ff;
+  background: rgba(139,92,246,.18);
+  border-color: rgba(167,139,250,.34);
+}
+
 .sorteo-card .sorteo-info {
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
@@ -488,6 +494,12 @@ video {
   color: #115e59;
   background: rgba(204,251,241,.95);
   border-color: rgba(13,148,136,.22);
+}
+
+:root[data-app-theme="light"] .sorteo-type-badge--live {
+  color: #6d28d9;
+  background: rgba(237,233,254,.98);
+  border-color: rgba(139,92,246,.2);
 }
 
 :root[data-app-theme="light"] .status-open {

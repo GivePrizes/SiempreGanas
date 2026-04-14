@@ -8,8 +8,8 @@
 
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css">
-  <link rel="stylesheet" href="../assets/css/admin.css">
-  <link rel="stylesheet" href="../assets/css/ruleta.css" />
+  <link rel="stylesheet" href="../assets/css/admin.css?v=20260414a">
+  <link rel="stylesheet" href="../assets/css/ruleta.css?v=20260414a" />
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
 </head>
 
@@ -103,6 +103,34 @@
             <p><span class="label">Probabilidad por número:</span><span id="statProbMedia">-</span></p>
           </div>
 
+          <section id="livePremioPanel" class="live-prize-panel" hidden>
+            <div class="live-prize-panel__header">
+              <div>
+                <p class="estado-label">Sorteo Live</p>
+                <h4 id="livePremioPanelTitle">Premios configurados</h4>
+              </div>
+              <span id="livePremioBadge" class="live-prize-badge">LIVE</span>
+            </div>
+
+            <div id="livePremioActual" class="live-prize-current">
+              Aun no hay premio activo para esta ronda.
+            </div>
+
+            <p id="livePremioHint" class="ruleta-hint live-prize-hint">
+              Cuando completes un premio, el siguiente quedara listo para programarse.
+            </p>
+
+            <div class="live-prize-history">
+              <div class="live-prize-history__title">
+                <span>Historial de ganadores</span>
+                <span id="livePremioResumen" class="live-prize-summary">0 entregados</span>
+              </div>
+              <div id="livePremioHistorial" class="live-prize-history__list">
+                <p class="live-prize-empty">Todavia no se han registrado premios en vivo.</p>
+              </div>
+            </div>
+          </section>
+
           <div class="ruleta-actions">
             <button id="btnGirar" class="btn-gold btn-girar">🎰 INICIAR RONDA</button>
             <button id="btnProgramar" class="btn-secondary">⏱ Programar ronda</button>
@@ -116,6 +144,7 @@
             <div class="programar-group">
               <label for="selectPreset" class="programar-label">Programar para:</label>
               <select id="selectPreset" class="programar-select">
+                <option value="0">Ahora mismo</option>
                 <option value="10">En 10 minutos</option>
                 <option value="30">En 30 minutos</option>
                 <option value="60">En 1 hora</option>
@@ -154,7 +183,7 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/admin/ruleta.js"></script>
+  <script type="module" src="../assets/js/admin/ruleta.js?v=20260414a"></script>
 
 </body>
 </html>

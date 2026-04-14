@@ -35,6 +35,13 @@ const elTotal = document.getElementById('statTotalNumeros');
 const elEnJuego = document.getElementById('statParticipantes');
 const elProb = document.getElementById('statProbMedia');
 const topBuyerInfoEl = document.getElementById('topBuyerInfo');
+const livePremioPanelEl = document.getElementById('livePremioPanel');
+const livePremioPanelTitleEl = document.getElementById('livePremioPanelTitle');
+const livePremioBadgeEl = document.getElementById('livePremioBadge');
+const livePremioActualEl = document.getElementById('livePremioActual');
+const livePremioHintEl = document.getElementById('livePremioHint');
+const livePremioResumenEl = document.getElementById('livePremioResumen');
+const livePremioHistorialEl = document.getElementById('livePremioHistorial');
 
 // Programar sorteo
 const btnProgramar = document.getElementById('btnProgramar');
@@ -116,6 +123,143 @@ function construirRuleta(participants) {
 
     ruletaCircle.appendChild(slice);
   });
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function formatMoney(value) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric)) return null;
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    maximumFractionDigits: 0,
+  }).format(numeric);
+}
+
+function getLiveMeta() {
+  return ruletaInfo?.modalidad === 'live' ? ruletaInfo?.live || null : null;
+}
+
+function getCurrentLivePrize() {
+  return getLiveMeta()?.premio_actual || null;
+}
+
+function getLastLiveHistoryItem() {
+  const historial = getLiveMeta()?.historial;
+  return Array.isArray(historial) && historial.length ? historial[historial.length - 1] : null;
+}
+
+function getLivePrizeLabel(prize) {
+  if (!prize) return '';
+  const amount = formatMoney(prize.premio_monto ?? prize.monto);
+  return amount ? `${prize.premio_nombre || prize.nombre} · ${amount}` : (prize.premio_nombre || prize.nombre || '');
+}
+
+function syncActionButtons() {
+  if (!btnGirar) return;
+
+  const liveMeta = getLiveMeta();
+  if (liveMeta?.premio_actual) {
+    btnGirar.textContent = `🎰 GIRAR ${String(liveMeta.premio_actual.nombre || 'PREMIO').toUpperCase()}`;
+  } else {
+    btnGirar.textContent = '🎰 INICIAR RONDA';
+  }
+}
+
+function renderLivePanel() {
+  if (!livePremioPanelEl) return;
+
+  const liveMeta = getLiveMeta();
+  if (!liveMeta) {
+    livePremioPanelEl.hidden = true;
+    return;
+  }
+
+  livePremioPanelEl.hidden = false;
+
+  const premioActual = liveMeta.premio_actual;
+  const entregados = Number(liveMeta.premios_entregados || 0);
+  const restantes = Number(liveMeta.premios_restantes || 0);
+  const total = Number(liveMeta.total_premios || 0);
+  const elegibles = Number(liveMeta.participantes_elegibles || 0);
+
+  if (livePremioPanelTitleEl) {
+    livePremioPanelTitleEl.textContent = premioActual
+      ? `Premio actual: ${premioActual.nombre}`
+      : 'Live listo para cierre';
+  }
+
+  if (livePremioBadgeEl) {
+    livePremioBadgeEl.textContent = `${restantes} pendientes`;
+  }
+
+  if (livePremioResumenEl) {
+    livePremioResumenEl.textContent = `${entregados}/${total} entregados · ${elegibles} elegibles`;
+  }
+
+  if (livePremioActualEl) {
+    if (premioActual) {
+      const amount = formatMoney(premioActual.monto);
+      livePremioActualEl.innerHTML = `
+        <div class="live-prize-current__eyebrow">Siguiente premio</div>
+        <div class="live-prize-current__name">${escapeHtml(premioActual.nombre)}</div>
+        <div class="live-prize-current__meta">
+          <span>#${escapeHtml(premioActual.orden)}</span>
+          <span>${escapeHtml((premioActual.tipo || 'otro').toUpperCase())}</span>
+          ${amount ? `<span>${escapeHtml(amount)}</span>` : ''}
+        </div>
+        ${premioActual.descripcion ? `<p>${escapeHtml(premioActual.descripcion)}</p>` : ''}
+      `;
+    } else {
+      livePremioActualEl.innerHTML = `
+        <div class="live-prize-current__eyebrow">Live completado</div>
+        <div class="live-prize-current__name">No quedan premios pendientes.</div>
+        <p>Ya puedes cerrar el evento o dejar solo el chat activo.</p>
+      `;
+    }
+  }
+
+  if (livePremioHintEl) {
+    livePremioHintEl.textContent = premioActual
+      ? elegibles > 0
+        ? 'El giro sacara un ganador nuevo y lo enviara directo a Live cuentas.'
+        : 'Ya no quedan participantes elegibles para seguir girando este Live.'
+      : 'Todos los premios configurados para este Live ya quedaron registrados.';
+  }
+
+  if (livePremioHistorialEl) {
+    const historial = Array.isArray(liveMeta.historial) ? [...liveMeta.historial].reverse() : [];
+    if (!historial.length) {
+      livePremioHistorialEl.innerHTML = '<p class="live-prize-empty">Todavia no se han registrado premios en vivo.</p>';
+    } else {
+      livePremioHistorialEl.innerHTML = historial
+        .map((item) => {
+          const amount = formatMoney(item.premio_monto);
+          const ganador = item.ganador_alias || item.ganador_nombre || `Usuario ${item.usuario_id}`;
+          return `
+            <article class="live-prize-item">
+              <div class="live-prize-item__top">
+                <strong>${escapeHtml(item.premio_nombre)}</strong>
+                <span>#${escapeHtml(item.numero)}</span>
+              </div>
+              <div class="live-prize-item__meta">
+                <span>${escapeHtml(ganador)}</span>
+                ${amount ? `<span>${escapeHtml(amount)}</span>` : `<span>${escapeHtml((item.premio_tipo || 'otro').toUpperCase())}</span>`}
+              </div>
+            </article>
+          `;
+        })
+        .join('');
+    }
+  }
 }
 
 // ==========================
@@ -200,7 +344,7 @@ function mostrarBannerGanador(numeroGanador, ganadorData = null) {
   if (wfName) wfName.textContent = ganadorVisual.nombreCorto;
 }
 
-function mostrarResultadoGanador(numeroGanador, ganadorData = null, { animado = false } = {}) {
+function mostrarResultadoGanador(numeroGanador, ganadorData = null, { animado = false, livePrize = null } = {}) {
   if (!resultadoRuleta) return;
 
   if (!numeroGanador) {
@@ -209,16 +353,19 @@ function mostrarResultadoGanador(numeroGanador, ganadorData = null, { animado = 
   }
 
   const ganadorVisual = getGanadorVisual(numeroGanador, ganadorData);
+  const premioTexto = livePrize ? getLivePrizeLabel(livePrize) : '';
 
   if (animado) {
     resultadoRuleta.classList.add('ganador-texto');
     resultadoRuleta.innerHTML = ganadorVisual.nombre
       ? `
         🎉 <strong>${ganadorVisual.nombreCorto}</strong> es el ganador con el número <strong>#${ganadorVisual.numero}</strong>.<br/>
+        ${premioTexto ? `Premio actual: <strong>${escapeHtml(premioTexto)}</strong>.<br/>` : ''}
         Llama su nombre, muéstrale el comprobante y celebra el momento: todos vieron la ruleta en pantalla.
       `
       : `
         🎉 Número ganador: <strong>#${ganadorVisual.numero}</strong>.<br/>
+        ${premioTexto ? `Premio actual: <strong>${escapeHtml(premioTexto)}</strong>.<br/>` : ''}
         Revisa en el panel qué usuario tiene este número y anúncialo en voz alta.
       `;
 
@@ -229,8 +376,8 @@ function mostrarResultadoGanador(numeroGanador, ganadorData = null, { animado = 
   }
 
   resultadoRuleta.innerHTML = ganadorVisual.nombre
-    ? `✅ Número ganador: <strong>${ganadorVisual.numero}</strong> — <strong>${ganadorVisual.nombreCorto}</strong>`
-    : `✅ Número ganador: <strong>${ganadorVisual.numero}</strong>`;
+    ? `✅ Número ganador: <strong>${ganadorVisual.numero}</strong> — <strong>${ganadorVisual.nombreCorto}</strong>${premioTexto ? ` · <span>${escapeHtml(premioTexto)}</span>` : ''}`
+    : `✅ Número ganador: <strong>${ganadorVisual.numero}</strong>${premioTexto ? ` · <span>${escapeHtml(premioTexto)}</span>` : ''}`;
 }
 
 function iniciarSpinVisual() {
@@ -243,10 +390,10 @@ function iniciarSpinVisual() {
   rotacionActual = rotacionDestino;
 }
 
-function animarGanador(numeroGanador, ganadorData = null) {
+function animarGanador(numeroGanador, ganadorData = null, { livePrize = null } = {}) {
   if (!ruletaCircle || !numeroGanador || !participantes.length) {
     mostrarBannerGanador(numeroGanador, ganadorData);
-    mostrarResultadoGanador(numeroGanador, ganadorData, { animado: false });
+    mostrarResultadoGanador(numeroGanador, ganadorData, { animado: false, livePrize });
     spinVisualActivo = false;
     girando = false;
     return Promise.resolve();
@@ -271,7 +418,7 @@ function animarGanador(numeroGanador, ganadorData = null) {
       setTimeout(() => {
         resaltarSliceGanador(Number(numeroGanador));
         mostrarBannerGanador(numeroGanador, ganadorData);
-        mostrarResultadoGanador(numeroGanador, ganadorData, { animado: true });
+        mostrarResultadoGanador(numeroGanador, ganadorData, { animado: true, livePrize });
         spinVisualActivo = false;
         girando = false;
         resolve();
@@ -347,9 +494,12 @@ async function fetchRuletaParticipantes() {
     if (!participantes.length) {
       if (ruletaCircle) {
         ruletaCircle.innerHTML =
-          '<p style="text-align:center; padding:1rem;">No hay participantes aprobados todavía.</p>';
+          getLiveMeta()
+            ? '<p style="text-align:center; padding:1rem;">No quedan participantes elegibles para el siguiente premio Live.</p>'
+            : '<p style="text-align:center; padding:1rem;">No hay participantes aprobados todavía.</p>';
       }
       if (btnGirar) btnGirar.disabled = true;
+      syncActionButtons();
       return;
     }
 
@@ -365,6 +515,7 @@ async function fetchRuletaParticipantes() {
     if (btnGirar && ruletaInfo) {
       btnGirar.disabled = !puedeGirarAhora();
     }
+    syncActionButtons();
   } catch (err) {
     console.error('Error fetchRuletaParticipantes:', err);
   }
@@ -392,6 +543,7 @@ function startRuletaPolling() {
 
 function puedeGirarAhora() {
   if (!ruletaInfo) return false;
+  if (ruletaInfo.modalidad === 'live' && !getCurrentLivePrize()) return false;
   if (ruletaInfo.ruleta_estado !== 'programada') return false;
   if (!ruletaInfo.ruleta_hora_programada) return false;
 
@@ -406,6 +558,7 @@ function renderRuletaInfo() {
   const {
     descripcion,
     premio,
+    modalidad,
     ruleta_estado,
     ruleta_hora_programada,
     modo_sorteo,
@@ -414,6 +567,34 @@ function renderRuletaInfo() {
     topBuyer,
     cantidad_numeros,
   } = ruletaInfo;
+  const currentLivePrize = getCurrentLivePrize();
+  const latestLivePrize = getLastLiveHistoryItem();
+
+  syncActionButtons();
+  renderLivePanel();
+
+  if (tituloSorteo) {
+    tituloSorteo.textContent = descripcion || premio || `Ronda #${sorteoId}`;
+  }
+
+  if (modoSorteoTextoEl) {
+    modoSorteoTextoEl.textContent = modalidad === 'live'
+      ? `${modo_sorteo} · LIVE`
+      : modo_sorteo;
+  }
+
+  if (subtituloSorteo) {
+    if (modalidad === 'live' && currentLivePrize) {
+      const amount = formatMoney(currentLivePrize.monto);
+      subtituloSorteo.textContent = amount
+        ? `Premio actual: ${currentLivePrize.nombre} (${amount}). La operacion se crea sola al salir el ganador.`
+        : `Premio actual: ${currentLivePrize.nombre}. La operacion se crea sola al salir el ganador.`;
+    } else if (modalidad === 'live') {
+      subtituloSorteo.textContent = 'Todos los premios Live configurados ya salieron. Puedes cerrar el evento o dejar el chat abierto.';
+    } else {
+      subtituloSorteo.textContent = 'Control de programación y giro en tiempo real.';
+    }
+  }
 
   // Estado (texto + punto)
   if (estadoTextoEl && estadoDotEl) {
@@ -447,7 +628,11 @@ function renderRuletaInfo() {
   }
 
   // Botón girar según si ya se puede
-  if (btnGirar) btnGirar.disabled = !puedeGirarAhora();
+  if (btnGirar) {
+    btnGirar.disabled = modalidad === 'live' && !currentLivePrize
+      ? true
+      : !puedeGirarAhora();
+  }
 
   if (ruleta_estado === 'girando') {
     if (countdownInterval) {
@@ -458,7 +643,9 @@ function renderRuletaInfo() {
     if (btnGirar) btnGirar.disabled = true;
     if (contadorTextoEl) contadorTextoEl.textContent = '00:00:00';
     if (resultadoRuleta) {
-      resultadoRuleta.textContent = 'Girando ruleta... 🎰✨';
+      resultadoRuleta.textContent = currentLivePrize
+        ? `Girando ${currentLivePrize.nombre}... 🎰✨`
+        : 'Girando ruleta... 🎰✨';
     }
     if (!spinVisualActivo) {
       iniciarSpinVisual();
@@ -482,7 +669,10 @@ function renderRuletaInfo() {
     if (contadorTextoEl) contadorTextoEl.textContent = '00:00:00';
     spinVisualActivo = false;
 
-    mostrarResultadoGanador(numero_ganador, ganador, { animado: false });
+    mostrarResultadoGanador(numero_ganador, ganador, {
+      animado: false,
+      livePrize: latestLivePrize,
+    });
     mostrarBannerGanador(numero_ganador, ganador);
 
     //  Asegurar que existan slices antes de resaltar
@@ -589,8 +779,11 @@ async function ejecutarFlujoRuleta({ pedirConfirmacion = false } = {}) {
   }
 
   if (pedirConfirmacion) {
+    const currentLivePrize = getCurrentLivePrize();
     const confirmar = confirm(
-      'Este giro registrará al ganador de forma definitiva.\n\n¿Deseas continuar?'
+      currentLivePrize
+        ? `Este giro registrará al ganador de ${currentLivePrize.nombre} y lo enviará a Live cuentas.\n\n¿Deseas continuar?`
+        : 'Este giro registrará al ganador de forma definitiva.\n\n¿Deseas continuar?'
     );
     if (!confirmar) return;
   }
@@ -608,7 +801,12 @@ async function ejecutarFlujoRuleta({ pedirConfirmacion = false } = {}) {
   }
 
   if (btnGirar) btnGirar.disabled = true;
-  if (resultadoRuleta) resultadoRuleta.textContent = 'Girando ruleta... 🎰✨';
+  if (resultadoRuleta) {
+    const currentLivePrize = getCurrentLivePrize();
+    resultadoRuleta.textContent = currentLivePrize
+      ? `Girando ${currentLivePrize.nombre}... 🎰✨`
+      : 'Girando ruleta... 🎰✨';
+  }
   iniciarSpinVisual();
 
   try {
@@ -644,7 +842,9 @@ async function ejecutarFlujoRuleta({ pedirConfirmacion = false } = {}) {
       await fetchRuletaParticipantes();
 
       if (ruletaInfo?.ruleta_estado === 'finalizada' && ruletaInfo?.numero_ganador) {
-        await animarGanador(ruletaInfo.numero_ganador, ruletaInfo.ganador);
+        await animarGanador(ruletaInfo.numero_ganador, ruletaInfo.ganador, {
+          livePrize: getLastLiveHistoryItem(),
+        });
         return;
       }
 
@@ -660,8 +860,11 @@ async function ejecutarFlujoRuleta({ pedirConfirmacion = false } = {}) {
 
     const numeroGanador =
       dataFinish?.ganador?.numero || dataFinish?.sorteo?.numero_ganador || null;
+    const awardedLivePrize = dataFinish?.live_resultado || null;
 
-    await animarGanador(numeroGanador, dataFinish?.ganador || null);
+    await animarGanador(numeroGanador, dataFinish?.ganador || null, {
+      livePrize: awardedLivePrize,
+    });
     await fetchRuletaInfo();
     await fetchRuletaParticipantes();
   } catch (err) {
@@ -678,6 +881,12 @@ async function ejecutarFlujoRuleta({ pedirConfirmacion = false } = {}) {
       clearTimeout(autoSpinTimer);
       autoSpinTimer = null;
     }
+  }
+
+  if (topBuyerInfoEl) {
+    topBuyerInfoEl.textContent = topBuyer?.alias
+      ? `Top buyer actual: ${topBuyer.alias}`
+      : '';
   }
 }
 
@@ -702,7 +911,7 @@ async function programarRuleta() {
     body.fechaPersonalizada = new Date(val).toISOString();
   } else {
     const minutos = parseInt(selectPreset.value, 10);
-    if (Number.isNaN(minutos) || minutos <= 0) {
+    if (Number.isNaN(minutos) || minutos < 0) {
       alert('Valor de minutos inválido');
       return;
     }
@@ -731,11 +940,11 @@ async function programarRuleta() {
     }
 
     alert('Ronda programada correctamente.');
-    // Desactivar botón tras programar exitosamente
-    if (btnConfirmProgramar) btnConfirmProgramar.disabled = true;
     // Ocultar panel de programación
     if (panelProgramar) panelProgramar.style.display = 'none';
     await fetchRuletaInfo();
+    await fetchRuletaParticipantes();
+    startRuletaPolling();
   } catch (err) {
     console.error('Error programarRuleta:', err);
     alert('Error de red al programar sorteo.');
@@ -762,6 +971,7 @@ if (btnProgramar) {
     if (!panelProgramar) return;
     const visible = panelProgramar.style.display !== 'none';
     panelProgramar.style.display = visible ? 'none' : 'flex';
+    if (btnConfirmProgramar) btnConfirmProgramar.disabled = false;
   });
 }
 
@@ -782,6 +992,7 @@ if (btnCancelProgramar) {
     panelProgramar.style.display = 'none';
     selectPreset.value = '10';
     if (customDateGroup) customDateGroup.style.display = 'none';
+    if (btnConfirmProgramar) btnConfirmProgramar.disabled = false;
   });
 }
 
