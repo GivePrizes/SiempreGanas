@@ -160,12 +160,15 @@ let ruletaLiveEndpoint = "live";
 let zeroEdgeTriggered = false;
 let liveReferralPanelState = null;
 let liveReferralPanelTimer = null;
+let livePollErrorCount = 0;
 
-const DEFAULT_POLL_INTERVAL_MS = 2500;
+const WAITING_POLL_INTERVAL_MS = 12000;
+const DEFAULT_POLL_INTERVAL_MS = 5000;
 const COUNTDOWN_POLL_INTERVAL_MS = 1000;
-const SPINNING_POLL_INTERVAL_MS = 700;
-const ZERO_EDGE_POLL_INTERVAL_MS = 180;
+const SPINNING_POLL_INTERVAL_MS = 1100;
+const ZERO_EDGE_POLL_INTERVAL_MS = 250;
 const LIVE_REFERRAL_REFRESH_MS = 15000;
+const LIVE_POLL_MAX_BACKOFF_MS = 30000;
 const TWO_PI = Math.PI * 2;
 
 function nowServerMs(){
@@ -483,6 +486,7 @@ async function fetchRuletaPayloadWithFallback(){
 }
 
 function getPollIntervalMs(){
+  if (estado === "waiting") return WAITING_POLL_INTERVAL_MS;
   if (estado === "spinning") return SPINNING_POLL_INTERVAL_MS;
 
   if (countdownEndsAtMs) {
@@ -494,7 +498,18 @@ function getPollIntervalMs(){
   return DEFAULT_POLL_INTERVAL_MS;
 }
 
-function scheduleNextPoll(delayMs = getPollIntervalMs()){
+function getLivePollDelayMs(){
+  const baseDelay = getPollIntervalMs();
+
+  if (livePollErrorCount <= 0) {
+    return baseDelay;
+  }
+
+  const multiplier = Math.min(2 ** Math.min(livePollErrorCount - 1, 2), 4);
+  return Math.min(Math.max(baseDelay, 5000) * multiplier, LIVE_POLL_MAX_BACKOFF_MS);
+}
+
+function scheduleNextPoll(delayMs = getLivePollDelayMs()){
   if (pollTimer) {
     clearTimeout(pollTimer);
   }
@@ -1081,8 +1096,10 @@ async function runPollCycle(){
       showResult(ganadorNombre);
     }
 
+    livePollErrorCount = 0;
+
   } catch(_e){
-    // silencioso
+    livePollErrorCount += 1;
   } finally {
     pollInFlight = false;
     scheduleNextPoll();
@@ -1113,7 +1130,10 @@ async function runPollCycle(){
     const liveChatReady = await waitForLiveChatBridge();
     if (liveChatReady) {
       window.initRuletaLiveChat({ sorteoId, token, writeAccess });
-      setChatEnabled(false, "El chat se habilita cuando comience el giro.");
+      const waitingMessage = writeAccess?.canWrite
+        ? "Puedes seguir la conversación desde ahora. El envío se habilita cuando comience el giro."
+        : "Puedes seguir la conversación desde ahora. Necesitas un número aprobado y que comience el giro para escribir.";
+      setChatEnabled(false, waitingMessage);
     }
 
     if (estado === "finished" && numeroGanador) {

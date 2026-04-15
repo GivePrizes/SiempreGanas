@@ -1,4 +1,4 @@
-import { cargarMisNumerosResumen } from './misNumeros.js';
+import { cargarMisNumerosResumen } from './misNumeros.js?v=20260415a';
 import { cargarProgresoBono } from '../bonus.js';
 
 const API_URL = window.API_URL || '';
@@ -767,15 +767,18 @@ function startDashboardAutoRefresh() {
   dashboardRefreshTimer = setInterval(() => {
     if (document.hidden) return;
     cargarSorteosActivos({ silent: true }).catch(() => {});
+    cargarMisNumerosResumen().catch(() => {});
   }, DASHBOARD_AUTO_REFRESH_MS);
 
   window.addEventListener('focus', () => {
     cargarSorteosActivos({ silent: true }).catch(() => {});
+    cargarMisNumerosResumen().catch(() => {});
   });
 
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
       cargarSorteosActivos({ silent: true }).catch(() => {});
+      cargarMisNumerosResumen().catch(() => {});
     }
   });
 }

@@ -521,7 +521,7 @@ body{
     width:100%;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem;
+    gap: 0.42rem;
   }
 
   .top-actions .badge{
@@ -531,8 +531,24 @@ body{
 
   .btnBack{
     justify-content: center;
-    padding: 0.48rem 0.65rem;
-    font-size: 0.9rem;
+    min-height: 36px;
+    padding: 0.42rem 0.58rem;
+    font-size: 0.84rem;
+    border-radius: 12px;
+    gap: 0.4rem;
+    box-shadow: 0 8px 18px rgba(0,0,0,.28);
+  }
+
+  .btnBack .btn-ico{
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    font-size: 0.86rem;
+  }
+
+  .btnBack .btn-label{
+    font-size: 0.82rem;
+    white-space: nowrap;
   }
 
   .countdownRow{
@@ -576,7 +592,7 @@ body{
 
   .top-actions{
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem;
+    gap: 0.4rem;
   }
 
   .liveReferralActions{
@@ -602,9 +618,22 @@ body{
   }
 
   .btnBack{
-    min-height: 38px;
-    font-size: 0.9rem;
-    padding: 0.45rem 0.65rem;
+    min-height: 34px;
+    font-size: 0.8rem;
+    padding: 0.38rem 0.5rem;
+    border-radius: 11px;
+  }
+
+  .btnBack .btn-ico{
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+  }
+
+  .btnBack .btn-label{
+    font-size: 0.78rem;
+    letter-spacing: 0;
   }
 
   .badge{

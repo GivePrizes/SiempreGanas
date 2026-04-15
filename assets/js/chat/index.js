@@ -4,9 +4,10 @@ import { createChatStore } from './store.js?v=20260329b';
 import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js?v=20260329b';
 import { subscribeToSorteoInserts } from './realtime.js?v=20260329b';
 
-const CHAT_SYNC_VISIBLE_MS = 5000;
-const CHAT_SYNC_HIDDEN_MS = 12000;
-const CHAT_STREAM_RECOVERY_MS = 900;
+const CHAT_SYNC_VISIBLE_MS = 12000;
+const CHAT_SYNC_HIDDEN_MS = 25000;
+const CHAT_STREAM_RECOVERY_MS = 2200;
+const CHAT_MAX_BACKOFF_MS = 60000;
 
 /* ===============================
    Utils
@@ -53,6 +54,7 @@ export async function initChat({ sorteoId, token }) {
   let syncTimer = null;
   let syncInFlight = false;
   let disposed = false;
+  let syncErrorCount = 0;
 
   /* ===============================
      UI helpers
@@ -174,9 +176,16 @@ export async function initChat({ sorteoId, token }) {
   }
 
   function getSyncDelay() {
-    return document.visibilityState === 'visible'
+    const baseDelay = document.visibilityState === 'visible'
       ? CHAT_SYNC_VISIBLE_MS
       : CHAT_SYNC_HIDDEN_MS;
+
+    if (syncErrorCount <= 0) {
+      return baseDelay;
+    }
+
+    const multiplier = Math.min(2 ** Math.min(syncErrorCount - 1, 2), 4);
+    return Math.min(baseDelay * multiplier, CHAT_MAX_BACKOFF_MS);
   }
 
   function scheduleSync(delay = getSyncDelay()) {
@@ -202,7 +211,9 @@ export async function initChat({ sorteoId, token }) {
       if (unseen.length) {
         unseen.forEach(appendMessage);
       }
+      syncErrorCount = 0;
     } catch (err) {
+      syncErrorCount += 1;
       console.error('chat fallback sync error:', err);
     } finally {
       syncInFlight = false;

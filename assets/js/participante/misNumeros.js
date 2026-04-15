@@ -4,10 +4,140 @@ const API_URL = window.API_URL; // viene de config.js
 
 let __MIS_ROWS__ = [];   // filas crudas del backend (1 por número)
 let __MIS_GRUPOS__ = []; // grupos (1 por sorteo)
-let __MIS_STATE_MAP__ = new Map(); // estado anterior por sorteo/numero
+let __MIS_STATE_MAP__ = loadStateMap(); // estado anterior por sorteo/numero
+let __MIS_CHANGED_SET__ = new Set();
+let __MIS_TOAST_TIMER__ = null;
+
+const MIS_STATE_STORAGE_KEY = 'mathome:mis-numeros:estado:v1';
 
 function norm(x) {
   return (x || '').toString().toLowerCase().trim();
+}
+
+function loadStateMap() {
+  try {
+    const raw = sessionStorage.getItem(MIS_STATE_STORAGE_KEY);
+    if (!raw) return new Map();
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return new Map();
+    return new Map(Object.entries(parsed));
+  } catch {
+    return new Map();
+  }
+}
+
+function persistStateMap(map) {
+  try {
+    const serializable = Object.fromEntries(map.entries());
+    sessionStorage.setItem(MIS_STATE_STORAGE_KEY, JSON.stringify(serializable));
+  } catch {
+    // noop
+  }
+}
+
+function ensureToastElement() {
+  let el = document.getElementById('toast');
+  if (el) return el;
+
+  el = document.createElement('div');
+  el.id = 'toast';
+  el.className = 'toast hidden';
+  el.textContent = 'Accion realizada';
+  document.body.appendChild(el);
+  return el;
+}
+
+function mostrarToast(msg) {
+  const toast = ensureToastElement();
+  if (!toast) return;
+
+  toast.textContent = msg;
+  toast.classList.remove('hidden');
+
+  if (__MIS_TOAST_TIMER__) {
+    clearTimeout(__MIS_TOAST_TIMER__);
+  }
+
+  __MIS_TOAST_TIMER__ = window.setTimeout(() => {
+    toast.classList.add('hidden');
+  }, 3200);
+}
+
+function formatNumero(numero) {
+  return `#${String(numero ?? '').trim()}`;
+}
+
+function syncStateMap(rows) {
+  const nextMap = new Map();
+  const changedSet = new Set();
+  const transitions = {
+    aprobados: [],
+    rechazados: [],
+  };
+
+  rows.forEach((row) => {
+    const key = `${row.sorteo_id}:${row.numero}`;
+    const nextEstado = norm(row.estado);
+    const prevEstado = __MIS_STATE_MAP__.get(key);
+
+    nextMap.set(key, nextEstado);
+
+    if (!prevEstado || prevEstado === nextEstado) return;
+
+    changedSet.add(key);
+
+    const payload = {
+      sorteoId: row.sorteo_id,
+      descripcion: row.descripcion,
+      numero: row.numero,
+      previous: prevEstado,
+      next: nextEstado,
+    };
+
+    if (nextEstado === 'aprobado') {
+      transitions.aprobados.push(payload);
+      return;
+    }
+
+    if (nextEstado === 'rechazado') {
+      transitions.rechazados.push(payload);
+    }
+  });
+
+  __MIS_STATE_MAP__ = nextMap;
+  __MIS_CHANGED_SET__ = changedSet;
+  persistStateMap(nextMap);
+
+  return { changedSet, transitions };
+}
+
+function buildTransitionToastMessage(transitions) {
+  const aprobados = Array.isArray(transitions?.aprobados) ? transitions.aprobados : [];
+  const rechazados = Array.isArray(transitions?.rechazados) ? transitions.rechazados : [];
+
+  if (!aprobados.length && !rechazados.length) return '';
+
+  const mensajes = [];
+
+  if (aprobados.length === 1) {
+    const item = aprobados[0];
+    mensajes.push(
+      `Tu pago del ${formatNumero(item.numero)} en "${item.descripcion}" ya fue aprobado.`
+    );
+  } else if (aprobados.length > 1) {
+    mensajes.push(`Se aprobaron ${aprobados.length} pagos en tus participaciones.`);
+  }
+
+  if (rechazados.length === 1) {
+    const item = rechazados[0];
+    mensajes.push(
+      `Tu pago del ${formatNumero(item.numero)} en "${item.descripcion}" fue rechazado.`
+    );
+  } else if (rechazados.length > 1) {
+    mensajes.push(`Se rechazaron ${rechazados.length} pagos en tus participaciones.`);
+  }
+
+  return mensajes.join(' ');
 }
 
 function estadoTexto(e) {
@@ -199,7 +329,7 @@ function aplicarFiltro(estado) {
 
 // ✅ filtros internos sin recargar página (lo llaman tus chips)
 window.filtrarMisNumeros = (estado) => {
-  renderGrupos(aplicarFiltro(estado));
+  renderGrupos(aplicarFiltro(estado), __MIS_CHANGED_SET__);
 };
 
 // ------------------------------
@@ -224,11 +354,18 @@ export async function cargarMisNumerosResumen() {
     }
 
     const data = await res.json();
-    const totalNumeros = Array.isArray(data) ? data.length : 0;
+    const rows = Array.isArray(data) ? data : [];
+    const totalNumeros = rows.length;
+    const { transitions } = syncStateMap(rows);
 
     if (stat) {
       stat.textContent = String(totalNumeros);
       stat.style.opacity = '1';
+    }
+
+    const transitionMessage = buildTransitionToastMessage(transitions);
+    if (transitionMessage) {
+      mostrarToast(transitionMessage);
     }
 
     //  CLAVE: devolver el total
@@ -274,19 +411,7 @@ export async function cargarMisNumerosDetalle({ silent = false } = {}) {
     const data = await res.json();
     __MIS_ROWS__ = Array.isArray(data) ? data : [];
     __MIS_GRUPOS__ = agruparPorSorteo(__MIS_ROWS__);
-
-    // Detectar cambios de estado por número (para animación suave)
-    const nextMap = new Map();
-    const changedSet = new Set();
-    __MIS_ROWS__.forEach((p) => {
-      const key = `${p.sorteo_id}:${p.numero}`;
-      const estado = norm(p.estado);
-      nextMap.set(key, estado);
-      if (__MIS_STATE_MAP__.has(key) && __MIS_STATE_MAP__.get(key) !== estado) {
-        changedSet.add(key);
-      }
-    });
-    __MIS_STATE_MAP__ = nextMap;
+    const { changedSet, transitions } = syncStateMap(__MIS_ROWS__);
 
     if (!__MIS_GRUPOS__.length) {
       if (!silent) {
@@ -294,6 +419,11 @@ export async function cargarMisNumerosDetalle({ silent = false } = {}) {
         if (emptyBox) emptyBox.classList.remove('oculto');
       }
       return;
+    }
+
+    const transitionMessage = buildTransitionToastMessage(transitions);
+    if (transitionMessage) {
+      mostrarToast(transitionMessage);
     }
 
     renderGrupos(__MIS_GRUPOS__, changedSet);

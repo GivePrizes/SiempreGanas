@@ -90,6 +90,8 @@ let linkSeguroActual = null;
 let redirectingToLiveRoom = false;
 let sorteoAutoRefreshTimer = null;
 let sorteoRemovedHandled = false;
+let approvedNumbersInitialized = false;
+let previousApprovedNumbers = new Set();
 
 if (maxNumerosTexto) maxNumerosTexto.textContent = MAX_NUMEROS_POR_COMPRA.toString();
 
@@ -638,6 +640,17 @@ async function cargarMisNumerosDelSorteo() {
     const data = await res.json();
     const nums = Array.isArray(data?.numeros) ? data.numeros : [];
     const liveReady = isLiveRoomReady();
+    const nextApprovedNumbers = new Set(
+      nums
+        .map((numero) => Number(numero))
+        .filter((numero) => Number.isFinite(numero))
+    );
+    const nuevosAprobados = approvedNumbersInitialized
+      ? Array.from(nextApprovedNumbers).filter((numero) => !previousApprovedNumbers.has(numero))
+      : [];
+
+    previousApprovedNumbers = nextApprovedNumbers;
+    approvedNumbersInitialized = true;
 
     if (nums.length === 0) {
       if (misNumerosEnSorteoCard) misNumerosEnSorteoCard.style.display = 'none';
@@ -659,16 +672,31 @@ async function cargarMisNumerosDelSorteo() {
       <span class="chip-numero">#${n}</span>
     `).join('');
 
+    if (nuevosAprobados.length) {
+      const avisoAprobacion =
+        nuevosAprobados.length === 1
+          ? `Tu pago del numero #${nuevosAprobados[0]} ya fue aprobado.`
+          : `Se aprobaron ${nuevosAprobados.length} numeros en esta ronda.`;
+      mostrarToast(liveReady ? `${avisoAprobacion} Entrando al vivo...` : avisoAprobacion);
+    }
+
     if (comprarOtroNumero && !liveReady) {
       return;
     }
 
     if (liveReady) {
-      goToLiveRoom({
-        focusChat: true,
-        replace: true,
-        reason: 'approved_participant_redirect',
-      });
+      const goLive = () =>
+        goToLiveRoom({
+          focusChat: true,
+          replace: true,
+          reason: 'approved_participant_redirect',
+        });
+
+      if (nuevosAprobados.length) {
+        setTimeout(goLive, 900);
+      } else {
+        goLive();
+      }
     }
 
   } catch (err) {
