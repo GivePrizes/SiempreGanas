@@ -266,12 +266,12 @@ function renderGrupos(grupos, changedSet = new Set()) {
     if (grupo.pendientes) badges.push(`<span class="badge badge-warning">Pendientes: ${grupo.pendientes}</span>`);
     if (grupo.rechazados) badges.push(`<span class="badge badge-danger">Rechazados: ${grupo.rechazados}</span>`);
 
-    const ctaHref = liveReady
-      ? `ruleta-live.html?id=${grupo.sorteo_id}`
-      : `sorteo.html?id=${grupo.sorteo_id}`;
-    const ctaLabel = liveReady
-      ? (sorteoEstado === 'finalizado' ? 'Ver resultado en vivo' : 'Entrar al vivo')
-      : 'Ver sorteo';
+    const ctaHref = `ruleta-live.html?id=${grupo.sorteo_id}`;
+    const ctaLabel = sorteoEstado === 'finalizado'
+      ? 'Ver resultado en vivo'
+      : liveReady
+        ? 'Entrar al vivo'
+        : 'Ir a la sala';
 
     card.innerHTML = `
       <div class="sorteo-content">

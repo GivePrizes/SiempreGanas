@@ -1,4 +1,4 @@
-import { cargarMisNumerosResumen } from './misNumeros.js?v=20260415a';
+import { cargarMisNumerosResumen } from './misNumeros.js?v=20260415b';
 import { cargarProgresoBono } from '../bonus.js';
 
 const API_URL = window.API_URL || '';

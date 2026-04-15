@@ -10,8 +10,6 @@
   <!-- CSS del sistema -->
   <link rel="stylesheet" href="../assets/css/common.css">
   <link rel="stylesheet" href="../assets/css/admin.css?v=20260414b">
-  <link rel="stylesheet" href="../assets/js/chat/chat.css">
-  <link rel="stylesheet" href="../assets/js/chat/chat-admin.css?v=20260329c"><!-- nuevo -->
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
 </head>
 <body class="admin-body">
@@ -92,23 +90,6 @@
         </div>
       </section>
 
-      <!-- 💬 CHAT ADMIN -->
-      <section class="card" style="margin-top:18px;">
-        <div class="card-title-row">
-          <h2>💬 Chat de Administración</h2>
-          <p class="text-muted">Comunicación en tiempo real con los participantes y control de moderación.</p>
-        </div>
-
-        <div id="adminChatContainer" class="chat-card admin-chat">
-          <div id="adminChatBody" class="chat-messages"></div>
-          <div class="chat-input-wrap">
-            <input id="adminChatInput" placeholder="Mensaje global o moderación...">
-            <button id="adminChatSend">Enviar</button>
-          </div>
-          <p id="adminChatHint"></p>
-        </div>
-      </section>
-
     </main>
   </div>
 
@@ -121,34 +102,6 @@
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
   <script type="module" src="../assets/js/admin/index.js?v=20260415a"></script>
-
-  <!-- Script del chat admin -->
-  <script>
-    // Define el sorteo actual (puedes obtenerlo dinámicamente)
-    window.currentSorteoId = '1'; // ejemplo: ID 1
-  </script>
-
-  <script type="module">
-    import { initAdminChat } from '../assets/js/chat/adminChat.js?v=20260415a';
-
-    const sorteoId = window.currentSorteoId;
-    const token = localStorage.getItem('token');
-
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.rol === 'admin') {
-          initAdminChat({ sorteoId, token });
-        } else {
-          document.getElementById('adminChatHint').textContent = 'Tu rol no es admin, no puedes usar este chat.';
-        }
-      } catch {
-        document.getElementById('adminChatHint').textContent = 'Token inválido.';
-      }
-    } else {
-      document.getElementById('adminChatHint').textContent = 'Inicia sesión para usar el chat admin.';
-    }
-  </script>
 </body>
 </html>
 
