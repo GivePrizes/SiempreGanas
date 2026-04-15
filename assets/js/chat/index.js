@@ -76,6 +76,20 @@ export async function initChat({ sorteoId, token }) {
     }
   }
 
+  window.setParticipantChatPermission = function setParticipantChatPermission({
+    canWrite,
+    message,
+  } = {}) {
+    if (typeof canWrite === 'boolean') {
+      puedeEscribir = canWrite;
+      updateChatPermission();
+    }
+
+    if (hintEl && typeof message === 'string') {
+      hintEl.textContent = message;
+    }
+  };
+
   function rerender({ keepBottom = true } = {}) {
     const atBottom = isBottom(bodyEl);
 
@@ -383,6 +397,9 @@ export async function initChat({ sorteoId, token }) {
     disposed = true;
     if (syncTimer) clearTimeout(syncTimer);
     unsub?.();
+    if (window.setParticipantChatPermission) {
+      delete window.setParticipantChatPermission;
+    }
     window.removeEventListener('chat-stream-unavailable', handleStreamUnavailable);
     document.removeEventListener('visibilitychange', handleVisibilityRefresh);
     window.removeEventListener('focus', handleVisibilityRefresh);

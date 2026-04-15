@@ -1,6 +1,9 @@
 import { initChat } from '../chat/index.js?v=20260415a';
 
 const API_URL = (window.API_URL || '').replace(/\/$/, '');
+let hasApprovedAccess = false;
+let phaseWriteEnabled = false;
+let lastHintMessage = '';
 
 function getEls() {
   return {
@@ -9,6 +12,22 @@ function getEls() {
     send: document.getElementById('chatSend'),
     hint: document.getElementById('chatHint')
   };
+}
+
+function syncLiveChatPermission(messageOverride) {
+  const { input, send, hint } = getEls();
+  const canWrite = hasApprovedAccess && phaseWriteEnabled;
+  const message = typeof messageOverride === 'string' ? messageOverride : lastHintMessage;
+
+  if (typeof window.setParticipantChatPermission === 'function') {
+    window.setParticipantChatPermission({ canWrite, message });
+  } else {
+    if (input) input.disabled = !canWrite;
+    if (send) send.disabled = !canWrite;
+    if (hint && typeof message === 'string') {
+      hint.textContent = message;
+    }
+  }
 }
 
 async function resolveWriteAccess({ sorteoId, token }) {
@@ -55,22 +74,11 @@ window.setRuletaLiveChatWriteAccess = function setRuletaLiveChatWriteAccess({
   canWrite,
   message
 } = {}) {
-  const { input, send, hint } = getEls();
-  const locked = canWrite === false;
-
-  if (input) {
-    input.dataset.forceDisabled = locked ? '1' : '0';
-    if (locked) input.disabled = true;
+  hasApprovedAccess = canWrite === true;
+  if (typeof message === 'string') {
+    lastHintMessage = message;
   }
-
-  if (send) {
-    send.dataset.forceDisabled = locked ? '1' : '0';
-    if (locked) send.disabled = true;
-  }
-
-  if (hint && typeof message === 'string') {
-    hint.textContent = message;
-  }
+  syncLiveChatPermission(message);
 };
 
 window.initRuletaLiveChat = async function initRuletaLiveChat({
@@ -90,9 +98,7 @@ window.initRuletaLiveChat = async function initRuletaLiveChat({
 
   try {
     await initChat({ sorteoId, token });
-    if (!access.canWrite) {
-      window.setRuletaLiveChatWriteAccess(access);
-    }
+    syncLiveChatPermission(access?.message || lastHintMessage);
   } catch {
     const { hint } = getEls();
     if (hint) hint.textContent = 'No se pudo cargar el chat.';
@@ -100,35 +106,13 @@ window.initRuletaLiveChat = async function initRuletaLiveChat({
 };
 
 window.setRuletaLiveChatState = function setRuletaLiveChatState({ enabled, message } = {}) {
-  const { input, send, hint } = getEls();
-
-  if (input && input.dataset.prevDisabled == null) {
-    input.dataset.prevDisabled = input.disabled ? '1' : '0';
-  }
-  if (send && send.dataset.prevDisabled == null) {
-    send.dataset.prevDisabled = send.disabled ? '1' : '0';
-  }
-
-  const forceDisabled = input?.dataset.forceDisabled === '1' || send?.dataset.forceDisabled === '1';
-
   if (typeof enabled === 'boolean') {
-    if (input) {
-      if (!enabled || forceDisabled) {
-        input.disabled = true;
-      } else {
-        input.disabled = input.dataset.prevDisabled === '1';
-      }
-    }
-    if (send) {
-      if (!enabled || forceDisabled) {
-        send.disabled = true;
-      } else {
-        send.disabled = send.dataset.prevDisabled === '1';
-      }
-    }
+    phaseWriteEnabled = enabled;
   }
 
-  if (hint && typeof message === 'string') {
-    hint.textContent = message;
+  if (typeof message === 'string') {
+    lastHintMessage = message;
   }
+
+  syncLiveChatPermission(message);
 };
