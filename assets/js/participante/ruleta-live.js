@@ -630,6 +630,33 @@ function setChatEnabled(enabled, message){
   if (chatHintEl && typeof message === "string") chatHintEl.textContent = message;
 }
 
+function resetRoundCycleState(){
+  did321 = false;
+  didSpin = false;
+  numeroGanador = null;
+  ganadorNombre = null;
+
+  if (elResult) {
+    elResult.classList.add("hidden");
+    elResult.textContent = "";
+  }
+
+  if (chatWindowTimer) {
+    clearInterval(chatWindowTimer);
+    chatWindowTimer = null;
+  }
+
+  chatWindowEndsAt = null;
+  stopIdleSpin();
+
+  [
+    "estado_waiting",
+    "estado_countdown",
+    "estado_spinning",
+    "estado_finished",
+  ].forEach((key) => lastSystemKeys.delete(key));
+}
+
 function startChatCountdown(){
   if (chatWindowEndsAt) return;
   chatWindowEndsAt = Date.now() + 5 * 60 * 1000;
@@ -882,6 +909,7 @@ function spinToWinner(winnerNumero){
 // =========================
 async function fetchRuletaInfo(){
   const data = await fetchRuletaPayloadWithFallback();
+  const previousEstado = lastEstado;
 
   if (data.server_time) {
     serverSkewMs = new Date(data.server_time).getTime() - Date.now();
@@ -919,6 +947,10 @@ async function fetchRuletaInfo(){
   }
 
   setEstadoBadge(safeUpper(estado));
+
+  if (previousEstado === "finished" && estado !== "finished") {
+    resetRoundCycleState();
+  }
 
   elSubtitle.textContent =
     estado === "waiting" ? "La ruleta se activará cuando el sorteo se llene y el admin la programe." :
