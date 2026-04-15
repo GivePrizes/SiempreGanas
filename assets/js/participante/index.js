@@ -7,6 +7,7 @@ const SORTEO_MODALIDAD_DEFAULT = 'normal';
 const VALID_TIPOS = new Set(['todos', 'pantalla', 'combo', 'juegos', 'live']);
 const VALID_ESTADOS = new Set(['todos', 'comprables', 'casi_lleno', 'vivo']);
 const VALID_ORDENES = new Set(['destacados', 'avance', 'precio_bajo', 'ultimos_cupos']);
+const DASHBOARD_AUTO_REFRESH_MS = 15000;
 
 const dom = {
   sorteoGrid: document.getElementById('sorteosActivos'),
@@ -36,6 +37,7 @@ const state = {
 };
 
 let currentItemsPerPage = getItemsPerPage();
+let dashboardRefreshTimer = null;
 
 function getItemsPerPage() {
   if (window.matchMedia('(max-width: 640px)').matches) return 4;
@@ -731,8 +733,10 @@ function showLoadError() {
 
 }
 
-async function cargarSorteosActivos() {
-  renderLoadingCards();
+async function cargarSorteosActivos({ silent = false } = {}) {
+  if (!silent) {
+    renderLoadingCards();
+  }
 
   try {
     const res = await fetch(`${API_URL}/api/sorteos`);
@@ -749,8 +753,31 @@ async function cargarSorteosActivos() {
   } catch (err) {
     console.error('Error cargando rondas del dashboard:', err);
     state.sorteos = [];
-    showLoadError();
+    if (!silent) {
+      showLoadError();
+    }
   }
+}
+
+function startDashboardAutoRefresh() {
+  if (dashboardRefreshTimer) {
+    clearInterval(dashboardRefreshTimer);
+  }
+
+  dashboardRefreshTimer = setInterval(() => {
+    if (document.hidden) return;
+    cargarSorteosActivos({ silent: true }).catch(() => {});
+  }, DASHBOARD_AUTO_REFRESH_MS);
+
+  window.addEventListener('focus', () => {
+    cargarSorteosActivos({ silent: true }).catch(() => {});
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      cargarSorteosActivos({ silent: true }).catch(() => {});
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -771,5 +798,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   ];
 
   cargarProgresoBono();
+  startDashboardAutoRefresh();
   await Promise.allSettled(pendingTasks);
 });

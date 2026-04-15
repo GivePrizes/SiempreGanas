@@ -470,7 +470,7 @@ async function fetchRuletaPayloadWithFallback(){
     } catch (error) {
       lastError = error;
 
-      if (endpoint === "live" && error.status === 404) {
+      if (endpoint === "live" && (error.status === 404 || error.status >= 500)) {
         ruletaLiveEndpoint = "ruleta-info";
         continue;
       }
@@ -543,7 +543,9 @@ function renderNumbersList(){
 }
 
 async function fetchMisNumerosParaLista(){
-  if (!sorteoId || !token || !elNumbersList) return;
+  if (!sorteoId || !token || !elNumbersList) {
+    return { numeros: [], canWrite: false };
+  }
 
   try{
     const res = await fetch(`${apiBase}/api/participante/mis-numeros?sorteoId=${sorteoId}`, {
@@ -555,7 +557,11 @@ async function fetchMisNumerosParaLista(){
     if (!nums.length) {
       elNumbersList.innerHTML = '<span class="muted small">Aún no tienes números aprobados.</span>';
       if (elNumbersCount) elNumbersCount.textContent = '0';
-      return;
+      return {
+        numeros: [],
+        canWrite: false,
+        message: 'Solo participantes con número aprobado pueden escribir.',
+      };
     }
 
     nums.sort((a,b) => Number(a) - Number(b));
@@ -565,9 +571,42 @@ async function fetchMisNumerosParaLista(){
     }).join('');
 
     if (elNumbersCount) elNumbersCount.textContent = String(nums.length);
+    return {
+      numeros: nums,
+      canWrite: true,
+      message: '',
+    };
   } catch {
     elNumbersList.innerHTML = '<span class="muted small">No se pudieron cargar tus números.</span>';
+    return {
+      numeros: [],
+      canWrite: false,
+      message: 'No se pudo validar tu acceso al chat.',
+    };
   }
+}
+
+function waitForLiveChatBridge({
+  retries = 24,
+  delayMs = 180,
+} = {}) {
+  return new Promise((resolve) => {
+    const attempt = (remaining) => {
+      if (typeof window.initRuletaLiveChat === "function") {
+        resolve(true);
+        return;
+      }
+
+      if (remaining <= 0) {
+        resolve(false);
+        return;
+      }
+
+      setTimeout(() => attempt(remaining - 1), delayMs);
+    };
+
+    attempt(retries);
+  });
 }
 
 function setChatEnabled(enabled, message){
@@ -1060,16 +1099,6 @@ async function runPollCycle(){
   }
 
   try{
-    const tryInitChat = () => {
-      if (typeof window.initRuletaLiveChat === "function") {
-        window.initRuletaLiveChat({ sorteoId, token });
-        setChatEnabled(false, "El chat se habilita cuando comience el giro.");
-      } else {
-        setTimeout(tryInitChat, 0);
-      }
-    };
-    tryInitChat();
-
     // 1) Info base
     await fetchRuletaInfo();
 
@@ -1077,9 +1106,15 @@ async function runPollCycle(){
     await fetchNumerosRuleta({ force: true });
 
     // 2b) Mis números para el panel lateral
-    await fetchMisNumerosParaLista();
+    const writeAccess = await fetchMisNumerosParaLista();
     await loadLiveReferralPanel();
     startLiveReferralAutoRefresh();
+
+    const liveChatReady = await waitForLiveChatBridge();
+    if (liveChatReady) {
+      window.initRuletaLiveChat({ sorteoId, token, writeAccess });
+      setChatEnabled(false, "El chat se habilita cuando comience el giro.");
+    }
 
     if (estado === "finished" && numeroGanador) {
       await ensureWinnerSegmentLoaded();

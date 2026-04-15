@@ -1,5 +1,5 @@
 // assets/js/participante/index-mis.js
-import { cargarMisNumerosDetalle } from './misNumeros.js';
+import { cargarMisNumerosDetalle } from './misNumeros.js?v=20260414e';
 
 const chips = document.querySelectorAll('.chip-filtro');
 

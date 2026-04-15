@@ -73,13 +73,19 @@ window.setRuletaLiveChatWriteAccess = function setRuletaLiveChatWriteAccess({
   }
 };
 
-window.initRuletaLiveChat = async function initRuletaLiveChat({ sorteoId, token } = {}) {
+window.initRuletaLiveChat = async function initRuletaLiveChat({
+  sorteoId,
+  token,
+  writeAccess = null,
+} = {}) {
   if (!sorteoId || !token) return;
 
   const { container } = getEls();
   if (container) container.style.display = 'flex';
 
-  const access = await resolveWriteAccess({ sorteoId, token });
+  const access = writeAccess && typeof writeAccess === 'object'
+    ? writeAccess
+    : await resolveWriteAccess({ sorteoId, token });
   window.setRuletaLiveChatWriteAccess(access);
 
   try {

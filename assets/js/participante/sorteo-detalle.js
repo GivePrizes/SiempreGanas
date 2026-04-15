@@ -78,6 +78,7 @@ const liveReferralBadge = document.getElementById('liveReferralBadge');
 const inputReferralAlias = document.getElementById('inputReferralAlias');
 const liveReferralHint = document.getElementById('liveReferralHint');
 
+const SORTEO_AUTO_REFRESH_MS = 12000;
 
 let sorteoActual = null;
 let numerosOcupados = [];
@@ -87,6 +88,8 @@ const NEQUI_PAYMENT_LINKS = window.NEQUI_PAYMENT_LINKS || {};
 let pagoMetodoActual = '';
 let linkSeguroActual = null;
 let redirectingToLiveRoom = false;
+let sorteoAutoRefreshTimer = null;
+let sorteoRemovedHandled = false;
 
 if (maxNumerosTexto) maxNumerosTexto.textContent = MAX_NUMEROS_POR_COMPRA.toString();
 
@@ -112,6 +115,58 @@ function goToLiveRoom({ focusChat = false, replace = false, reason = '' } = {}) 
   }
 
   location.href = nextUrl;
+}
+
+function isLiveRoomReady(sorteo = sorteoActual) {
+  const estado = String(sorteo?.estado || sorteo?.sorteo_estado || '')
+    .trim()
+    .toLowerCase();
+  const ruletaEstado = String(sorteo?.ruleta_estado || '')
+    .trim()
+    .toLowerCase();
+
+  return (
+    estado === 'lleno' ||
+    estado === 'finalizado' ||
+    ruletaEstado === 'programada' ||
+    ruletaEstado === 'girando' ||
+    ruletaEstado === 'finalizada'
+  );
+}
+
+function updateQuickAccessButtons({ hasApprovedNumbers = false } = {}) {
+  if (btnMisNumeros) {
+    const liveReady = hasApprovedNumbers && isLiveRoomReady();
+    const nextHref = liveReady ? buildLiveRoomUrl({ focusChat: true }) : 'mis-numeros.html';
+    btnMisNumeros.onclick = () => {
+      location.href = nextHref;
+    };
+
+    const labelEl = btnMisNumeros.querySelector('.btn-label');
+    if (labelEl) {
+      labelEl.textContent = liveReady ? 'Sala en vivo' : 'Mis números';
+    }
+  }
+
+  if (btnChatOnline) {
+    const labelEl = btnChatOnline.querySelector('.btn-label');
+    if (labelEl) {
+      labelEl.textContent = isLiveRoomReady() ? 'Ir al vivo' : 'Sala en vivo';
+    }
+  }
+}
+
+function startSorteoAutoRefresh() {
+  if (sorteoAutoRefreshTimer) {
+    clearInterval(sorteoAutoRefreshTimer);
+  }
+
+  sorteoAutoRefreshTimer = setInterval(async () => {
+    if (document.hidden || redirectingToLiveRoom) return;
+
+    await cargarSorteo({ silent: true });
+    await cargarMisNumerosDelSorteo();
+  }, SORTEO_AUTO_REFRESH_MS);
 }
 
 if (btnChatOnline && sorteoId) {
@@ -582,17 +637,20 @@ async function cargarMisNumerosDelSorteo() {
 
     const data = await res.json();
     const nums = Array.isArray(data?.numeros) ? data.numeros : [];
+    const liveReady = isLiveRoomReady();
 
     if (nums.length === 0) {
       if (misNumerosEnSorteoCard) misNumerosEnSorteoCard.style.display = 'none';
       if (estadoNoParticipante) estadoNoParticipante.style.display = 'block';
       if (btnMisNumeros) btnMisNumeros.classList.add('hidden');
+      updateQuickAccessButtons({ hasApprovedNumbers: false });
       return;
     }
 
     if (estadoNoParticipante) estadoNoParticipante.style.display = 'none';
     if (misNumerosEnSorteoCard) misNumerosEnSorteoCard.style.display = 'block';
     if (btnMisNumeros) btnMisNumeros.classList.remove('hidden');
+    updateQuickAccessButtons({ hasApprovedNumbers: true });
     nums.sort((a, b) => Number(a) - Number(b));
 
     misNumerosEnSorteoTexto.textContent = `Aprobados: ${nums.length} número(s)`;
@@ -601,15 +659,17 @@ async function cargarMisNumerosDelSorteo() {
       <span class="chip-numero">#${n}</span>
     `).join('');
 
-    if (comprarOtroNumero) {
+    if (comprarOtroNumero && !liveReady) {
       return;
     }
 
-    goToLiveRoom({
-      focusChat: true,
-      replace: true,
-      reason: 'approved_participant_redirect',
-    });
+    if (liveReady) {
+      goToLiveRoom({
+        focusChat: true,
+        replace: true,
+        reason: 'approved_participant_redirect',
+      });
+    }
 
   } catch (err) {
   }
@@ -618,7 +678,7 @@ async function cargarMisNumerosDelSorteo() {
 
 
 // --- cargar sorteo desde backend ---
-async function cargarSorteo() {
+async function cargarSorteo({ silent = false } = {}) {
   const token = localStorage.getItem('token');
   const user = typeof window.getAuthUser === 'function'
     ? await window.getAuthUser()
@@ -640,6 +700,15 @@ async function cargarSorteo() {
     const data = await res.json();
 
     if (!res.ok) {
+      if (res.status === 404 && !sorteoRemovedHandled) {
+        sorteoRemovedHandled = true;
+        mostrarToast('Esta ronda ya no está disponible.');
+        setTimeout(() => {
+          location.replace('dashboard.html');
+        }, 900);
+        return;
+      }
+
       tituloSorteo.textContent = data.error || 'Error al cargar la ronda';
       return;
     }
@@ -649,6 +718,7 @@ async function cargarSorteo() {
     numerosOcupados = Array.isArray(sorteoActual.numeros_ocupados)
       ? sorteoActual.numeros_ocupados
       : [];
+    updateQuickAccessButtons({ hasApprovedNumbers: misNumerosEnSorteoCard?.style.display !== 'none' });
 
     // Hero
     tituloSorteo.textContent = sorteoActual.descripcion;
@@ -971,6 +1041,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderMetodoPagoOptions();
   cargarSorteo();
   cargarMisNumerosDelSorteo();
+  startSorteoAutoRefresh();
 });
 
 

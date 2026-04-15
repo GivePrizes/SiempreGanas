@@ -37,7 +37,9 @@ function agruparPorSorteo(rows) {
         sorteo_id: sorteoId,
         descripcion: p.descripcion,
         premio: p.premio,
+        modalidad: p.modalidad,
         sorteo_estado: p.sorteo_estado,
+        ruleta_estado: p.ruleta_estado,
         numero_ganador: p.numero_ganador,
         numeros: [], // [{numero, estado}]
         aprobados: 0,
@@ -82,10 +84,23 @@ function renderGrupos(grupos, changedSet = new Set()) {
     card.className = 'sorteo-card';
 
     const sorteoEstado = norm(grupo.sorteo_estado);
+    const modalidad = norm(grupo.modalidad);
+    const ruletaEstado = norm(grupo.ruleta_estado);
+    const liveReady =
+      modalidad === 'live' &&
+      (
+        sorteoEstado === 'lleno' ||
+        sorteoEstado === 'finalizado' ||
+        ruletaEstado === 'programada' ||
+        ruletaEstado === 'girando' ||
+        ruletaEstado === 'finalizada'
+      );
     const pillSorteo =
       sorteoEstado === 'finalizado'
         ? `<span class="badge badge-danger">Finalizado</span>`
-        : `<span class="badge badge-success">Activo</span>`;
+        : sorteoEstado === 'lleno'
+          ? `<span class="badge badge-warning">Listo para vivo</span>`
+          : `<span class="badge badge-success">Activo</span>`;
 
     const ganadorHtml =
       sorteoEstado === 'finalizado' && grupo.numero_ganador != null
@@ -121,6 +136,13 @@ function renderGrupos(grupos, changedSet = new Set()) {
     if (grupo.pendientes) badges.push(`<span class="badge badge-warning">Pendientes: ${grupo.pendientes}</span>`);
     if (grupo.rechazados) badges.push(`<span class="badge badge-danger">Rechazados: ${grupo.rechazados}</span>`);
 
+    const ctaHref = liveReady
+      ? `ruleta-live.html?id=${grupo.sorteo_id}`
+      : `sorteo.html?id=${grupo.sorteo_id}`;
+    const ctaLabel = liveReady
+      ? (sorteoEstado === 'finalizado' ? 'Ver resultado en vivo' : 'Entrar al vivo')
+      : 'Ver sorteo';
+
     card.innerHTML = `
       <div class="sorteo-content">
         <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
@@ -141,8 +163,8 @@ function renderGrupos(grupos, changedSet = new Set()) {
         </p>
 
         <div class="cta cta-mis-numeros">
-          <a href="sorteo.html?id=${grupo.sorteo_id}" class="btn btn-primary">
-            Ver sorteo
+          <a href="${ctaHref}" class="btn btn-primary">
+            ${ctaLabel}
           </a>
         </div>
       </div>
