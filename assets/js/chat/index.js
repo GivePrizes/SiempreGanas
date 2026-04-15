@@ -253,8 +253,8 @@ export async function initChat({ sorteoId, token }) {
     newBtnEl.classList.add('hidden');
   });
 
-  // Por defecto permitimos escribir
-  puedeEscribir = true;
+  // Arranca bloqueado hasta que otra capa resuelva permiso real
+  puedeEscribir = false;
   updateChatPermission();
 
 

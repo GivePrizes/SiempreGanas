@@ -1,10 +1,5 @@
 ﻿const apiBase = (window.API_URL || '').replace(/\/$/, '');
-const token = localStorage.getItem('token') || '';
-
-if (!token) {
-  // si no hay sesión, manda al login
-  location.href = '../login.html';
-}
+let token = localStorage.getItem('token') || '';
 
 const authHeaders = () => ({
   "Content-Type": "application/json",
@@ -1110,6 +1105,15 @@ async function runPollCycle(){
 // INIT
 // =========================
 (async function init(){
+  const user = typeof window.requireAuthUser === 'function'
+    ? await window.requireAuthUser({ redirectTo: '../login.html' })
+    : null;
+
+  token = localStorage.getItem('token') || '';
+  if (!token || !user?.id) {
+    return;
+  }
+
   if(!sorteoId){
     elSubtitle.textContent = "Falta sorteoId en la URL. Usa ?sorteo=123";
     return;

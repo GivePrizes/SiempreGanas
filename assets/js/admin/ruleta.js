@@ -80,10 +80,19 @@ let pollingInterval = null;
 let autoSpinIniciado = false;
 let autoSpinTimer = null;
 let spinVisualActivo = false;
+let pollingInFlight = false;
+let pollingErrorCount = 0;
+let pollingListenersBound = false;
 
 const PRE_SPIN_DURATION_MS = 7000;
 const FINAL_SPIN_DURATION_MS = 4700;
 const LIVE_LIQUIDACION_MIN_REFRESH_MS = 15000;
+const ADMIN_POLL_WAITING_MS = 10000;
+const ADMIN_POLL_DEFAULT_MS = 5000;
+const ADMIN_POLL_COUNTDOWN_MS = 2500;
+const ADMIN_POLL_SPINNING_MS = 1500;
+const ADMIN_POLL_HIDDEN_MS = 20000;
+const ADMIN_POLL_MAX_BACKOFF_MS = 60000;
 
 // Helpers de auth
 const token = localStorage.getItem('token');
@@ -1139,18 +1148,81 @@ async function fetchRuletaParticipantes() {
 }
 
 function startRuletaPolling() {
-  if (pollingInterval) clearInterval(pollingInterval);
+  if (!pollingListenersBound) {
+    pollingListenersBound = true;
 
-  pollingInterval = setInterval(async () => {
-    try {
-      await fetchRuletaInfo();
-      if (!ruletaInfo || ruletaInfo.ruleta_estado !== 'finalizada') {
-        await fetchRuletaParticipantes();
+    window.addEventListener('focus', () => {
+      scheduleRuletaPolling(500);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        scheduleRuletaPolling(500);
       }
-    } catch (err) {
-      console.error('Error polling ruleta:', err);
+    });
+  }
+
+  scheduleRuletaPolling(800);
+}
+
+function stopRuletaPolling() {
+  if (pollingInterval) {
+    clearTimeout(pollingInterval);
+    pollingInterval = null;
+  }
+}
+
+function getRuletaPollingBaseDelay() {
+  if (document.hidden) return ADMIN_POLL_HIDDEN_MS;
+
+  const estado = String(ruletaInfo?.ruleta_estado || '').toLowerCase();
+  if (estado === 'girando') return ADMIN_POLL_SPINNING_MS;
+  if (estado === 'programada') return ADMIN_POLL_COUNTDOWN_MS;
+  if (estado === 'no_programada') return ADMIN_POLL_WAITING_MS;
+  return ADMIN_POLL_DEFAULT_MS;
+}
+
+function getRuletaPollingDelay() {
+  const baseDelay = getRuletaPollingBaseDelay();
+  if (pollingErrorCount <= 0) {
+    return baseDelay;
+  }
+
+  const multiplier = Math.min(2 ** Math.min(pollingErrorCount - 1, 2), 4);
+  return Math.min(baseDelay * multiplier, ADMIN_POLL_MAX_BACKOFF_MS);
+}
+
+function scheduleRuletaPolling(delayMs = getRuletaPollingDelay()) {
+  stopRuletaPolling();
+  pollingInterval = setTimeout(runRuletaPollingCycle, delayMs);
+}
+
+async function runRuletaPollingCycle() {
+  if (pollingInFlight) {
+    scheduleRuletaPolling(300);
+    return;
+  }
+
+  if (document.hidden) {
+    scheduleRuletaPolling();
+    return;
+  }
+
+  pollingInFlight = true;
+
+  try {
+    await fetchRuletaInfo();
+    if (!ruletaInfo || ruletaInfo.ruleta_estado !== 'finalizada') {
+      await fetchRuletaParticipantes();
     }
-  }, 3000);
+    pollingErrorCount = 0;
+  } catch (err) {
+    pollingErrorCount += 1;
+    console.error('Error polling ruleta:', err);
+  } finally {
+    pollingInFlight = false;
+    scheduleRuletaPolling();
+  }
 }
 
 
@@ -1274,10 +1346,7 @@ function renderRuletaInfo() {
   //  FINALIZADA
   if (ruleta_estado === 'finalizada') {
     // parar polling/contador
-    if (pollingInterval) {
-      clearInterval(pollingInterval);
-      pollingInterval = null;
-    }
+    stopRuletaPolling();
     if (countdownInterval) {
       clearInterval(countdownInterval);
       countdownInterval = null;
@@ -1410,8 +1479,7 @@ async function ejecutarFlujoRuleta({ pedirConfirmacion = false } = {}) {
   autoSpinIniciado = true;
 
   if (pollingInterval) {
-    clearInterval(pollingInterval);
-    pollingInterval = null;
+    stopRuletaPolling();
   }
   if (countdownInterval) {
     clearInterval(countdownInterval);
@@ -1441,6 +1509,7 @@ async function ejecutarFlujoRuleta({ pedirConfirmacion = false } = {}) {
       girando = false;
       spinVisualActivo = false;
       autoSpinIniciado = false;
+      pollingErrorCount = 0;
       await fetchRuletaInfo();
       startRuletaPolling();
       return;
@@ -1472,6 +1541,7 @@ async function ejecutarFlujoRuleta({ pedirConfirmacion = false } = {}) {
       girando = false;
       spinVisualActivo = false;
       autoSpinIniciado = false;
+      pollingErrorCount = 0;
       startRuletaPolling();
       return;
     }
@@ -1493,6 +1563,7 @@ async function ejecutarFlujoRuleta({ pedirConfirmacion = false } = {}) {
     girando = false;
     spinVisualActivo = false;
     autoSpinIniciado = false;
+    pollingErrorCount = 0;
     startRuletaPolling();
   } finally {
     if (autoSpinTimer) {
@@ -1566,6 +1637,7 @@ async function programarRuleta() {
     if (panelProgramar) panelProgramar.style.display = 'none';
     await fetchRuletaInfo();
     await fetchRuletaParticipantes();
+    pollingErrorCount = 0;
     startRuletaPolling();
   } catch (err) {
     console.error('Error programarRuleta:', err);
@@ -1656,7 +1728,7 @@ async function init() {
   await fetchRuletaInfo();
   await fetchRuletaParticipantes();
 
-  // Polling suave de ruleta-info cada 3s (sin recargar página, sin "saltos")
+  // Polling inteligente según estado de la ronda
   startRuletaPolling();
 }
 

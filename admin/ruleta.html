@@ -8,8 +8,10 @@
 
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=20260414a">
-  <link rel="stylesheet" href="../assets/css/ruleta.css?v=20260414d" />
+  <link rel="stylesheet" href="../assets/css/admin.css?v=20260415a">
+  <link rel="stylesheet" href="../assets/css/ruleta.css?v=20260415a" />
+  <link rel="stylesheet" href="../assets/js/chat/chat.css">
+  <link rel="stylesheet" href="../assets/js/chat/chat-admin.css?v=20260329c">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
 </head>
 
@@ -217,6 +219,27 @@
           <div id="topBuyerInfo" class="ruleta-hint"></div>
         </aside>
       </section>
+
+      <section class="ruleta-admin-workspace">
+        <div class="ruleta-admin-workspace__header">
+          <div>
+            <p class="estado-label">Cabina Live</p>
+            <h3>Chat operativo del evento</h3>
+            <p class="ruleta-hint">
+              Desde aqui puedes leer lo que dicen los participantes, moderar y responder sin salir de la ruleta.
+            </p>
+          </div>
+        </div>
+
+        <div id="adminChatContainer" class="chat-card admin-chat">
+          <div id="adminChatBody" class="chat-messages"></div>
+          <div class="chat-input-wrap">
+            <input id="adminChatInput" placeholder="Mensaje del operador o moderacion...">
+            <button id="adminChatSend">Enviar</button>
+          </div>
+          <p id="adminChatHint"></p>
+        </div>
+      </section>
     </section>
   </main>
 
@@ -230,7 +253,29 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/admin/ruleta.js?v=20260414e"></script>
+  <script type="module" src="../assets/js/admin/ruleta.js?v=20260415b"></script>
+  <script type="module">
+    import { initAdminChat } from '../assets/js/chat/adminChat.js?v=20260415a';
+
+    const sorteoId = new URLSearchParams(window.location.search).get('sorteo')
+      || new URLSearchParams(window.location.search).get('sorteoId');
+    const token = localStorage.getItem('token');
+
+    if (token && sorteoId) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.rol === 'admin') {
+          initAdminChat({ sorteoId, token });
+        } else {
+          document.getElementById('adminChatHint').textContent = 'Tu rol no es admin, no puedes usar este chat.';
+        }
+      } catch {
+        document.getElementById('adminChatHint').textContent = 'Token invalido.';
+      }
+    } else {
+      document.getElementById('adminChatHint').textContent = 'Inicia sesion para usar el chat operativo.';
+    }
+  </script>
 
 </body>
 </html>

@@ -46,58 +46,8 @@ function showAdminToast(message) {
 function renderLiveReadyHub(readyLives, freshReadyIds = new Set()) {
   const hub = document.getElementById('liveReadyHub');
   if (!hub) return;
-
-  if (!Array.isArray(readyLives) || !readyLives.length) {
-    hub.hidden = true;
-    hub.innerHTML = '';
-    return;
-  }
-
-  const countLabel = readyLives.length === 1
-    ? '1 Live listo para programar'
-    : `${readyLives.length} Lives listos para programar`;
-
-  hub.hidden = false;
-  hub.innerHTML = `
-    <div class="live-ready-hub__header">
-      <div>
-        <p class="live-ready-hub__eyebrow">Momento clave</p>
-        <h3>${countLabel}</h3>
-        <p class="live-ready-hub__copy">
-          Estas rondas ya completaron cupos. Desde aqui puedes entrar directo a programar la hora real del evento.
-        </p>
-      </div>
-    </div>
-    <div class="live-ready-hub__list">
-      ${readyLives.map((sorteo) => {
-        const fresh = freshReadyIds.has(String(sorteo.id));
-        const ocupacion = `${sorteo.ocupados} / ${sorteo.cantidad_numeros}`;
-        return `
-          <article class="live-ready-hub__item${fresh ? ' is-fresh' : ''}">
-            <div class="live-ready-hub__item-main">
-              <div class="live-ready-hub__item-top">
-                <strong>${sorteo.descripcion}</strong>
-                <span class="badge badge-live-ready">${fresh ? 'Listo ahora' : 'Listo'}</span>
-              </div>
-              <p>${sorteo.premio}</p>
-              <div class="live-ready-hub__meta">
-                <span>Cupos completos: ${ocupacion}</span>
-                <span>Modalidad Live</span>
-              </div>
-            </div>
-            <div class="live-ready-hub__actions">
-              <button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${sorteo.id}'">
-                ⏱ Programar Live
-              </button>
-              <button class="btn btn-ghost btn-sm" onclick="window.open('../participante/ruleta-live.html?id=${sorteo.id}', '_blank', 'noopener')">
-                👁 Ver sala
-              </button>
-            </div>
-          </article>
-        `;
-      }).join('')}
-    </div>
-  `;
+  hub.hidden = true;
+  hub.innerHTML = '';
 }
 
 function getTipoBadge(sorteo) {
@@ -112,6 +62,12 @@ function getModalidadBadge(sorteo) {
   return String(sorteo.modalidad || '').trim().toLowerCase() === 'live'
     ? '<span class="badge badge-live">Live</span>'
     : '';
+}
+
+function getLiveAdminActionLabel(sorteo) {
+  const ruletaEstado = String(sorteo?.ruleta_estado || '').trim().toLowerCase();
+  if (ruletaEstado === 'no_programada') return '⏱ Programar Live';
+  return '🎛 Abrir cabina Live';
 }
 
 export async function cargarSorteosAdmin() {
@@ -235,11 +191,8 @@ export async function cargarSorteosAdmin() {
             <div class="sorteo-live-callout${liveReadyFresh ? ' is-fresh' : ''}">
               <div>
                 <strong>${liveReadyFresh ? 'Acaba de llenarse.' : 'Live listo para programar.'}</strong>
-                <p>Ya puedes abrir la ruleta, definir la hora real y arrancar la cuenta regresiva del evento.</p>
+                <p>Desde la cabina Live controlas todo: programacion, giro, chat y cierre del evento.</p>
               </div>
-              <button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">
-                ⏱ Ir a programar
-              </button>
             </div>
           `
           : '';
@@ -255,6 +208,21 @@ export async function cargarSorteosAdmin() {
         const imagenHtml = s.imagen_url
           ? `<div class="sorteo-admin-image"><img src="${s.imagen_url}" alt="Imagen sorteo ${s.descripcion}"></div>`
           : '';
+
+        let actionButtons = `
+          ${btnRuleta}
+          <button class="btn btn-warning btn-sm" onclick="editarSorteo(${s.id})">✏️ Editar</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminarSorteo(${s.id})">🗑 Eliminar</button>
+          <button class="btn btn-primary btn-sm" onclick="verDetalleSorteo(${s.id})">👁 Ver detalle</button>
+        `;
+
+        if (liveReady) {
+          actionButtons = `
+            <button class="btn btn-secondary btn-sm" onclick="location.href='ruleta.html?sorteo=${s.id}'">
+              ${getLiveAdminActionLabel(s)}
+            </button>
+          `;
+        }
 
         return `
           <article class="sorteo-card-admin draggable-sorteo${liveReady ? ' sorteo-card-admin--live-ready' : ''}" draggable="true" data-id="${s.id}">
@@ -273,10 +241,7 @@ export async function cargarSorteosAdmin() {
               ${liveReadyCallout}
               <p class="sorteo-detalle-mini">${guidanceText}</p>
               <div class="sorteo-actions-admin">
-                ${btnRuleta}
-                <button class="btn btn-warning btn-sm" onclick="editarSorteo(${s.id})">✏️ Editar</button>
-                <button class="btn btn-danger btn-sm" onclick="eliminarSorteo(${s.id})">🗑 Eliminar</button>
-                <button class="btn btn-primary btn-sm" onclick="verDetalleSorteo(${s.id})">👁 Ver detalle</button>
+                ${actionButtons}
               </div>
             </div>
           </article>

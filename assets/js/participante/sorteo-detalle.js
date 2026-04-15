@@ -713,7 +713,7 @@ async function cargarSorteo({ silent = false } = {}) {
     : null;
 
   if (!token || !user?.id) {
-    location.href = '../index.html';
+    location.href = '../login.html';
     return;
   }
 
@@ -933,7 +933,7 @@ if (btnConfirmar) {
       : null;
 
     if (!token || !user?.id) {
-      location.href = '../index.html';
+      location.href = '../login.html';
       return;
     }
 
@@ -1058,18 +1058,29 @@ if (btnConfirmar) {
 
 // --- init ---
 document.addEventListener('DOMContentLoaded', () => {
-  if (paymentStepAccordion) {
-    paymentStepAccordion.addEventListener('toggle', () => {
-      if (paymentStepAccordion.open) {
-        scrollToPaymentStep();
-      }
-    });
-  }
+  (async () => {
+    const user = typeof window.requireAuthUser === 'function'
+      ? await window.requireAuthUser({ redirectTo: '../login.html' })
+      : null;
+    const token = localStorage.getItem('token');
 
-  renderMetodoPagoOptions();
-  cargarSorteo();
-  cargarMisNumerosDelSorteo();
-  startSorteoAutoRefresh();
+    if (!token || !user?.id) {
+      return;
+    }
+
+    if (paymentStepAccordion) {
+      paymentStepAccordion.addEventListener('toggle', () => {
+        if (paymentStepAccordion.open) {
+          scrollToPaymentStep();
+        }
+      });
+    }
+
+    renderMetodoPagoOptions();
+    cargarSorteo();
+    cargarMisNumerosDelSorteo();
+    startSorteoAutoRefresh();
+  })();
 });
 
 

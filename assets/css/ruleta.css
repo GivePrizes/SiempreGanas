@@ -607,6 +607,27 @@
   margin-bottom: 0.5rem;
 }
 
+.ruleta-admin-workspace{
+  margin-top: 1.5rem;
+  padding-top: 1.35rem;
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.ruleta-admin-workspace__header{
+  margin-bottom: 0.9rem;
+}
+
+.ruleta-admin-workspace__header h3{
+  margin: 0.15rem 0 0.35rem;
+  font-size: 1.05rem;
+  color: #f8fafc;
+}
+
+.ruleta-admin-workspace #adminChatContainer{
+  min-height: 430px;
+  max-height: 64vh;
+}
+
 .btn-girar { 
   width: 100%;
   font-size: 1.05rem;
@@ -824,6 +845,11 @@
   .live-liquidation-item__meta{
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .ruleta-admin-workspace #adminChatContainer{
+    min-height: 380px;
+    max-height: 60vh;
   }
 }
 

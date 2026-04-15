@@ -71,6 +71,14 @@
         const data = await res.json();
 
         if (res.ok) {
+          const modalidad = String(data.modalidad || '').trim().toLowerCase();
+          const estado = String(data.estado || '').trim().toLowerCase();
+
+          if (modalidad === 'live' && estado === 'lleno') {
+            location.replace(`ruleta.html?sorteo=${sorteoId}`);
+            return;
+          }
+
           const tipo = data.tipo_producto === 'combo'
             ? 'Combo'
             : data.tipo_producto === 'juegos'
@@ -88,24 +96,19 @@
       }
     }
 
-    // Inicializar chat admin si el rol es correcto
-    if (token && sorteoId) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
+    (async function initAdminDetail() {
+      const user = typeof window.requireAuthUser === 'function'
+        ? await window.requireAuthUser({ redirectTo: '../login.html' })
+        : null;
 
-        if (payload.rol === 'admin') {
-          cargarDetalleSorteo();
-          initAdminChat({ sorteoId, token });
-        } else {
-          document.getElementById('adminChatHint').textContent = 'Tu rol no es admin.';
-        }
-      } catch (err) {
-        console.error('Error leyendo el token:', err);
-        document.getElementById('adminChatHint').textContent = 'Token inválido.';
+      if (!token || !sorteoId || !user || user.rol !== 'admin') {
+        location.href = '../login.html';
+        return;
       }
-    } else {
-      document.getElementById('adminChatHint').textContent = 'Inicia sesión para usar el chat.';
-    }
+
+      cargarDetalleSorteo();
+      initAdminChat({ sorteoId, token });
+    })();
   </script>
 </body>
 </html>

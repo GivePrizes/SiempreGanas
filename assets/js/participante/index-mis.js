@@ -2,6 +2,9 @@
 import { cargarMisNumerosDetalle } from './misNumeros.js?v=20260415a';
 
 const chips = document.querySelectorAll('.chip-filtro');
+const MIS_NUMEROS_REFRESH_MS = 20000;
+
+let misNumerosRefreshTimer = null;
 
 function getEstadoFromQuery() {
   const estado = new URLSearchParams(window.location.search).get('estado') || 'todos';
@@ -36,7 +39,43 @@ function setupFiltros() {
   });
 }
 
+function refreshMisNumerosSilently() {
+  return cargarMisNumerosDetalle({ silent: true }).then(() => {
+    window.filtrarMisNumeros?.(getEstadoActivoUI());
+  });
+}
+
+function startMisNumerosAutoRefresh() {
+  if (misNumerosRefreshTimer) {
+    clearInterval(misNumerosRefreshTimer);
+  }
+
+  misNumerosRefreshTimer = setInterval(() => {
+    if (document.hidden) return;
+    refreshMisNumerosSilently().catch(() => {});
+  }, MIS_NUMEROS_REFRESH_MS);
+
+  window.addEventListener('focus', () => {
+    refreshMisNumerosSilently().catch(() => {});
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      refreshMisNumerosSilently().catch(() => {});
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
+  const user = typeof window.requireAuthUser === 'function'
+    ? await window.requireAuthUser({ redirectTo: '../login.html' })
+    : null;
+  const token = localStorage.getItem('token');
+
+  if (!token || !user?.id) {
+    return;
+  }
+
   setupFiltros();
 
   const estadoInicial = getEstadoFromQuery();
@@ -45,10 +84,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   await cargarMisNumerosDetalle();
   window.filtrarMisNumeros?.(estadoInicial);
 
-  // Actualizacion suave y silenciosa
-  setInterval(() => {
-    cargarMisNumerosDetalle({ silent: true }).then(() => {
-      window.filtrarMisNumeros?.(getEstadoActivoUI());
-    });
-  }, 20000);
+  startMisNumerosAutoRefresh();
 });
