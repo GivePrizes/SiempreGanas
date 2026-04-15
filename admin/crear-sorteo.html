@@ -87,10 +87,10 @@
               <label for="modalidad">Modalidad del sorteo</label>
               <select id="modalidad" name="modalidad" required>
                 <option value="normal">Normal</option>
-                <option value="live">Live</option>
+                <option value="live">Sala en vivo</option>
               </select>
               <small id="modalidadHelp">
-                Normal: sorteo clasico. Live: evento en vivo con premios ordenados, reglas de referidos y cierre manual.
+                Normal: sorteo clasico. Sala en vivo: varias tiradas con chat y ruleta en tiempo real.
               </small>
             </div>
 
@@ -116,9 +116,9 @@
             </div>
 
             <section id="liveConfigSection" class="live-config-panel" hidden>
-              <div class="form-section-title">Configuracion Live</div>
+              <div class="form-section-title">Configuracion de sala en vivo</div>
               <p class="mini-hint live-section-hint">
-                Aqui dejas la base del evento: beneficio de entrada, premios a rifar y reglas de referidos.
+                Aqui defines el orden exacto de los premios que se van a rifar cuando el sorteo se llene.
               </p>
 
               <div class="form-group">
@@ -154,7 +154,7 @@
               <div class="live-builder-block">
                 <div class="card-title-row">
                   <div>
-                    <h3>Premios del Live</h3>
+                    <h3>Premios de la sala</h3>
                     <p class="mini-hint">
                       Define el orden exacto en que se van a rifar cuando el sorteo se llene.
                     </p>
@@ -166,20 +166,6 @@
                 <div id="livePremiosList" class="live-repeater-list"></div>
               </div>
 
-              <div class="live-builder-block">
-                <div class="card-title-row">
-                  <div>
-                    <h3>Reglas de referidos</h3>
-                    <p class="mini-hint">
-                      Configura cuántos referidos activan pago y cuánto se paga en cada meta.
-                    </p>
-                  </div>
-                  <button type="button" class="btn btn-secondary btn-sm" id="btnAgregarReglaReferido">
-                    + Agregar regla
-                  </button>
-                </div>
-                <div id="liveReferidosList" class="live-repeater-list"></div>
-              </div>
             </section>
 
             <div class="form-actions">
@@ -200,7 +186,7 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/admin/crear-sorteo.js?v=20260414b"></script>
+  <script type="module" src="../assets/js/admin/crear-sorteo.js?v=20260415a"></script>
 </body>
 </html>
 

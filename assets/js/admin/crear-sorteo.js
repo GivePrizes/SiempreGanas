@@ -12,19 +12,6 @@ const DEFAULT_LIVE_PRIZES = [
   { tipo: 'efectivo', nombre: 'Premio mayor', monto: '80000', descripcion: '' },
 ];
 
-const DEFAULT_LIVE_REFERRAL_RULES = [
-  {
-    minimo_referidos: '2',
-    recompensa_monto: '5000',
-    descripcion: 'Pago parcial por dos referidos aprobados.',
-  },
-  {
-    minimo_referidos: '3',
-    recompensa_monto: '12500',
-    descripcion: 'Devuelve el valor completo de entrada cuando se completa el ciclo.',
-  },
-];
-
 let modoEdicion = false;
 let sorteoId = null;
 let estadoActual = 'activo';
@@ -167,7 +154,7 @@ function renderModalidadHelp() {
   if (!help) return;
 
   if (getModalidadValue() === 'live') {
-    help.textContent = 'Live: evento en vivo con premios ordenados, reglas de referidos y cierre manual controlado por admin.';
+    help.textContent = 'Sala en vivo: varias tiradas sobre el mismo sorteo, con premios ordenados y cabina de ruleta en tiempo real.';
     return;
   }
 
@@ -230,10 +217,6 @@ function initTipoProductoUI() {
 function ensureLiveDefaults() {
   if (!livePremiosState.length) {
     livePremiosState = DEFAULT_LIVE_PRIZES.map((row) => ({ ...row }));
-  }
-
-  if (!liveReferidosState.length) {
-    liveReferidosState = DEFAULT_LIVE_REFERRAL_RULES.map((row) => ({ ...row }));
   }
 }
 
@@ -374,7 +357,6 @@ function renderLiveSection({ seedDefaults = false } = {}) {
   }
 
   renderLivePremios();
-  renderLiveReferidos();
 }
 
 function initModalidadUI() {
@@ -399,15 +381,6 @@ function initLiveBuilders() {
       descripcion: '',
     });
     renderLivePremios();
-  });
-
-  document.getElementById('btnAgregarReglaReferido')?.addEventListener('click', () => {
-    liveReferidosState.push({
-      minimo_referidos: '',
-      recompensa_monto: '',
-      descripcion: '',
-    });
-    renderLiveReferidos();
   });
 
   premiosList?.addEventListener('input', (event) => {
@@ -509,31 +482,11 @@ function collectLivePayload() {
     }
   }
 
-  const referralRules = liveReferidosState
-    .map((row) => normalizeLiveReferralRuleRow(row))
-    .filter((row) => row.minimo_referidos || row.recompensa_monto || row.descripcion);
-
-  for (const [index, rule] of referralRules.entries()) {
-    const minimo = parseCantidadNumeros(rule.minimo_referidos);
-    const monto = parseMontoNoNegativo(rule.recompensa_monto);
-
-    if (!minimo) {
-      return { error: `La regla de referidos #${index + 1} necesita un minimo valido.` };
-    }
-
-    if (monto == null) {
-      return { error: `La regla de referidos #${index + 1} necesita un monto valido.` };
-    }
-
-    rule.minimo_referidos = String(minimo);
-    rule.recompensa_monto = monto.toFixed(2);
-  }
-
   return {
     modalidad,
     live_config: liveConfig,
     live_prizes: premios,
-    live_referral_rules: referralRules,
+    live_referral_rules: [],
   };
 }
 
@@ -582,9 +535,7 @@ async function cargarSorteoParaEditar(id) {
       ? s.live_prizes.map((row) => normalizeLivePrizeRow(row))
       : [];
 
-    liveReferidosState = Array.isArray(s.live_referral_rules)
-      ? s.live_referral_rules.map((row) => normalizeLiveReferralRuleRow(row))
-      : [];
+    liveReferidosState = [];
 
     estadoActual = s.estado || 'activo';
     imagenActualUrl = s.imagen_url || null;

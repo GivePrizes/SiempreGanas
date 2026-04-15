@@ -1031,7 +1031,7 @@ async function fetchRuletaInfo(){
     }
     if (estado === "countdown") {
       pushSystemMessage("✅ El sorteo ya está lleno. El admin activó la ruleta y ya empezó la cuenta regresiva.", "estado_countdown");
-      setChatEnabled(true, "Chat activo · el sorteo ya está lleno y la ruleta fue programada.");
+      setChatEnabled(false, "Chat bloqueado por ahora · se habilita cuando comience el giro.");
     }
     if (estado === "spinning") {
       pushSystemMessage("🎯 ¡La ruleta está girando!", "estado_spinning");
