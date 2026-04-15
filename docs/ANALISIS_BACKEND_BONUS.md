@@ -235,7 +235,9 @@ router.get('/progreso', verifyToken, obtenerProgresoBono);
 - `POST /api/sorteos/crear` - Crear sorteo
 - `PUT /api/sorteos/:id` - Actualizar sorteo
 - `GET /api/sorteos/:id/ruleta-data` - Datos para ruleta
-- `POST /api/sorteos/:id/realizar` - Realizar sorteo
+- `POST /api/sorteos/:id/programar-ruleta` - Programar la ruleta
+- `POST /api/sorteos/:id/iniciar-ruleta` - Iniciar el giro oficial
+- `POST /api/sorteos/:id/spin-finished` - Cerrar el giro y registrar resultado
 
 **Cuentas:**
 - `GET /api/admin/cuentas` - Obtener entregas de cuenta

@@ -1,6 +1,6 @@
 # SiempreGanas Frontend
 
-Frontend del participante y administración para la plataforma SiempreGanas.
+Frontend del participante y administracion para la plataforma SiempreGanas.
 
 ## Stack real
 
@@ -10,11 +10,10 @@ Frontend del participante y administración para la plataforma SiempreGanas.
 
 ## Flujo oficial de chat y ruleta
 
-- La única sala oficial del participante es [ruleta-live.html](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/participante/ruleta-live.html).
-- [chat.html](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/participante/chat.html) queda solo como redirección de compatibilidad.
+- La unica sala oficial del participante es [ruleta-live.html](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/participante/ruleta-live.html).
 - [sorteo.html](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/participante/sorteo.html) ya no monta un chat propio ni abre una sala separada.
 
-## Documentación recomendada
+## Documentacion recomendada
 
 - [ARQUITECTURA_GENERAL.md](/d:/carpetaRuleta2026/ARQUITECTURA_GENERAL.md)
 - [ARQUITECTURA_CHAT_RULETA.md](/d:/carpetaRuleta2026/SiempreGanas/frontend/frontend/docs/ARQUITECTURA_CHAT_RULETA.md)
@@ -23,7 +22,7 @@ Frontend del participante y administración para la plataforma SiempreGanas.
 
 ## Desarrollo local
 
-Puedes servir esta carpeta con cualquier servidor estático. Ejemplo:
+Puedes servir esta carpeta con cualquier servidor estatico. Ejemplo:
 
 ```bash
 cd SiempreGanas/frontend/frontend
