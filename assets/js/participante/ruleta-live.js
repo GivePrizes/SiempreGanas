@@ -155,19 +155,35 @@ let ruletaLiveEndpoint = "live";
 let zeroEdgeTriggered = false;
 let liveReferralPanelState = null;
 let liveReferralPanelTimer = null;
+let liveReferralRequestInFlight = false;
 let livePollErrorCount = 0;
+let lastNumbersFetchAtMs = 0;
 
-const WAITING_POLL_INTERVAL_MS = 12000;
-const DEFAULT_POLL_INTERVAL_MS = 5000;
-const COUNTDOWN_POLL_INTERVAL_MS = 1000;
-const SPINNING_POLL_INTERVAL_MS = 1100;
-const ZERO_EDGE_POLL_INTERVAL_MS = 250;
-const LIVE_REFERRAL_REFRESH_MS = 15000;
+const WAITING_POLL_VISIBLE_MS = 15000;
+const WAITING_POLL_HIDDEN_MS = 45000;
+const DEFAULT_POLL_VISIBLE_MS = 7000;
+const DEFAULT_POLL_HIDDEN_MS = 20000;
+const COUNTDOWN_POLL_VISIBLE_MS = 2000;
+const COUNTDOWN_POLL_HIDDEN_MS = 6000;
+const SPINNING_POLL_VISIBLE_MS = 1800;
+const SPINNING_POLL_HIDDEN_MS = 7000;
+const ZERO_EDGE_POLL_VISIBLE_MS = 450;
+const ZERO_EDGE_POLL_HIDDEN_MS = 1800;
+const NUMBERS_REFRESH_WAITING_VISIBLE_MS = 20000;
+const NUMBERS_REFRESH_WAITING_HIDDEN_MS = 60000;
+const NUMBERS_REFRESH_ACTIVE_VISIBLE_MS = 45000;
+const NUMBERS_REFRESH_ACTIVE_HIDDEN_MS = 90000;
+const LIVE_REFERRAL_REFRESH_VISIBLE_MS = 30000;
+const LIVE_REFERRAL_REFRESH_HIDDEN_MS = 90000;
 const LIVE_POLL_MAX_BACKOFF_MS = 30000;
 const TWO_PI = Math.PI * 2;
 
 function nowServerMs(){
   return Date.now() + (serverSkewMs || 0);
+}
+
+function isDocumentVisible(){
+  return document.visibilityState === "visible";
 }
 
 function fmtMMSS(ms){
@@ -432,10 +448,7 @@ async function loadLiveReferralPanel(){
 }
 
 function startLiveReferralAutoRefresh(){
-  if (liveReferralPanelTimer) clearInterval(liveReferralPanelTimer);
-  liveReferralPanelTimer = setInterval(() => {
-    loadLiveReferralPanel().catch(() => {});
-  }, LIVE_REFERRAL_REFRESH_MS);
+  scheduleLiveReferralRefresh();
 }
 
 async function fetchRuletaPayload(endpoint){
@@ -481,16 +494,17 @@ async function fetchRuletaPayloadWithFallback(){
 }
 
 function getPollIntervalMs(){
-  if (estado === "waiting") return WAITING_POLL_INTERVAL_MS;
-  if (estado === "spinning") return SPINNING_POLL_INTERVAL_MS;
+  const visible = isDocumentVisible();
+  if (estado === "waiting") return visible ? WAITING_POLL_VISIBLE_MS : WAITING_POLL_HIDDEN_MS;
+  if (estado === "spinning") return visible ? SPINNING_POLL_VISIBLE_MS : SPINNING_POLL_HIDDEN_MS;
 
   if (countdownEndsAtMs) {
     const diff = countdownEndsAtMs - nowServerMs();
-    if (diff <= 0) return ZERO_EDGE_POLL_INTERVAL_MS;
-    if (diff <= 6000) return COUNTDOWN_POLL_INTERVAL_MS;
+    if (diff <= 0) return visible ? ZERO_EDGE_POLL_VISIBLE_MS : ZERO_EDGE_POLL_HIDDEN_MS;
+    if (diff <= 6000) return visible ? COUNTDOWN_POLL_VISIBLE_MS : COUNTDOWN_POLL_HIDDEN_MS;
   }
 
-  return DEFAULT_POLL_INTERVAL_MS;
+  return visible ? DEFAULT_POLL_VISIBLE_MS : DEFAULT_POLL_HIDDEN_MS;
 }
 
 function getLivePollDelayMs(){
@@ -504,12 +518,63 @@ function getLivePollDelayMs(){
   return Math.min(Math.max(baseDelay, 5000) * multiplier, LIVE_POLL_MAX_BACKOFF_MS);
 }
 
+function getPollJitterMs(baseDelay){
+  if (baseDelay >= 15000) return Math.floor(Math.random() * 1400);
+  if (baseDelay >= 7000) return Math.floor(Math.random() * 800);
+  if (baseDelay >= 2000) return Math.floor(Math.random() * 220);
+  if (baseDelay >= 800) return Math.floor(Math.random() * 120);
+  return Math.floor(Math.random() * 60);
+}
+
+function getNumbersRefreshIntervalMs(){
+  const visible = isDocumentVisible();
+  if (estado === "waiting") {
+    return visible
+      ? NUMBERS_REFRESH_WAITING_VISIBLE_MS
+      : NUMBERS_REFRESH_WAITING_HIDDEN_MS;
+  }
+
+  return visible
+    ? NUMBERS_REFRESH_ACTIVE_VISIBLE_MS
+    : NUMBERS_REFRESH_ACTIVE_HIDDEN_MS;
+}
+
+function getLiveReferralRefreshMs(){
+  return isDocumentVisible()
+    ? LIVE_REFERRAL_REFRESH_VISIBLE_MS
+    : LIVE_REFERRAL_REFRESH_HIDDEN_MS;
+}
+
+function scheduleLiveReferralRefresh(delayMs = getLiveReferralRefreshMs()){
+  if (liveReferralPanelTimer) {
+    clearTimeout(liveReferralPanelTimer);
+  }
+
+  liveReferralPanelTimer = setTimeout(async () => {
+    if (liveReferralRequestInFlight) {
+      scheduleLiveReferralRefresh();
+      return;
+    }
+
+    liveReferralRequestInFlight = true;
+    try {
+      await loadLiveReferralPanel();
+    } catch (_) {
+      // nada
+    } finally {
+      liveReferralRequestInFlight = false;
+      scheduleLiveReferralRefresh();
+    }
+  }, delayMs + getPollJitterMs(delayMs));
+}
+
 function scheduleNextPoll(delayMs = getLivePollDelayMs()){
   if (pollTimer) {
     clearTimeout(pollTimer);
   }
 
-  pollTimer = setTimeout(runPollCycle, delayMs);
+  const safeDelay = Math.max(250, Number(delayMs) || getLivePollDelayMs());
+  pollTimer = setTimeout(runPollCycle, safeDelay + getPollJitterMs(safeDelay));
 }
 
 function pushSystemMessage(text, key){
@@ -991,7 +1056,16 @@ async function fetchRuletaInfo(){
 
 
 async function fetchNumerosRuleta({ force = false } = {}){
-  if (!force && segments.length) return segments;
+  const now = Date.now();
+  if (
+    !force &&
+    segments.length &&
+    lastNumbersFetchAtMs &&
+    now - lastNumbersFetchAtMs < getNumbersRefreshIntervalMs()
+  ) {
+    return segments;
+  }
+
   const res = await fetch(`${apiBase}/api/sorteos/${sorteoId}/ruleta-numeros`, {
     headers: authHeaders()
   });
@@ -1012,6 +1086,7 @@ async function fetchNumerosRuleta({ force = false } = {}){
     drawWheel();
   }
 
+  lastNumbersFetchAtMs = Date.now();
   return segments;
 }
 
@@ -1096,7 +1171,7 @@ async function runPollCycle(){
     await fetchRuletaInfo();
 
     if (estado !== "finished") {
-      await fetchNumerosRuleta({ force: true });
+      await fetchNumerosRuleta();
     } else {
       await ensureWinnerSegmentLoaded();
     }
@@ -1131,6 +1206,20 @@ async function runPollCycle(){
     pollInFlight = false;
     scheduleNextPoll();
   }
+}
+
+function handleLiveVisibilityRefresh(){
+  if (!token || !sorteoId) return;
+
+  startLiveReferralAutoRefresh();
+
+  if (document.visibilityState === "visible") {
+    lastNumbersFetchAtMs = 0;
+    scheduleNextPoll(320);
+    return;
+  }
+
+  scheduleNextPoll();
 }
 
 // =========================
@@ -1184,6 +1273,8 @@ async function runPollCycle(){
 
     // 4) polling
     scheduleNextPoll();
+    document.addEventListener("visibilitychange", handleLiveVisibilityRefresh);
+    window.addEventListener("focus", handleLiveVisibilityRefresh);
 
   }catch(err){
     elSubtitle.textContent = "No se pudo conectar con la ronda en vivo.";

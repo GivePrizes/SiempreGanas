@@ -1,4 +1,4 @@
-import { initChat } from '../chat/index.js?v=20260415a';
+import { initChat } from '../chat/index.js?v=20260415b';
 
 const API_URL = (window.API_URL || '').replace(/\/$/, '');
 let hasApprovedAccess = false;

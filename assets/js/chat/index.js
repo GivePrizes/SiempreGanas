@@ -4,8 +4,8 @@ import { createChatStore } from './store.js?v=20260329b';
 import { bindFilters, renderMessages, isBottom, toBottom } from './ui.js?v=20260329b';
 import { subscribeToSorteoInserts } from './realtime.js?v=20260329b';
 
-const CHAT_SYNC_VISIBLE_MS = 12000;
-const CHAT_SYNC_HIDDEN_MS = 25000;
+const CHAT_SYNC_VISIBLE_MS = 25000;
+const CHAT_SYNC_HIDDEN_MS = 60000;
 const CHAT_STREAM_RECOVERY_MS = 2200;
 const CHAT_MAX_BACKOFF_MS = 60000;
 
@@ -25,6 +25,13 @@ function usuarioIdFromToken(token) {
   } catch {
     return null;
   }
+}
+
+function getChatSyncJitterMs(baseDelay) {
+  if (baseDelay >= 60000) return Math.floor(Math.random() * 2200);
+  if (baseDelay >= 25000) return Math.floor(Math.random() * 1400);
+  if (baseDelay >= 10000) return Math.floor(Math.random() * 700);
+  return Math.floor(Math.random() * 150);
 }
 
 /* ===============================
@@ -205,9 +212,10 @@ export async function initChat({ sorteoId, token }) {
   function scheduleSync(delay = getSyncDelay()) {
     if (disposed) return;
     if (syncTimer) clearTimeout(syncTimer);
+    const safeDelay = Math.max(500, Number(delay) || getSyncDelay());
     syncTimer = setTimeout(() => {
       syncLatestMessages();
-    }, delay);
+    }, safeDelay + getChatSyncJitterMs(safeDelay));
   }
 
   async function syncLatestMessages() {
