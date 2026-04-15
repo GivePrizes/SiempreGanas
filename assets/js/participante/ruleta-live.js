@@ -1211,8 +1211,6 @@ async function runPollCycle(){
 function handleLiveVisibilityRefresh(){
   if (!token || !sorteoId) return;
 
-  startLiveReferralAutoRefresh();
-
   if (document.visibilityState === "visible") {
     lastNumbersFetchAtMs = 0;
     scheduleNextPoll(320);
@@ -1249,8 +1247,6 @@ function handleLiveVisibilityRefresh(){
 
     // 2b) Mis números para el panel lateral
     const writeAccess = await fetchMisNumerosParaLista();
-    await loadLiveReferralPanel();
-    startLiveReferralAutoRefresh();
 
     const liveChatReady = await waitForLiveChatBridge();
     if (liveChatReady) {

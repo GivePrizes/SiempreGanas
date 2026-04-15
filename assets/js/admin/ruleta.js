@@ -1076,7 +1076,6 @@ async function fetchRuletaInfo() {
 
     ruletaInfo = data;
     renderRuletaInfo();
-    await fetchLiveLiquidacion();
   } catch (err) {
     console.error('Error fetchRuletaInfo:', err);
   }
@@ -1694,24 +1693,7 @@ if (btnConfirmProgramar) {
   btnConfirmProgramar.addEventListener('click', programarRuleta);
 }
 
-if (btnRefreshLiquidacion) {
-  btnRefreshLiquidacion.addEventListener('click', () => fetchLiveLiquidacion(true));
-}
-
-if (btnFinalizarLive) {
-  btnFinalizarLive.addEventListener('click', finalizarLiveActual);
-}
-
-if (btnExportarLiquidacionPdf) {
-  btnExportarLiquidacionPdf.addEventListener('click', exportLiveLiquidacionPdf);
-}
-
-if (btnDescargarLiquidacionHtml) {
-  btnDescargarLiquidacionHtml.addEventListener('click', downloadLiveLiquidacionHtml);
-}
-
 syncProgramarControls();
-renderLiveLiquidacion();
 
 async function init() {
   const user = typeof window.getAuthUser === 'function'
