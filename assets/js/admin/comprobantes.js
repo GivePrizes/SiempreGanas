@@ -191,7 +191,7 @@ function buildApprovalAlertMessage(data) {
       ? formatReferralIdentifier(referral.referidorAlias)
       : referral.referidorNombre;
     const totalText = totalAprobados > 0
-      ? ` Ya va en ${totalAprobados} referido${totalAprobados === 1 ? '' : 's'} aprobado${totalAprobados === 1 ? '' : 's'}.`
+      ? ` Ya va en ${totalAprobados} compra${totalAprobados === 1 ? '' : 's'} referida${totalAprobados === 1 ? '' : 's'} aprobada${totalAprobados === 1 ? '' : 's'}.`
       : '';
     blocks.push(`Referido Live reconocido para ${referidor}.${totalText}`);
   }
@@ -201,7 +201,7 @@ function buildApprovalAlertMessage(data) {
       .map((op) => {
         const meta = Number(op.minimoReferidos || 0);
         const monto = formatMoney(op.monto);
-        return `- Pago Live creado: ${meta} referidos -> ${monto}`;
+        return `- Pago Live creado: ${meta} compra${meta === 1 ? '' : 's'} referida${meta === 1 ? '' : 's'} -> ${monto}`;
       })
       .join('\n');
     blocks.push(`Se generaron operaciones en admin cuentas:\n${resumen}`);
