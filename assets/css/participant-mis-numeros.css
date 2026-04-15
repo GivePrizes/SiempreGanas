@@ -267,19 +267,34 @@
 @media (max-width: 480px) {
   .dashboard-header__actions {
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem;
+    display: flex;
+    align-items: center;
+    justify-content: stretch;
+    gap: 0.42rem;
+    flex-wrap: nowrap;
   }
 
   .dashboard-header__actions .btn {
-    min-height: 38px;
-    padding: 0.48rem 0.65rem;
-    font-size: 0.9rem;
+    flex: 1 1 0;
+    min-height: 34px;
+    padding: 0.4rem 0.52rem;
+    font-size: 0.8rem;
+    border-radius: 11px;
+    gap: 0.38rem;
+    box-shadow: 0 8px 18px rgba(0,0,0,.28);
   }
 
-  .dashboard-header__actions .btn-logout {
-    grid-column: 1 / -1;
+  .dashboard-header__actions .btn .btn-ico {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+  }
+
+  .dashboard-header__actions .btn .btn-label {
+    font-size: 0.78rem;
+    letter-spacing: 0;
+    white-space: nowrap;
   }
 }
 
