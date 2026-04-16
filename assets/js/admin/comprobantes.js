@@ -23,6 +23,7 @@ function agruparComprobantesPorSorteo(comprobantes) {
 // Estado para evitar parpadeo
 let yaPintoAlgo = false;
 let ultimoHTML = '';
+const accionesEnCurso = new Set();
 
 function formatMoney(value) {
   const amount = Number(value || 0);
@@ -90,8 +91,18 @@ function construirHTML(grupos) {
               <small>${new Date(c.fecha).toLocaleString()}</small>
             </div>
             <div class="comprobante-actions">
-              <button class="btn-green" onclick="aprobar(${c.id})">Aprobar</button>
-              <button class="btn-red" onclick="rechazar(${c.id})">Rechazar</button>
+              <button
+                class="btn-green"
+                data-comprobante-id="${c.id}"
+                data-comprobante-action="aprobar"
+                onclick="aprobar(${c.id})"
+              >Aprobar</button>
+              <button
+                class="btn-red"
+                data-comprobante-id="${c.id}"
+                data-comprobante-action="rechazar"
+                onclick="rechazar(${c.id})"
+              >Rechazar</button>
             </div>
           </li>
         `
@@ -249,9 +260,45 @@ function buildApprovalAlertMessage(data) {
   return `Comprobante aprobado.\n\n${blocks.join('\n\n')}`;
 }
 
+function setComprobanteActionState(id, disabled, actionInProgress = null) {
+  const buttons = document.querySelectorAll(`[data-comprobante-id="${id}"]`);
+  if (!buttons.length) return;
+
+  buttons.forEach((button) => {
+    if (!button.dataset.originalText) {
+      button.dataset.originalText = button.textContent || '';
+    }
+
+    button.disabled = disabled;
+
+    if (!disabled) {
+      button.textContent = button.dataset.originalText;
+      return;
+    }
+
+    const action = button.dataset.comprobanteAction;
+    if (action === actionInProgress) {
+      button.textContent = action === 'aprobar' ? 'Aprobando...' : 'Rechazando...';
+    }
+  });
+}
+
+function isAlreadyProcessedMessage(message) {
+  const normalized = String(message || '').toLowerCase();
+  return (
+    normalized.includes('ya procesado') ||
+    normalized.includes('comprobante no encontrado') ||
+    normalized.includes('ya fue procesado')
+  );
+}
+
 async function aprobar(id) {
   if (!confirm('¿Aprobar?')) return;
+  if (accionesEnCurso.has(id)) return;
+
   const token = localStorage.getItem('token');
+  accionesEnCurso.add(id);
+  setComprobanteActionState(id, true, 'aprobar');
 
   try {
     const res = await fetch(`${API_URL}/api/admin/comprobantes/aprobar/${id}`, {
@@ -269,13 +316,26 @@ async function aprobar(id) {
     await cargarComprobantes();
   } catch (error) {
     console.error('Error aprobando comprobante:', error);
+    if (isAlreadyProcessedMessage(error.message)) {
+      alert('Este comprobante ya fue procesado. Voy a refrescar la bandeja.');
+      await cargarComprobantes();
+      return;
+    }
+
     alert(error.message || 'No se pudo aprobar el comprobante.');
+  } finally {
+    accionesEnCurso.delete(id);
+    setComprobanteActionState(id, false);
   }
 }
 
 async function rechazar(id) {
   if (!confirm('¿Rechazar?')) return;
+  if (accionesEnCurso.has(id)) return;
+
   const token = localStorage.getItem('token');
+  accionesEnCurso.add(id);
+  setComprobanteActionState(id, true, 'rechazar');
 
   try {
     const res = await fetch(`${API_URL}/api/admin/comprobantes/rechazar/${id}`, {
@@ -287,7 +347,16 @@ async function rechazar(id) {
     await cargarComprobantes();
   } catch (error) {
     console.error('Error rechazando comprobante:', error);
+    if (isAlreadyProcessedMessage(error.message)) {
+      alert('Este comprobante ya fue procesado. Voy a refrescar la bandeja.');
+      await cargarComprobantes();
+      return;
+    }
+
     alert(error.message || 'No se pudo rechazar el comprobante.');
+  } finally {
+    accionesEnCurso.delete(id);
+    setComprobanteActionState(id, false);
   }
 }
 
