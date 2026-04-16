@@ -246,19 +246,19 @@ function renderReferralProgram(data) {
 
   referralSummaryCards.innerHTML = [
     {
-      label: 'Pagos pendientes',
+      label: 'Socios por pagar',
       value: String(Number(resumen.pagos_pendientes || 0)),
-      meta: `Monto en cola: ${formatMoney(resumen.monto_pendiente || 0)}`,
+      meta: `Valor pendiente: ${formatMoney(resumen.monto_pendiente || 0)}`,
     },
     {
-      label: 'Pagos completados',
+      label: 'Pagos realizados',
       value: String(Number(resumen.pagos_pagados || 0)),
-      meta: `Monto entregado: ${formatMoney(resumen.monto_pagado || 0)}`,
+      meta: `Ya entregado: ${formatMoney(resumen.monto_pagado || 0)}`,
     },
     {
-      label: 'Movimientos totales',
+      label: 'Movimientos del programa',
       value: String(Number(resumen.total_pagos || 0)),
-      meta: 'Lectura agregada del programa de socios',
+      meta: 'Resumen rapido del programa de socios',
     },
   ].map((card) => `
     <article class="referral-summary-card">
@@ -273,7 +273,7 @@ function renderReferralProgram(data) {
   }
 
   if (!pagosPendientes.length) {
-    referralPendingList.innerHTML = '<div class="referral-empty">No hay pagos pendientes por referidos.</div>';
+    referralPendingList.innerHTML = '<div class="referral-empty">No hay pagos pendientes del programa de socios.</div>';
   } else {
     referralPendingList.innerHTML = pagosPendientes.map((item) => {
       const waLink = buildReferralWhatsappLink(item);
@@ -303,7 +303,7 @@ function renderReferralProgram(data) {
           <div class="referral-payout-item__actions">
             <a class="btn-mini ${waLink ? '' : 'disabled'}" ${waLink ? `href="${waLink}" target="_blank" rel="noopener"` : 'aria-disabled="true"'}>WhatsApp</a>
             <button type="button" class="btn-mini primary" data-action="pagar-referral-reward" data-reward="${item.id}">
-              Marcar pagado
+              Marcar pago hecho
             </button>
           </div>
         </article>
@@ -312,7 +312,7 @@ function renderReferralProgram(data) {
   }
 
   if (!ranking.length) {
-    referralLeaderboard.innerHTML = '<div class="referral-empty">Todavia no hay socios con progreso.</div>';
+    referralLeaderboard.innerHTML = '<div class="referral-empty">Todavia no hay socios con avance para mostrar.</div>';
     return;
   }
 

@@ -9,7 +9,7 @@
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225c">
   <link rel="stylesheet" href="../assets/css/participant-shared.css?v=20260414a">
-  <link rel="stylesheet" href="../assets/css/participant-sorteo.css?v=20260416a">
+  <link rel="stylesheet" href="../assets/css/participant-sorteo.css?v=20260416b">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260412b">
 </head>
 <body>
@@ -306,13 +306,46 @@
 
   </div>
 
+  <div id="sociosPromoModal" class="socios-promo-modal hidden" aria-hidden="true">
+    <div class="socios-promo-modal__backdrop" data-socios-promo-close></div>
+    <div class="socios-promo-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="sociosPromoTitle">
+      <div class="socios-promo-modal__header">
+        <div class="socios-promo-modal__copy">
+          <span class="socios-promo-modal__eyebrow">Mathome</span>
+          <h2 id="sociosPromoTitle">Programa de socios</h2>
+          <p>Lee esta guía rápida y ciérrala con la X cuando termines.</p>
+        </div>
+        <button
+          type="button"
+          class="socios-promo-modal__close"
+          id="btnCerrarSociosPromo"
+          data-socios-promo-close
+          aria-label="Cerrar promoción del programa de socios"
+        >
+          <span aria-hidden="true">×</span>
+          <span>Cerrar</span>
+        </button>
+      </div>
+
+      <div class="socios-promo-modal__body">
+        <img
+          src="../assets/imagenes/Gemini_Generated_Image_69bkxb69bkxb69bk.png"
+          alt="Imagen informativa del programa de socios de Mathome"
+          class="socios-promo-modal__image"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast hidden">Mensaje</div>
 
   <script src="../assets/js/app-config.js?v=20260412d"></script>
   <script src="../assets/js/config.js?v=20260412d"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260416a"></script>
+  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260416b"></script>
 </body>
 </html>
 

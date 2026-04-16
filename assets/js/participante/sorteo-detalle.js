@@ -11,6 +11,7 @@ const comprarOtroNumero = ['1', 'true', 'si'].includes(
 );
 
 const MAX_NUMEROS_POR_COMPRA = 1;
+const SOCIOS_PROMO_STORAGE_KEY = 'mathome_socios_promo_seen_v20260416b';
 
 const tituloSorteo = document.getElementById('tituloSorteo');
 const subtituloSorteo = document.getElementById('subtituloSorteo');
@@ -71,6 +72,8 @@ const postConfirmActions = document.getElementById('postConfirmActions');
 const btnPostLive = document.getElementById('btnPostLive');
 const numbersStepAccordion = document.getElementById('numbersStepAccordion');
 const paymentStepAccordion = document.getElementById('paymentStepAccordion');
+const sociosPromoModal = document.getElementById('sociosPromoModal');
+const btnCerrarSociosPromo = document.getElementById('btnCerrarSociosPromo');
 
 const SORTEO_AUTO_REFRESH_MS = 12000;
 
@@ -193,6 +196,46 @@ function mostrarToast(msg) {
     toast.classList.remove('show');
     setTimeout(() => toast.classList.add('hidden'), 200);
   }, 2500);
+}
+
+function shouldShowSociosPromo() {
+  if (!sociosPromoModal) return false;
+  return localStorage.getItem(SOCIOS_PROMO_STORAGE_KEY) !== '1';
+}
+
+function closeSociosPromo({ remember = true } = {}) {
+  if (!sociosPromoModal) return;
+
+  sociosPromoModal.classList.add('hidden');
+  sociosPromoModal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('socios-promo-open');
+
+  if (remember) {
+    localStorage.setItem(SOCIOS_PROMO_STORAGE_KEY, '1');
+  }
+}
+
+function openSociosPromo() {
+  if (!sociosPromoModal) return;
+
+  sociosPromoModal.classList.remove('hidden');
+  sociosPromoModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('socios-promo-open');
+  window.setTimeout(() => btnCerrarSociosPromo?.focus({ preventScroll: true }), 60);
+}
+
+function initSociosPromoModal() {
+  if (!sociosPromoModal) return;
+
+  sociosPromoModal.querySelectorAll('[data-socios-promo-close]').forEach((element) => {
+    element.addEventListener('click', () => closeSociosPromo());
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !sociosPromoModal.classList.contains('hidden')) {
+      closeSociosPromo();
+    }
+  });
 }
 
 function getNumeroPadding() {
@@ -1006,6 +1049,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!token || !user?.id) {
       return;
+    }
+
+    initSociosPromoModal();
+    if (shouldShowSociosPromo()) {
+      openSociosPromo();
     }
 
     if (paymentStepAccordion) {

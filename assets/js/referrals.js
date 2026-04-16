@@ -11,7 +11,7 @@ function formatMoney(value) {
 }
 
 function getInviteText(code) {
-  return `Usa mi codigo ${code} cuando compres tu puesto en Mathome. Tu compra validada me suma en el programa de socios.`;
+  return `Usa mi codigo ${code} cuando compres tu puesto en Mathome. Si tu compra queda validada, ambos seguimos creciendo en el programa de socios.`;
 }
 
 async function copyText(text, successMessage) {
@@ -72,11 +72,10 @@ function renderReferralSummary(data) {
   const totalValidados = Number(data?.total_validados || 0);
   const currentTier = data?.current_tier || null;
   const nextTier = data?.next_tier || null;
-  const pendingCount = Number(data?.pending_rewards?.count || 0);
   const pendingAmount = Number(data?.pending_rewards?.amount || 0);
   const referralCode = String(data?.referral_code || '').trim();
 
-  const currentTierName = currentTier?.nombre || 'Socio inicial';
+  const currentTierName = currentTier?.nombre || 'Aun sin nivel';
   const progressPercent = nextTier?.minimo_validados
     ? Math.max(
         0,
@@ -85,16 +84,16 @@ function renderReferralSummary(data) {
     : 100;
 
   box.hidden = false;
-  title.textContent = `${currentTierName} · ${totalValidados} validado${totalValidados === 1 ? '' : 's'}`;
+  title.textContent = currentTierName;
 
   if (nextTier?.nombre) {
-    meta.textContent = `Te faltan ${nextTier.faltan} para ${nextTier.nombre}.`;
+    meta.textContent = `Llevas ${totalValidados} compra${totalValidados === 1 ? '' : 's'} validada${totalValidados === 1 ? '' : 's'}. Te faltan ${nextTier.faltan} para ${nextTier.nombre}.`;
   } else {
-    meta.textContent = 'Ya estas en el nivel mas alto del programa.';
+    meta.textContent = `Llevas ${totalValidados} compras validadas. Ya estas en el nivel mas alto del programa.`;
   }
 
-  pending.textContent = pendingCount > 0
-    ? `${pendingCount} pago${pendingCount === 1 ? '' : 's'} pendiente${pendingCount === 1 ? '' : 's'} · ${formatMoney(pendingAmount)}`
+  pending.textContent = pendingAmount > 0
+    ? `Pendiente: ${formatMoney(pendingAmount)}`
     : 'Sin pagos pendientes';
 
   bar.style.width = `${progressPercent}%`;
