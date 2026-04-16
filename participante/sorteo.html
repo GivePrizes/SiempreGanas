@@ -9,7 +9,7 @@
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225c">
   <link rel="stylesheet" href="../assets/css/participant-shared.css?v=20260414a">
-  <link rel="stylesheet" href="../assets/css/participant-sorteo.css?v=20260415a">
+  <link rel="stylesheet" href="../assets/css/participant-sorteo.css?v=20260416a">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260412b">
 </head>
 <body>
@@ -257,6 +257,27 @@
               <input id="inputPagadorTelefono" type="tel" inputmode="numeric" placeholder="Ej: 3001234567" autocomplete="tel" />
             </div>
 
+            <div class="referral-entry-card">
+              <div class="referral-entry-card__head">
+                <div>
+                  <p class="referral-entry-card__eyebrow">Programa de socios</p>
+                  <h4>¿Te invitó alguien?</h4>
+                </div>
+                <span class="referral-entry-card__badge">Opcional</span>
+              </div>
+
+              <label for="inputReferidoCodigo">Código o alias del socio</label>
+              <input
+                id="inputReferidoCodigo"
+                type="text"
+                maxlength="32"
+                placeholder="Ej: MTH000123 o @camilo"
+                autocomplete="off"
+                autocapitalize="characters"
+              />
+              <p class="text-muted microhint">Solo cuenta cuando tu pago quede aprobado. No se puede usar tu propio código.</p>
+            </div>
+
             <button id="btnConfirmar" class="btn btn-primary btn-full-width">
               Confirmar participación
             </button>
@@ -291,7 +312,7 @@
   <script src="../assets/js/config.js?v=20260412d"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260415b"></script>
+  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260416a"></script>
 </body>
 </html>
 

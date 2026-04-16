@@ -1,5 +1,6 @@
 import { cargarMisNumerosResumen } from './misNumeros.js?v=20260415b';
 import { cargarProgresoBono } from '../bonus.js';
+import { cargarResumenReferidos } from '../referrals.js';
 
 const API_URL = window.API_URL || '';
 const SORTEO_TIPO_DEFAULT = 'pantalla';
@@ -768,17 +769,20 @@ function startDashboardAutoRefresh() {
     if (document.hidden) return;
     cargarSorteosActivos({ silent: true }).catch(() => {});
     cargarMisNumerosResumen().catch(() => {});
+    cargarResumenReferidos().catch(() => {});
   }, DASHBOARD_AUTO_REFRESH_MS);
 
   window.addEventListener('focus', () => {
     cargarSorteosActivos({ silent: true }).catch(() => {});
     cargarMisNumerosResumen().catch(() => {});
+    cargarResumenReferidos({ force: true }).catch(() => {});
   });
 
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
       cargarSorteosActivos({ silent: true }).catch(() => {});
       cargarMisNumerosResumen().catch(() => {});
+      cargarResumenReferidos({ force: true }).catch(() => {});
     }
   });
 }
@@ -801,6 +805,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   ];
 
   cargarProgresoBono();
+  cargarResumenReferidos({ force: true });
   startDashboardAutoRefresh();
   await Promise.allSettled(pendingTasks);
 });

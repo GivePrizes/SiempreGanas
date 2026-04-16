@@ -1,5 +1,5 @@
 // assets/js/admin/index.js
-import { cargarComprobantes } from './comprobantes.js?v=20260414d';
+import { cargarComprobantes } from './comprobantes.js?v=20260416a';
 import { cargarStats } from './stats.js';
 import { cargarSorteosAdmin } from './sorteos-admin.js?v=20260415a';
 

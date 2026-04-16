@@ -66,6 +66,7 @@ const sinComprobante = document.getElementById('sinComprobante');
 const pagadorDatos = document.getElementById('pagadorDatos');
 const inputPagadorNombre = document.getElementById('inputPagadorNombre');
 const inputPagadorTelefono = document.getElementById('inputPagadorTelefono');
+const inputReferidoCodigo = document.getElementById('inputReferidoCodigo');
 const postConfirmActions = document.getElementById('postConfirmActions');
 const btnPostLive = document.getElementById('btnPostLive');
 const numbersStepAccordion = document.getElementById('numbersStepAccordion');
@@ -85,6 +86,7 @@ let sorteoAutoRefreshTimer = null;
 let sorteoRemovedHandled = false;
 let approvedNumbersInitialized = false;
 let previousApprovedNumbers = new Set();
+const referralCodeFromUrl = String(params.get('ref') || '').trim();
 
 if (maxNumerosTexto) maxNumerosTexto.textContent = MAX_NUMEROS_POR_COMPRA.toString();
 
@@ -897,6 +899,7 @@ if (btnConfirmar) {
     const file = inputComprobante?.files?.[0];
     const pagadorNombre = (inputPagadorNombre?.value || '').trim();
     const pagadorTelefono = (inputPagadorTelefono?.value || '').replace(/\D+/g, '');
+    const referidoCodigo = (inputReferidoCodigo?.value || '').trim();
     const pagadorOk = pagadorNombre.length >= 3 && pagadorTelefono.length >= 10;
     const metodo = pagoMetodoActual;
 
@@ -933,6 +936,7 @@ if (btnConfirmar) {
         pagador_nombre: pagadorNombre || null,
         pagador_telefono: pagadorTelefono || null,
         pago_metodo: metodo,
+        referido_codigo: referidoCodigo || null,
       };
 
       const res = await fetch(`${API_URL}/api/participante/guardar-numeros`, {
@@ -976,6 +980,7 @@ if (btnConfirmar) {
       if (pagadorDatos) pagadorDatos.classList.add('oculto');
       if (inputPagadorNombre) inputPagadorNombre.value = '';
       if (inputPagadorTelefono) inputPagadorTelefono.value = '';
+      if (inputReferidoCodigo) inputReferidoCodigo.value = referralCodeFromUrl || '';
       actualizarResumen();
 
       // Opcional: recargar ocupados
@@ -1012,6 +1017,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderMetodoPagoOptions();
+    if (inputReferidoCodigo && referralCodeFromUrl) {
+      inputReferidoCodigo.value = referralCodeFromUrl.replace(/^@+/, '').trim();
+    }
     cargarSorteo();
     cargarMisNumerosDelSorteo();
     startSorteoAutoRefresh();

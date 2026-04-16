@@ -11,6 +11,11 @@ const elEmptySub = document.getElementById('emptySub');
 const elQ = document.getElementById('q');
 const elTipoProductoFiltro = document.getElementById('tipoProductoFiltro');
 const btnRefrescar = document.getElementById('btnRefrescar');
+const referralProgramSection = document.getElementById('referralProgramSection');
+const referralSummaryCards = document.getElementById('referralSummaryCards');
+const referralPendingCount = document.getElementById('referralPendingCount');
+const referralPendingList = document.getElementById('referralPendingList');
+const referralLeaderboard = document.getElementById('referralLeaderboard');
 
 const liveOpModal = document.getElementById('liveOperacionModal');
 const liveOpModalSub = document.getElementById('liveOperacionModalSub');
@@ -31,6 +36,44 @@ const state = {
   suspendAutoRefreshUntil: 0,
   lastViewportAnchor: null,
 };
+
+function formatMoney(value) {
+  const amount = Number(value || 0);
+  if (!Number.isFinite(amount)) return '$0';
+  return `$${amount.toLocaleString('es-CO')}`;
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function sanitizePhone(raw) {
+  if (!raw) return '';
+  let digits = String(raw).replace(/\D/g, '');
+  if (!digits) return '';
+  if (digits.startsWith('57')) return digits;
+  if (digits.length === 10) return `57${digits}`;
+  if (digits.length > 10) return `57${digits.slice(-10)}`;
+  return digits;
+}
+
+function buildReferralWhatsappLink(item) {
+  const phone = sanitizePhone(item?.telefono);
+  if (!phone) return '';
+
+  const tier = item?.tier_nombre ? ` por ${item.tier_nombre}` : '';
+  const amount = item?.monto ? ` de ${formatMoney(item.monto)}` : '';
+  const text = encodeURIComponent(
+    `Hola ${item?.nombre || ''}, te escribo de Mathome por tu pago pendiente${amount}${tier} del programa de socios. Voy a coordinar contigo la entrega por este medio.`
+  );
+
+  return `https://wa.me/${phone}?text=${text}`;
+}
 
 function cssEscape(value) {
   const raw = String(value ?? '');
@@ -185,6 +228,134 @@ async function fetchJSON(url, options = {}) {
   return data;
 }
 
+function renderReferralProgram(data) {
+  if (!referralProgramSection || !referralSummaryCards || !referralPendingList || !referralLeaderboard) {
+    return;
+  }
+
+  if (data?.enabled === false) {
+    referralProgramSection.hidden = true;
+    return;
+  }
+
+  referralProgramSection.hidden = false;
+
+  const resumen = data?.resumen || {};
+  const pagosPendientes = Array.isArray(data?.pagos_pendientes) ? data.pagos_pendientes : [];
+  const ranking = Array.isArray(data?.ranking) ? data.ranking : [];
+
+  referralSummaryCards.innerHTML = [
+    {
+      label: 'Pagos pendientes',
+      value: String(Number(resumen.pagos_pendientes || 0)),
+      meta: `Monto en cola: ${formatMoney(resumen.monto_pendiente || 0)}`,
+    },
+    {
+      label: 'Pagos completados',
+      value: String(Number(resumen.pagos_pagados || 0)),
+      meta: `Monto entregado: ${formatMoney(resumen.monto_pagado || 0)}`,
+    },
+    {
+      label: 'Movimientos totales',
+      value: String(Number(resumen.total_pagos || 0)),
+      meta: 'Lectura agregada del programa de socios',
+    },
+  ].map((card) => `
+    <article class="referral-summary-card">
+      <span class="referral-summary-card__label">${card.label}</span>
+      <strong class="referral-summary-card__value">${card.value}</strong>
+      <span class="referral-summary-card__meta">${card.meta}</span>
+    </article>
+  `).join('');
+
+  if (referralPendingCount) {
+    referralPendingCount.textContent = String(pagosPendientes.length);
+  }
+
+  if (!pagosPendientes.length) {
+    referralPendingList.innerHTML = '<div class="referral-empty">No hay pagos pendientes por referidos.</div>';
+  } else {
+    referralPendingList.innerHTML = pagosPendientes.map((item) => {
+      const waLink = buildReferralWhatsappLink(item);
+      const alias = item.alias ? `@${item.alias}` : '';
+      const code = item.referral_code || '';
+      const beneficio = item.beneficio_extra
+        ? `<div class="muted tiny">Beneficio extra: ${escapeHtml(item.beneficio_extra)}</div>`
+        : '';
+
+      return `
+        <article class="referral-payout-item">
+          <div class="referral-payout-item__top">
+            <div>
+              <div class="referral-payout-item__name">${escapeHtml(item.nombre || 'Sin nombre')}</div>
+              <div class="referral-payout-item__meta">
+                ${alias ? `<span>${escapeHtml(alias)}</span>` : ''}
+                ${code ? `<span>${escapeHtml(code)}</span>` : ''}
+                <span>${escapeHtml(item.total_validados || 0)} validados</span>
+                <span>${escapeHtml(item.tier_nombre || 'Nivel')}</span>
+              </div>
+            </div>
+            <div class="referral-payout-item__amount">${formatMoney(item.monto || 0)}</div>
+          </div>
+          <div class="muted tiny">Meta alcanzada: ${escapeHtml(item.minimo_validados || 0)} compras validadas.</div>
+          ${beneficio}
+          <div class="muted tiny">${escapeHtml(item.email || 'Sin correo')} · ${escapeHtml(item.telefono || 'Sin telefono')}</div>
+          <div class="referral-payout-item__actions">
+            <a class="btn-mini ${waLink ? '' : 'disabled'}" ${waLink ? `href="${waLink}" target="_blank" rel="noopener"` : 'aria-disabled="true"'}>WhatsApp</a>
+            <button type="button" class="btn-mini primary" data-action="pagar-referral-reward" data-reward="${item.id}">
+              Marcar pagado
+            </button>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  if (!ranking.length) {
+    referralLeaderboard.innerHTML = '<div class="referral-empty">Todavia no hay socios con progreso.</div>';
+    return;
+  }
+
+  referralLeaderboard.innerHTML = ranking.map((item, index) => `
+    <article class="referral-rank-item">
+      <div class="referral-rank-item__top">
+        <div>
+          <div class="referral-rank-item__name">#${index + 1} · ${escapeHtml(item.nombre || 'Sin nombre')}</div>
+          <div class="referral-rank-item__meta">
+            ${item.alias ? `<span>${escapeHtml(`@${item.alias}`)}</span>` : ''}
+            ${item.referral_code ? `<span>${escapeHtml(item.referral_code)}</span>` : ''}
+            ${item.current_tier_nombre ? `<span>${escapeHtml(item.current_tier_nombre)}</span>` : '<span>Sin nivel</span>'}
+          </div>
+        </div>
+        <span class="badge warning">${item.total_validados || 0} validados</span>
+      </div>
+      <div class="muted tiny">
+        Pendiente: ${formatMoney(item.monto_pendiente || 0)} · Pagado: ${formatMoney(item.monto_pagado || 0)}
+      </div>
+    </article>
+  `).join('');
+}
+
+async function cargarProgramaReferidos({ silent = false } = {}) {
+  const token = getToken();
+  if (!token || !referralProgramSection) return;
+
+  try {
+    const data = await fetchJSON(`${API_URL}/api/admin/referidos/resumen`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    renderReferralProgram(data);
+  } catch (err) {
+    console.error('[REFERIDOS] Error:', err);
+    if (!silent) {
+      toast(err.message || 'No se pudo cargar el programa de socios');
+    }
+    if (referralProgramSection) {
+      referralProgramSection.hidden = true;
+    }
+  }
+}
+
 async function cargarCuentas({ silent = false, force = false } = {}) {
   const token = getToken();
   if (!token) {
@@ -286,6 +457,32 @@ async function completarLiveOperacion(operacionId, btn) {
   } finally {
     if (btn) {
       btn.textContent = oldText || 'Marcar completada';
+    }
+  }
+}
+
+async function marcarPagoReferido(rewardId, btn) {
+  const token = getToken();
+  if (!token) throw new Error('Sesion expirada');
+
+  rememberViewportContext(btn);
+  const oldText = btn?.textContent;
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Guardando...';
+  }
+
+  try {
+    await fetchJSON(
+      `${API_URL}/api/admin/referidos/recompensas/${rewardId}/pagar`,
+      { method: 'PATCH', headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    toast('Pago de referido marcado como realizado');
+    await cargarProgramaReferidos({ silent: true });
+  } finally {
+    if (btn) {
+      btn.textContent = oldText || 'Marcar pagado';
     }
   }
 }
@@ -462,6 +659,22 @@ function setupAcordeonToggle() {
   });
 }
 
+function setupReferralActions() {
+  referralProgramSection?.addEventListener('click', (event) => {
+    const btn = event.target.closest('button[data-action="pagar-referral-reward"][data-reward]');
+    if (!btn) return;
+
+    event.preventDefault();
+    const rewardId = btn.dataset.reward;
+    marcarPagoReferido(rewardId, btn).catch((err) => {
+      console.error(err);
+      toast(err.message || 'No se pudo marcar el pago');
+      btn.disabled = false;
+      btn.textContent = 'Marcar pagado';
+    });
+  });
+}
+
 function setupLiveOperacionModal() {
   if (!liveOpModal || !liveOpForm) return;
 
@@ -493,11 +706,14 @@ async function init() {
   document.body.classList.remove('auth-pending');
   setupFilters();
   setupAcordeonToggle();
+  setupReferralActions();
   setupLiveOperacionModal();
   refreshEmptyStateCopy();
+  cargarProgramaReferidos({ silent: false });
   cargarCuentas({ silent: false, force: true });
   setInterval(() => {
     if (!liveOpModal?.classList.contains('hidden')) return;
+    cargarProgramaReferidos({ silent: true });
     cargarCuentas({ silent: true });
   }, REFRESH_MS);
 }

@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225b">
   <link rel="stylesheet" href="../assets/css/admin.css?v=20260414a">
   <!-- ✅ CSS aislado de este micro-módulo -->
-  <link rel="stylesheet" href="../assets/css/cuentas-sorteo.css?v=20260414a">
+  <link rel="stylesheet" href="../assets/css/cuentas-sorteo.css?v=20260416a">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
   <style>
     body.auth-pending { visibility: hidden; }
@@ -79,6 +79,41 @@
 
         <div class="mini-note">
           Tip: marca “Entregada” solo cuando ya enviaste la cuenta. Queda registro.
+        </div>
+      </section>
+
+      <section id="referralProgramSection" class="card referral-program-section" style="margin-top:18px;" hidden>
+        <div class="card-title-row">
+          <div>
+            <h2>🤝 Programa de socios</h2>
+            <p class="text-muted">
+              Aquí controlas pagos pendientes por referidos validados y ves quién viene moviendo más compras.
+            </p>
+          </div>
+
+          <div class="card-title-right text-muted mini-hint">
+            Lectura resumida · sin recalcular todo a cada pantalla.
+          </div>
+        </div>
+
+        <div id="referralSummaryCards" class="referral-summary-cards"></div>
+
+        <div class="referral-admin-grid">
+          <div class="referral-admin-panel">
+            <div class="referral-admin-panel__head">
+              <h3>Pagos pendientes</h3>
+              <span id="referralPendingCount" class="badge neutral">0</span>
+            </div>
+            <div id="referralPendingList" class="referral-payout-list"></div>
+          </div>
+
+          <div class="referral-admin-panel">
+            <div class="referral-admin-panel__head">
+              <h3>Ranking</h3>
+              <span class="badge neutral">Top socios</span>
+            </div>
+            <div id="referralLeaderboard" class="referral-leaderboard"></div>
+          </div>
         </div>
       </section>
 
@@ -161,7 +196,7 @@
   <script src="../assets/js/theme.js?v=20260401b"></script>
 
   <!-- ✅ Entry point del micro-módulo -->
-<script type="module" src="../assets/js/admin/cuentas/index.js?v=20260414d"></script>
+<script type="module" src="../assets/js/admin/cuentas/index.js?v=20260416a"></script>
 </body>
 </html>
 

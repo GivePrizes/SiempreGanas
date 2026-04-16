@@ -17,7 +17,6 @@ let sorteoId = null;
 let estadoActual = 'activo';
 let imagenActualUrl = null;
 let livePremiosState = [];
-let liveReferidosState = [];
 
 function getTipoProductoValue() {
   const input = document.getElementById('tipo_producto');
@@ -103,14 +102,6 @@ function normalizeLivePrizeRow(raw = {}) {
   };
 }
 
-function normalizeLiveReferralRuleRow(raw = {}) {
-  return {
-    minimo_referidos: sanitizeText(raw.minimo_referidos),
-    recompensa_monto: sanitizeText(raw.recompensa_monto),
-    descripcion: sanitizeText(raw.descripcion),
-  };
-}
-
 function mostrarToast(mensaje) {
   const toast = document.getElementById('toast');
   if (!toast) return;
@@ -168,7 +159,7 @@ function renderFechaSorteoHelp() {
   if (!label || !help || !input) return;
 
   if (getModalidadValue() === 'live') {
-    label.textContent = 'Fecha estimada del Live (opcional)';
+    label.textContent = 'Fecha estimada de la sala en vivo (opcional)';
     help.textContent =
       'Opcional. La fecha y hora real del evento se programa despues, cuando el sorteo ya este lleno.';
     input.required = false;
@@ -225,7 +216,7 @@ function renderLivePremios() {
   if (!list) return;
 
   if (!livePremiosState.length) {
-    list.innerHTML = '<div class="live-repeater-empty">Todavia no has agregado premios para este Live.</div>';
+    list.innerHTML = '<div class="live-repeater-empty">Todavia no has agregado premios para esta sala en vivo.</div>';
     return;
   }
 
@@ -283,63 +274,6 @@ function renderLivePremios() {
     .join('');
 }
 
-function renderLiveReferidos() {
-  const list = document.getElementById('liveReferidosList');
-  if (!list) return;
-
-  if (!liveReferidosState.length) {
-    list.innerHTML = '<div class="live-repeater-empty">Todavia no has agregado reglas de referidos para este Live.</div>';
-    return;
-  }
-
-  list.innerHTML = liveReferidosState
-    .map((row, index) => `
-      <article class="live-repeater-item" data-live-regla-index="${index}">
-        <div class="live-repeater-item__header">
-          <h4 class="live-repeater-item__title">Regla #${index + 1}</h4>
-          <button type="button" class="btn btn-danger btn-sm" data-remove-live-regla="${index}">
-            Quitar
-          </button>
-        </div>
-
-        <div class="form-row-inline">
-          <div class="form-group">
-            <label>Minimo de referidos</label>
-            <input
-              type="number"
-              min="1"
-              step="1"
-              placeholder="Ej: 2"
-              value="${escapeHtml(row.minimo_referidos)}"
-              data-live-regla-field="minimo_referidos"
-            >
-          </div>
-          <div class="form-group">
-            <label>Monto a pagar</label>
-            <input
-              type="text"
-              inputmode="decimal"
-              placeholder="Ej: 5000"
-              value="${escapeHtml(row.recompensa_monto)}"
-              data-live-regla-field="recompensa_monto"
-            >
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Descripcion</label>
-          <input
-            type="text"
-            placeholder="Ej: Pago parcial por 2 referidos"
-            value="${escapeHtml(row.descripcion)}"
-            data-live-regla-field="descripcion"
-          >
-        </div>
-      </article>
-    `)
-    .join('');
-}
-
 function renderLiveSection({ seedDefaults = false } = {}) {
   const section = document.getElementById('liveConfigSection');
   if (!section) return;
@@ -371,7 +305,6 @@ function initModalidadUI() {
 
 function initLiveBuilders() {
   const premiosList = document.getElementById('livePremiosList');
-  const reglasList = document.getElementById('liveReferidosList');
 
   document.getElementById('btnAgregarPremioLive')?.addEventListener('click', () => {
     livePremiosState.push({
@@ -415,28 +348,6 @@ function initLiveBuilders() {
     livePremiosState.splice(index, 1);
     renderLivePremios();
   });
-
-  reglasList?.addEventListener('input', (event) => {
-    const field = event.target?.dataset?.liveReglaField;
-    const container = event.target?.closest('[data-live-regla-index]');
-    if (!field || !container) return;
-
-    const index = Number.parseInt(container.dataset.liveReglaIndex || '', 10);
-    if (!Number.isInteger(index) || !liveReferidosState[index]) return;
-
-    liveReferidosState[index][field] = event.target.value;
-  });
-
-  reglasList?.addEventListener('click', (event) => {
-    const button = event.target.closest('[data-remove-live-regla]');
-    if (!button) return;
-
-    const index = Number.parseInt(button.dataset.removeLiveRegla || '', 10);
-    if (!Number.isInteger(index)) return;
-
-    liveReferidosState.splice(index, 1);
-    renderLiveReferidos();
-  });
 }
 
 function collectLivePayload() {
@@ -463,7 +374,7 @@ function collectLivePayload() {
     .filter((row) => row.nombre || row.monto || row.descripcion);
 
   if (!premios.length) {
-    return { error: 'Agrega al menos un premio para el sorteo Live.' };
+    return { error: 'Agrega al menos un premio para la sala en vivo.' };
   }
 
   for (const [index, premio] of premios.entries()) {
@@ -534,8 +445,6 @@ async function cargarSorteoParaEditar(id) {
     livePremiosState = Array.isArray(s.live_prizes)
       ? s.live_prizes.map((row) => normalizeLivePrizeRow(row))
       : [];
-
-    liveReferidosState = [];
 
     estadoActual = s.estado || 'activo';
     imagenActualUrl = s.imagen_url || null;
@@ -738,6 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const form = document.getElementById('formCrearSorteo');
   if (form) {
+    form.noValidate = true;
     form.addEventListener('submit', enviarFormulario);
   }
 });

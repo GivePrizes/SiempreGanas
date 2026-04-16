@@ -207,6 +207,40 @@ function buildApprovalAlertMessage(data) {
     blocks.push(`Se generaron operaciones en admin cuentas:\n${resumen}`);
   }
 
+  const referralProgram = data?.referidos_programa || null;
+  const referralProgramReferrer = referralProgram?.referral || null;
+  const totalValidados = Number(referralProgram?.total_validados || 0);
+  const nuevasRecompensas = Array.isArray(referralProgram?.nuevas_recompensas)
+    ? referralProgram.nuevas_recompensas
+    : [];
+
+  if (
+    referralProgramReferrer?.referrerCode
+    || referralProgramReferrer?.referrerAlias
+    || referralProgramReferrer?.referrerNombre
+  ) {
+    const referidor = referralProgramReferrer.referrerCode
+      ? referralProgramReferrer.referrerCode
+      : referralProgramReferrer.referrerAlias
+        ? formatReferralIdentifier(referralProgramReferrer.referrerAlias)
+        : referralProgramReferrer.referrerNombre;
+    const totalText = totalValidados > 0
+      ? ` Ahora lleva ${totalValidados} compra${totalValidados === 1 ? '' : 's'} validada${totalValidados === 1 ? '' : 's'}.`
+      : '';
+    blocks.push(`Programa de socios reconocido para ${referidor}.${totalText}`);
+  }
+
+  if (nuevasRecompensas.length) {
+    const resumen = nuevasRecompensas
+      .map((reward) => {
+        const meta = Number(reward.minimoValidados || 0);
+        const monto = formatMoney(reward.monto);
+        return `- ${reward.tierNombre || 'Nivel'}: ${meta} validados -> ${monto}`;
+      })
+      .join('\n');
+    blocks.push(`Se generaron pagos del programa de socios:\n${resumen}`);
+  }
+
   if (Array.isArray(data?.warnings) && data.warnings.length) {
     blocks.push(data.warnings.join('\n'));
   }
