@@ -17,6 +17,8 @@ let sorteoId = null;
 let estadoActual = 'activo';
 let imagenActualUrl = null;
 let livePremiosState = [];
+let toastTimer = null;
+let toastHideTimer = null;
 
 function getTipoProductoValue() {
   const input = document.getElementById('tipo_producto');
@@ -105,9 +107,33 @@ function normalizeLivePrizeRow(raw = {}) {
 function mostrarToast(mensaje) {
   const toast = document.getElementById('toast');
   if (!toast) return;
+
+  if (toastTimer) {
+    clearTimeout(toastTimer);
+    toastTimer = null;
+  }
+
+  if (toastHideTimer) {
+    clearTimeout(toastHideTimer);
+    toastHideTimer = null;
+  }
+
   toast.textContent = mensaje;
   toast.classList.remove('hidden');
-  setTimeout(() => toast.classList.add('hidden'), 3200);
+  toast.classList.remove('show');
+
+  requestAnimationFrame(() => {
+    toast.classList.add('show');
+  });
+
+  toastTimer = setTimeout(() => {
+    toast.classList.remove('show');
+    toastHideTimer = setTimeout(() => {
+      toast.classList.add('hidden');
+      toastHideTimer = null;
+    }, 260);
+    toastTimer = null;
+  }, 3200);
 }
 
 async function readResponseData(resp) {

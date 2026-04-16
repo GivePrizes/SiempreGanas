@@ -9,7 +9,7 @@
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225c">
   <link rel="stylesheet" href="../assets/css/participant-shared.css?v=20260414a">
-  <link rel="stylesheet" href="../assets/css/participant-dashboard.css?v=20260416b">
+  <link rel="stylesheet" href="../assets/css/participant-dashboard.css?v=20260416c">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
 </head>
 <body>
@@ -52,33 +52,35 @@
 
         <div class="stat-value" id="statNumerosComprados" style="opacity: 0.5; transition: opacity 0.3s ease;">0</div>
 
-        <!-- BONUS dinámico: se muestra solo si hay datos -->
-        <div class="bonus-mini" id="bonusMini" hidden>
-          <div id="bonusMiniText"></div>
-          <div class="bonus-mini-bar">
-            <span id="bonusMiniBar"></span>
-          </div>
-        </div>
-
-        <div class="referral-mini" id="referralMini" hidden>
-          <div class="referral-mini__top">
-            <div class="referral-mini__copy">
-              <span class="referral-mini__eyebrow">Programa de socios</span>
-              <strong id="referralMiniTitle">Socio inicial</strong>
-              <p id="referralMiniMeta" class="referral-mini__meta">Todavia no tienes compras validadas.</p>
+        <div class="stat-insights-grid">
+          <!-- BONUS dinámico: se muestra solo si hay datos -->
+          <div class="bonus-mini" id="bonusMini" hidden>
+            <div id="bonusMiniText"></div>
+            <div class="bonus-mini-bar">
+              <span id="bonusMiniBar"></span>
             </div>
-            <span id="referralMiniPending" class="referral-mini__pending">Sin pagos pendientes</span>
           </div>
 
-          <div class="bonus-mini-bar referral-mini__bar">
-            <span id="referralMiniBar"></span>
-          </div>
+          <div class="referral-mini" id="referralMini" hidden>
+            <div class="referral-mini__top">
+              <div class="referral-mini__copy">
+                <span class="referral-mini__eyebrow">Programa de socios</span>
+                <strong id="referralMiniTitle">Socio inicial</strong>
+                <p id="referralMiniMeta" class="referral-mini__meta">Todavia no tienes compras validadas.</p>
+              </div>
+              <span id="referralMiniPending" class="referral-mini__pending">Sin pagos pendientes</span>
+            </div>
 
-          <div class="referral-mini__code">
-            <span id="referralCodeValue" class="referral-mini__code-value">Sin codigo</span>
-            <div class="referral-mini__actions">
-              <button id="btnCopyReferralCode" type="button" class="btn btn-secondary btn-xs">Copiar código</button>
-              <button id="btnCopyReferralInvite" type="button" class="btn btn-secondary btn-xs">Copiar texto</button>
+            <div class="bonus-mini-bar referral-mini__bar">
+              <span id="referralMiniBar"></span>
+            </div>
+
+            <div class="referral-mini__code">
+              <span id="referralCodeValue" class="referral-mini__code-value">Sin codigo</span>
+              <div class="referral-mini__actions">
+                <button id="btnCopyReferralCode" type="button" class="btn btn-secondary btn-xs">Copiar código</button>
+                <button id="btnCopyReferralInvite" type="button" class="btn btn-secondary btn-xs">Copiar texto</button>
+              </div>
             </div>
           </div>
         </div>
