@@ -1,5 +1,5 @@
 import { cargarMisNumerosResumen } from './misNumeros.js?v=20260415b';
-import { cargarProgresoBono } from '../bonus.js';
+import { cargarProgresoBono } from '../bonus.js?v=20260416a';
 import { cargarResumenReferidos } from '../referrals.js?v=20260416b';
 
 const API_URL = window.API_URL || '';
