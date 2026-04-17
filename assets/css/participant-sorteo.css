@@ -960,6 +960,7 @@ body.socios-promo-open {
   display: grid;
   place-items: center;
   padding: 1rem;
+  overscroll-behavior: contain;
 }
 
 .socios-promo-modal.hidden {
@@ -1283,7 +1284,11 @@ body.socios-promo-open {
   }
 
   .socios-promo-modal {
-    padding: 0.55rem;
+    padding:
+      max(0.55rem, env(safe-area-inset-top))
+      max(0.55rem, env(safe-area-inset-right))
+      max(0.55rem, env(safe-area-inset-bottom))
+      max(0.55rem, env(safe-area-inset-left));
   }
 
   .socios-promo-modal__dialog {
