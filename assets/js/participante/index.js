@@ -1,5 +1,4 @@
 import { cargarMisNumerosResumen } from './misNumeros.js?v=20260415b';
-import { cargarProgresoBono } from '../bonus.js?v=20260416b';
 import { cargarResumenReferidos } from '../referrals.js?v=20260416c';
 
 const API_URL = window.API_URL || '';
@@ -304,6 +303,9 @@ function setBienvenida(user) {
 function renderSorteoCard(item, index = 0) {
   const { sorteo, tipoProducto, modalidad, tipoLabel, metrics, precioText } = item;
   const imagen = renderSorteoImage(sorteo, index);
+  const liveProgressClass = modalidad === 'live'
+    ? 'progress-container progress-container--live'
+    : 'progress-container';
 
   return `
     <article class="sorteo-card">
@@ -325,10 +327,16 @@ function renderSorteoCard(item, index = 0) {
 
         <div class="sorteo-info">Premio: ${sorteo.premio}</div>
         <div class="sorteo-info">Precio: $${precioText}</div>
-        <div class="sorteo-info">Vendidos: ${metrics.vendidos} / ${metrics.total}</div>
-        <div class="sorteo-info">Disponibles: ${metrics.disponibles}</div>
+        ${
+          modalidad === 'live'
+            ? ''
+            : `
+              <div class="sorteo-info">Vendidos: ${metrics.vendidos} / ${metrics.total}</div>
+              <div class="sorteo-info">Disponibles: ${metrics.disponibles}</div>
+            `
+        }
 
-        <div class="progress-container">
+        <div class="${liveProgressClass}">
           <div class="progress-bar" style="width:${metrics.porcentaje}%"></div>
         </div>
 
@@ -804,7 +812,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     cargarSorteosActivos(),
   ];
 
-  cargarProgresoBono();
   cargarResumenReferidos({ force: true });
   startDashboardAutoRefresh();
   await Promise.allSettled(pendingTasks);
