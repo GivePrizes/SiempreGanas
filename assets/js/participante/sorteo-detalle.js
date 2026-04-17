@@ -11,7 +11,6 @@ const comprarOtroNumero = ['1', 'true', 'si'].includes(
 );
 
 const MAX_NUMEROS_POR_COMPRA = 1;
-const SOCIOS_PROMO_STORAGE_KEY = 'mathome_socios_promo_seen_v20260417a';
 const SOCIOS_PROMO_OPEN_DELAY_MS = 180;
 const SOCIOS_PROMO_GUARD_MS = 450;
 
@@ -202,38 +201,16 @@ function mostrarToast(msg) {
 }
 
 function shouldShowSociosPromo() {
-  if (!sociosPromoModal) return false;
-
-  try {
-    return localStorage.getItem(SOCIOS_PROMO_STORAGE_KEY) !== '1';
-  } catch {
-    try {
-      return sessionStorage.getItem(SOCIOS_PROMO_STORAGE_KEY) !== '1';
-    } catch {
-      return true;
-    }
-  }
+  return Boolean(sociosPromoModal);
 }
 
-function closeSociosPromo({ remember = true } = {}) {
+function closeSociosPromo() {
   if (!sociosPromoModal) return;
   if (Date.now() - sociosPromoOpenedAt < SOCIOS_PROMO_GUARD_MS) return;
 
   sociosPromoModal.classList.add('hidden');
   sociosPromoModal.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('socios-promo-open');
-
-  if (remember) {
-    try {
-      localStorage.setItem(SOCIOS_PROMO_STORAGE_KEY, '1');
-    } catch {
-      try {
-        sessionStorage.setItem(SOCIOS_PROMO_STORAGE_KEY, '1');
-      } catch {
-        // noop
-      }
-    }
-  }
 }
 
 function openSociosPromo() {
