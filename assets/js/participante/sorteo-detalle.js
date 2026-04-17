@@ -11,7 +11,7 @@ const comprarOtroNumero = ['1', 'true', 'si'].includes(
 );
 
 const MAX_NUMEROS_POR_COMPRA = 1;
-const SOCIOS_PROMO_STORAGE_KEY = 'mathome_socios_promo_seen_v20260416b';
+const SOCIOS_PROMO_STORAGE_KEY = 'mathome_socios_promo_seen_v20260417a';
 
 const tituloSorteo = document.getElementById('tituloSorteo');
 const subtituloSorteo = document.getElementById('subtituloSorteo');
