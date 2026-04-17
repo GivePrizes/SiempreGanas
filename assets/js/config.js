@@ -13,7 +13,7 @@ const SUPABASE_ANON_KEY = runtime.SUPABASE_ANON_KEY || '';
 const NEQUI_PAYMENT_LINKS = runtime.NEQUI_PAYMENT_LINKS || {};
 const NEQUI_KEYS = runtime.NEQUI_KEYS || {};
 const NEQUI_KEY = runtime.NEQUI_KEY || '';
-const NEQUI_PHONE = runtime.NEQUI_PHONE || runtime.NEQUI_NUMBER || '';
+const NEQUI_PHONE = runtime.NEQUI_PHONE || runtime.NEQUI_NUMBER || '3045538465';
 const NEQUI_HOLDER_NAME = runtime.NEQUI_HOLDER_NAME || '';
 const NEQUI_HOLDER_NAMES = runtime.NEQUI_HOLDER_NAMES || {};
 

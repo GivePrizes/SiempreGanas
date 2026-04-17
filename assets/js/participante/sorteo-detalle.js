@@ -431,7 +431,7 @@ function obtenerLlaveNequi(sorteoIdValue) {
 }
 
 function obtenerNumeroNequi() {
-  return (window.NEQUI_PHONE || window.NEQUI_NUMBER || '3017680062').toString();
+  return (window.NEQUI_PHONE || window.NEQUI_NUMBER || '3045538465').toString();
 }
 
 function obtenerTitularNequi(sorteoIdValue) {
