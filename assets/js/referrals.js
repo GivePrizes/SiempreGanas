@@ -84,12 +84,12 @@ function renderReferralSummary(data) {
     : 100;
 
   box.hidden = false;
-  title.textContent = currentTierName;
+  title.textContent = `${totalValidados} referido${totalValidados === 1 ? '' : 's'} validado${totalValidados === 1 ? '' : 's'}`;
 
   if (nextTier?.nombre) {
-    meta.textContent = `Llevas ${totalValidados} compra${totalValidados === 1 ? '' : 's'} validada${totalValidados === 1 ? '' : 's'}. Te faltan ${nextTier.faltan} para ${nextTier.nombre}.`;
+    meta.textContent = `Nivel actual: ${currentTierName}. Te faltan ${nextTier.faltan} para ${nextTier.nombre}.`;
   } else {
-    meta.textContent = `Llevas ${totalValidados} compras validadas. Ya estas en el nivel mas alto del programa.`;
+    meta.textContent = `Nivel actual: ${currentTierName}. Ya estas en el nivel mas alto del programa.`;
   }
 
   pending.textContent = pendingAmount > 0

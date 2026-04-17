@@ -94,7 +94,7 @@
 
 .stat-insights-grid {
   display: grid;
-  grid-template-columns: minmax(220px, 0.92fr) minmax(300px, 1.08fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
   margin-top: 10px;
   align-items: stretch;
@@ -276,7 +276,7 @@
   .stats-row--compact .stat-insights-grid {
     grid-area: insights;
     margin-top: 0;
-    grid-template-columns: minmax(220px, 0.9fr) minmax(320px, 1.1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 0.85rem;
   }
 

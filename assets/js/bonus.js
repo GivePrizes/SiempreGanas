@@ -43,7 +43,7 @@ function renderBono(data) {
       <span class="bonus-mini__eyebrow">Cuenta asegurada</span>
       <strong>Bono desbloqueado</strong>
       <span class="bonus-mini__meta">
-        Completaste ${objetivo} compras aprobadas. Te enviaremos tu cuenta GRATIS por WhatsApp.
+        Completaste ${objetivo} numeros aprobados. Te enviaremos tu cuenta GRATIS por WhatsApp.
       </span>
     `;
     return;
@@ -53,7 +53,7 @@ function renderBono(data) {
     <span class="bonus-mini__eyebrow">Bono global</span>
     <strong>Te faltan ${faltan}</strong>
     <span class="bonus-mini__meta">
-      Llevas ${aprobados} de ${objetivo} compras aprobadas para reclamar tu cuenta GRATIS.
+      Llevas ${aprobados} de ${objetivo} numeros aprobados para reclamar tu cuenta GRATIS.
     </span>
   `;
 }

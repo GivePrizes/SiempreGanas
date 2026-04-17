@@ -1,6 +1,6 @@
 import { cargarMisNumerosResumen } from './misNumeros.js?v=20260415b';
-import { cargarProgresoBono } from '../bonus.js?v=20260416a';
-import { cargarResumenReferidos } from '../referrals.js?v=20260416b';
+import { cargarProgresoBono } from '../bonus.js?v=20260416b';
+import { cargarResumenReferidos } from '../referrals.js?v=20260416c';
 
 const API_URL = window.API_URL || '';
 const SORTEO_TIPO_DEFAULT = 'pantalla';
