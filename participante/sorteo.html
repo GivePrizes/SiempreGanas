@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="../assets/imagenes/mathome-favicon.png">
-  <title>Mathome — Elige tus números y participa</title>
+  <title>Mathome — Participa en la ronda</title>
 
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225c">
@@ -20,7 +20,7 @@
       <div class="sorteo-header__text">
         <h1 id="tituloSorteo" class="sorteo-title">Cargando ronda...</h1>
         <p id="subtituloSorteo" class="sorteo-subtitle">
-          Estás a unos pasos de asegurar tus números 🎟️
+          Confirma tu participación, sube tu comprobante y entra al vivo.
         </p>
       </div>
 
@@ -33,7 +33,7 @@
 
           <button id="btnMisNumeros" type="button" class="btn btn-primary btn-app has-ico hidden" onclick="location.href='mis-numeros.html'">
             <span class="btn-ico" aria-hidden="true">🎟️</span>
-            <span class="btn-label">Mis números</span>
+            <span class="btn-label">Mis participaciones</span>
           </button>
         </div>
 
@@ -53,8 +53,8 @@
       <div class="sorteo-card__list">
         <p class="sorteo-info-line">✅ Incluye producto digital + acceso a la ronda en vivo</p>
         <p class="sorteo-info-line">🎁 Ganador principal: <span id="textoPremio">—</span></p>
-        <p class="sorteo-info-line">💲 Precio por número: <span id="textoPrecio">—</span></p>
-        <p class="sorteo-info-line">🔢 Total de números: <span id="textoCantidad">—</span></p>
+        <p class="sorteo-info-line">💲 Precio de la participación: <span id="textoPrecio">—</span></p>
+        <p class="sorteo-info-line">🎟️ Participación: <span id="textoCantidad">Cupo automático</span></p>
       </div>
 
       <div class="progress-wrapper">
@@ -70,7 +70,7 @@
     <section class="sorteo-status">
       <div id="estadoNoParticipante" class="status-card status-locked">
         <div class="status-title">🔒 Aún no participas</div>
-        <div class="status-text">Elige tus números para entrar a la sala.</div>
+        <div class="status-text">Confirma tu participación para entrar a la sala.</div>
       </div>
 
       <div id="misNumerosEnSorteoCard" class="status-card status-ok" style="display:none;">
@@ -83,43 +83,10 @@
     <!-- FLUJO POR PASOS -->
     <section class="sorteo-flow">
 
-      <!-- PASO 1 -->
-      <details id="numbersStepAccordion" class="info-accordion" open>
+      <details id="paymentStepAccordion" class="info-accordion" open>
         <summary>
-          <span>🎯 Paso 1 · Elige tus números</span>
+          <span>💳 Participa · Paga y confirma</span>
           <span class="pago-nequi-badge">1</span>
-        </summary>
-
-        <div class="sorteo-numeros-card">
-          <div class="sorteo-numeros-header">
-            <h3>Elige tus números</h3>
-            <p class="text-muted microhint">
-              Máx. <strong><span id="maxNumerosTexto">1</span></strong> por compra
-            </p>
-          </div>
-
-          <div class="numeros-scroll">
-            <div id="gridNumeros" class="numeros-grid"></div>
-          </div>
-
-          <div class="mini-resumen-compra">
-            <div class="mini-resumen-row">
-              <span class="mini-label">Selección</span>
-              <strong id="resumenNumeros">Ninguno todavía</strong>
-            </div>
-            <div class="mini-resumen-row">
-              <span class="mini-label">Total</span>
-              <strong id="resumenTotal">$0</strong>
-            </div>
-          </div>
-        </div>
-      </details>
-
-      <!-- PASO 2 -->
-      <details id="paymentStepAccordion" class="info-accordion">
-        <summary>
-          <span>💳 Paso 2 · Paga y confirma</span>
-          <span class="pago-nequi-badge">2</span>
         </summary>
 
         <div class="payment-workflow-card">
@@ -131,8 +98,8 @@
             </div>
 
             <div class="payment-selection-pill">
-              <span>Número elegido</span>
-              <strong id="paymentSelectedNumbers">Sin seleccionar</strong>
+              <span>Participación</span>
+              <strong id="paymentSelectedNumbers">Cupo automático</strong>
             </div>
           </div>
 
@@ -147,8 +114,8 @@
 
               <div class="payment-method-summary">
                 <div class="payment-method-summary__item">
-                  <span>Seleccion</span>
-                  <strong id="paymentSelectedCount">0 numero</strong>
+                  <span>Participación</span>
+                  <strong id="paymentSelectedCount">1 cupo</strong>
                 </div>
                 <div class="payment-method-summary__item">
                   <span>Total</span>
@@ -295,7 +262,7 @@
             <details class="mini-ayuda">
               <summary>¿Que pasa despues?</summary>
               <p class="text-muted">
-                Tus números quedan <strong>pendientes</strong> hasta revisión. Al aprobar, quedan <strong>activos</strong>.
+                Tu participación queda <strong>pendiente</strong> hasta revisión. Al aprobar, entra a la ronda.
               </p>
             </details>
           </div>
@@ -345,7 +312,7 @@
   <script src="../assets/js/config.js?v=20260412d"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260417c"></script>
+  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260421a"></script>
 </body>
 </html>
 

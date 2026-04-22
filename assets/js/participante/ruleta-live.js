@@ -73,7 +73,7 @@ if (focusTarget === "chat") {
     window.setTimeout(() => {
       scrollToChat({ behavior: "smooth" });
       if (chatHintEl && liveEntryReason === "approved_participant_redirect") {
-        chatHintEl.textContent = "Ya tienes un numero aprobado. Esta es tu sala en vivo. Si quieres otro cupo, usa Comprar otro.";
+        chatHintEl.textContent = "Ya tienes una participación aprobada. Esta es tu sala en vivo. Si quieres otra, usa Comprar otro.";
       }
     }, 220);
   }, { once: true });
@@ -101,6 +101,7 @@ let countdownEndsAtMs = null;
 let countdownStartSeconds = null;
 let numeroGanador = null;
 let ganadorNombre = null;
+let ganadorUsuarioId = null;
 let pollInFlight = false;
 
 let serverSkewMs = 0;
@@ -129,7 +130,7 @@ function primeAudioOnce() {
 window.addEventListener("pointerdown", primeAudioOnce, { once: true });
 
 
-let segments = []; // [{numero:1}, ...]
+let segments = []; // [{ numero, usuario_id, label, nombre, alias }, ...]
 let wheelAngle = 0; // rad
 let spinning = false;
 let idleSpin = false;
@@ -139,14 +140,7 @@ let did321 = false;
 let didSpin = false;
 let lastEstado = null;
 let lastCountdownSecond = null;
-let lastMotivationSecond = null;
 const lastSystemKeys = new Set();
-const motivationalPhrases = [
-  "¡Ya casi llega tu momento!",
-  "El sorteo está en movimiento…",
-  "Prepárate, el destino se acerca…",
-  "¿Será tu número el elegido?",
-];
 
 let chatWindowEndsAt = null;
 let chatWindowTimer = null;
@@ -598,23 +592,28 @@ function pushSystemMessage(text, key){
   }
 }
 
-function renderNumbersList(){
-  if (!elNumbersList) return;
+function getSegmentDisplayLabel(segment, index = 0){
+  const rawLabel = String(
+    segment?.label ||
+    segment?.alias ||
+    segment?.nombre ||
+    ''
+  ).trim();
 
-  const nums = Array.isArray(segments) ? segments : [];
-  if (!nums.length) {
-    elNumbersList.innerHTML = '<span class="muted small">Todavía no hay números aprobados visibles en esta ronda.</span>';
-  } else {
-  elNumbersList.innerHTML = nums.map(s => {
-    const n = Number(s.numero);
-    const label = Number.isFinite(n) ? `#${String(n).padStart(2,"0")}` : String(s.numero || '');
-    return `<span class="numberChip">${label}</span>`;
-  }).join('');
+  if (rawLabel) {
+    return rawLabel.length > 14 ? `${rawLabel.slice(0, 13)}…` : rawLabel;
   }
 
-  if (elNumbersCount) {
-    elNumbersCount.textContent = String(nums.length || 0);
+  return `P${index + 1}`;
+}
+
+function segmentMatchesWinner(segment, { winnerNumero = numeroGanador, winnerUserId = ganadorUsuarioId } = {}){
+  if (winnerUserId != null && segment?.usuario_id != null) {
+    return Number(segment.usuario_id) === Number(winnerUserId);
   }
+
+  if (winnerNumero == null) return false;
+  return Number(segment?.numero) === Number(winnerNumero);
 }
 
 async function fetchMisNumerosParaLista(){
@@ -630,18 +629,18 @@ async function fetchMisNumerosParaLista(){
     const nums = Array.isArray(data?.numeros) ? data.numeros : [];
 
     if (!nums.length) {
-      elNumbersList.innerHTML = '<span class="muted small">Aún no tienes números aprobados.</span>';
+      elNumbersList.innerHTML = '<span class="muted small">Aún no tienes participaciones aprobadas.</span>';
       if (elNumbersCount) elNumbersCount.textContent = '0';
       return {
         numeros: [],
         canWrite: false,
-        message: 'Solo participantes con número aprobado pueden escribir.',
+        message: 'Solo participantes aprobados pueden escribir.',
       };
     }
 
     nums.sort((a,b) => Number(a) - Number(b));
-    elNumbersList.innerHTML = nums.map(n => {
-      const label = `#${String(n).padStart(2,"0")}`;
+    elNumbersList.innerHTML = nums.map((_, index) => {
+      const label = `Participación ${index + 1}`;
       return `<span class="numberChip">${label}</span>`;
     }).join('');
 
@@ -652,7 +651,7 @@ async function fetchMisNumerosParaLista(){
       message: '',
     };
   } catch {
-    elNumbersList.innerHTML = '<span class="muted small">No se pudieron cargar tus números.</span>';
+    elNumbersList.innerHTML = '<span class="muted small">No se pudieron cargar tus participaciones.</span>';
     return {
       numeros: [],
       canWrite: false,
@@ -700,6 +699,7 @@ function resetRoundCycleState(){
   didSpin = false;
   numeroGanador = null;
   ganadorNombre = null;
+  ganadorUsuarioId = null;
 
   if (elResult) {
     elResult.classList.add("hidden");
@@ -749,13 +749,15 @@ function startChatCountdown(){
 // DRAW WHEEL (REAL)
 // =========================
 function getWinnerIndex(){
-  if (numeroGanador == null) return -1;
-  return segments.findIndex(segment => Number(segment.numero) === Number(numeroGanador));
+  if (numeroGanador == null && ganadorUsuarioId == null) return -1;
+  return segments.findIndex((segment) => segmentMatchesWinner(segment));
 }
 
-function getWheelStopAngle(winnerNumero){
+function getWheelStopAngle({ winnerNumero = numeroGanador, winnerUserId = ganadorUsuarioId } = {}){
   if (!segments.length) return null;
-  const idx = segments.findIndex(segment => Number(segment.numero) === Number(winnerNumero));
+  const idx = segments.findIndex((segment) =>
+    segmentMatchesWinner(segment, { winnerNumero, winnerUserId })
+  );
   if (idx < 0) return null;
 
   const slice = TWO_PI / segments.length;
@@ -764,8 +766,8 @@ function getWheelStopAngle(winnerNumero){
   return normalizeAngle(pointerAngle - targetAngle);
 }
 
-function setWheelToWinner(winnerNumero){
-  const finalAngle = getWheelStopAngle(winnerNumero);
+function setWheelToWinner({ winnerNumero = numeroGanador, winnerUserId = ganadorUsuarioId } = {}){
+  const finalAngle = getWheelStopAngle({ winnerNumero, winnerUserId });
   if (finalAngle == null) return false;
 
   wheelAngle = finalAngle;
@@ -831,8 +833,7 @@ function drawWheel(){
     ctx.stroke();
 
     if (labelFontSize > 0 && (isWinner || i % labelStep === 0)) {
-      const numero = segments[i]?.numero ?? (i+1);
-      const label = `#${String(numero).padStart(2,"0")}`;
+      const label = getSegmentDisplayLabel(segments[i], i);
 
       ctx.save();
       ctx.rotate(a0 + slice/2);
@@ -887,15 +888,16 @@ async function show321(){
 
 function showResult(ganadorNombre){
   elResult.classList.remove("hidden");
-  const num = `#${String(numeroGanador).padStart(2,"0")}`;
-  elResult.textContent = ganadorNombre
-    ? `✅ Resultado oficial: ${num} — ${ganadorNombre}`
-    : `✅ Resultado oficial: ${num}`;
+  const winnerSegment = segments.find((segment) => segmentMatchesWinner(segment)) || null;
+  const winnerLabel = ganadorNombre || getSegmentDisplayLabel(winnerSegment, 0);
+  elResult.textContent = winnerLabel
+    ? `✅ Resultado oficial: ${winnerLabel}`
+    : "✅ Resultado oficial confirmado.";
 
-  if (ganadorNombre) {
-    pushSystemMessage(`🎉 Felicitaciones a ${ganadorNombre}`, `win_${ganadorNombre}`);
-  } else if (numeroGanador != null) {
-    pushSystemMessage(`🏆 ¡Resultado destacado confirmado! Número ${num}`, `win_num_${numeroGanador}`);
+  if (winnerLabel) {
+    pushSystemMessage(`🎉 Felicitaciones a ${winnerLabel}`, `win_${winnerLabel}`);
+  } else if (ganadorUsuarioId != null) {
+    pushSystemMessage("🏆 ¡Resultado destacado confirmado!", `win_user_${ganadorUsuarioId}`);
   }
 
   if (audioWin) {
@@ -928,9 +930,9 @@ function stopIdleSpin(){
 }
 
 // Gira hasta el ganador (sin inventarlo)
-function spinToWinner(winnerNumero){
+function spinToWinner({ winnerNumero = numeroGanador, winnerUserId = ganadorUsuarioId } = {}){
   if (spinning || !segments.length) return Promise.resolve(false);
-  const finalStopAngle = getWheelStopAngle(winnerNumero);
+  const finalStopAngle = getWheelStopAngle({ winnerNumero, winnerUserId });
   if (finalStopAngle == null) return Promise.resolve(false);
 
   const start = wheelAngle;
@@ -1002,13 +1004,16 @@ async function fetchRuletaInfo(){
     if (ganador && typeof ganador === "object") {
       numeroGanador = ganador.numero ?? ganador.numero_ganador ?? null;
       ganadorNombre = ganador.alias ?? ganador.nombre ?? null;
+      ganadorUsuarioId = ganador.usuario_id ?? null;
     } else if (ganador != null) {
       numeroGanador = ganador;
       ganadorNombre = null;
+      ganadorUsuarioId = null;
     }
   } else {
     numeroGanador = null;
     ganadorNombre = null;
+    ganadorUsuarioId = null;
   }
 
   setEstadoBadge(safeUpper(estado));
@@ -1072,14 +1077,45 @@ async function fetchNumerosRuleta({ force = false } = {}){
   if(!res.ok) throw new Error("No se pudo cargar ruleta-numeros");
   const data = await res.json();
 
-  const nums = Array.isArray(data.numeros) ? data.numeros : [];
-  const nextSegments = nums
-    .map(n => ({ numero: Number(n) }))
-    .sort((a,b)=>a.numero-b.numero);
+  const participantes = Array.isArray(data.participantes) ? data.participantes : [];
+  const nextSegments = (
+    participantes.length
+      ? participantes
+      : (Array.isArray(data.numeros) ? data.numeros.map((numero) => ({ numero })) : [])
+  )
+    .map((item, index) => {
+      if (typeof item === "object" && item !== null) {
+        return {
+          numero: Number(item.numero),
+          usuario_id: item.usuario_id ?? null,
+          nombre: item.nombre ?? null,
+          alias: item.alias ?? null,
+          label: item.label || item.alias || item.nombre || `P${index + 1}`,
+        };
+      }
+
+      return {
+        numero: Number(item),
+        usuario_id: null,
+        nombre: null,
+        alias: null,
+        label: `P${index + 1}`,
+      };
+    })
+    .sort((a, b) => {
+      const leftUser = Number(a.usuario_id || 0);
+      const rightUser = Number(b.usuario_id || 0);
+      if (leftUser !== rightUser) return leftUser - rightUser;
+      return Number(a.numero || 0) - Number(b.numero || 0);
+    });
 
   const changed =
     nextSegments.length !== segments.length ||
-    nextSegments.some((segment, index) => segment.numero !== segments[index]?.numero);
+    nextSegments.some((segment, index) =>
+      segment.numero !== segments[index]?.numero ||
+      Number(segment.usuario_id || 0) !== Number(segments[index]?.usuario_id || 0) ||
+      segment.label !== segments[index]?.label
+    );
 
   if (changed) {
     segments = nextSegments;
@@ -1091,8 +1127,8 @@ async function fetchNumerosRuleta({ force = false } = {}){
 }
 
 async function ensureWinnerSegmentLoaded(){
-  if (numeroGanador == null) return;
-  const exists = segments.some(segment => Number(segment.numero) === Number(numeroGanador));
+  if (numeroGanador == null && ganadorUsuarioId == null) return;
+  const exists = segments.some((segment) => segmentMatchesWinner(segment));
   if (!exists) {
     await fetchNumerosRuleta({ force: true });
   }
@@ -1108,7 +1144,7 @@ function tick(){
       ? "🎯 La ruleta está girando…"
       : estado === "finished"
         ? "🏆 Ya tenemos ganador"
-        : "La ruleta todavía no está activa. Sigue aquí viendo cómo se llenan los números comprados.";
+        : "La ruleta todavía no está activa. Sigue aquí viendo cómo avanza la ronda.";
     elBar.style.width = "0%";
     requestAnimationFrame(tick);
     return;
@@ -1180,9 +1216,9 @@ async function runPollCycle(){
       if (!did321) { did321 = true; await show321(); }
       didSpin = true;
       stopIdleSpin();
-      const animated = await spinToWinner(numeroGanador);
+      const animated = await spinToWinner({ winnerNumero: numeroGanador, winnerUserId: ganadorUsuarioId });
       if (!animated) {
-        setWheelToWinner(numeroGanador);
+        setWheelToWinner({ winnerNumero: numeroGanador, winnerUserId: ganadorUsuarioId });
       }
       showResult(ganadorNombre);
     }
@@ -1191,9 +1227,9 @@ async function runPollCycle(){
       didSpin = true;
       stopIdleSpin();
       await ensureWinnerSegmentLoaded();
-      const animated = await spinToWinner(numeroGanador);
+      const animated = await spinToWinner({ winnerNumero: numeroGanador, winnerUserId: ganadorUsuarioId });
       if (!animated) {
-        setWheelToWinner(numeroGanador);
+        setWheelToWinner({ winnerNumero: numeroGanador, winnerUserId: ganadorUsuarioId });
       }
       showResult(ganadorNombre);
     }
@@ -1242,10 +1278,10 @@ function handleLiveVisibilityRefresh(){
     // 1) Info base
     await fetchRuletaInfo();
 
-    // 2) Si no llegó snapshot, dibujar con números aprobados
+    // 2) Si no llegó snapshot, dibujar con participantes aprobados
     await fetchNumerosRuleta({ force: true });
 
-    // 2b) Mis números para el panel lateral
+    // 2b) Mis participaciones para el panel lateral
     const writeAccess = await fetchMisNumerosParaLista();
 
     const liveChatReady = await waitForLiveChatBridge();
@@ -1253,13 +1289,13 @@ function handleLiveVisibilityRefresh(){
       window.initRuletaLiveChat({ sorteoId, token, writeAccess });
       const waitingMessage = writeAccess?.canWrite
         ? "Puedes seguir la conversación desde ahora. El envío se habilita cuando comience el giro."
-        : "Puedes seguir la conversación desde ahora. Necesitas un número aprobado y que comience el giro para escribir.";
+        : "Puedes seguir la conversación desde ahora. Necesitas una participación aprobada y que comience el giro para escribir.";
       setChatEnabled(false, waitingMessage);
     }
 
     if (estado === "finished" && numeroGanador) {
       await ensureWinnerSegmentLoaded();
-      setWheelToWinner(numeroGanador);
+      setWheelToWinner({ winnerNumero: numeroGanador, winnerUserId: ganadorUsuarioId });
       showResult(ganadorNombre);
       didSpin = true;
     }

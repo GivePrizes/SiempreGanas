@@ -10,7 +10,6 @@ const comprarOtroNumero = ['1', 'true', 'si'].includes(
   String(params.get('comprar') || '').toLowerCase()
 );
 
-const MAX_NUMEROS_POR_COMPRA = 1;
 const SOCIOS_PROMO_OPEN_DELAY_MS = 180;
 const SOCIOS_PROMO_GUARD_MS = 450;
 
@@ -23,11 +22,6 @@ const textoCantidad = document.getElementById('textoCantidad');
 const textoProgreso = document.getElementById('textoProgreso');
 const textoCupos = document.getElementById('textoCupos');
 const progressFill = document.getElementById('progressFill');
-const maxNumerosTexto = document.getElementById('maxNumerosTexto');
-
-const gridNumeros = document.getElementById('gridNumeros');
-const resumenNumeros = document.getElementById('resumenNumeros');
-const resumenTotal = document.getElementById('resumenTotal');
 const paymentSelectedNumbers = document.getElementById('paymentSelectedNumbers');
 const paymentSelectedCount = document.getElementById('paymentSelectedCount');
 const paymentSelectedTotal = document.getElementById('paymentSelectedTotal');
@@ -71,7 +65,6 @@ const inputPagadorTelefono = document.getElementById('inputPagadorTelefono');
 const inputReferidoCodigo = document.getElementById('inputReferidoCodigo');
 const postConfirmActions = document.getElementById('postConfirmActions');
 const btnPostLive = document.getElementById('btnPostLive');
-const numbersStepAccordion = document.getElementById('numbersStepAccordion');
 const paymentStepAccordion = document.getElementById('paymentStepAccordion');
 const sociosPromoModal = document.getElementById('sociosPromoModal');
 const btnCerrarSociosPromo = document.getElementById('btnCerrarSociosPromo');
@@ -80,7 +73,6 @@ const SORTEO_AUTO_REFRESH_MS = 12000;
 
 let sorteoActual = null;
 let numerosOcupados = [];
-let seleccionados = [];
 let precioNumero = 0;
 const NEQUI_PAYMENT_LINKS = window.NEQUI_PAYMENT_LINKS || {};
 let pagoMetodoActual = '';
@@ -92,8 +84,6 @@ let approvedNumbersInitialized = false;
 let previousApprovedNumbers = new Set();
 const referralCodeFromUrl = String(params.get('ref') || '').trim();
 let sociosPromoOpenedAt = 0;
-
-if (maxNumerosTexto) maxNumerosTexto.textContent = MAX_NUMEROS_POR_COMPRA.toString();
 
 function buildLiveRoomUrl({ focusChat = false } = {}) {
   const nextUrl = new URL('ruleta-live.html', window.location.href);
@@ -146,7 +136,7 @@ function updateQuickAccessButtons({ hasApprovedNumbers = false } = {}) {
 
     const labelEl = btnMisNumeros.querySelector('.btn-label');
     if (labelEl) {
-      labelEl.textContent = liveReady ? 'Sala en vivo' : 'Mis números';
+      labelEl.textContent = liveReady ? 'Sala en vivo' : 'Mis participaciones';
     }
   }
 
@@ -237,36 +227,23 @@ function initSociosPromoModal() {
   });
 }
 
-function getNumeroPadding() {
-  const total = Number(sorteoActual?.cantidad_numeros || 0);
-  return total >= 100 ? 3 : 2;
-}
-
-function formatearNumero(numero) {
-  return `#${String(numero).padStart(getNumeroPadding(), '0')}`;
+function getCantidadParticipacionesCompra() {
+  if (!sorteoActual || sorteoActual.estado === 'lleno') return 0;
+  return 1;
 }
 
 function actualizarResumen() {
-  const total = seleccionados.length * precioNumero;
-
-  if (seleccionados.length === 0) {
-    resumenNumeros.textContent = 'Ninguno todavía';
-    resumenTotal.textContent = '$0';
-  } else {
-    resumenNumeros.textContent = seleccionados.map(formatearNumero).join(', ');
-    resumenTotal.textContent = `$${total.toLocaleString('es-CO')}`;
-  }
+  const cantidad = getCantidadParticipacionesCompra();
+  const total = cantidad * precioNumero;
 
   if (paymentSelectedNumbers) {
-    paymentSelectedNumbers.textContent = seleccionados.length
-      ? seleccionados.map(formatearNumero).join(', ')
-      : 'Sin seleccionar';
+    paymentSelectedNumbers.textContent = cantidad ? 'Cupo automático' : 'Sin cupo disponible';
   }
 
   if (paymentSelectedCount) {
-    paymentSelectedCount.textContent = seleccionados.length
-      ? `${seleccionados.length} numero${seleccionados.length === 1 ? '' : 's'}`
-      : '0 numero';
+    paymentSelectedCount.textContent = cantidad
+      ? '1 participación'
+      : '0 participaciones';
   }
 
   if (paymentSelectedTotal) {
@@ -290,9 +267,6 @@ function scrollToPaymentStep() {
 function openPaymentStep({ scroll = true } = {}) {
   if (!paymentStepAccordion) return;
   paymentStepAccordion.open = true;
-  if (numbersStepAccordion) {
-    numbersStepAccordion.open = false;
-  }
   if (scroll) {
     scrollToPaymentStep();
   }
@@ -319,11 +293,12 @@ function actualizarEstadoConfirmar() {
   const pagadorTelefono = (inputPagadorTelefono?.value || '').replace(/\D+/g, '');
   const pagadorOk = pagadorNombre.length >= 3 && pagadorTelefono.length >= 10;
   const metodoSeleccionado = Boolean(pagoMetodoActual);
-  const listo = (seleccionados.length > 0) && metodoSeleccionado && (!!file || pagadorOk);
+  const cantidad = getCantidadParticipacionesCompra();
+  const listo = cantidad > 0 && metodoSeleccionado && (!!file || pagadorOk);
 
   btnConfirmar.disabled = !listo;
-  if (seleccionados.length === 0) {
-    btnConfirmar.textContent = 'Selecciona un numero para continuar';
+  if (cantidad === 0) {
+    btnConfirmar.textContent = 'Cupo no disponible';
     return;
   }
 
@@ -335,71 +310,6 @@ function actualizarEstadoConfirmar() {
   btnConfirmar.textContent = listo
     ? 'Confirmar participación'
     : 'Sube comprobante o confirma con nombre y celular';
-}
-
-
-function renderNumeros() {
-  if (!sorteoActual || !gridNumeros) return;
-
-  const total = sorteoActual.cantidad_numeros;
-  gridNumeros.innerHTML = '';
-
-  for (let n = 1; n <= total; n++) {
-    const ocupado = numerosOcupados.includes(n);
-    const div = document.createElement('div');
-
-    // clase base de la bolita
-    div.className = 'numero-bola';
-    // Formato visual: 001, 002... si >= 100; sino 01, 02...
-    const padding = total >= 100 ? 3 : 2;
-    div.textContent = String(n).padStart(padding, '0');
-    div.dataset.numero = n;
-
-    if (ocupado) {
-      // estilo de número ya vendido / ocupado
-      div.classList.add('numero-bola--ocupado');
-      div.setAttribute('aria-disabled', 'true');
-    } else {
-      // si ese número ya está en "seleccionados", marcarlo
-      if (seleccionados.includes(n)) {
-        div.classList.add('numero-bola--seleccionado');
-      }
-
-      div.addEventListener('click', () => toggleNumero(n, div));
-    }
-
-    gridNumeros.appendChild(div);
-  }
-
-  actualizarBloqueoPorMaximo();
-
-}
-
-
-function actualizarBloqueoPorMaximo() {
-  if (!gridNumeros) return;
-
-  const maxAlcanzado = seleccionados.length >= MAX_NUMEROS_POR_COMPRA;
-
-  // Recorremos todos los números pintados
-  gridNumeros.querySelectorAll('.numero-bola').forEach((el) => {
-    const n = Number(el.dataset.numero);
-
-    const ocupado = el.classList.contains('numero-bola--ocupado');
-    const seleccionado = el.classList.contains('numero-bola--seleccionado');
-
-    // Si está ocupado, no tocamos nada
-    if (ocupado) return;
-
-    // Si se alcanzó el max, apagamos los NO seleccionados
-    if (maxAlcanzado && !seleccionado) {
-      el.classList.add('numero-bola--bloqueado');
-      el.setAttribute('aria-disabled', 'true');
-    } else {
-      el.classList.remove('numero-bola--bloqueado');
-      el.removeAttribute('aria-disabled');
-    }
-  });
 }
 
 
@@ -505,10 +415,11 @@ function aplicarMetodoPagoUI(metodo) {
   const usarLlave = metodo === 'nequi_key';
   const usarNumero = metodo === 'nequi_numero';
   const holderName = obtenerTitularNequi(sorteoId);
-  const totalSeleccion = seleccionados.length * precioNumero;
-  const resumenSeleccion = seleccionados.length
+  const cantidad = getCantidadParticipacionesCompra();
+  const totalSeleccion = cantidad * precioNumero;
+  const resumenSeleccion = cantidad
     ? `Total a pagar: $${totalSeleccion.toLocaleString('es-CO')}`
-    : 'Selecciona tu numero y luego realiza el pago.';
+    : 'La ronda no tiene cupos disponibles en este momento.';
 
   if (paymentPreviewCard) paymentPreviewCard.classList.toggle('is-empty', !metodo);
   if (paymentPreviewEmpty) paymentPreviewEmpty.classList.toggle('hidden', Boolean(metodo));
@@ -565,34 +476,6 @@ function aplicarMetodoPagoUI(metodo) {
     if (paymentPreviewText) paymentPreviewText.textContent = `${resumenSeleccion} Confirma que el titular sea ${holderName}.`;
   }
 }
-
-
-function toggleNumero(numero, el) {
-  // por seguridad: si está ocupado, no hacer nada
-  if (el.classList.contains('numero-bola--ocupado')) return;
-
-  const idx = seleccionados.indexOf(numero);
-
-  if (idx >= 0) {
-    // quitar selección
-    seleccionados.splice(idx, 1);
-    el.classList.remove('numero-bola--seleccionado');
-  } else {
-    if (seleccionados.length >= MAX_NUMEROS_POR_COMPRA) {
-      mostrarToast(`Máximo ${MAX_NUMEROS_POR_COMPRA} número por compra.`);
-      return;
-    }
-    seleccionados.push(numero);
-    el.classList.add('numero-bola--seleccionado');
-  }
-
-  actualizarResumen();
-
-  if (seleccionados.length > 0) {
-    openPaymentStep();
-  }
-}
-
 
 // helper para convertir un File a base64 (data URL)
 function fileToBase64(file) {
@@ -653,17 +536,20 @@ async function cargarMisNumerosDelSorteo() {
     updateQuickAccessButtons({ hasApprovedNumbers: true });
     nums.sort((a, b) => Number(a) - Number(b));
 
-    misNumerosEnSorteoTexto.textContent = `Aprobados: ${nums.length} número(s)`;
+    misNumerosEnSorteoTexto.textContent =
+      nums.length === 1
+        ? 'Tienes 1 participación aprobada en esta ronda.'
+        : `Tienes ${nums.length} participaciones aprobadas en esta ronda.`;
 
-    misNumerosEnSorteoChips.innerHTML = nums.map(n => `
-      <span class="chip-numero">#${n}</span>
+    misNumerosEnSorteoChips.innerHTML = nums.map((_, index) => `
+      <span class="chip-numero">Participación ${index + 1}</span>
     `).join('');
 
     if (nuevosAprobados.length) {
       const avisoAprobacion =
         nuevosAprobados.length === 1
-          ? `Tu pago del numero #${nuevosAprobados[0]} ya fue aprobado.`
-          : `Se aprobaron ${nuevosAprobados.length} numeros en esta ronda.`;
+          ? 'Tu pago ya fue aprobado.'
+          : `Se aprobaron ${nuevosAprobados.length} participaciones en esta ronda.`;
       mostrarToast(liveReady ? `${avisoAprobacion} Entrando al vivo...` : avisoAprobacion);
     }
 
@@ -740,7 +626,7 @@ async function cargarSorteo({ silent = false } = {}) {
     tituloPremio.textContent = 'Ronda: ' + sorteoActual.descripcion;
     textoPremio.textContent = sorteoActual.premio;
     textoPrecio.textContent = `$${precioNumero.toLocaleString('es-CO')}`;
-    textoCantidad.textContent = sorteoActual.cantidad_numeros;
+    textoCantidad.textContent = 'Cupo automático al confirmar pago';
 
     const ocupados = numerosOcupados.length;
     const total = sorteoActual.cantidad_numeros;
@@ -752,14 +638,14 @@ async function cargarSorteo({ silent = false } = {}) {
     }
 
     if (textoProgreso) {
-      textoProgreso.textContent = `${ocupados} / ${total} vendidos`;
+      textoProgreso.textContent = 'La ronda avanza con cada pago aprobado';
     }
 
     if (textoCupos) {
       if (faltan <= 0) {
         textoCupos.innerHTML = 'Ronda completa - lista para resultado en vivo';
       } else {
-        textoCupos.innerHTML = `Quedan <strong>${faltan}</strong> cupos disponibles`;
+        textoCupos.innerHTML = 'Asegura tu participación y comparte la ronda con tus amigos';
       }
     }
 
@@ -773,7 +659,6 @@ async function cargarSorteo({ silent = false } = {}) {
       }
     }
 
-    renderNumeros();
     actualizarResumen();
 
     // El chat no se monta aquí. La entrada única es la ruleta en vivo.
@@ -928,8 +813,8 @@ if (btnConfirmar) {
       return;
     }
 
-    if (seleccionados.length === 0) {
-      mostrarToast('Selecciona al menos un número antes de confirmar.');
+    if (getCantidadParticipacionesCompra() === 0) {
+      mostrarToast('Esta ronda ya no tiene cupos disponibles.');
       return;
     }
 
@@ -973,7 +858,6 @@ if (btnConfirmar) {
       // 2️⃣ armar body JSON como lo espera el backend
       const body = {
         sorteo_id: Number(sorteoId),
-        numeros: seleccionados,
         comprobante: base64,
         pagador_nombre: pagadorNombre || null,
         pagador_telefono: pagadorTelefono || null,
@@ -1005,8 +889,6 @@ if (btnConfirmar) {
         }, 1800);
       }
 
-      // reset selección
-      seleccionados = [];
       pagoMetodoActual = '';
       if (paymentMethodSelect) paymentMethodSelect.value = '';
       if (inputComprobante) inputComprobante.value = '';

@@ -145,11 +145,39 @@ function construirRuleta(participants) {
     const mostrarLabel = index % pasoLabel === 0;
 
     slice.innerHTML = mostrarLabel
-      ? `<span class="slice-num">${p.numero}</span>`
+      ? `<span class="slice-num">${escapeHtml(getParticipantDisplayLabel(p))}</span>`
       : '';
 
     ruletaCircle.appendChild(slice);
   });
+}
+
+function getParticipantDisplayLabel(participant) {
+  const raw = String(
+    participant?.alias ||
+    participant?.nombre_corto ||
+    participant?.nombre ||
+    'Participante'
+  ).trim();
+
+  return raw.length > 14 ? `${raw.slice(0, 13)}…` : raw;
+}
+
+function findParticipanteIndex({ winnerNumero = null, winnerUserId = null } = {}) {
+  if (!Array.isArray(participantes) || !participantes.length) return -1;
+
+  if (winnerUserId != null) {
+    const byUser = participantes.findIndex(
+      (p) => Number(p.usuario_id) === Number(winnerUserId)
+    );
+    if (byUser >= 0) return byUser;
+  }
+
+  if (winnerNumero != null) {
+    return participantes.findIndex((p) => Number(p.numero) === Number(winnerNumero));
+  }
+
+  return -1;
 }
 
 function escapeHtml(value) {
@@ -925,13 +953,16 @@ function applyWinnerFromCache(data) {
   }
 }
 
-function resaltarSliceGanador(numeroGanador) {
-  if (!ruletaCircle || !numeroGanador) return;
+function resaltarSliceGanador(numeroGanador, ganadorData = null) {
+  if (!ruletaCircle || (!numeroGanador && !ganadorData?.usuario_id)) return;
 
   const slices = Array.from(ruletaCircle.querySelectorAll('.ruleta-slice'));
   slices.forEach(s => s.classList.remove('ganador'));
 
-  const idx = participantes.findIndex(p => p.numero === numeroGanador);
+  const idx = findParticipanteIndex({
+    winnerNumero: numeroGanador,
+    winnerUserId: ganadorData?.usuario_id ?? null,
+  });
   if (idx >= 0 && slices[idx]) slices[idx].classList.add('ganador');
 }
 
@@ -942,15 +973,21 @@ function wait(ms) {
 }
 
 function getGanadorVisual(numeroGanador, ganadorData = null) {
-  const numero = Number(numeroGanador);
-  const participante =
-    participantes.find((p) => Number(p.numero) === numero) || null;
-  const nombre = ganadorData?.nombre || participante?.nombre || null;
+  const idx = findParticipanteIndex({
+    winnerNumero: numeroGanador,
+    winnerUserId: ganadorData?.usuario_id ?? null,
+  });
+  const participante = idx >= 0 ? participantes[idx] : null;
+  const nombre = ganadorData?.alias || ganadorData?.nombre || participante?.alias || participante?.nombre || null;
 
   return {
-    numero,
+    numero: Number(numeroGanador),
     nombre,
-    nombreCorto: nombre ? nombre.split(' ')[0] : participante?.nombre_corto || 'Ganador',
+    nombreCorto: getParticipantDisplayLabel({
+      alias: ganadorData?.alias || participante?.alias || null,
+      nombre_corto: participante?.nombre_corto || null,
+      nombre,
+    }),
   };
 }
 
@@ -959,20 +996,20 @@ function mostrarBannerGanador(numeroGanador, ganadorData = null) {
   const wfNum = document.getElementById('winnerFloatNumero');
   const wfName = document.getElementById('winnerFloatNombre');
 
-  if (!wf || !numeroGanador) return;
+  if (!wf || (!numeroGanador && !ganadorData?.usuario_id)) return;
 
   const ganadorVisual = getGanadorVisual(numeroGanador, ganadorData);
   wf.classList.remove('oculto');
   wf.classList.add('winner-float--show');
 
-  if (wfNum) wfNum.textContent = `N° ${ganadorVisual.numero}`;
+  if (wfNum) wfNum.textContent = 'Ganador oficial';
   if (wfName) wfName.textContent = ganadorVisual.nombreCorto;
 }
 
 function mostrarResultadoGanador(numeroGanador, ganadorData = null, { animado = false, livePrize = null } = {}) {
   if (!resultadoRuleta) return;
 
-  if (!numeroGanador) {
+  if (!numeroGanador && !ganadorData?.usuario_id) {
     resultadoRuleta.innerHTML = '✅ Ruleta finalizada.';
     return;
   }
@@ -984,14 +1021,14 @@ function mostrarResultadoGanador(numeroGanador, ganadorData = null, { animado = 
     resultadoRuleta.classList.add('ganador-texto');
     resultadoRuleta.innerHTML = ganadorVisual.nombre
       ? `
-        🎉 <strong>${ganadorVisual.nombreCorto}</strong> es el ganador con el número <strong>#${ganadorVisual.numero}</strong>.<br/>
+        🎉 <strong>${ganadorVisual.nombreCorto}</strong> es el ganador oficial.<br/>
         ${premioTexto ? `Premio actual: <strong>${escapeHtml(premioTexto)}</strong>.<br/>` : ''}
-        Llama su nombre, muéstrale el comprobante y celebra el momento: todos vieron la ruleta en pantalla.
+        Llama su nombre, confirma su participación aprobada y celebra el momento: todos vieron la ruleta en pantalla.
       `
       : `
-        🎉 Número ganador: <strong>#${ganadorVisual.numero}</strong>.<br/>
+        🎉 Ya tenemos ganador confirmado.<br/>
         ${premioTexto ? `Premio actual: <strong>${escapeHtml(premioTexto)}</strong>.<br/>` : ''}
-        Revisa en el panel qué usuario tiene este número y anúncialo en voz alta.
+        Revisa el panel, identifica al participante y anúncialo en voz alta.
       `;
 
     setTimeout(() => {
@@ -1001,8 +1038,8 @@ function mostrarResultadoGanador(numeroGanador, ganadorData = null, { animado = 
   }
 
   resultadoRuleta.innerHTML = ganadorVisual.nombre
-    ? `✅ Número ganador: <strong>${ganadorVisual.numero}</strong> — <strong>${ganadorVisual.nombreCorto}</strong>${premioTexto ? ` · <span>${escapeHtml(premioTexto)}</span>` : ''}`
-    : `✅ Número ganador: <strong>${ganadorVisual.numero}</strong>${premioTexto ? ` · <span>${escapeHtml(premioTexto)}</span>` : ''}`;
+    ? `✅ Ganador oficial: <strong>${ganadorVisual.nombreCorto}</strong>${premioTexto ? ` · <span>${escapeHtml(premioTexto)}</span>` : ''}`
+    : `✅ Ganador oficial confirmado${premioTexto ? ` · <span>${escapeHtml(premioTexto)}</span>` : ''}`;
 }
 
 function iniciarSpinVisual() {
@@ -1016,7 +1053,7 @@ function iniciarSpinVisual() {
 }
 
 function animarGanador(numeroGanador, ganadorData = null, { livePrize = null } = {}) {
-  if (!ruletaCircle || !numeroGanador || !participantes.length) {
+  if (!ruletaCircle || (!numeroGanador && !ganadorData?.usuario_id) || !participantes.length) {
     mostrarBannerGanador(numeroGanador, ganadorData);
     mostrarResultadoGanador(numeroGanador, ganadorData, { animado: false, livePrize });
     spinVisualActivo = false;
@@ -1026,7 +1063,10 @@ function animarGanador(numeroGanador, ganadorData = null, { livePrize = null } =
 
   const total = participantes.length;
   const anguloSlice = 360 / total;
-  const indice = participantes.findIndex((p) => Number(p.numero) === Number(numeroGanador));
+  const indice = findParticipanteIndex({
+    winnerNumero: numeroGanador,
+    winnerUserId: ganadorData?.usuario_id ?? null,
+  });
   const indiceFinal = indice >= 0 ? indice : 0;
   const anguloCentro = indiceFinal * anguloSlice + anguloSlice / 2;
   const vueltasExtra = 5 + Math.floor(Math.random() * 3);
@@ -1041,7 +1081,7 @@ function animarGanador(numeroGanador, ganadorData = null, { livePrize = null } =
       rotacionActual = rotacionDestino;
 
       setTimeout(() => {
-        resaltarSliceGanador(Number(numeroGanador));
+        resaltarSliceGanador(Number(numeroGanador), ganadorData);
         mostrarBannerGanador(numeroGanador, ganadorData);
         mostrarResultadoGanador(numeroGanador, ganadorData, { animado: true, livePrize });
         spinVisualActivo = false;
@@ -1101,6 +1141,7 @@ async function fetchRuletaParticipantes() {
     participantes = (data.participantes || []).map((p) => ({
       ...p,
       nombre_corto: p.nombre ? p.nombre.split(' ')[0] : `Usuario ${p.usuario_id}`,
+      label: getParticipantDisplayLabel(p),
     }));
 
     // Stats básicos
@@ -1112,8 +1153,9 @@ async function fetchRuletaParticipantes() {
     }
 
     if (elProb) {
-      elProb.textContent =
-        totalEnJuego > 0 ? `Cada número tiene 1 entre ${totalEnJuego}` : '-';
+      elProb.textContent = totalEnJuego > 0
+        ? `Selección entre ${totalEnJuego} participantes elegibles`
+        : '-';
     }
 
     if (!participantes.length) {
@@ -1133,7 +1175,7 @@ async function fetchRuletaParticipantes() {
 
     // ✅ 2) Si ya está finalizada, ahora sí resaltar el slice ganador
     if (ruletaInfo?.ruleta_estado === 'finalizada' && ruletaInfo?.numero_ganador) {
-      resaltarSliceGanador(ruletaInfo.numero_ganador);
+      resaltarSliceGanador(ruletaInfo.numero_ganador, ruletaInfo.ganador || null);
     }
 
     // Botón girar según si ya se puede
@@ -1373,7 +1415,7 @@ function renderRuletaInfo() {
 
     //  Resaltar slice ganador sin volver a girar
     if (numero_ganador) {
-      resaltarSliceGanador(numero_ganador);
+      resaltarSliceGanador(numero_ganador, ganador || null);
     }
 
     return; // no countdown
@@ -1405,7 +1447,7 @@ function iniciarCountdown() {
     "Ya casi llega tu momento.",
     "La ronda esta en movimiento...",
     "Preparate, el resultado se acerca...",
-    "Sera tu numero el elegido?",
+    "Quien sera el ganador de esta ronda?",
   ];
 
   function actualizar() {
