@@ -1,4 +1,4 @@
-import { renderAcordeon } from './render.js?v=20260414c';
+import { renderAcordeon } from './render.js?v=20260422b';
 
 const API_URL = window.API_URL || '';
 const REFRESH_MS = 15000;

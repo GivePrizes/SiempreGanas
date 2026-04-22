@@ -171,12 +171,12 @@ function renderParticipanteRow(p, s) {
     ? 'Beneficio: Cuenta gratis por fidelidad'
     : esLive
       ? `Entrega Live: ${beneficioLive}`
-      : `Numeros: ${numerosTxt}`;
+      : `Participaciones: ${numerosTxt}`;
   const detalleSecundario = p.esBonusGratis
     ? '<div class="muted tiny">No depende de un sorteo puntual.</div>'
     : esLive
       ? `
-        <div class="muted tiny">Numeros aprobados: ${escapeHtml(numerosTxt)}</div>
+        <div class="muted tiny">Participaciones aprobadas: ${escapeHtml(numerosTxt)}</div>
         ${
           s.liveBeneficioEntradaDescripcion
             ? `<div class="muted tiny">${escapeHtml(s.liveBeneficioEntradaDescripcion)}</div>`

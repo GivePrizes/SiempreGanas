@@ -1,5 +1,5 @@
-import { cargarMisNumerosResumen } from './misNumeros.js?v=20260415b';
-import { cargarResumenReferidos } from '../referrals.js?v=20260416c';
+import { cargarMisNumerosResumen } from './misNumeros.js?v=20260422b';
+import { cargarResumenReferidos } from '../referrals.js?v=20260422a';
 
 const API_URL = window.API_URL || '';
 const SORTEO_TIPO_DEFAULT = 'pantalla';
@@ -38,6 +38,12 @@ const state = {
 
 let currentItemsPerPage = getItemsPerPage();
 let dashboardRefreshTimer = null;
+
+function hasActiveLiveSorteos() {
+  return state.sorteos.some(
+    (sorteo) => String(sorteo?.modalidad || '').trim().toLowerCase() === 'live'
+  );
+}
 
 function getItemsPerPage() {
   if (window.matchMedia('(max-width: 640px)').matches) return 4;
@@ -296,7 +302,7 @@ function setBienvenida(user) {
   if (titulo) titulo.textContent = nombre ? `Hola ${nombre} 👋` : 'Hola 👋';
   if (subtitulo) {
     subtitulo.textContent =
-      'Adquiere tus numeros, sube tu comprobante y espera la dinamica.';
+      'Confirma tu participacion, sube tu comprobante y sigue la dinamica.';
   }
 }
 
@@ -356,7 +362,7 @@ function renderSorteoCard(item, index = 0) {
                 <a class="btn btn-primary sorteo-enter-btn" href="sorteo.html?id=${sorteo.id}">
                   <span class="sorteo-enter-btn__copy">
                     <span class="sorteo-enter-btn__title">Entrar al sorteo</span>
-                    <span class="sorteo-enter-btn__meta">Elige tus numeros y confirma tu pago sin salirte del flujo</span>
+                    <span class="sorteo-enter-btn__meta">Confirma tu participacion y carga tu comprobante sin salirte del flujo</span>
                   </span>
                   <span class="sorteo-enter-btn__arrow" aria-hidden="true">-></span>
                 </a>
@@ -759,9 +765,17 @@ async function cargarSorteosActivos({ silent = false } = {}) {
       : [];
 
     renderSorteosView();
+    await cargarResumenReferidos({
+      force: true,
+      visible: hasActiveLiveSorteos(),
+    });
   } catch (err) {
     console.error('Error cargando rondas del dashboard:', err);
     state.sorteos = [];
+    await cargarResumenReferidos({
+      force: true,
+      visible: false,
+    });
     if (!silent) {
       showLoadError();
     }
@@ -777,20 +791,17 @@ function startDashboardAutoRefresh() {
     if (document.hidden) return;
     cargarSorteosActivos({ silent: true }).catch(() => {});
     cargarMisNumerosResumen().catch(() => {});
-    cargarResumenReferidos().catch(() => {});
   }, DASHBOARD_AUTO_REFRESH_MS);
 
   window.addEventListener('focus', () => {
     cargarSorteosActivos({ silent: true }).catch(() => {});
     cargarMisNumerosResumen().catch(() => {});
-    cargarResumenReferidos({ force: true }).catch(() => {});
   });
 
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) {
       cargarSorteosActivos({ silent: true }).catch(() => {});
       cargarMisNumerosResumen().catch(() => {});
-      cargarResumenReferidos({ force: true }).catch(() => {});
     }
   });
 }
@@ -812,7 +823,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     cargarSorteosActivos(),
   ];
 
-  cargarResumenReferidos({ force: true });
   startDashboardAutoRefresh();
   await Promise.allSettled(pendingTasks);
 });

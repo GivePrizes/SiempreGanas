@@ -4,6 +4,13 @@ const REFERRAL_REFRESH_WINDOW_MS = 60000;
 let lastFetchAt = 0;
 let listenersBound = false;
 
+function hideReferralSummary() {
+  const box = document.getElementById('referralMini');
+  if (box) {
+    box.hidden = true;
+  }
+}
+
 function formatMoney(value) {
   const amount = Number(value || 0);
   if (!Number.isFinite(amount)) return '$0';
@@ -11,7 +18,7 @@ function formatMoney(value) {
 }
 
 function getInviteText(code) {
-  return `Usa mi codigo ${code} cuando compres tu puesto en Mathome. Si tu compra queda validada, ambos seguimos creciendo en el programa de socios.`;
+  return `Usa mi codigo ${code} en el Live de Mathome. Si tu compra queda validada, cuenta para el programa de socios.`;
 }
 
 async function copyText(text, successMessage) {
@@ -50,7 +57,7 @@ function bindReferralActions() {
   listenersBound = true;
 }
 
-function renderReferralSummary(data) {
+function renderReferralSummary(data, { visible = true } = {}) {
   const box = document.getElementById('referralMini');
   const title = document.getElementById('referralMiniTitle');
   const meta = document.getElementById('referralMiniMeta');
@@ -61,6 +68,11 @@ function renderReferralSummary(data) {
   const btnCopyInvite = document.getElementById('btnCopyReferralInvite');
 
   if (!box || !title || !meta || !pending || !bar || !code || !btnCopyCode || !btnCopyInvite) {
+    return;
+  }
+
+  if (!visible) {
+    box.hidden = true;
     return;
   }
 
@@ -87,25 +99,30 @@ function renderReferralSummary(data) {
   title.textContent = `${totalValidados} referido${totalValidados === 1 ? '' : 's'} validado${totalValidados === 1 ? '' : 's'}`;
 
   if (nextTier?.nombre) {
-    meta.textContent = `Nivel actual: ${currentTierName}. Te faltan ${nextTier.faltan} para ${nextTier.nombre}.`;
+    meta.textContent = `${currentTierName}. Te faltan ${nextTier.faltan} para ${nextTier.nombre}.`;
   } else {
-    meta.textContent = `Nivel actual: ${currentTierName}. Ya estas en el nivel mas alto del programa.`;
+    meta.textContent = `${currentTierName}. Ya estás en el nivel más alto.`;
   }
 
   pending.textContent = pendingAmount > 0
     ? `Pendiente: ${formatMoney(pendingAmount)}`
-    : 'Sin pagos pendientes';
+    : 'Sin pendientes';
 
   bar.style.width = `${progressPercent}%`;
-  code.textContent = referralCode || 'Sin codigo';
+  code.textContent = referralCode || 'Sin código';
   btnCopyCode.dataset.code = referralCode;
   btnCopyInvite.dataset.code = referralCode;
   btnCopyCode.disabled = !referralCode;
   btnCopyInvite.disabled = !referralCode;
 }
 
-export async function cargarResumenReferidos({ force = false } = {}) {
+export async function cargarResumenReferidos({ force = false, visible = true } = {}) {
   try {
+    if (!visible) {
+      hideReferralSummary();
+      return;
+    }
+
     const token = localStorage.getItem('token');
     if (!token) return;
 
@@ -126,7 +143,7 @@ export async function cargarResumenReferidos({ force = false } = {}) {
     if (!res.ok) return;
 
     const data = await res.json();
-    renderReferralSummary(data);
+    renderReferralSummary(data, { visible });
   } catch (err) {
     console.error('Error cargando referidos:', err);
   }

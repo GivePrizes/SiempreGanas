@@ -525,12 +525,12 @@ async function enviarFormulario(event) {
   }
 
   if (!cantidadNumeros) {
-    mostrarToast('La cantidad de numeros debe ser un entero mayor que 0.');
+    mostrarToast('La cantidad de cupos debe ser un entero mayor que 0.');
     return;
   }
 
   if (!precioNumero) {
-    mostrarToast('El precio por numero debe ser mayor que 0.');
+    mostrarToast('El precio por participacion debe ser mayor que 0.');
     return;
   }
 

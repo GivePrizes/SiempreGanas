@@ -2,7 +2,7 @@
 
 const API_URL = window.API_URL; // viene de config.js
 
-let __MIS_ROWS__ = [];   // filas crudas del backend (1 por número)
+let __MIS_ROWS__ = [];   // filas crudas del backend (1 por participacion)
 let __MIS_GRUPOS__ = []; // grupos (1 por sorteo)
 let __MIS_STATE_MAP__ = loadStateMap(); // estado anterior por sorteo/numero
 let __MIS_CHANGED_SET__ = new Set();
@@ -63,10 +63,6 @@ function mostrarToast(msg) {
   }, 3200);
 }
 
-function formatNumero(numero) {
-  return `#${String(numero ?? '').trim()}`;
-}
-
 function syncStateMap(rows) {
   const nextMap = new Map();
   const changedSet = new Set();
@@ -122,7 +118,7 @@ function buildTransitionToastMessage(transitions) {
   if (aprobados.length === 1) {
     const item = aprobados[0];
     mensajes.push(
-      `Tu pago del ${formatNumero(item.numero)} en "${item.descripcion}" ya fue aprobado.`
+      `Tu participacion en "${item.descripcion}" ya fue aprobada.`
     );
   } else if (aprobados.length > 1) {
     mensajes.push(`Se aprobaron ${aprobados.length} pagos en tus participaciones.`);
@@ -131,7 +127,7 @@ function buildTransitionToastMessage(transitions) {
   if (rechazados.length === 1) {
     const item = rechazados[0];
     mensajes.push(
-      `Tu pago del ${formatNumero(item.numero)} en "${item.descripcion}" fue rechazado.`
+      `Tu participacion en "${item.descripcion}" fue rechazada.`
     );
   } else if (rechazados.length > 1) {
     mensajes.push(`Se rechazaron ${rechazados.length} pagos en tus participaciones.`);
@@ -142,9 +138,9 @@ function buildTransitionToastMessage(transitions) {
 
 function estadoTexto(e) {
   const v = norm(e);
-  if (v === 'aprobado') return 'Pagado';
+  if (v === 'aprobado') return 'Aprobada';
   if (v === 'pendiente') return 'Pendiente';
-  if (v === 'rechazado') return 'Rechazado';
+  if (v === 'rechazado') return 'Rechazada';
   return '—';
 }
 
@@ -234,7 +230,7 @@ function renderGrupos(grupos, changedSet = new Set()) {
 
     const ganadorHtml =
       sorteoEstado === 'finalizado' && grupo.numero_ganador != null
-        ? `<p class="resumen-linea"><strong>Ganador:</strong> <span>#${grupo.numero_ganador}</span></p>`
+        ? `<p class="resumen-linea"><strong>Participacion ganadora:</strong> <span>#${grupo.numero_ganador}</span></p>`
         : '';
 
     const chipsHtml =
@@ -262,9 +258,9 @@ function renderGrupos(grupos, changedSet = new Set()) {
         : '<span class="text-muted">—</span>';
 
     const badges = [];
-    if (grupo.aprobados) badges.push(`<span class="badge badge-success">Pagados: ${grupo.aprobados}</span>`);
-    if (grupo.pendientes) badges.push(`<span class="badge badge-warning">Pendientes: ${grupo.pendientes}</span>`);
-    if (grupo.rechazados) badges.push(`<span class="badge badge-danger">Rechazados: ${grupo.rechazados}</span>`);
+    if (grupo.aprobados) badges.push(`<span class="badge badge-success">Aprobadas: ${grupo.aprobados}</span>`);
+    if (grupo.pendientes) badges.push(`<span class="badge badge-warning">En revision: ${grupo.pendientes}</span>`);
+    if (grupo.rechazados) badges.push(`<span class="badge badge-danger">Rechazadas: ${grupo.rechazados}</span>`);
 
     const ctaHref = `ruleta-live.html?id=${grupo.sorteo_id}`;
     const ctaLabel = sorteoEstado === 'finalizado'
@@ -278,14 +274,14 @@ function renderGrupos(grupos, changedSet = new Set()) {
         <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
           <div>
             <h3 class="sorteo-title">${grupo.descripcion}</h3>
-            <p class="text-muted">Ganador: ${grupo.premio}</p>
+            <p class="text-muted">Premio: ${grupo.premio}</p>
           </div>
           <div>${pillSorteo}</div>
         </div>
 
         ${ganadorHtml}
 
-        <p class="resumen-linea"><strong>Números:</strong></p>
+        <p class="resumen-linea"><strong>Tus participaciones:</strong></p>
         <div class="numeros-chips-wrap">${chipsHtml}</div>
 
         <p class="resumen-linea">
@@ -403,7 +399,7 @@ export async function cargarMisNumerosDetalle({ silent = false } = {}) {
       console.error('Error HTTP en mis-participaciones (detalle):', res.status);
       if (!silent) {
         contenedor.innerHTML =
-          '<p class="error">No se pudieron cargar tus números. Intenta más tarde.</p>';
+          '<p class="error">No se pudieron cargar tus participaciones. Intenta mas tarde.</p>';
       }
       return;
     }
@@ -431,7 +427,7 @@ export async function cargarMisNumerosDetalle({ silent = false } = {}) {
     console.error(err);
     if (!silent) {
       contenedor.innerHTML =
-        '<p class="error">Error de conexión al cargar tus números.</p>';
+        '<p class="error">Error de conexion al cargar tus participaciones.</p>';
     }
   }
 }

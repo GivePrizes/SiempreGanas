@@ -1,4 +1,4 @@
-import { initChat } from '../chat/index.js?v=20260415b';
+import { initChat } from '../chat/index.js?v=20260422b';
 
 const API_URL = (window.API_URL || '').replace(/\/$/, '');
 let hasApprovedAccess = false;
@@ -60,7 +60,7 @@ async function resolveWriteAccess({ sorteoId, token }) {
 
     return {
       canWrite: false,
-      message: 'Solo participantes con número aprobado pueden escribir.'
+      message: 'Solo quienes tengan una participacion aprobada pueden escribir.'
     };
   } catch {
     return {

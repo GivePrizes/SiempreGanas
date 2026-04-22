@@ -78,7 +78,7 @@ export async function initChat({ sorteoId, token }) {
       hintEl.style.color = '#ccc';
     } else {
       hintEl.textContent =
-        '🔒 Solo participantes con número aprobado pueden escribir.';
+        '🔒 Solo quienes tengan una participacion aprobada pueden escribir.';
       hintEl.style.color = '#ff6b6b';
     }
   }
@@ -344,7 +344,7 @@ export async function initChat({ sorteoId, token }) {
       const errText = String(data?.message || data?.error || '').toLowerCase();
 
       if (status === 403 && data?.code === 'participation_required') {
-        hintEl.textContent = '🔒 Solo participantes con número aprobado pueden escribir.';
+        hintEl.textContent = '🔒 Solo quienes tengan una participacion aprobada pueden escribir.';
         puedeEscribir = false;
         updateChatPermission();
         hintEl.style.color = '#ff6b6b';

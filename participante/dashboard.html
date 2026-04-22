@@ -30,7 +30,7 @@
       <div class="app-topbar-actions">
         <button type="button" class="btn btn-primary has-ico" onclick="location.href='mis-numeros.html'">
           <span class="btn-ico">🎟</span>
-          <span class="btn-label">Mis números</span>
+          <span class="btn-label">Mis participaciones</span>
         </button>
 
         <button type="button" class="btn btn-danger has-ico btn-logout" onclick="logout()" aria-label="Salir">
@@ -43,10 +43,10 @@
     <!-- 📊 RESUMEN RÁPIDO -->
     <section class="stats-row stats-row--compact">
 
-      <!-- Números adquiridos + BONO -->
+      <!-- Participaciones + programa de socios -->
       <div class="stat-card stat-card--sm">
         <div class="stat-top">
-          <span class="stat-label">Números adquiridos</span>
+          <span class="stat-label">Participaciones registradas</span>
           <span class="stat-ico">🎟</span>
         </div>
 
@@ -56,11 +56,11 @@
           <div class="referral-mini" id="referralMini" hidden>
             <div class="referral-mini__top">
               <div class="referral-mini__copy">
-                <span class="referral-mini__eyebrow">Programa de socios</span>
-                <strong id="referralMiniTitle">Socio inicial</strong>
-                <p id="referralMiniMeta" class="referral-mini__meta">Todavia no tienes compras validadas.</p>
+                <span class="referral-mini__eyebrow">Socios Live</span>
+                <strong id="referralMiniTitle">Sin avance</strong>
+                <p id="referralMiniMeta" class="referral-mini__meta">Todavia no tienes referidos validados.</p>
               </div>
-              <span id="referralMiniPending" class="referral-mini__pending">Sin pagos pendientes</span>
+              <span id="referralMiniPending" class="referral-mini__pending">Sin pendientes</span>
             </div>
 
             <div class="bonus-mini-bar referral-mini__bar">
@@ -68,10 +68,10 @@
             </div>
 
             <div class="referral-mini__code">
-              <span id="referralCodeValue" class="referral-mini__code-value">Sin codigo</span>
+              <span id="referralCodeValue" class="referral-mini__code-value">Sin código</span>
               <div class="referral-mini__actions">
                 <button id="btnCopyReferralCode" type="button" class="btn btn-secondary btn-xs">Copiar código</button>
-                <button id="btnCopyReferralInvite" type="button" class="btn btn-secondary btn-xs">Copiar texto</button>
+                <button id="btnCopyReferralInvite" type="button" class="btn btn-secondary btn-xs">Copiar invitación</button>
               </div>
             </div>
           </div>
@@ -197,7 +197,7 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/participante/index.js?v=20260416e"></script>
+  <script type="module" src="../assets/js/participante/index.js?v=20260422b"></script>
 </body>
 </html>
 

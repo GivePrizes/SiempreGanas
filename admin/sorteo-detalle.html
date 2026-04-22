@@ -54,7 +54,7 @@
   <script src="../assets/js/theme.js?v=20260401b"></script>
 
   <script type="module">
-    import { initAdminChat } from '../assets/js/chat/adminChat.js?v=20260415a';
+    import { initAdminChat } from '../assets/js/chat/adminChat.js?v=20260422b';
 
     const API_URL = window.API_URL || '';
     const params = new URLSearchParams(window.location.search);
@@ -85,7 +85,7 @@
               ? 'Juegos'
               : 'Pantalla';
           document.getElementById('tituloSorteo').textContent = data.descripcion;
-          document.getElementById('subtituloSorteo').textContent = `Tipo: ${tipo} · Ganador: ${data.premio} · Ocupación: ${data.ocupados}/${data.cantidad_numeros}`;
+          document.getElementById('subtituloSorteo').textContent = `Tipo: ${tipo} · Premio: ${data.premio} · Ocupacion: ${data.ocupados}/${data.cantidad_numeros}`;
           document.getElementById('estadoSorteo').textContent = `Estado: ${data.estado}`;
         } else {
           document.getElementById('tituloSorteo').textContent = 'Error cargando sorteo';

@@ -203,7 +203,7 @@ export async function cargarSorteosAdmin() {
             ? 'Esta ronda ya está completa. Puedes publicar el resultado en vivo y generar expectativa.'
             : isLive
               ? 'Este Live se programa cuando complete cupos. Mientras tanto, sigue moviendo ventas y referidos.'
-              : 'Aún se están vendiendo números. Cuantos más participen, más fuerte se siente el momento de la ronda.';
+              : 'Aun se estan vendiendo cupos. Cuantos mas participen, mas fuerte se siente el momento de la ronda.';
 
         const imagenHtml = s.imagen_url
           ? `<div class="sorteo-admin-image"><img src="${s.imagen_url}" alt="Imagen sorteo ${s.descripcion}"></div>`
@@ -272,7 +272,7 @@ async function eliminarSorteo(id) {
   }
 
   const confirmar = confirm(
-    '¿Seguro que quieres eliminar esta ronda?\n\nSe borraran tambien sus numeros, historial Live, chat, operaciones y entregas asociadas. Esta accion no se puede deshacer.'
+    '¿Seguro que quieres eliminar esta ronda?\n\nSe borraran tambien sus participaciones, historial Live, chat, operaciones y entregas asociadas. Esta accion no se puede deshacer.'
   );
   if (!confirmar) return;
 

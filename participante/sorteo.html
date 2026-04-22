@@ -224,16 +224,16 @@
               <input id="inputPagadorTelefono" type="tel" inputmode="numeric" placeholder="Ej: 3001234567" autocomplete="tel" />
             </div>
 
-            <div class="referral-entry-card">
+            <div id="referralEntryCard" class="referral-entry-card" hidden>
               <div class="referral-entry-card__head">
                 <div>
-                  <p class="referral-entry-card__eyebrow">Programa de socios</p>
-                  <h4>¿Te invitó alguien?</h4>
+                  <p class="referral-entry-card__eyebrow">Disponible solo en Lives</p>
+                  <h4>Código de invitación</h4>
                 </div>
                 <span class="referral-entry-card__badge">Opcional</span>
               </div>
 
-              <label for="inputReferidoCodigo">Código o alias del socio</label>
+              <label for="inputReferidoCodigo">Código o alias</label>
               <input
                 id="inputReferidoCodigo"
                 type="text"
@@ -242,7 +242,7 @@
                 autocomplete="off"
                 autocapitalize="characters"
               />
-              <p class="text-muted microhint">Solo cuenta cuando tu pago quede aprobado. No se puede usar tu propio código.</p>
+              <p class="text-muted microhint">Se aplica al aprobar el pago. No puedes usar tu propio código.</p>
             </div>
 
             <button id="btnConfirmar" class="btn btn-primary btn-full-width">
@@ -280,7 +280,7 @@
         <div class="socios-promo-modal__copy">
           <span class="socios-promo-modal__eyebrow">Mathome</span>
           <h2 id="sociosPromoTitle">Programa de socios</h2>
-          <p>Lee esta guía rápida y ciérrala con la X cuando termines.</p>
+          <p>Revisa la imagen y continúa.</p>
         </div>
         <button
           type="button"
@@ -312,7 +312,7 @@
   <script src="../assets/js/config.js?v=20260412d"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260401b"></script>
-  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260421a"></script>
+  <script type="module" src="../assets/js/participante/sorteo-detalle.js?v=20260422a"></script>
 </body>
 </html>
 

@@ -186,7 +186,7 @@ export async function initAdminChat({ sorteoId, token }) {
 
     if (!ok) {
       if (status === 403 && data?.code === 'participation_required') {
-        hintEl.textContent = '🔒 Solo participantes con número aprobado pueden escribir.';
+        hintEl.textContent = '🔒 Solo quienes tengan una participacion aprobada pueden escribir.';
         hintEl.style.color = '#ff6b6b';
       } else if (status === 403 && (data?.message || '').toLowerCase().includes('silenc')) {
         hintEl.textContent = data?.message || 'Has sido silenciado.';

@@ -63,6 +63,7 @@ const pagadorDatos = document.getElementById('pagadorDatos');
 const inputPagadorNombre = document.getElementById('inputPagadorNombre');
 const inputPagadorTelefono = document.getElementById('inputPagadorTelefono');
 const inputReferidoCodigo = document.getElementById('inputReferidoCodigo');
+const referralEntryCard = document.getElementById('referralEntryCard');
 const postConfirmActions = document.getElementById('postConfirmActions');
 const btnPostLive = document.getElementById('btnPostLive');
 const paymentStepAccordion = document.getElementById('paymentStepAccordion');
@@ -84,6 +85,7 @@ let approvedNumbersInitialized = false;
 let previousApprovedNumbers = new Set();
 const referralCodeFromUrl = String(params.get('ref') || '').trim();
 let sociosPromoOpenedAt = 0;
+let sociosPromoAutoOpened = false;
 
 function buildLiveRoomUrl({ focusChat = false } = {}) {
   const nextUrl = new URL('ruleta-live.html', window.location.href);
@@ -190,8 +192,34 @@ function mostrarToast(msg) {
   }, 2500);
 }
 
+function isLiveReferralEnabled(sorteo = sorteoActual) {
+  return String(sorteo?.modalidad || '').trim().toLowerCase() === 'live';
+}
+
+function syncReferralExperienceVisibility() {
+  const enabled = isLiveReferralEnabled();
+
+  if (referralEntryCard) {
+    referralEntryCard.hidden = !enabled;
+  }
+
+  if (!enabled) {
+    if (inputReferidoCodigo) {
+      inputReferidoCodigo.value = '';
+    }
+
+    if (sociosPromoModal) {
+      sociosPromoModal.classList.add('hidden');
+      sociosPromoModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('socios-promo-open');
+    }
+  }
+
+  return enabled;
+}
+
 function shouldShowSociosPromo() {
-  return Boolean(sociosPromoModal);
+  return Boolean(sociosPromoModal) && isLiveReferralEnabled() && !sociosPromoAutoOpened;
 }
 
 function closeSociosPromo() {
@@ -619,6 +647,7 @@ async function cargarSorteo({ silent = false } = {}) {
     numerosOcupados = Array.isArray(sorteoActual.numeros_ocupados)
       ? sorteoActual.numeros_ocupados
       : [];
+    const referralEnabled = syncReferralExperienceVisibility();
     updateQuickAccessButtons({ hasApprovedNumbers: misNumerosEnSorteoCard?.style.display !== 'none' });
 
     // Hero
@@ -660,6 +689,15 @@ async function cargarSorteo({ silent = false } = {}) {
     }
 
     actualizarResumen();
+
+    if (referralEnabled && shouldShowSociosPromo()) {
+      sociosPromoAutoOpened = true;
+      window.setTimeout(() => {
+        if (isLiveReferralEnabled()) {
+          openSociosPromo();
+        }
+      }, SOCIOS_PROMO_OPEN_DELAY_MS);
+    }
 
     // El chat no se monta aquí. La entrada única es la ruleta en vivo.
 
@@ -826,7 +864,9 @@ if (btnConfirmar) {
     const file = inputComprobante?.files?.[0];
     const pagadorNombre = (inputPagadorNombre?.value || '').trim();
     const pagadorTelefono = (inputPagadorTelefono?.value || '').replace(/\D+/g, '');
-    const referidoCodigo = (inputReferidoCodigo?.value || '').trim();
+    const referidoCodigo = isLiveReferralEnabled()
+      ? (inputReferidoCodigo?.value || '').trim()
+      : '';
     const pagadorOk = pagadorNombre.length >= 3 && pagadorTelefono.length >= 10;
     const metodo = pagoMetodoActual;
 
@@ -904,7 +944,9 @@ if (btnConfirmar) {
       if (pagadorDatos) pagadorDatos.classList.add('oculto');
       if (inputPagadorNombre) inputPagadorNombre.value = '';
       if (inputPagadorTelefono) inputPagadorTelefono.value = '';
-      if (inputReferidoCodigo) inputReferidoCodigo.value = referralCodeFromUrl || '';
+    if (inputReferidoCodigo) {
+      inputReferidoCodigo.value = isLiveReferralEnabled() ? (referralCodeFromUrl || '') : '';
+    }
       actualizarResumen();
 
       // Opcional: recargar ocupados
@@ -933,13 +975,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     initSociosPromoModal();
-    if (shouldShowSociosPromo()) {
-      window.setTimeout(() => {
-        if (shouldShowSociosPromo()) {
-          openSociosPromo();
-        }
-      }, SOCIOS_PROMO_OPEN_DELAY_MS);
-    }
 
     if (paymentStepAccordion) {
       paymentStepAccordion.addEventListener('toggle', () => {
