@@ -34,6 +34,17 @@ function getChatSyncJitterMs(baseDelay) {
   return Math.floor(Math.random() * 150);
 }
 
+function readThemeColor(tokenName, fallback) {
+  try {
+    const value = getComputedStyle(document.documentElement)
+      .getPropertyValue(tokenName)
+      .trim();
+    return value || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 /* ===============================
    Init
 =============================== */
@@ -75,11 +86,11 @@ export async function initChat({ sorteoId, token }) {
 
     if (puedeEscribir) {
       hintEl.textContent = 'Escribe tu mensaje... (máx. 120 caracteres)';
-      hintEl.style.color = '#ccc';
+      hintEl.style.color = readThemeColor('--colour-muted', '#9db3d7');
     } else {
       hintEl.textContent =
         '🔒 Solo quienes tengan una participacion aprobada pueden escribir.';
-      hintEl.style.color = '#ff6b6b';
+      hintEl.style.color = readThemeColor('--colour-danger', '#f87171');
     }
   }
 
@@ -347,20 +358,20 @@ export async function initChat({ sorteoId, token }) {
         hintEl.textContent = '🔒 Solo quienes tengan una participacion aprobada pueden escribir.';
         puedeEscribir = false;
         updateChatPermission();
-        hintEl.style.color = '#ff6b6b';
+        hintEl.style.color = readThemeColor('--colour-danger', '#f87171');
       } else if (status === 403 && errText.includes('silenc')) {
         hintEl.textContent = data?.message || data?.error || 'Has sido silenciado.';
-        hintEl.style.color = '#f87171';
+        hintEl.style.color = readThemeColor('--colour-danger', '#f87171');
       } else if (status === 429) {
         hintEl.textContent = data?.error || 'Demasiadas peticiones. Espera unos segundos.';
         hintEl.style.color = '#f59e0b';
       } else if (status === 404) {
         hintEl.textContent = 'Chat no disponible.';
-        hintEl.style.color = '#f87171';
+        hintEl.style.color = readThemeColor('--colour-danger', '#f87171');
       } else {
         console.error('postMessage failed', status, data);
         hintEl.textContent = data?.error || 'Error enviando mensaje.';
-        hintEl.style.color = '#f87171';
+        hintEl.style.color = readThemeColor('--colour-danger', '#f87171');
       }
 
       sendEl.disabled = false;

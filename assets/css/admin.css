@@ -918,7 +918,7 @@
 /* =========================================================
    Admin Light App Theme
    ========================================================= */
-.admin-body {
+:root[data-app-theme="light"] body.admin-body {
   background:
     radial-gradient(1000px 500px at 0% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
     radial-gradient(900px 460px at 100% 0%, rgba(14, 165, 233, 0.05), transparent 60%),
@@ -926,105 +926,105 @@
   color: #0f172a;
 }
 
-.admin-header,
-.card,
-.sorteo-card-admin,
-.stat-card,
-.table-wrapper {
+:root[data-app-theme="light"] .admin-header,
+:root[data-app-theme="light"] .card,
+:root[data-app-theme="light"] .sorteo-card-admin,
+:root[data-app-theme="light"] .stat-card,
+:root[data-app-theme="light"] .table-wrapper {
   border: 1px solid #dbe5f1;
   background: #ffffff;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
-.admin-status-pill {
+:root[data-app-theme="light"] .admin-status-pill {
   border-color: #bfdbfe;
   background: #eff6ff;
   color: #1e3a8a;
 }
 
-.admin-status-pill .dot {
+:root[data-app-theme="light"] .admin-status-pill .dot {
   background-color: #22c55e;
   box-shadow: none;
 }
 
-.admin-header-left .admin-subtitle,
-.mini-hint,
-.sorteo-detalle-mini,
-.stat-hint,
-.mini-estado {
+:root[data-app-theme="light"] .admin-header-left .admin-subtitle,
+:root[data-app-theme="light"] .mini-hint,
+:root[data-app-theme="light"] .sorteo-detalle-mini,
+:root[data-app-theme="light"] .stat-hint,
+:root[data-app-theme="light"] .mini-estado {
   color: #64748b;
 }
 
-.table thead {
+:root[data-app-theme="light"] .table thead {
   background: #f8fafc;
 }
 
-.table th {
+:root[data-app-theme="light"] .table th {
   color: #1e3a8a;
 }
 
-.table td {
+:root[data-app-theme="light"] .table td {
   color: #0f172a;
 }
 
-.table tr:nth-child(even) {
+:root[data-app-theme="light"] .table tr:nth-child(even) {
   background-color: #f8fafc;
 }
 
-.table tr:hover {
+:root[data-app-theme="light"] .table tr:hover {
   background-color: #eef2ff;
 }
 
-.pagination .page-link {
+:root[data-app-theme="light"] .pagination .page-link {
   border: 1px solid #dbe5f1;
   background: #f8fafc;
   color: #334155;
 }
 
-.pagination .page-link:hover,
-.pagination .page-link.active {
+:root[data-app-theme="light"] .pagination .page-link:hover,
+:root[data-app-theme="light"] .pagination .page-link.active {
   background: #2563eb;
   color: #ffffff;
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
 }
 
-.badge-success {
+:root[data-app-theme="light"] .badge-success {
   background: #dcfce7;
   color: #166534;
 }
 
-.badge-warning {
+:root[data-app-theme="light"] .badge-warning {
   background: #fef9c3;
   color: #854d0e;
 }
 
-.badge-game {
+:root[data-app-theme="light"] .badge-game {
   background: #ccfbf1;
   color: #115e59;
 }
 
-.badge-live {
+:root[data-app-theme="light"] .badge-live {
   background: #ede9fe;
   color: #6d28d9;
 }
 
-.badge-danger {
+:root[data-app-theme="light"] .badge-danger {
   background: #fee2e2;
   color: #991b1b;
 }
 
-.stat-card.gold,
-.stat-card.ruby,
-.stat-card.obsidian {
+:root[data-app-theme="light"] .stat-card.gold,
+:root[data-app-theme="light"] .stat-card.ruby,
+:root[data-app-theme="light"] .stat-card.obsidian {
   background: #ffffff;
   color: #0f172a;
 }
 
-.stat-card::after {
+:root[data-app-theme="light"] .stat-card::after {
   display: none;
 }
 
-.toast {
+:root[data-app-theme="light"] .toast {
   background: #0f172a;
   color: #f8fafc;
 }
@@ -1032,67 +1032,67 @@
 /* =========================================================
    Admin Cognitive Comfort Mode
    ========================================================= */
-.admin-body {
+:root[data-app-theme="light"] body.admin-body {
   background: #f6f7f9;
 }
 
-.admin-header,
-.card,
-.sorteo-card-admin,
-.stat-card,
-.table-wrapper,
-.table,
-.pagination .page-link {
+:root[data-app-theme="light"] .admin-header,
+:root[data-app-theme="light"] .card,
+:root[data-app-theme="light"] .sorteo-card-admin,
+:root[data-app-theme="light"] .stat-card,
+:root[data-app-theme="light"] .table-wrapper,
+:root[data-app-theme="light"] .table,
+:root[data-app-theme="light"] .pagination .page-link {
   background: #ffffff;
   border-color: #e5e7eb;
   box-shadow: none;
 }
 
-.live-ready-hub {
+:root[data-app-theme="light"] .live-ready-hub {
   background: #fffaf0;
   border-color: #fde68a;
 }
 
-.live-ready-hub__eyebrow,
-.sorteo-live-callout strong {
+:root[data-app-theme="light"] .live-ready-hub__eyebrow,
+:root[data-app-theme="light"] .sorteo-live-callout strong {
   color: #b45309;
 }
 
-.live-ready-hub__item {
+:root[data-app-theme="light"] .live-ready-hub__item {
   background: #ffffff;
   border-color: #fde68a;
 }
 
-.live-ready-hub__copy,
-.live-ready-hub__meta,
-.sorteo-live-callout p {
+:root[data-app-theme="light"] .live-ready-hub__copy,
+:root[data-app-theme="light"] .live-ready-hub__meta,
+:root[data-app-theme="light"] .sorteo-live-callout p {
   color: #64748b;
 }
 
-.sorteo-live-callout {
+:root[data-app-theme="light"] .sorteo-live-callout {
   background: #fffbeb;
   border-color: #fde68a;
 }
 
-.sorteo-card-admin--live-ready {
+:root[data-app-theme="light"] .sorteo-card-admin--live-ready {
   border-color: #fde68a;
 }
 
-.table thead,
-.table tr:nth-child(even) {
+:root[data-app-theme="light"] .table thead,
+:root[data-app-theme="light"] .table tr:nth-child(even) {
   background: #f7f8fa;
 }
 
-.table tr:hover {
+:root[data-app-theme="light"] .table tr:hover {
   background: #eef2f7;
 }
 
-.btn:hover,
-.pagination .page-link:hover {
+:root[data-app-theme="light"] .btn:hover,
+:root[data-app-theme="light"] .pagination .page-link:hover {
   transform: none;
 }
 
-.stat-card::after {
+:root[data-app-theme="light"] .stat-card::after {
   display: none !important;
 }
 

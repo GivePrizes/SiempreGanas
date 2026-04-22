@@ -17,18 +17,28 @@ const CHAT_SYNC_HIDDEN_MS = 25000;
 const CHAT_STREAM_RECOVERY_MS = 2200;
 const CHAT_MAX_BACKOFF_MS = 60000;
 
+function readThemeColor(tokenName, fallback) {
+  try {
+    const value = getComputedStyle(document.documentElement)
+      .getPropertyValue(tokenName)
+      .trim();
+    return value || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 /* ===============================
    Init Admin Chat
 ================================ */
 export async function initAdminChat({ sorteoId, token }) {
   if (!sorteoId || !token) return;
 
-  const bodyEl  = document.getElementById('adminChatBody');
+  const bodyEl = document.getElementById('adminChatBody');
   const inputEl = document.getElementById('adminChatInput');
-  const sendEl  = document.getElementById('adminChatSend');
-  const hintEl  = document.getElementById('adminChatHint');
+  const sendEl = document.getElementById('adminChatSend');
+  const hintEl = document.getElementById('adminChatHint');
 
-  // Store de mensajes (admin)
   const store = createChatStore({ myUsuarioId: 'admin' });
   let unsub = null;
   let syncTimer = null;
@@ -36,16 +46,12 @@ export async function initAdminChat({ sorteoId, token }) {
   let disposed = false;
   let syncErrorCount = 0;
 
-  /* ===============================
-     Render con acciones de moderación
-  =============================== */
   function renderAdminMessages({ forceBottom = false } = {}) {
     renderMessages({
       containerEl: bodyEl,
       messages: store.getFiltered(),
       myUsuarioId: 'admin',
       renderActions: (msg) => {
-        // Los botones SOLO para mensajes normales (no sistema)
         if (!(msg.is_system ?? msg.isSystem)) {
           return `
             <span class="actions">
@@ -70,10 +76,6 @@ export async function initAdminChat({ sorteoId, token }) {
     }
   }
 
-  /* ===============================
-     Append mensaje (preparado para realtime)
-     ⚠️ Aún no se usa si no hay Supabase
-  =============================== */
   function appendMessage(msg) {
     const message = normalizeChatMessage(msg);
     if (!message || store.has(message.id)) return;
@@ -139,12 +141,8 @@ export async function initAdminChat({ sorteoId, token }) {
     scheduleSync();
   }
 
-  /* ===============================
-     History (carga inicial)
-  =============================== */
   try {
     const data = await fetchMessages({ sorteoId, token, limit: 50 });
-    console.log('Historial recibido:', data);
     store.upsertMany(data.messages || []);
     renderAdminMessages({ forceBottom: true });
   } catch (err) {
@@ -160,15 +158,11 @@ export async function initAdminChat({ sorteoId, token }) {
     });
   } catch (err) {
     console.error('Error conectando chat admin realtime:', err);
-    hintEl.textContent = 'El chat se cargó, pero la actualización en vivo no está disponible.';
+    hintEl.textContent = 'El chat cargo, pero la actualizacion en vivo no esta disponible.';
   }
 
   scheduleSync();
 
-  /* ===============================
-     Enviar mensaje (ADMIN)
-     IMPORTANTE: los admins usan su ruta dedicada para evitar reglas de participante.
-  =============================== */
   async function send() {
     const text = inputEl.value.trim();
     if (!text) return;
@@ -186,21 +180,21 @@ export async function initAdminChat({ sorteoId, token }) {
 
     if (!ok) {
       if (status === 403 && data?.code === 'participation_required') {
-        hintEl.textContent = '🔒 Solo quienes tengan una participacion aprobada pueden escribir.';
-        hintEl.style.color = '#ff6b6b';
+        hintEl.textContent = 'Solo quienes tengan una participacion aprobada pueden escribir.';
+        hintEl.style.color = readThemeColor('--colour-danger', '#f87171');
       } else if (status === 403 && (data?.message || '').toLowerCase().includes('silenc')) {
         hintEl.textContent = data?.message || 'Has sido silenciado.';
-        hintEl.style.color = '#f87171';
+        hintEl.style.color = readThemeColor('--colour-danger', '#f87171');
       } else if (status === 429) {
         hintEl.textContent = 'Demasiadas peticiones. Espera unos segundos.';
         hintEl.style.color = '#f59e0b';
       } else if (status === 404) {
         hintEl.textContent = 'Chat no disponible.';
-        hintEl.style.color = '#f87171';
+        hintEl.style.color = readThemeColor('--colour-danger', '#f87171');
       } else {
         console.error('postMessage failed', status, data);
         hintEl.textContent = data?.error || data?.message || 'Error enviando mensaje';
-        hintEl.style.color = '#f87171';
+        hintEl.style.color = readThemeColor('--colour-danger', '#f87171');
       }
     }
 
@@ -214,11 +208,8 @@ export async function initAdminChat({ sorteoId, token }) {
 
     sendEl.disabled = false;
     inputEl.focus();
-  } 
+  }
 
-  /* ===============================
-     Eventos de envío
-  =============================== */
   sendEl.addEventListener('click', send);
 
   inputEl.addEventListener('keydown', (e) => {
@@ -228,9 +219,6 @@ export async function initAdminChat({ sorteoId, token }) {
     }
   });
 
-  /* ===============================
-     Moderación (event delegation)
-  =============================== */
   bodyEl.addEventListener('click', async (e) => {
     if (e.target.classList.contains('mute-btn')) {
       const usuarioId = e.target.dataset.user;

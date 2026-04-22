@@ -7,11 +7,11 @@
 #chatContainer {
   display: flex;
   flex-direction: column;
-  background: rgba(15, 23, 42, 0.95);
-  color: #e5e7eb;
+  background: var(--app-chat-shell-bg);
+  color: var(--app-chat-bubble-copy);
   font-family: system-ui, -apple-system, sans-serif;
   border-radius: 8px;
-  border: 1px solid rgba(246, 208, 111, 0.08);
+  border: 1px solid var(--app-chat-border);
   width: 100%;
   max-width: 100%;
   overflow: hidden;
@@ -27,7 +27,7 @@
   overflow-y: auto;
   padding: 12px;
   scroll-behavior: smooth;
-  background: rgba(2, 6, 23, 0.8);
+  background: var(--app-chat-panel-bg);
   border-radius: 6px;
   min-height: 260px;
 }
@@ -38,12 +38,12 @@
 }
 
 #chatBody::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: var(--app-chat-scrollbar);
   border-radius: 4px;
 }
 
 #chatBody::-webkit-scrollbar-track {
-  background: #020617;
+  background: var(--app-chat-scrollbar-track);
 }
 
 /* ===============================
@@ -75,7 +75,7 @@
   display: flex;
   gap: 6px;
   align-items: center;
-  color: #9ca3af;
+  color: var(--app-chat-meta-copy);
 }
 
 .chat-row.mine .chat-meta {
@@ -88,8 +88,8 @@
   max-width: 75%;
   padding: 8px 12px;
   border-radius: 14px;
-  background: rgba(30, 41, 59, 0.8);
-  color: #f2f0eb;
+  background: var(--app-chat-bubble-bg);
+  color: var(--app-chat-bubble-copy);
   word-break: break-word;
   transition:
     background-color 0.2s ease,
@@ -97,8 +97,8 @@
 }
 
 .chat-row.mine .chat-bubble {
-  background: linear-gradient(135deg, #f6d06f, #ffe4a6);
-  color: #1a1410;
+  background: var(--app-chat-mine-bg);
+  color: var(--app-chat-mine-copy);
   font-weight: 500;
   transform-origin: right bottom;
 }
@@ -109,8 +109,8 @@
 
 /* Sistema */
 .chat-row.system .chat-bubble {
-  background: #78350f;
-  color: #fde68a;
+  background: var(--app-chat-system-bg);
+  color: var(--app-chat-system-copy);
   font-style: italic;
   font-size: 13px;
 }
@@ -142,8 +142,8 @@
   display: flex;
   gap: 6px;
   padding: 8px;
-  border-top: 1px solid rgba(246, 208, 111, 0.08);
-  background: rgba(2, 6, 23, 0.8);
+  border-top: 1px solid var(--app-chat-border);
+  background: var(--app-chat-panel-bg);
   align-items: stretch;
   min-height: 44px;
   position: relative;
@@ -154,9 +154,9 @@
 #chatInput {
   flex: 1;
   min-width: 0;
-  background: #020617;
-  color: #f2f0eb;
-  border: 1px solid rgba(246, 208, 111, 0.2);
+  background: var(--app-chat-input-bg);
+  color: var(--app-chat-bubble-copy);
+  border: 1px solid var(--app-chat-input-border);
   border-radius: 8px;
   padding: 10px 12px;
   transition: border-color 0.2s ease, background-color 0.2s ease;
@@ -165,14 +165,14 @@
 }
 
 #chatInput::placeholder {
-  color: rgba(242, 240, 235, 0.5);
+  color: var(--app-chat-input-placeholder);
 }
 
 #chatInput:focus {
   outline: none;
-  border-color: #f6d06f;
-  background: rgba(2, 6, 23, 0.95);
-  box-shadow: 0 0 8px rgba(246, 208, 111, 0.2);
+  border-color: var(--colour-primary);
+  background: var(--app-chat-input-bg);
+  box-shadow: var(--app-field-ring);
 }
 
 #chatInput:disabled {
@@ -213,9 +213,9 @@
 }
 
 .chat-emoji-btn {
-  background: #0f172a;
-  color: #f2f0eb;
-  border: 1px solid rgba(246, 208, 111, 0.2);
+  background: var(--app-chat-input-bg);
+  color: var(--app-chat-bubble-copy);
+  border: 1px solid var(--app-chat-input-border);
   border-radius: 8px;
   padding: 0 10px;
   min-width: 44px;
@@ -227,7 +227,7 @@
 }
 
 .chat-emoji-btn:hover {
-  border-color: #f6d06f;
+  border-color: var(--colour-primary);
 }
 
 .chat-emoji-panel {
@@ -241,8 +241,8 @@
   width: 220px;
   padding: 8px;
   border-radius: 10px;
-  border: 1px solid rgba(246, 208, 111, 0.2);
-  background: rgba(2, 6, 23, 0.97);
+  border: 1px solid var(--app-chat-input-border);
+  background: var(--app-chat-panel-bg);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   z-index: 20;
 }
@@ -250,71 +250,71 @@
 /* ===============================
    CHAT SALA - LIGHT / RESPONSIVE
 =============================== */
-.chat-sala#chatContainer,
-.chat-sala {
+:root[data-app-theme="light"] .chat-sala#chatContainer,
+:root[data-app-theme="light"] .chat-sala {
   background: #ffffff;
   color: #0f172a;
   border: 1px solid #e5e7eb;
   box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 
-.chat-sala #chatBody.chat-messages {
+:root[data-app-theme="light"] .chat-sala #chatBody.chat-messages {
   background: #f8fafc;
   border: 1px solid #e5e7eb;
 }
 
-.chat-sala .chat-meta {
+:root[data-app-theme="light"] .chat-sala .chat-meta {
   color: #64748b;
 }
 
-.chat-sala .chat-bubble {
+:root[data-app-theme="light"] .chat-sala .chat-bubble {
   background: #e2e8f0;
   color: #0f172a;
 }
 
-.chat-sala .chat-row.mine .chat-bubble {
+:root[data-app-theme="light"] .chat-sala .chat-row.mine .chat-bubble {
   background: #2563eb;
   color: #ffffff;
 }
 
-.chat-sala .chat-row.system .chat-bubble {
+:root[data-app-theme="light"] .chat-sala .chat-row.system .chat-bubble {
   background: #fff7ed;
   color: #9a3412;
   border: 1px solid #fed7aa;
 }
 
-.chat-sala .chat-input-wrap {
+:root[data-app-theme="light"] .chat-sala .chat-input-wrap {
   background: #ffffff;
   border-top: 1px solid #e5e7eb;
 }
 
-.chat-sala #chatInput {
+:root[data-app-theme="light"] .chat-sala #chatInput {
   background: #ffffff;
   color: #0f172a;
   border: 1px solid #cbd5e1;
 }
 
-.chat-sala #chatInput::placeholder {
+:root[data-app-theme="light"] .chat-sala #chatInput::placeholder {
   color: #94a3b8;
 }
 
-.chat-sala #chatInput:focus {
+:root[data-app-theme="light"] .chat-sala #chatInput:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
   background: #ffffff;
 }
 
-.chat-sala #chatSend {
+:root[data-app-theme="light"] .chat-sala #chatSend {
   background: #2563eb;
   color: #ffffff;
   box-shadow: 0 6px 16px rgba(37, 99, 235, 0.18);
 }
 
-.chat-sala #chatSend:hover:not(:disabled) {
+:root[data-app-theme="light"] .chat-sala #chatSend:hover:not(:disabled) {
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.26);
 }
 
-.chat-sala .chat-new-btn {
+:root[data-app-theme="light"] .chat-sala .chat-new-btn {
   width: 100%;
   margin: 8px 0;
   border: 1px solid #dbe5f1;
@@ -337,7 +337,7 @@
 
 .chat-emoji-item {
   border: 1px solid transparent;
-  background: rgba(30, 41, 59, 0.7);
+  background: var(--app-chat-bubble-bg);
   border-radius: 8px;
   cursor: pointer;
   font-size: 18px;
@@ -346,8 +346,8 @@
 }
 
 .chat-emoji-item:hover {
-  border-color: rgba(246, 208, 111, 0.35);
-  background: rgba(51, 65, 85, 0.85);
+  border-color: var(--colour-primary);
+  background: var(--colour-surface-alt);
 }
 
 /* ===============================
@@ -358,6 +358,7 @@
   font-size: 12px;
   padding: 4px 12px;
   min-height: 18px;
+  color: var(--colour-muted);
   transition:
     opacity 0.25s ease,
     transform 0.25s ease;

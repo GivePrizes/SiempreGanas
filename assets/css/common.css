@@ -363,7 +363,7 @@ select:focus {
 /* =========================================================
    Global Light App Theme
    ========================================================= */
-:root {
+:root[data-app-theme="light"] {
   --colour-background: #f4f7fb;
   --colour-surface: #ffffff;
   --colour-surface-alt: #f8fafc;
@@ -391,108 +391,109 @@ select:focus {
   --shadow-strong: 0 20px 48px rgba(15, 23, 42, 0.14);
 }
 
-html, body {
+:root[data-app-theme="light"],
+:root[data-app-theme="light"] body {
   color: var(--colour-text);
   background-color: var(--colour-background);
 }
 
-body {
+:root[data-app-theme="light"] body {
   background:
     radial-gradient(1000px 500px at 0% 0%, rgba(37, 99, 235, 0.06), transparent 60%),
     radial-gradient(900px 460px at 100% 0%, rgba(14, 165, 233, 0.05), transparent 60%),
     var(--colour-background);
 }
 
-::placeholder {
+:root[data-app-theme="light"] ::placeholder {
   color: rgba(71, 85, 105, 0.7);
 }
 
-input,
-textarea,
-select {
+:root[data-app-theme="light"] input,
+:root[data-app-theme="light"] textarea,
+:root[data-app-theme="light"] select {
   background: #ffffff;
   border: 1px solid var(--colour-border);
   color: var(--colour-text);
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+:root[data-app-theme="light"] input:focus,
+:root[data-app-theme="light"] textarea:focus,
+:root[data-app-theme="light"] select:focus {
   border-color: rgba(37, 99, 235, 0.6);
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
 }
 
-.text-muted { color: var(--colour-muted); }
+:root[data-app-theme="light"] .text-muted { color: var(--colour-muted); }
 
-.btn-primary {
+:root[data-app-theme="light"] .btn-primary {
   background: linear-gradient(180deg, #3b82f6, #2563eb);
   color: #ffffff;
   border-color: rgba(37, 99, 235, 0.45);
   box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
 }
 
-.btn-primary:hover {
+:root[data-app-theme="light"] .btn-primary:hover {
   background: linear-gradient(180deg, #60a5fa, #2563eb);
 }
 
-.btn-secondary {
+:root[data-app-theme="light"] .btn-secondary {
   background: #eef2f7;
   color: #0f172a;
   border-color: #d3dce8;
 }
 
-.btn-secondary:hover {
+:root[data-app-theme="light"] .btn-secondary:hover {
   background: #e2e8f0;
 }
 
-.card {
+:root[data-app-theme="light"] .card {
   background: #ffffff;
   border: 1px solid var(--colour-border);
   box-shadow: var(--shadow-soft);
 }
 
-.badge {
+:root[data-app-theme="light"] .badge {
   border-color: #d0dced;
   background: #eef2f7;
   color: #334155;
 }
 
-.badge-success {
+:root[data-app-theme="light"] .badge-success {
   border-color: #86efac;
   background: #dcfce7;
   color: #166534;
 }
 
-.badge-warning {
+:root[data-app-theme="light"] .badge-warning {
   border-color: #fde68a;
   background: #fef9c3;
   color: #854d0e;
 }
 
-.badge-danger {
+:root[data-app-theme="light"] .badge-danger {
   border-color: #fecaca;
   background: #fee2e2;
   color: #991b1b;
 }
 
-.toast {
+:root[data-app-theme="light"] .toast {
   background: #0f172a;
   border-color: #1e293b;
   color: #f8fafc;
 }
 
-.error-msg {
+:root[data-app-theme="light"] .error-msg {
   color: #dc2626;
 }
 
-.whatsapp-float-dashboard {
+:root[data-app-theme="light"] .whatsapp-float-dashboard {
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.18);
 }
 
 /* =========================================================
    Cognitive Comfort Mode
    ========================================================= */
-:root {
+:root[data-app-theme="light"] {
   --colour-background: #f6f7f9;
   --colour-surface: #ffffff;
   --colour-surface-alt: #f7f8fa;
@@ -508,24 +509,24 @@ select:focus {
   --shadow-strong: 0 10px 24px rgba(17, 24, 39, 0.1);
 }
 
-body {
+:root[data-app-theme="light"] body {
   background: var(--colour-background);
 }
 
-.card,
-.toast,
-.btn,
-input,
-textarea,
-select {
+:root[data-app-theme="light"] .card,
+:root[data-app-theme="light"] .toast,
+:root[data-app-theme="light"] .btn,
+:root[data-app-theme="light"] input,
+:root[data-app-theme="light"] textarea,
+:root[data-app-theme="light"] select {
   box-shadow: none;
 }
 
-.card {
+:root[data-app-theme="light"] .card {
   border-color: var(--colour-border);
 }
 
-.btn {
+:root[data-app-theme="light"] .btn {
   transition: background-color .12s ease, border-color .12s ease, color .12s ease;
 }
 
