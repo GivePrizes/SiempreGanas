@@ -24,10 +24,10 @@ function formatMoney(value) {
 }
 
 function getLiveOperationTypeData(tipo) {
-  if (tipo === 'referido') return { label: 'Referido' };
-  if (tipo === 'premio_efectivo') return { label: 'Premio efectivo' };
+  if (tipo === 'referido') return { label: 'Pago de socio' };
+  if (tipo === 'premio_efectivo') return { label: 'Premio en efectivo' };
   if (tipo === 'premio_extra') return { label: 'Premio extra' };
-  return { label: 'Ajuste' };
+  return { label: 'Ajuste Live' };
 }
 
 function normalizeMetadata(value) {
@@ -47,7 +47,7 @@ function buildLiveOperationMetaLines(op) {
     const total = Number(metadata.total_aprobados || 0);
 
     if (minimo > 0) {
-      lines.push(`Meta alcanzada: ${minimo} referidos aprobados.`);
+      lines.push(`Meta Live alcanzada: ${minimo} referidos aprobados.`);
     }
 
     if (total > minimo) {
@@ -57,7 +57,7 @@ function buildLiveOperationMetaLines(op) {
     }
 
     if (origin === 'referidos_live_cierre') {
-      lines.push('Generado automaticamente al cerrar el Live.');
+      lines.push('Generado automaticamente al cierre del Live.');
     }
   }
 
@@ -278,6 +278,7 @@ function renderLiveOperationRow(op, s) {
     <div class="live-op-left">
       <div class="live-op-title">
         <span>${escapeHtml(op.nombre || 'Sin nombre')}</span>
+        <span class="badge type-live">Live</span>
         <span class="badge type-live">${escapeHtml(tipoMeta.label)}</span>
         <span class="pill ${estado === 'completada' ? 'pill-success' : 'pill-warning'}">
           ${estado === 'completada' ? 'COMPLETADA' : 'PENDIENTE'}
@@ -479,8 +480,8 @@ export function renderAcordeon(sorteos, uiState) {
       </div>
 
       <div class="ac-badges">
-        <span class="badge warning">Pendientes: ${s.resumen?.pendientes ?? pendientes.length}</span>
-        <span class="badge success">Entregadas: ${s.resumen?.entregadas ?? entregadas.length}</span>
+        <span class="badge warning">Entregas pendientes: ${s.resumen?.pendientes ?? pendientes.length}</span>
+        <span class="badge success">Entregas hechas: ${s.resumen?.entregadas ?? entregadas.length}</span>
         ${isLive ? `<span class="badge neutral">Pagos Live: ${livePend.length + liveDone.length}</span>` : ''}
         <span class="badge neutral">Mostrando: ${totalMostrando}</span>
       </div>
@@ -494,11 +495,11 @@ export function renderAcordeon(sorteos, uiState) {
     const list = document.createElement('div');
     list.className = 'users-list';
 
-    list.appendChild(sectionTitle('Pendientes', pendFil.length));
+    list.appendChild(sectionTitle('Entregas pendientes', pendFil.length));
     if (pendFil.length) pendFil.forEach((p) => list.appendChild(renderParticipanteRow(p, s)));
     else list.appendChild(miniEmpty('Sin pendientes en este filtro'));
 
-    list.appendChild(sectionTitle('Entregadas', entFil.length));
+    list.appendChild(sectionTitle('Entregas completadas', entFil.length));
     if (entFil.length) entFil.forEach((p) => list.appendChild(renderParticipanteRow(p, s)));
     else list.appendChild(miniEmpty('Sin entregadas en este filtro'));
 

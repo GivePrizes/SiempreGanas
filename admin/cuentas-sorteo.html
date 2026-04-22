@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../assets/css/common.css?v=20260225b">
   <link rel="stylesheet" href="../assets/css/admin.css?v=20260414a">
   <!-- ✅ CSS aislado de este micro-módulo -->
-  <link rel="stylesheet" href="../assets/css/cuentas-sorteo.css?v=20260416a">
+  <link rel="stylesheet" href="../assets/css/cuentas-sorteo.css?v=20260422c">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
   <style>
     body.auth-pending { visibility: hidden; }
@@ -24,7 +24,7 @@
       <div class="admin-header-left">
         <h1>Entrega de cuentas</h1>
         <span class="admin-subtitle">
-          Aqui ves entregas pendientes y pagos del programa de socios, todo en un solo lugar.
+          Separa entregas normales y pagos del programa de socios Live, todo con trazabilidad clara.
         </span>
 
         <div class="admin-status-pill">
@@ -87,7 +87,7 @@
           <div>
             <h2>🤝 Programa de socios</h2>
             <p class="text-muted">
-              Aqui controlas pagos pendientes por socios y ves rapido quienes mas compras validaron.
+              Aqui controlas solo pagos del programa de socios Live y ves rapido quien ya desbloqueo nivel.
             </p>
           </div>
 
@@ -102,15 +102,18 @@
           <div class="referral-admin-panel">
             <div class="referral-admin-panel__head">
               <h3>Pagos pendientes</h3>
-              <span id="referralPendingCount" class="badge neutral">0</span>
+              <div class="referral-panel-badges">
+                <span class="badge type-live">Solo Live</span>
+                <span id="referralPendingCount" class="badge neutral">0</span>
+              </div>
             </div>
             <div id="referralPendingList" class="referral-payout-list"></div>
           </div>
 
           <div class="referral-admin-panel">
             <div class="referral-admin-panel__head">
-              <h3>Ranking</h3>
-              <span class="badge neutral">Top socios</span>
+              <h3>Socios con avance</h3>
+              <span class="badge neutral">Niveles y progreso</span>
             </div>
             <div id="referralLeaderboard" class="referral-leaderboard"></div>
           </div>
@@ -122,7 +125,7 @@
           <div>
             <h2>📦 Entregas pendientes por sorteo</h2>
             <p class="text-muted">
-              Cada sorteo se despliega como acordeon y, cuando aplique, tambien veras bloques de Live y bonus de fidelidad para entregar por WhatsApp o marcar como resueltos.
+              Cada ronda se despliega por aparte. Aqui ves entregas normales, beneficios Live y bonus de fidelidad sin mezclar el programa de socios.
             </p>
           </div>
 
@@ -196,7 +199,7 @@
   <script src="../assets/js/theme.js?v=20260401b"></script>
 
   <!-- ✅ Entry point del micro-módulo -->
-<script type="module" src="../assets/js/admin/cuentas/index.js?v=20260422b"></script>
+<script type="module" src="../assets/js/admin/cuentas/index.js?v=20260422c"></script>
 </body>
 </html>
 

@@ -1,4 +1,4 @@
-import { renderAcordeon } from './render.js?v=20260422b';
+import { renderAcordeon } from './render.js?v=20260422c';
 
 const API_URL = window.API_URL || '';
 const REFRESH_MS = 15000;
@@ -243,22 +243,30 @@ function renderReferralProgram(data) {
   const resumen = data?.resumen || {};
   const pagosPendientes = Array.isArray(data?.pagos_pendientes) ? data.pagos_pendientes : [];
   const ranking = Array.isArray(data?.ranking) ? data.ranking : [];
+  const sociosActivos = ranking.length;
+  const sociosConNivel = ranking.filter((item) => String(item?.current_tier_nombre || '').trim()).length;
+  const sociosConPagosPendientes = ranking.filter((item) => Number(item?.pagos_pendientes || 0) > 0).length;
 
   referralSummaryCards.innerHTML = [
     {
-      label: 'Socios por pagar',
+      label: 'Pendientes Live',
       value: String(Number(resumen.pagos_pendientes || 0)),
-      meta: `Valor pendiente: ${formatMoney(resumen.monto_pendiente || 0)}`,
+      meta: `Por pagar: ${formatMoney(resumen.monto_pendiente || 0)}`,
     },
     {
-      label: 'Pagos realizados',
+      label: 'Socios activos',
+      value: String(sociosActivos),
+      meta: `${sociosConNivel} con nivel · ${sociosConPagosPendientes} con pago pendiente`,
+    },
+    {
+      label: 'Pagado',
       value: String(Number(resumen.pagos_pagados || 0)),
-      meta: `Ya entregado: ${formatMoney(resumen.monto_pagado || 0)}`,
+      meta: `Liquidado: ${formatMoney(resumen.monto_pagado || 0)}`,
     },
     {
-      label: 'Movimientos del programa',
+      label: 'Movimientos',
       value: String(Number(resumen.total_pagos || 0)),
-      meta: 'Resumen rapido del programa de socios',
+      meta: 'Historial auditado del programa Live',
     },
   ].map((card) => `
     <article class="referral-summary-card">
@@ -273,7 +281,7 @@ function renderReferralProgram(data) {
   }
 
   if (!pagosPendientes.length) {
-    referralPendingList.innerHTML = '<div class="referral-empty">No hay pagos pendientes del programa de socios.</div>';
+    referralPendingList.innerHTML = '<div class="referral-empty">No hay pagos pendientes del programa de socios Live.</div>';
   } else {
     referralPendingList.innerHTML = pagosPendientes.map((item) => {
       const waLink = buildReferralWhatsappLink(item);
@@ -282,6 +290,9 @@ function renderReferralProgram(data) {
       const beneficio = item.beneficio_extra
         ? `<div class="muted tiny">Beneficio extra: ${escapeHtml(item.beneficio_extra)}</div>`
         : '';
+      const createdAt = item.created_at
+        ? new Date(item.created_at).toLocaleString()
+        : '';
 
       return `
         <article class="referral-payout-item">
@@ -289,21 +300,26 @@ function renderReferralProgram(data) {
             <div>
               <div class="referral-payout-item__name">${escapeHtml(item.nombre || 'Sin nombre')}</div>
               <div class="referral-payout-item__meta">
+                <span class="badge type-live">Live</span>
                 ${alias ? `<span>${escapeHtml(alias)}</span>` : ''}
                 ${code ? `<span>${escapeHtml(code)}</span>` : ''}
                 <span>${escapeHtml(item.total_validados || 0)} validados</span>
-                <span>${escapeHtml(item.tier_nombre || 'Nivel')}</span>
+                <span>${escapeHtml(item.tier_nombre || 'Sin nivel')}</span>
               </div>
             </div>
             <div class="referral-payout-item__amount">${formatMoney(item.monto || 0)}</div>
           </div>
-          <div class="muted tiny">Meta alcanzada: ${escapeHtml(item.minimo_validados || 0)} compras validadas.</div>
+          <div class="referral-payout-item__tier">
+            <strong>Nivel desbloqueado:</strong> ${escapeHtml(item.tier_nombre || 'Sin nivel')}
+            · <strong>Meta:</strong> ${escapeHtml(item.minimo_validados || 0)} validados
+          </div>
           ${beneficio}
+          ${createdAt ? `<div class="muted tiny">Pendiente desde: ${escapeHtml(createdAt)}</div>` : ''}
           <div class="muted tiny">${escapeHtml(item.email || 'Sin correo')} · ${escapeHtml(item.telefono || 'Sin telefono')}</div>
           <div class="referral-payout-item__actions">
             <a class="btn-mini ${waLink ? '' : 'disabled'}" ${waLink ? `href="${waLink}" target="_blank" rel="noopener"` : 'aria-disabled="true"'}>WhatsApp</a>
             <button type="button" class="btn-mini primary" data-action="pagar-referral-reward" data-reward="${item.id}">
-              Marcar pago hecho
+              Marcar pagado
             </button>
           </div>
         </article>
@@ -312,7 +328,7 @@ function renderReferralProgram(data) {
   }
 
   if (!ranking.length) {
-    referralLeaderboard.innerHTML = '<div class="referral-empty">Todavia no hay socios con avance para mostrar.</div>';
+    referralLeaderboard.innerHTML = '<div class="referral-empty">Todavia no hay socios Live con avance para mostrar.</div>';
     return;
   }
 
@@ -324,10 +340,15 @@ function renderReferralProgram(data) {
           <div class="referral-rank-item__meta">
             ${item.alias ? `<span>${escapeHtml(`@${item.alias}`)}</span>` : ''}
             ${item.referral_code ? `<span>${escapeHtml(item.referral_code)}</span>` : ''}
-            ${item.current_tier_nombre ? `<span>${escapeHtml(item.current_tier_nombre)}</span>` : '<span>Sin nivel</span>'}
+            <span class="badge type-live">Live</span>
           </div>
         </div>
         <span class="badge warning">${item.total_validados || 0} validados</span>
+      </div>
+      <div class="referral-rank-item__stats">
+        <span><strong>Nivel actual:</strong> ${escapeHtml(item.current_tier_nombre || 'Sin nivel')}</span>
+        <span><strong>Pagos pendientes:</strong> ${escapeHtml(item.pagos_pendientes || 0)}</span>
+        <span><strong>Pagos hechos:</strong> ${escapeHtml(item.pagos_pagados || 0)}</span>
       </div>
       <div class="muted tiny">
         Pendiente: ${formatMoney(item.monto_pendiente || 0)} · Pagado: ${formatMoney(item.monto_pagado || 0)}
