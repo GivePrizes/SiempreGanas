@@ -1,6 +1,5 @@
 import { initChat } from '../chat/index.js?v=20260422c';
 
-const API_URL = (window.API_URL || '').replace(/\/$/, '');
 let hasApprovedAccess = false;
 let phaseWriteEnabled = false;
 let lastHintMessage = '';
@@ -10,7 +9,7 @@ function getEls() {
     container: document.getElementById('chatContainer'),
     input: document.getElementById('chatInput'),
     send: document.getElementById('chatSend'),
-    hint: document.getElementById('chatHint')
+    hint: document.getElementById('chatHint'),
   };
 }
 
@@ -21,58 +20,30 @@ function syncLiveChatPermission(messageOverride) {
 
   if (typeof window.setParticipantChatPermission === 'function') {
     window.setParticipantChatPermission({ canWrite, message });
-  } else {
-    if (input) input.disabled = !canWrite;
-    if (send) send.disabled = !canWrite;
-    if (hint && typeof message === 'string') {
-      hint.textContent = message;
-    }
+    return;
+  }
+
+  if (input) input.disabled = !canWrite;
+  if (send) send.disabled = !canWrite;
+  if (hint && typeof message === 'string') {
+    hint.textContent = message;
   }
 }
 
-async function resolveWriteAccess({ sorteoId, token }) {
-  if (!API_URL || !sorteoId || !token) {
+function getDefaultWriteAccess({ sorteoId, token }) {
+  if (!sorteoId || !token) {
     return {
       canWrite: false,
-      message: 'Inicia sesión y participa para escribir en la sala.'
+      message: 'Inicia sesión para escribir en la sala.',
     };
   }
 
-  try {
-    const res = await fetch(
-      `${API_URL}/api/participante/mis-numeros?sorteoId=${encodeURIComponent(sorteoId)}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    if (!res.ok) {
-      return {
-        canWrite: false,
-        message: 'No se pudo validar tu participación en esta ronda.'
-      };
-    }
-
-    const data = await res.json();
-    const numeros = Array.isArray(data?.numeros) ? data.numeros : [];
-
-    if (numeros.length > 0) {
-      return { canWrite: true, message: '' };
-    }
-
-    return {
-      canWrite: false,
-      message: 'Solo quienes tengan una participacion aprobada pueden escribir.'
-    };
-  } catch {
-    return {
-      canWrite: false,
-      message: 'No se pudo validar tu acceso al chat.'
-    };
-  }
+  return { canWrite: true, message: '' };
 }
 
 window.setRuletaLiveChatWriteAccess = function setRuletaLiveChatWriteAccess({
   canWrite,
-  message
+  message,
 } = {}) {
   hasApprovedAccess = canWrite === true;
   if (typeof message === 'string') {
@@ -88,19 +59,18 @@ window.initRuletaLiveChat = async function initRuletaLiveChat({
 } = {}) {
   if (!sorteoId || !token) return;
 
-  const { container } = getEls();
+  const { container, hint } = getEls();
   if (container) container.style.display = 'flex';
 
   const access = writeAccess && typeof writeAccess === 'object'
     ? writeAccess
-    : await resolveWriteAccess({ sorteoId, token });
+    : getDefaultWriteAccess({ sorteoId, token });
   window.setRuletaLiveChatWriteAccess(access);
 
   try {
     await initChat({ sorteoId, token });
     syncLiveChatPermission(access?.message || lastHintMessage);
   } catch {
-    const { hint } = getEls();
     if (hint) hint.textContent = 'No se pudo cargar el chat.';
   }
 };

@@ -453,6 +453,25 @@ function setChatEnabled(enabled, message){
   if (chatHintEl && typeof message === "string") chatHintEl.textContent = message;
 }
 
+function syncChatPhaseState(currentEstado = estado){
+  if (currentEstado === "finished") {
+    startChatCountdown();
+    return;
+  }
+
+  if (currentEstado === "countdown") {
+    setChatEnabled(true, "Chat activo · la ronda ya fue programada y sigue abierta.");
+    return;
+  }
+
+  if (currentEstado === "spinning") {
+    setChatEnabled(true, "Chat activo · sigue la conversación en vivo.");
+    return;
+  }
+
+  setChatEnabled(true, "Chat activo · solo participantes aprobados pueden escribir.");
+}
+
 function resetRoundCycleState(){
   did321 = false;
   didSpin = false;
@@ -791,20 +810,17 @@ async function fetchRuletaInfo(){
   if (lastEstado !== estado) {
     if (estado === "waiting") {
       pushSystemMessage("⏳ La ruleta aún no se activa: primero debe llenarse el sorteo y luego el admin la programará.", "estado_waiting");
-      setChatEnabled(false, "La ruleta se habilita cuando el sorteo se llena y el admin la activa.");
     }
     if (estado === "countdown") {
       pushSystemMessage("✅ El sorteo ya está lleno. El admin activó la ruleta y ya empezó la cuenta regresiva.", "estado_countdown");
-      setChatEnabled(false, "Chat bloqueado por ahora · se habilita cuando comience el giro.");
     }
     if (estado === "spinning") {
       pushSystemMessage("🎯 ¡La ruleta está girando!", "estado_spinning");
-      setChatEnabled(true, "Chat activo · el cierre se anuncia al terminar.");
     }
     if (estado === "finished") {
       pushSystemMessage("🏆 ¡Resultado confirmado!", "estado_finished");
-      startChatCountdown();
     }
+    syncChatPhaseState(estado);
     lastEstado = estado;
   }
 
@@ -942,7 +958,7 @@ function tick(){
     startIdleSpin();
     if (!zeroEdgeTriggered) {
       zeroEdgeTriggered = true;
-      scheduleNextPoll(ZERO_EDGE_POLL_INTERVAL_MS);
+      scheduleNextPoll(ZERO_EDGE_POLL_VISIBLE_MS);
     }
     elCountdown.textContent = "00:00";
     elHint.textContent = "🎯 La ruleta está girando…";
@@ -1034,22 +1050,20 @@ function handleLiveVisibilityRefresh(){
   }
 
   try{
-    // 1) Info base
-    await fetchRuletaInfo();
+    const [
+      ,
+      ,
+      liveChatReady,
+    ] = await Promise.all([
+      fetchRuletaInfo(),
+      fetchNumerosRuleta({ force: true }),
+      fetchMisNumerosParaLista(),
+      waitForLiveChatBridge(),
+    ]);
 
-    // 2) Si no llegó snapshot, dibujar con participantes aprobados
-    await fetchNumerosRuleta({ force: true });
-
-    // 2b) Mis participaciones para el panel lateral
-    const writeAccess = await fetchMisNumerosParaLista();
-
-    const liveChatReady = await waitForLiveChatBridge();
     if (liveChatReady) {
-      window.initRuletaLiveChat({ sorteoId, token, writeAccess });
-      const waitingMessage = writeAccess?.canWrite
-        ? "Puedes seguir la conversación desde ahora. El envío se habilita cuando comience el giro."
-        : "Puedes seguir la conversación desde ahora. Necesitas una participación aprobada y que comience el giro para escribir.";
-      setChatEnabled(false, waitingMessage);
+      window.initRuletaLiveChat({ sorteoId, token });
+      syncChatPhaseState(estado);
     }
 
     if (estado === "finished" && numeroGanador) {
