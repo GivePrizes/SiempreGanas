@@ -1,5 +1,20 @@
 @charset "UTF-8";
 
+:root,
+:root[data-app-theme="dark"] {
+  --sorteo-summary-eyebrow: rgba(120, 195, 255, .92);
+  --sorteo-summary-copy: rgba(226, 232, 240, .95);
+  --sorteo-summary-value: #f8fbff;
+  --sorteo-summary-muted: #b9c9e6;
+}
+
+:root[data-app-theme="light"] {
+  --sorteo-summary-eyebrow: #2563eb;
+  --sorteo-summary-copy: #334155;
+  --sorteo-summary-value: #0f172a;
+  --sorteo-summary-muted: #475569;
+}
+
 .sorteo-page {
   display: grid;
   gap: 1.2rem;
@@ -149,7 +164,7 @@
   font-size: 0.8rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(120,195,255,.92);
+  color: var(--sorteo-summary-eyebrow);
 }
 
 .sorteo-card__list {
@@ -160,7 +175,13 @@
 .sorteo-info-line {
   margin: 0;
   font-size: 0.95rem;
-  color: rgba(226,232,240,.95);
+  line-height: 1.55;
+  color: var(--sorteo-summary-copy);
+}
+
+.sorteo-info-line span {
+  color: var(--sorteo-summary-value);
+  font-weight: 700;
 }
 
 .progress-wrapper {
@@ -172,6 +193,11 @@
   margin-top: 0.3rem;
   font-size: 0.85rem;
   color: var(--colour-muted);
+}
+
+.sorteo-card-premium .progress-text,
+.sorteo-card-premium .progress-tip-text {
+  color: var(--sorteo-summary-muted);
 }
 
 .sorteo-status,
@@ -1071,6 +1097,18 @@ body.socios-promo-open {
 :root[data-app-theme="light"] .sorteo-title {
   color: #0f172a;
   text-shadow: none;
+}
+
+:root[data-app-theme="light"] .sorteo-card__eyebrow {
+  color: var(--sorteo-summary-eyebrow);
+}
+
+:root[data-app-theme="light"] .sorteo-info-line {
+  color: var(--sorteo-summary-copy);
+}
+
+:root[data-app-theme="light"] .sorteo-info-line span {
+  color: var(--sorteo-summary-value);
 }
 
 :root[data-app-theme="light"] .sorteo-subtitle,
