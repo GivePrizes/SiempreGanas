@@ -55,18 +55,6 @@ const elNumbersCount = document.getElementById("numbersCount");
 const chatInputEl = document.getElementById("chatInput");
 const chatSendEl = document.getElementById("chatSend");
 const chatHintEl = document.getElementById("chatHint");
-const liveReferralCardEl = document.getElementById("liveReferralCard");
-const liveReferralStatusBadgeEl = document.getElementById("liveReferralStatusBadge");
-const liveReferralShareHintEl = document.getElementById("liveReferralShareHint");
-const liveReferralUserIdEl = document.getElementById("liveReferralUserId");
-const liveReferralAliasEl = document.getElementById("liveReferralAlias");
-const liveReferralReferrerEl = document.getElementById("liveReferralReferrer");
-const liveReferralApprovedCountEl = document.getElementById("liveReferralApprovedCount");
-const liveReferralPendingCountEl = document.getElementById("liveReferralPendingCount");
-const liveReferralPendingMoneyEl = document.getElementById("liveReferralPendingMoney");
-const liveReferralRulesEl = document.getElementById("liveReferralRules");
-const btnCopyLiveReferralId = document.getElementById("btnCopyLiveReferralId");
-const btnCopyLiveReferralLink = document.getElementById("btnCopyLiveReferralLink");
 
 if (focusTarget === "chat") {
   window.addEventListener("load", () => {
@@ -77,20 +65,6 @@ if (focusTarget === "chat") {
       }
     }, 220);
   }, { once: true });
-}
-
-if (btnCopyLiveReferralId) {
-  btnCopyLiveReferralId.addEventListener("click", () => {
-    const shareId = liveReferralPanelState?.share?.id || "";
-    copyText(shareId, "ID de referido copiado.");
-  });
-}
-
-if (btnCopyLiveReferralLink) {
-  btnCopyLiveReferralLink.addEventListener("click", () => {
-    const shareUrl = liveReferralPanelState?.share?.url || "";
-    copyText(shareUrl, "Enlace de referido copiado.");
-  });
 }
 
 const canvas = document.getElementById("wheel");
@@ -147,9 +121,6 @@ let chatWindowTimer = null;
 let pollTimer = null;
 let ruletaLiveEndpoint = "live";
 let zeroEdgeTriggered = false;
-let liveReferralPanelState = null;
-let liveReferralPanelTimer = null;
-let liveReferralRequestInFlight = false;
 let livePollErrorCount = 0;
 let lastNumbersFetchAtMs = 0;
 
@@ -167,8 +138,6 @@ const NUMBERS_REFRESH_WAITING_VISIBLE_MS = 20000;
 const NUMBERS_REFRESH_WAITING_HIDDEN_MS = 60000;
 const NUMBERS_REFRESH_ACTIVE_VISIBLE_MS = 45000;
 const NUMBERS_REFRESH_ACTIVE_HIDDEN_MS = 90000;
-const LIVE_REFERRAL_REFRESH_VISIBLE_MS = 30000;
-const LIVE_REFERRAL_REFRESH_HIDDEN_MS = 90000;
 const LIVE_POLL_MAX_BACKOFF_MS = 30000;
 const TWO_PI = Math.PI * 2;
 
@@ -191,35 +160,6 @@ function formatMoney(value){
   const amount = Number(value || 0);
   if (!Number.isFinite(amount)) return "$0";
   return `$${amount.toLocaleString("es-CO")}`;
-}
-
-async function copyText(text, successMessage){
-  const value = String(text || "").trim();
-  if (!value) return;
-
-  try{
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(value);
-    } else {
-      const input = document.createElement("textarea");
-      input.value = value;
-      input.setAttribute("readonly", "");
-      input.style.position = "absolute";
-      input.style.left = "-9999px";
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand("copy");
-      document.body.removeChild(input);
-    }
-
-    if (chatHintEl) {
-      chatHintEl.textContent = successMessage || "Copiado.";
-    }
-  } catch {
-    if (chatHintEl) {
-      chatHintEl.textContent = "No se pudo copiar automaticamente.";
-    }
-  }
 }
 
 function setEstadoBadge(txt){
@@ -291,158 +231,6 @@ function normalizeLivePayload(data){
     server_time: serverTimeIso,
     ganador,
   };
-}
-
-function getLiveRuleStatus(rule){
-  if (rule?.operacion_estado === "completada") {
-    return {
-      className: "is-complete",
-      badge: "Pagado",
-      text: "Ya alcanzaste esta meta y el pago fue marcado como completado.",
-    };
-  }
-
-  if (rule?.alcanzada) {
-    return {
-      className: "is-progress",
-      badge: "Pendiente",
-      text: "Ya cumpliste esta meta. El pago queda pendiente de gestion en admin cuentas.",
-    };
-  }
-
-  const faltan = Number(rule?.faltan || 0);
-  return {
-    className: "",
-    badge: "En progreso",
-    text: faltan > 0
-      ? `Te faltan ${faltan} referido${faltan === 1 ? "" : "s"} aprobado${faltan === 1 ? "" : "s"} para desbloquearla.`
-      : "Esta meta sigue en progreso.",
-  };
-}
-
-function renderLiveReferralRules(rules){
-  if (!liveReferralRulesEl) return;
-
-  const items = Array.isArray(rules) ? rules : [];
-  if (!items.length) {
-    liveReferralRulesEl.innerHTML = `
-      <article class="liveReferralRule">
-        <div class="liveReferralRule__head">
-          <div class="liveReferralRule__title">Aun no hay metas de referidos</div>
-          <span class="liveReferralRule__badge">Live</span>
-        </div>
-        <p class="liveReferralRule__text muted small">Cuando el admin configure las reglas del Live, las veras aqui.</p>
-      </article>
-    `;
-    return;
-  }
-
-  liveReferralRulesEl.innerHTML = items.map((rule) => {
-    const minimo = Number(rule.minimo_referidos || 0);
-    const progreso = Number(rule.progreso_actual || 0);
-    const pct = minimo > 0 ? Math.max(0, Math.min(100, (progreso / minimo) * 100)) : 0;
-    const status = getLiveRuleStatus(rule);
-
-    return `
-      <article class="liveReferralRule ${status.className}">
-        <div class="liveReferralRule__head">
-          <div class="liveReferralRule__title">${minimo} referidos</div>
-          <span class="liveReferralRule__badge">${status.badge}</span>
-        </div>
-        <div class="liveReferralRule__money">${formatMoney(rule.recompensa_monto)}</div>
-        <div class="liveReferralRule__bar" aria-hidden="true">
-          <span style="width:${pct}%"></span>
-        </div>
-        <p class="liveReferralRule__text muted small">
-          ${rule.descripcion || status.text}
-        </p>
-        <p class="liveReferralRule__text muted small">
-          Progreso: ${progreso}/${minimo}
-        </p>
-      </article>
-    `;
-  }).join("");
-}
-
-function renderLiveReferralPanel(data){
-  if (!liveReferralCardEl) return;
-
-  liveReferralPanelState = data || null;
-
-  if (!data?.enabled) {
-    liveReferralCardEl.classList.add("hidden");
-    return;
-  }
-
-  liveReferralCardEl.classList.remove("hidden");
-
-  const shareId = data?.share?.id || "--";
-  const shareAlias = data?.share?.alias ? `@${data.share.alias}` : "Sin alias publico";
-  const totalAprobados = Number(data?.progress?.total_aprobados || 0);
-  const totalPendientes = Number(data?.progress?.total_pendientes || 0);
-  const montoPendiente = Number(data?.progress?.monto_pendiente || 0);
-  const participaActivo = data?.participa_activo === true;
-  const referidoPor = data?.referido_por || null;
-
-  if (liveReferralStatusBadgeEl) {
-    liveReferralStatusBadgeEl.textContent = participaActivo ? "Activo" : "Pendiente";
-  }
-  if (liveReferralUserIdEl) {
-    liveReferralUserIdEl.textContent = shareId;
-  }
-  if (liveReferralAliasEl) {
-    liveReferralAliasEl.textContent = shareAlias;
-  }
-  if (liveReferralShareHintEl) {
-    const aliasNote = data?.share?.alias
-      ? ` Tambien pueden entrar con tu alias @${data.share.alias}.`
-      : "";
-    liveReferralShareHintEl.textContent = participaActivo
-      ? `Comparte tu ID ${shareId} o copia el enlace directo para sumar referidos aprobados.${aliasNote}`
-      : `Tu panel ya esta listo. Cuando te aprueben la compra, este progreso se movera en vivo.${aliasNote}`;
-  }
-  if (liveReferralApprovedCountEl) {
-    liveReferralApprovedCountEl.textContent = String(totalAprobados);
-  }
-  if (liveReferralPendingCountEl) {
-    liveReferralPendingCountEl.textContent = String(totalPendientes);
-  }
-  if (liveReferralPendingMoneyEl) {
-    liveReferralPendingMoneyEl.textContent = formatMoney(montoPendiente);
-  }
-  if (liveReferralReferrerEl) {
-    if (referidoPor) {
-      const who = referidoPor.alias ? `@${referidoPor.alias}` : `ID ${referidoPor.id}`;
-      liveReferralReferrerEl.textContent = `Entraste referido por ${who}.`;
-      liveReferralReferrerEl.classList.remove("hidden");
-    } else {
-      liveReferralReferrerEl.textContent = "";
-      liveReferralReferrerEl.classList.add("hidden");
-    }
-  }
-
-  renderLiveReferralRules(data?.progress?.reglas || []);
-}
-
-async function loadLiveReferralPanel(){
-  if (!sorteoId || !liveReferralCardEl) return;
-
-  try{
-    const res = await fetch(
-      `${apiBase}/api/participante/live-referral-panel?sorteoId=${encodeURIComponent(sorteoId)}`,
-      { headers: authHeaders() }
-    );
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    renderLiveReferralPanel(data);
-  } catch (_err) {
-    liveReferralCardEl.classList.add("hidden");
-  }
-}
-
-function startLiveReferralAutoRefresh(){
-  scheduleLiveReferralRefresh();
 }
 
 async function fetchRuletaPayload(endpoint){
@@ -531,35 +319,6 @@ function getNumbersRefreshIntervalMs(){
   return visible
     ? NUMBERS_REFRESH_ACTIVE_VISIBLE_MS
     : NUMBERS_REFRESH_ACTIVE_HIDDEN_MS;
-}
-
-function getLiveReferralRefreshMs(){
-  return isDocumentVisible()
-    ? LIVE_REFERRAL_REFRESH_VISIBLE_MS
-    : LIVE_REFERRAL_REFRESH_HIDDEN_MS;
-}
-
-function scheduleLiveReferralRefresh(delayMs = getLiveReferralRefreshMs()){
-  if (liveReferralPanelTimer) {
-    clearTimeout(liveReferralPanelTimer);
-  }
-
-  liveReferralPanelTimer = setTimeout(async () => {
-    if (liveReferralRequestInFlight) {
-      scheduleLiveReferralRefresh();
-      return;
-    }
-
-    liveReferralRequestInFlight = true;
-    try {
-      await loadLiveReferralPanel();
-    } catch (_) {
-      // nada
-    } finally {
-      liveReferralRequestInFlight = false;
-      scheduleLiveReferralRefresh();
-    }
-  }, delayMs + getPollJitterMs(delayMs));
 }
 
 function scheduleNextPoll(delayMs = getLivePollDelayMs()){
