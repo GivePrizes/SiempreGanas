@@ -16,6 +16,15 @@ const referralSummaryCards = document.getElementById('referralSummaryCards');
 const referralPendingCount = document.getElementById('referralPendingCount');
 const referralPendingList = document.getElementById('referralPendingList');
 const referralLeaderboard = document.getElementById('referralLeaderboard');
+const cuentasSidebar = document.getElementById('cuentasSidebar');
+const cuentasSidebarBackdrop = document.getElementById('cuentasSidebarBackdrop');
+const btnMenuCuentas = document.getElementById('btnMenuCuentas');
+const btnCerrarMenuCuentas = document.getElementById('btnCerrarMenuCuentas');
+const btnViewSocios = document.getElementById('btnViewSocios');
+const navEntregasCount = document.getElementById('navEntregasCount');
+const navSociosCount = document.getElementById('navSociosCount');
+const viewButtons = Array.from(document.querySelectorAll('[data-admin-view-target]'));
+const viewPanels = Array.from(document.querySelectorAll('[data-admin-view-panel]'));
 
 const liveOpModal = document.getElementById('liveOperacionModal');
 const liveOpModalSub = document.getElementById('liveOperacionModalSub');
@@ -33,6 +42,9 @@ const state = {
   q: '',
   open: new Set(),
   cache: [],
+  view: 'entregas',
+  referralData: null,
+  referralEnabled: false,
   suspendAutoRefreshUntil: 0,
   lastViewportAnchor: null,
 };
@@ -188,9 +200,100 @@ function toast(msg) {
   window.__toastTimer = setTimeout(() => t.classList.add('hidden'), 1800);
 }
 
+function getEntregasPendientesCount() {
+  return state.cache.reduce((acc, sorteo) => {
+    const participantes = Array.isArray(sorteo?.participantes) ? sorteo.participantes : [];
+    const liveOperaciones = Array.isArray(sorteo?.liveOperaciones) ? sorteo.liveOperaciones : [];
+
+    const pendientesParticipantes = participantes.filter(
+      (item) => String(item?.entregaEstado || 'pendiente') === 'pendiente'
+    ).length;
+
+    const pendientesLive = liveOperaciones.filter(
+      (item) => String(item?.estado || 'pendiente') === 'pendiente'
+    ).length;
+
+    return acc + pendientesParticipantes + pendientesLive;
+  }, 0);
+}
+
+function getSociosPendientesCount() {
+  return Number(state.referralData?.resumen?.pagos_pendientes || 0);
+}
+
+function updateNavigationBadges() {
+  if (navEntregasCount) {
+    navEntregasCount.textContent = String(getEntregasPendientesCount());
+  }
+
+  if (navSociosCount) {
+    navSociosCount.textContent = String(getSociosPendientesCount());
+  }
+}
+
+function closeSidebar() {
+  if (!cuentasSidebar) return;
+  cuentasSidebar.classList.remove('is-open');
+  cuentasSidebarBackdrop?.classList.add('hidden');
+}
+
+function openSidebar() {
+  if (!cuentasSidebar) return;
+  cuentasSidebar.classList.add('is-open');
+  cuentasSidebarBackdrop?.classList.remove('hidden');
+}
+
+function syncSociosNavigation() {
+  const enabled = state.referralEnabled;
+
+  if (btnViewSocios) {
+    btnViewSocios.hidden = !enabled;
+  }
+
+  if (!enabled && state.view === 'socios') {
+    state.view = 'entregas';
+  }
+}
+
+function setAdminView(nextView) {
+  const targetView = nextView === 'socios' && !state.referralEnabled
+    ? 'entregas'
+    : nextView;
+
+  state.view = targetView;
+
+  viewButtons.forEach((button) => {
+    const isActive = button.dataset.adminViewTarget === targetView;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+  });
+
+  viewPanels.forEach((panel) => {
+    const panelView = panel.dataset.adminViewPanel;
+    const shouldShow = panelView === targetView;
+
+    if (panel === referralProgramSection && !state.referralEnabled) {
+      panel.hidden = true;
+      return;
+    }
+
+    panel.hidden = !shouldShow;
+  });
+
+  if (targetView !== 'entregas') {
+    showEmpty(false);
+  } else {
+    const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
+    showEmpty(!hasVisible);
+  }
+
+  closeSidebar();
+}
+
 function showEmpty(show) {
   if (!elEmpty) return;
-  elEmpty.classList.toggle('hidden', !show);
+  const shouldShow = state.view === 'entregas' && show;
+  elEmpty.classList.toggle('hidden', !shouldShow);
 }
 
 function setEmptyMessage(title, subtitle) {
@@ -234,11 +337,14 @@ function renderReferralProgram(data) {
   }
 
   if (data?.enabled === false) {
-    referralProgramSection.hidden = true;
+    referralSummaryCards.innerHTML = '';
+    referralPendingList.innerHTML = '';
+    referralLeaderboard.innerHTML = '';
+    if (referralPendingCount) {
+      referralPendingCount.textContent = '0';
+    }
     return;
   }
-
-  referralProgramSection.hidden = false;
 
   const resumen = data?.resumen || {};
   const pagosPendientes = Array.isArray(data?.pagos_pendientes) ? data.pagos_pendientes : [];
@@ -365,15 +471,22 @@ async function cargarProgramaReferidos({ silent = false } = {}) {
     const data = await fetchJSON(`${API_URL}/api/admin/referidos/resumen`, {
       headers: { Authorization: `Bearer ${token}` },
     });
+    state.referralData = data || {};
+    state.referralEnabled = data?.enabled !== false;
     renderReferralProgram(data);
+    syncSociosNavigation();
+    updateNavigationBadges();
+    setAdminView(state.view);
   } catch (err) {
     console.error('[REFERIDOS] Error:', err);
     if (!silent) {
       toast(err.message || 'No se pudo cargar el programa de socios');
     }
-    if (referralProgramSection) {
-      referralProgramSection.hidden = true;
-    }
+    state.referralData = { enabled: false };
+    state.referralEnabled = false;
+    syncSociosNavigation();
+    updateNavigationBadges();
+    setAdminView(state.view);
   }
 }
 
@@ -406,6 +519,8 @@ async function cargarCuentas({ silent = false, force = false } = {}) {
     const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
     refreshEmptyStateCopy();
     showEmpty(!hasVisible);
+    updateNavigationBadges();
+    setAdminView(state.view);
 
     restoreViewportContext(viewportAnchor, prevScroll);
   } catch (e) {
@@ -418,6 +533,7 @@ async function cargarCuentas({ silent = false, force = false } = {}) {
       e.message || 'Revisa la conexion o refresca el panel.'
     );
     showEmpty(true);
+    updateNavigationBadges();
   } finally {
     state.lastViewportAnchor = null;
     if (!silent && btnRefrescar) {
@@ -513,6 +629,7 @@ function rerenderAndRefreshEmpty() {
   const hasVisible = !!(elAcordeon && elAcordeon.children && elAcordeon.children.length);
   refreshEmptyStateCopy();
   showEmpty(!hasVisible);
+  updateNavigationBadges();
 }
 
 function getLiveOperationDefaultDescription(tipo) {
@@ -631,6 +748,31 @@ function setupFilters() {
   btnRefrescar?.addEventListener('click', () => cargarCuentas({ silent: false, force: true }));
 }
 
+function setupViewNavigation() {
+  viewButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const nextView = button.dataset.adminViewTarget || 'entregas';
+      setAdminView(nextView);
+    });
+  });
+
+  btnMenuCuentas?.addEventListener('click', () => openSidebar());
+  btnCerrarMenuCuentas?.addEventListener('click', () => closeSidebar());
+  cuentasSidebarBackdrop?.addEventListener('click', () => closeSidebar());
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 980) {
+      closeSidebar();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && cuentasSidebar?.classList.contains('is-open')) {
+      closeSidebar();
+    }
+  });
+}
+
 function setupAcordeonToggle() {
   elAcordeon?.addEventListener('click', (ev) => {
     const btnEntregar = ev.target.closest('button[data-action="entregar"][data-entrega]');
@@ -725,11 +867,13 @@ async function init() {
   if (!user) return;
 
   document.body.classList.remove('auth-pending');
+  setupViewNavigation();
   setupFilters();
   setupAcordeonToggle();
   setupReferralActions();
   setupLiveOperacionModal();
   refreshEmptyStateCopy();
+  setAdminView(state.view);
   cargarProgramaReferidos({ silent: false });
   cargarCuentas({ silent: false, force: true });
   setInterval(() => {

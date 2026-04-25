@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../assets/css/common.css?v=20260422a">
   <link rel="stylesheet" href="../assets/css/admin.css?v=20260422a">
   <!-- ✅ CSS aislado de este micro-módulo -->
-  <link rel="stylesheet" href="../assets/css/cuentas-sorteo.css?v=20260422c">
+  <link rel="stylesheet" href="../assets/css/cuentas-sorteo.css?v=20260425a">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260401b">
   <style>
     body.auth-pending { visibility: hidden; }
@@ -24,7 +24,7 @@
       <div class="admin-header-left">
         <h1>Entrega de cuentas</h1>
         <span class="admin-subtitle">
-          Separa entregas normales y pagos del programa de socios Live, todo con trazabilidad clara.
+          Separa entregas por sorteo y pagos del programa de socios Live sin mezclar flujos.
         </span>
 
         <div class="admin-status-pill">
@@ -34,6 +34,10 @@
       </div>
 
       <div class="admin-header-right">
+        <button type="button" class="btn btn-secondary cuentas-menu-toggle" id="btnMenuCuentas">
+          ☰ Menu
+        </button>
+
         <button type="button" class="btn btn-secondary" id="btnRefrescar">
           🔄 Refrescar
         </button>
@@ -44,8 +48,53 @@
       </div>
     </header>
 
-    <main class="admin-main">
-      <section class="card cuentas-toolbar">
+    <main class="admin-main cuentas-shell">
+      <aside class="card cuentas-sidebar" id="cuentasSidebar" aria-label="Secciones de admin cuentas">
+        <div class="cuentas-sidebar__header">
+          <div>
+            <p class="cuentas-sidebar__eyebrow">Navegacion</p>
+            <h2>Admin cuentas</h2>
+          </div>
+
+          <button type="button" class="btn btn-secondary btn-sm cuentas-sidebar__close" id="btnCerrarMenuCuentas">
+            Cerrar
+          </button>
+        </div>
+
+        <nav class="cuentas-nav" aria-label="Vistas del panel">
+          <button
+            type="button"
+            class="cuentas-nav__item is-active"
+            data-admin-view-target="entregas"
+            aria-pressed="true"
+          >
+            <span class="cuentas-nav__label">Entregas por sorteo</span>
+            <span id="navEntregasCount" class="badge neutral">0</span>
+          </button>
+
+          <button
+            type="button"
+            class="cuentas-nav__item"
+            data-admin-view-target="socios"
+            id="btnViewSocios"
+            aria-pressed="false"
+            hidden
+          >
+            <span class="cuentas-nav__label">Socios Live</span>
+            <span id="navSociosCount" class="badge type-live">0</span>
+          </button>
+        </nav>
+
+        <div class="cuentas-sidebar__note">
+          Usa <strong>Entregas por sorteo</strong> para cuentas, bonus y operaciones Live.
+          Usa <strong>Socios Live</strong> solo para pagos del programa de referidos.
+        </div>
+      </aside>
+
+      <div class="cuentas-sidebar-backdrop hidden" id="cuentasSidebarBackdrop"></div>
+
+      <div class="cuentas-content">
+      <section class="card cuentas-toolbar" data-admin-view-panel="entregas">
         <div class="toolbar-row">
           <div class="toolbar-left">
             <label class="label" for="q">Buscar</label>
@@ -73,26 +122,26 @@
           </div>
 
           <div class="mini-note mini-note--soft">
-            Filtra rapido si hoy estas entregando pantallas, combos, juegos, beneficios de Live o bonus gratis.
+            Filtra rapido la cola de trabajo por tipo de sorteo.
           </div>
         </div>
 
         <div class="mini-note">
-          Tip: marca “Entregada” solo cuando ya enviaste la cuenta. Queda registro.
+          Marca “Entregada” solo cuando la cuenta ya fue enviada.
         </div>
       </section>
 
-      <section id="referralProgramSection" class="card referral-program-section" style="margin-top:18px;" hidden>
+      <section id="referralProgramSection" class="card referral-program-section cuentas-section" data-admin-view-panel="socios" hidden>
         <div class="card-title-row">
           <div>
             <h2>🤝 Programa de socios</h2>
             <p class="text-muted">
-              Aqui controlas solo pagos del programa de socios Live y ves rapido quien ya desbloqueo nivel.
+              Pagos y progreso del programa de socios Live.
             </p>
           </div>
 
           <div class="card-title-right text-muted mini-hint">
-            Lectura resumida · sin recalcular todo a cada pantalla.
+            Vista resumida.
           </div>
         </div>
 
@@ -120,17 +169,17 @@
         </div>
       </section>
 
-      <section class="card" style="margin-top:18px;">
+      <section class="card cuentas-section" data-admin-view-panel="entregas">
         <div class="card-title-row">
           <div>
             <h2>📦 Entregas pendientes por sorteo</h2>
             <p class="text-muted">
-              Cada ronda se despliega por aparte. Aqui ves entregas normales, beneficios Live y bonus de fidelidad sin mezclar el programa de socios.
+              Entregas, beneficios Live y bonus organizados por sorteo.
             </p>
           </div>
 
           <div class="card-title-right text-muted mini-hint">
-            Auto-refresh suave (sin saltos).
+            Auto-refresh suave.
           </div>
         </div>
 
@@ -143,6 +192,7 @@
           <div id="emptySub" class="empty-sub">Cuando apruebes pagos o se desbloquee un bonus, apareceran aqui como pendientes.</div>
         </div>
       </section>
+      </div>
     </main>
   </div>
 
@@ -199,7 +249,7 @@
   <script src="../assets/js/theme.js?v=20260401b"></script>
 
   <!-- ✅ Entry point del micro-módulo -->
-<script type="module" src="../assets/js/admin/cuentas/index.js?v=20260422c"></script>
+<script type="module" src="../assets/js/admin/cuentas/index.js?v=20260425a"></script>
 </body>
 </html>
 
