@@ -469,29 +469,6 @@
   color: #f2f0eb;
 }
 
-.sorteos-empty-state {
-  margin-top: 1rem;
-  padding: 1.15rem 1.2rem;
-  border-radius: 1rem;
-  border: 1px dashed rgba(146,193,255,.24);
-  background: linear-gradient(180deg, rgba(96,165,250,.08), rgba(255,255,255,.02));
-  display: grid;
-  gap: 0.45rem;
-}
-
-.sorteos-empty-state__title {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--colour-text);
-}
-
-.sorteos-empty-state__text {
-  margin: 0;
-  color: var(--colour-muted);
-  font-size: 0.92rem;
-  line-height: 1.5;
-}
-
 .sorteos-pagination {
   margin-top: 1.1rem;
   display: flex;
@@ -636,7 +613,6 @@
 :root[data-app-theme="light"] .app-subtitle,
 :root[data-app-theme="light"] .stat-top,
 :root[data-app-theme="light"] .sorteos-entry-hint,
-:root[data-app-theme="light"] .sorteos-empty-state__text,
 :root[data-app-theme="light"] .sorteos-meta-pill--soft {
   color: #64748b;
 }
@@ -646,7 +622,6 @@
 :root[data-app-theme="light"] .sorteos-meta-pill,
 :root[data-app-theme="light"] .sorteos-field,
 :root[data-app-theme="light"] .sorteos-filter-block,
-:root[data-app-theme="light"] .sorteos-empty-state,
 :root[data-app-theme="light"] .dashboard-skeleton-card {
   border-color: rgba(37,99,235,.12);
   background: rgba(255,255,255,.96);

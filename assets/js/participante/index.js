@@ -17,10 +17,6 @@ const dom = {
   estadoFiltros: document.getElementById('estadoSorteoFiltros'),
   resultadosInfo: document.getElementById('sorteosResultadosInfo'),
   paginaInfo: document.getElementById('sorteosPaginaInfo'),
-  emptyState: document.getElementById('sorteosEmptyState'),
-  emptyTitle: document.getElementById('sorteosEmptyTitle'),
-  emptyText: document.getElementById('sorteosEmptyText'),
-  resetFilters: document.getElementById('resetSorteosFilters'),
   pagination: document.getElementById('sorteosPagination'),
   prevPage: document.getElementById('sorteosPrevPage'),
   nextPage: document.getElementById('sorteosNextPage'),
@@ -391,7 +387,6 @@ function renderLoadingCards() {
     </article>
   `).join('');
 
-  if (dom.emptyState) dom.emptyState.hidden = true;
   if (dom.pagination) dom.pagination.hidden = true;
   if (dom.resultadosInfo) dom.resultadosInfo.textContent = 'Cargando rondas...';
   if (dom.paginaInfo) dom.paginaInfo.textContent = 'Preparando catalogo';
@@ -496,42 +491,6 @@ function getPreparedVisibleSorteos() {
   return sortPreparedSorteos(filtered);
 }
 
-function getEmptyStateCopy() {
-  if (!state.sorteos.length) {
-    return {
-      title: 'No hay sorteos por ahora',
-      text: 'Cuando abramos nuevas rondas, apareceran aqui listas para filtrar y explorar.',
-      showReset: false,
-    };
-  }
-
-  if (state.search) {
-    return {
-      title: 'No encontramos coincidencias',
-      text: 'Prueba con otra palabra o limpia los filtros para volver a ver todas las rondas.',
-      showReset: true,
-    };
-  }
-
-  return {
-    title: 'Ninguna ronda coincide con esos filtros',
-    text: 'Cambia el tipo, el estado o el orden para encontrar otras opciones activas.',
-    showReset: true,
-  };
-}
-
-function updateEmptyState(show, copy = getEmptyStateCopy()) {
-  if (!dom.emptyState) return;
-
-  dom.emptyState.hidden = !show;
-
-  if (!show) return;
-
-  if (dom.emptyTitle) dom.emptyTitle.textContent = copy.title;
-  if (dom.emptyText) dom.emptyText.textContent = copy.text;
-  if (dom.resetFilters) dom.resetFilters.hidden = !copy.showReset;
-}
-
 function updateResultsMeta({ total, startIndex, endIndex, totalPages }) {
   if (dom.resultadosInfo) {
     if (!total) {
@@ -611,16 +570,6 @@ function setPage(nextPage) {
   renderSorteosView();
 }
 
-function resetDashboardFilters() {
-  state.sorteoTipo = 'todos';
-  state.sorteoEstado = 'todos';
-  state.search = '';
-  state.sort = 'destacados';
-  state.currentPage = 1;
-  syncControlsWithState();
-  renderSorteosView();
-}
-
 function renderSorteosView() {
   if (!dom.sorteoGrid) return;
 
@@ -644,12 +593,10 @@ function renderSorteosView() {
   if (!pageItems.length) {
     dom.sorteoGrid.classList.remove('is-loading');
     dom.sorteoGrid.innerHTML = '';
-    updateEmptyState(true, getEmptyStateCopy());
     renderPagination(0);
     return;
   }
 
-  updateEmptyState(false);
   dom.sorteoGrid.classList.remove('is-loading');
   dom.sorteoGrid.innerHTML = pageItems
     .map((item, index) => renderSorteoCard(item, index))
@@ -708,10 +655,6 @@ function initDashboardControls() {
     renderSorteosView();
   });
 
-  dom.resetFilters?.addEventListener('click', () => {
-    resetDashboardFilters();
-  });
-
   dom.prevPage?.addEventListener('click', () => {
     if (state.currentPage <= 1) return;
     setPage(state.currentPage - 1);
@@ -739,13 +682,6 @@ function showLoadError() {
   if (dom.pagination) dom.pagination.hidden = true;
   if (dom.resultadosInfo) dom.resultadosInfo.textContent = 'Sin datos';
   if (dom.paginaInfo) dom.paginaInfo.textContent = 'Pagina 1 de 1';
-
-  updateEmptyState(true, {
-    title: 'No se pudieron cargar las rondas',
-    text: 'Revisa tu conexion o actualiza la pagina para intentarlo de nuevo.',
-    showReset: false,
-  });
-
 }
 
 async function cargarSorteosActivos({ silent = false } = {}) {
