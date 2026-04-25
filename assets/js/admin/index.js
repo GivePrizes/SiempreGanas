@@ -1,9 +1,141 @@
-// assets/js/admin/index.js
 import { cargarComprobantes } from './comprobantes.js?v=20260416b';
-import { cargarStats } from './stats.js';
 import { cargarSorteosAdmin } from './sorteos-admin.js?v=20260415a';
 
-// Al cargar el panel admin, verificamos que haya token y que sea admin
+const ADMIN_PANEL_VIEW_STORAGE_KEY = 'mathome:admin-panel:view:v1';
+const VIEW_PAGOS = 'pagos';
+const VIEW_RONDAS = 'rondas';
+const PANEL_REFRESH_MS = 300000;
+
+const shellDom = {
+  toggle: document.getElementById('adminShellToggle'),
+  sidebar: document.getElementById('adminShellSidebar'),
+  backdrop: document.getElementById('adminShellBackdrop'),
+  navPagos: document.getElementById('adminNavPagos'),
+  navRondas: document.getElementById('adminNavRondas'),
+  navCuentas: document.getElementById('adminNavCuentas'),
+  navSections: Array.from(document.querySelectorAll('[data-admin-view-target]')),
+  sections: Array.from(document.querySelectorAll('[data-admin-view]')),
+};
+
+const panelState = {
+  puedePagos: false,
+  currentView: VIEW_PAGOS,
+};
+
+let panelRefreshTimer = null;
+
+function readSavedView() {
+  try {
+    const saved = localStorage.getItem(ADMIN_PANEL_VIEW_STORAGE_KEY);
+    return saved === VIEW_RONDAS ? VIEW_RONDAS : VIEW_PAGOS;
+  } catch {
+    return VIEW_PAGOS;
+  }
+}
+
+function persistView(view) {
+  try {
+    localStorage.setItem(ADMIN_PANEL_VIEW_STORAGE_KEY, view);
+  } catch {
+    // noop
+  }
+}
+
+function setShellOpen(open) {
+  const isOpen = Boolean(open);
+  document.body.classList.toggle('admin-shell-open', isOpen);
+  shellDom.toggle?.setAttribute('aria-expanded', String(isOpen));
+  if (shellDom.backdrop) {
+    shellDom.backdrop.hidden = !isOpen;
+  }
+}
+
+function loadCurrentView() {
+  if (panelState.currentView === VIEW_PAGOS && panelState.puedePagos) {
+    cargarComprobantes();
+    return;
+  }
+
+  cargarSorteosAdmin();
+}
+
+function setAdminView(nextView, { persist = true, closeShell = true } = {}) {
+  const requestedView = nextView === VIEW_RONDAS ? VIEW_RONDAS : VIEW_PAGOS;
+  const finalView = !panelState.puedePagos && requestedView === VIEW_PAGOS
+    ? VIEW_RONDAS
+    : requestedView;
+
+  panelState.currentView = finalView;
+
+  shellDom.sections.forEach((section) => {
+    section.hidden = section.dataset.adminView !== finalView;
+  });
+
+  shellDom.navSections.forEach((button) => {
+    button.classList.toggle('is-active', button.dataset.adminViewTarget === finalView);
+  });
+
+  if (persist) {
+    persistView(finalView);
+  }
+
+  if (closeShell) {
+    setShellOpen(false);
+  }
+
+  loadCurrentView();
+}
+
+function initAdminShellNavigation() {
+  shellDom.toggle?.addEventListener('click', () => {
+    const isOpen = document.body.classList.contains('admin-shell-open');
+    setShellOpen(!isOpen);
+  });
+
+  shellDom.backdrop?.addEventListener('click', () => {
+    setShellOpen(false);
+  });
+
+  shellDom.navPagos?.addEventListener('click', () => {
+    setAdminView(VIEW_PAGOS);
+  });
+
+  shellDom.navRondas?.addEventListener('click', () => {
+    setAdminView(VIEW_RONDAS);
+  });
+
+  shellDom.navCuentas?.addEventListener('click', () => {
+    setShellOpen(false);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      setShellOpen(false);
+    }
+  });
+}
+
+function startPanelAutoRefresh() {
+  if (panelRefreshTimer) {
+    clearInterval(panelRefreshTimer);
+  }
+
+  panelRefreshTimer = setInterval(() => {
+    if (document.hidden) return;
+    loadCurrentView();
+  }, PANEL_REFRESH_MS);
+
+  window.addEventListener('focus', () => {
+    loadCurrentView();
+  });
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      loadCurrentView();
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const token = localStorage.getItem('token');
   const user = typeof window.requireAuthUser === 'function'
@@ -16,36 +148,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // ✅ Permisos
   const permisos = Array.isArray(user.permisos) ? user.permisos : [];
   const puedePagos = permisos.includes('pagos:aprobar');
   const puedeCuentas = permisos.includes('cuentas:gestionar');
+  panelState.puedePagos = puedePagos;
 
-  // ✅ Si es admin SOLO de cuentas, lo mandamos a su panel dedicado
   if (puedeCuentas && !puedePagos) {
     location.href = 'cuentas-sorteo.html';
     return;
   }
 
-  // ✅ Si NO tiene pagos: ocultamos bloques y NO llamamos endpoints de pagos (evita 403 spam)
   if (!puedePagos) {
-    const bloqueComprobantes = document.getElementById('bloqueComprobantes');
-    if (bloqueComprobantes) bloqueComprobantes.style.display = 'none';
-
-    const bloqueStats = document.getElementById('bloqueStats');
-    if (bloqueStats) bloqueStats.style.display = 'none';
-
-  } else {
-    // ✅ Admin pagos: carga normal
-    cargarComprobantes();
-    setInterval(cargarComprobantes, 300000); // 5 min
-
-    cargarStats();
-    setInterval(cargarStats, 300000); // 5 min
-
+    document.getElementById('bloqueComprobantes')?.setAttribute('hidden', 'hidden');
+    shellDom.navPagos?.setAttribute('hidden', 'hidden');
   }
 
-  // ✅ Sorteos (solo lectura) para admins que vean este panel
-  cargarSorteosAdmin();
-  setInterval(cargarSorteosAdmin, 300000); // 5 min (silencioso con fade)
+  if (!puedeCuentas) {
+    shellDom.navCuentas?.setAttribute('hidden', 'hidden');
+  }
+
+  initAdminShellNavigation();
+
+  const preferredView = readSavedView();
+  setAdminView(preferredView, { persist: false, closeShell: false });
+  startPanelAutoRefresh();
 });

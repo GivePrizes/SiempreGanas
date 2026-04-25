@@ -9,7 +9,7 @@
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <!-- CSS del sistema -->
   <link rel="stylesheet" href="../assets/css/common.css?v=20260422a">
-  <link rel="stylesheet" href="../assets/css/admin.css?v=20260422a">
+  <link rel="stylesheet" href="../assets/css/admin.css?v=20260425a">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260425a">
 </head>
 <body class="admin-body">
@@ -20,7 +20,7 @@
       <div class="admin-header-left">
         <h1>Panel de Administración</h1>
         <span class="admin-subtitle">
-          Control total de rondas, comprobantes y resultados en un solo lugar.
+          Organiza pagos y rondas sin mezclar todo en una sola vista.
         </span>
 
         <!-- Cinta de estado / confianza -->
@@ -29,12 +29,15 @@
           <span>Sistema en línea · Validaciones manuales para máxima transparencia</span>
         </div>
       </div>
-      <div class="admin-header-right">
+      <div class="admin-header-right admin-header-right--shell">
         <button
+          id="adminShellToggle"
           type="button"
-          class="btn btn-secondary"
-          onclick="location.href='crear-sorteo.html'">
-          ➕ Crear ronda
+          class="btn btn-secondary admin-shell-toggle has-ico"
+          aria-controls="adminShellSidebar"
+          aria-expanded="false">
+          <span class="btn-ico" aria-hidden="true">☰</span>
+          <span class="btn-label">Menú</span>
         </button>
         <button
           type="button"
@@ -45,21 +48,73 @@
       </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="admin-main">
+    <div class="admin-shell">
+      <aside id="adminShellSidebar" class="admin-shell-sidebar" aria-label="Navegación admin">
+        <div class="admin-shell-sidebar__head">
+          <p class="admin-shell-sidebar__eyebrow">Cabina</p>
+          <h2>Accesos rápidos</h2>
+          <p class="admin-shell-sidebar__hint">Entra a una sola tarea por vez y evita ruido visual.</p>
+        </div>
+
+        <nav class="admin-shell-nav">
+          <button
+            id="adminNavPagos"
+            type="button"
+            class="admin-shell-link is-active"
+            data-admin-view-target="pagos">
+            <span class="admin-shell-link__icon" aria-hidden="true">📑</span>
+            <span class="admin-shell-link__copy">
+              <strong>Validar pagos</strong>
+              <small>Aprobar o rechazar comprobantes</small>
+            </span>
+          </button>
+
+          <button
+            id="adminNavRondas"
+            type="button"
+            class="admin-shell-link"
+            data-admin-view-target="rondas">
+            <span class="admin-shell-link__icon" aria-hidden="true">🎯</span>
+            <span class="admin-shell-link__copy">
+              <strong>Rondas activas</strong>
+              <small>Seguimiento y acceso a cabina</small>
+            </span>
+          </button>
+
+          <a id="adminNavCrear" class="admin-shell-link admin-shell-link--route" href="crear-sorteo.html">
+            <span class="admin-shell-link__icon" aria-hidden="true">➕</span>
+            <span class="admin-shell-link__copy">
+              <strong>Crear ronda</strong>
+              <small>Nueva ronda o edición</small>
+            </span>
+          </a>
+
+          <a id="adminNavCuentas" class="admin-shell-link admin-shell-link--route" href="cuentas-sorteo.html">
+            <span class="admin-shell-link__icon" aria-hidden="true">💼</span>
+            <span class="admin-shell-link__copy">
+              <strong>Socios Live</strong>
+              <small>Pagos y control operativo</small>
+            </span>
+          </a>
+        </nav>
+      </aside>
+
+      <button id="adminShellBackdrop" type="button" class="admin-shell-backdrop" hidden aria-label="Cerrar menú"></button>
+
+      <!-- CONTENIDO PRINCIPAL -->
+      <main class="admin-main admin-main--shell">
 
       <!-- 📑 COMPROBANTES PENDIENTES -->
-      <section id="bloqueComprobantes" class="card">
+      <section id="bloqueComprobantes" class="card admin-view-section" data-admin-view="pagos">
         <div class="card-title-row">
           <div>
             <h2>📑 Comprobantes pendientes</h2>
             <p class="text-muted">
-              Cada comprobante aprobado activa participaciones reales para los jugadores.
-              Revisa monto, fecha y referencia antes de aceptar.
+              Revisa el pago, confirma el soporte y aprueba solo cuando todo esté claro.
             </p>
           </div>
           <div class="card-title-right text-muted mini-hint">
-            Tip: una bandeja “en cero” antes de iniciar rondas transmite seriedad.
+            Bandeja de aprobación manual.
           </div>
         </div>
 
@@ -69,17 +124,16 @@
       </section>
 
       <!-- 🎯 SORTEOS ACTIVOS -->
-      <section class="card" style="margin-top:18px;">
+      <section id="bloqueSorteos" class="card admin-view-section" data-admin-view="rondas" hidden>
         <div class="card-title-row">
           <div>
             <h2>🎯 Rondas activas</h2>
             <p class="text-muted">
-              Observa el avance de cada ronda, llena cupos y pasa a la ruleta cuando
-              todo esté validado.
+              Mira el avance, detecta qué ronda ya está lista y entra a operarla desde la cabina.
             </p>
           </div>
           <div class="card-title-right text-muted mini-hint">
-            Recomendado: anuncia con tiempo qué ronda será la próxima en pasar a resultado en vivo.
+            Vista operativa de rondas.
           </div>
         </div>
 
@@ -90,7 +144,8 @@
         </div>
       </section>
 
-    </main>
+      </main>
+    </div>
   </div>
 
   <!-- Toast de feedback -->
@@ -101,7 +156,7 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260425a"></script>
-  <script type="module" src="../assets/js/admin/index.js?v=20260416b"></script>
+  <script type="module" src="../assets/js/admin/index.js?v=20260425a"></script>
 </body>
 </html>
 
