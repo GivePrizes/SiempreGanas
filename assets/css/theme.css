@@ -129,15 +129,19 @@ body {
   transition: background-color .22s ease, color .22s ease;
 }
 
+body.has-app-theme-dock {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
+}
+
 .app-theme-dock {
   position: fixed;
-  left: 18px;
-  bottom: 18px;
+  left: 14px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
   z-index: 9998;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px;
+  justify-content: center;
+  padding: 6px;
   border-radius: 999px;
   border: 1px solid var(--app-theme-dock-border);
   background: var(--app-theme-dock-bg);
@@ -146,44 +150,61 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
-.app-theme-dock__label {
-  font-size: .75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  color: var(--app-theme-dock-copy);
-  padding: 0 6px 0 4px;
-}
-
-.app-theme-dock__btn {
-  border: 1px solid transparent;
+.app-theme-dock__toggle {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 1px solid rgba(255,255,255,.06);
   background: transparent;
   color: var(--app-theme-dock-copy);
   border-radius: 999px;
-  padding: 8px 14px;
-  font-size: .82rem;
-  font-weight: 700;
   cursor: pointer;
   transition: background-color .2s ease, color .2s ease, border-color .2s ease, transform .2s ease, box-shadow .2s ease;
 }
 
-.app-theme-dock__btn:hover {
+.app-theme-dock__toggle:hover {
   background: var(--app-theme-dock-hover);
 }
 
-.app-theme-dock__btn:focus-visible {
+.app-theme-dock__toggle:focus-visible {
   outline: none;
   border-color: var(--colour-primary);
   box-shadow: 0 0 0 4px rgba(59,130,246,.16);
 }
 
-.app-theme-dock__btn[aria-pressed="true"],
-.app-theme-dock__btn.is-active {
+.app-theme-dock__toggle[aria-pressed="true"],
+.app-theme-dock__toggle.is-active {
   background: var(--app-theme-dock-active-bg);
   border-color: var(--app-theme-dock-active-border);
   color: var(--app-theme-dock-active-copy);
   box-shadow: 0 10px 18px rgba(37,99,235,.18);
   transform: translateY(-1px);
+}
+
+.app-theme-dock__icon {
+  position: absolute;
+  inset: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(.84);
+  transition: opacity .18s ease, transform .18s ease;
+}
+
+.app-theme-dock__icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+:root[data-app-theme="light"] .app-theme-dock__icon--moon,
+:root[data-app-theme="dark"] .app-theme-dock__icon--sun {
+  opacity: 1;
+  transform: scale(1);
 }
 
 body.admin-body {
@@ -391,24 +412,23 @@ body.admin-body {
 }
 
 @media (max-width: 640px) {
+  body.has-app-theme-dock {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 82px);
+  }
+
   .app-theme-dock {
     left: 12px;
-    right: 76px;
-    bottom: 14px;
-    gap: 4px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
     padding: 6px;
-    transform: none;
-    width: auto;
-    justify-content: center;
   }
 
-  .app-theme-dock__label {
-    display: none;
+  .app-theme-dock__toggle {
+    width: 42px;
+    height: 42px;
   }
 
-  .app-theme-dock__btn {
-    flex: 1 1 0;
-    padding: 6px 10px;
-    font-size: .78rem;
+  .app-theme-dock__icon svg {
+    width: 17px;
+    height: 17px;
   }
 }
