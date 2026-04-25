@@ -62,13 +62,13 @@ const sinComprobante = document.getElementById('sinComprobante');
 const pagadorDatos = document.getElementById('pagadorDatos');
 const inputPagadorNombre = document.getElementById('inputPagadorNombre');
 const inputPagadorTelefono = document.getElementById('inputPagadorTelefono');
-const inputReferidoCodigo = document.getElementById('inputReferidoCodigo');
-const referralEntryCard = document.getElementById('referralEntryCard');
+let inputReferidoCodigo = document.getElementById('inputReferidoCodigo');
+let referralEntryCard = document.getElementById('referralEntryCard');
 const postConfirmActions = document.getElementById('postConfirmActions');
 const btnPostLive = document.getElementById('btnPostLive');
 const paymentStepAccordion = document.getElementById('paymentStepAccordion');
-const sociosPromoModal = document.getElementById('sociosPromoModal');
-const btnCerrarSociosPromo = document.getElementById('btnCerrarSociosPromo');
+let sociosPromoModal = document.getElementById('sociosPromoModal');
+let btnCerrarSociosPromo = document.getElementById('btnCerrarSociosPromo');
 
 const SORTEO_AUTO_REFRESH_MS = 12000;
 
@@ -86,6 +86,7 @@ let previousApprovedNumbers = new Set();
 const referralCodeFromUrl = String(params.get('ref') || '').trim();
 let sociosPromoOpenedAt = 0;
 let sociosPromoAutoOpened = false;
+let sociosPromoModalReady = false;
 
 function buildLiveRoomUrl({ focusChat = false } = {}) {
   const nextUrl = new URL('ruleta-live.html', window.location.href);
@@ -193,26 +194,52 @@ function mostrarToast(msg) {
 }
 
 function isLiveReferralEnabled(sorteo = sorteoActual) {
+  if (!sorteo) return false;
+
+  if (typeof sorteo?.referral_program_enabled === 'boolean') {
+    return sorteo.referral_program_enabled;
+  }
+
   return String(sorteo?.modalidad || '').trim().toLowerCase() === 'live';
+}
+
+function destroyReferralExperience() {
+  if (inputReferidoCodigo) {
+    inputReferidoCodigo.value = '';
+  }
+
+  if (referralEntryCard?.isConnected) {
+    referralEntryCard.remove();
+  }
+  referralEntryCard = null;
+  inputReferidoCodigo = null;
+
+  if (sociosPromoModal) {
+    sociosPromoModal.classList.add('hidden');
+    sociosPromoModal.setAttribute('aria-hidden', 'true');
+  }
+  document.body.classList.remove('socios-promo-open');
+
+  if (sociosPromoModal?.isConnected) {
+    sociosPromoModal.remove();
+  }
+  sociosPromoModal = null;
+  btnCerrarSociosPromo = null;
+  sociosPromoAutoOpened = false;
+  sociosPromoOpenedAt = 0;
+  sociosPromoModalReady = false;
 }
 
 function syncReferralExperienceVisibility() {
   const enabled = isLiveReferralEnabled();
 
-  if (referralEntryCard) {
-    referralEntryCard.hidden = !enabled;
+  if (!enabled) {
+    destroyReferralExperience();
+    return false;
   }
 
-  if (!enabled) {
-    if (inputReferidoCodigo) {
-      inputReferidoCodigo.value = '';
-    }
-
-    if (sociosPromoModal) {
-      sociosPromoModal.classList.add('hidden');
-      sociosPromoModal.setAttribute('aria-hidden', 'true');
-      document.body.classList.remove('socios-promo-open');
-    }
+  if (referralEntryCard) {
+    referralEntryCard.hidden = false;
   }
 
   return enabled;
@@ -242,14 +269,19 @@ function openSociosPromo() {
 }
 
 function initSociosPromoModal() {
-  if (!sociosPromoModal) return;
+  if (!sociosPromoModal || sociosPromoModalReady) return;
+  sociosPromoModalReady = true;
 
   sociosPromoModal.querySelectorAll('[data-socios-promo-close]').forEach((element) => {
     element.addEventListener('click', () => closeSociosPromo());
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !sociosPromoModal.classList.contains('hidden')) {
+    if (
+      event.key === 'Escape'
+      && sociosPromoModal
+      && !sociosPromoModal.classList.contains('hidden')
+    ) {
       closeSociosPromo();
     }
   });
@@ -648,6 +680,12 @@ async function cargarSorteo({ silent = false } = {}) {
       ? sorteoActual.numeros_ocupados
       : [];
     const referralEnabled = syncReferralExperienceVisibility();
+    if (referralEnabled) {
+      initSociosPromoModal();
+      if (inputReferidoCodigo && referralCodeFromUrl) {
+        inputReferidoCodigo.value = referralCodeFromUrl.replace(/^@+/, '').trim();
+      }
+    }
     updateQuickAccessButtons({ hasApprovedNumbers: misNumerosEnSorteoCard?.style.display !== 'none' });
 
     // Hero
@@ -974,8 +1012,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    initSociosPromoModal();
-
     if (paymentStepAccordion) {
       paymentStepAccordion.addEventListener('toggle', () => {
         if (paymentStepAccordion.open) {
@@ -985,9 +1021,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderMetodoPagoOptions();
-    if (inputReferidoCodigo && referralCodeFromUrl) {
-      inputReferidoCodigo.value = referralCodeFromUrl.replace(/^@+/, '').trim();
-    }
     cargarSorteo();
     cargarMisNumerosDelSorteo();
     startSorteoAutoRefresh();
