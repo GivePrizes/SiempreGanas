@@ -9,7 +9,7 @@
   <script src="../assets/js/theme-init.js?v=20260401b"></script>
   <link rel="stylesheet" href="../assets/css/common.css?v=20260422a">
   <link rel="stylesheet" href="../assets/css/participant-shared.css?v=20260416a">
-  <link rel="stylesheet" href="../assets/css/participant-dashboard.css?v=20260425a">
+  <link rel="stylesheet" href="../assets/css/participant-dashboard.css?v=20260425b">
   <link rel="stylesheet" href="../assets/css/theme.css?v=20260425a">
 </head>
 <body>
@@ -90,65 +90,25 @@
         </p>
       </div>
 
-      <div class="sorteos-discovery-panel">
-        <div class="sorteos-entry-toolbar sorteos-entry-toolbar--pro">
-          <div class="sorteos-entry-copy">
-            <span class="sorteos-entry-label">Explora por filtros</span>
-            <p class="sorteos-entry-hint">
-              Busca rondas, filtra por pantallas, combos o juegos y navega por paginas sin tragarte una lista eterna.
-            </p>
-          </div>
-
-          <div class="sorteos-discovery-meta">
-            <span id="sorteosResultadosInfo" class="sorteos-meta-pill" aria-live="polite">0 rondas</span>
-            <span id="sorteosPaginaInfo" class="sorteos-meta-pill sorteos-meta-pill--soft" aria-live="polite">Pagina 1 de 1</span>
+      <div class="sorteos-filter-groups">
+        <div class="sorteos-filter-block">
+          <span class="sorteos-filter-block__label">Tipo</span>
+          <div class="mis-numeros-filtros" id="tipoSorteoFiltros" aria-label="Filtrar sorteos por tipo">
+            <button type="button" class="chip-filtro chip-filtro--activo" data-tipo-sorteo="todos">Todos</button>
+            <button type="button" class="chip-filtro" data-tipo-sorteo="pantalla">Pantallas</button>
+            <button type="button" class="chip-filtro" data-tipo-sorteo="combo">Combos</button>
+            <button type="button" class="chip-filtro" data-tipo-sorteo="juegos">Juegos</button>
+            <button type="button" class="chip-filtro" data-tipo-sorteo="live">Lives</button>
           </div>
         </div>
 
-        <div class="sorteos-filtros-grid">
-          <label class="sorteos-field">
-            <span class="sorteos-field__label">Buscar ronda</span>
-            <input
-              id="sorteoSearchInput"
-              class="sorteos-search-input"
-              type="search"
-              inputmode="search"
-              autocomplete="off"
-              placeholder="Busca por descripcion, premio o tipo"
-            />
-          </label>
-
-          <label class="sorteos-field sorteos-field--compact">
-            <span class="sorteos-field__label">Ordenar</span>
-            <select id="sorteoSortSelect" class="sorteos-sort-select">
-              <option value="destacados">Destacadas primero</option>
-              <option value="avance">Mas avanzadas</option>
-              <option value="precio_bajo">Menor precio</option>
-              <option value="ultimos_cupos">Ultimos cupos</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="sorteos-filter-groups">
-          <div class="sorteos-filter-block">
-            <span class="sorteos-filter-block__label">Tipo</span>
-            <div class="mis-numeros-filtros" id="tipoSorteoFiltros" aria-label="Filtrar sorteos por tipo">
-              <button type="button" class="chip-filtro chip-filtro--activo" data-tipo-sorteo="todos">Todos</button>
-              <button type="button" class="chip-filtro" data-tipo-sorteo="pantalla">Pantallas</button>
-              <button type="button" class="chip-filtro" data-tipo-sorteo="combo">Combos</button>
-              <button type="button" class="chip-filtro" data-tipo-sorteo="juegos">Juegos</button>
-              <button type="button" class="chip-filtro" data-tipo-sorteo="live">Lives</button>
-            </div>
-          </div>
-
-          <div class="sorteos-filter-block">
-            <span class="sorteos-filter-block__label">Estado</span>
-            <div class="mis-numeros-filtros" id="estadoSorteoFiltros" aria-label="Filtrar sorteos por estado">
-              <button type="button" class="chip-filtro chip-filtro--activo" data-estado-sorteo="todos">Todas</button>
-              <button type="button" class="chip-filtro" data-estado-sorteo="comprables">Para comprar</button>
-              <button type="button" class="chip-filtro" data-estado-sorteo="casi_lleno">Casi llenas</button>
-              <button type="button" class="chip-filtro" data-estado-sorteo="vivo">En vivo</button>
-            </div>
+        <div class="sorteos-filter-block">
+          <span class="sorteos-filter-block__label">Estado</span>
+          <div class="mis-numeros-filtros" id="estadoSorteoFiltros" aria-label="Filtrar sorteos por estado">
+            <button type="button" class="chip-filtro chip-filtro--activo" data-estado-sorteo="todos">Todas</button>
+            <button type="button" class="chip-filtro" data-estado-sorteo="comprables">Para comprar</button>
+            <button type="button" class="chip-filtro" data-estado-sorteo="casi_lleno">Casi llenas</button>
+            <button type="button" class="chip-filtro" data-estado-sorteo="vivo">En vivo</button>
           </div>
         </div>
       </div>
@@ -189,7 +149,7 @@
   <script src="../assets/js/config.js"></script>
   <script src="../assets/js/auth.js?v=20260331a"></script>
   <script src="../assets/js/theme.js?v=20260425a"></script>
-  <script type="module" src="../assets/js/participante/index.js?v=20260425a"></script>
+  <script type="module" src="../assets/js/participante/index.js?v=20260425b"></script>
 </body>
 </html>
 

@@ -6,17 +6,12 @@ const SORTEO_TIPO_DEFAULT = 'pantalla';
 const SORTEO_MODALIDAD_DEFAULT = 'normal';
 const VALID_TIPOS = new Set(['todos', 'pantalla', 'combo', 'juegos', 'live']);
 const VALID_ESTADOS = new Set(['todos', 'comprables', 'casi_lleno', 'vivo']);
-const VALID_ORDENES = new Set(['destacados', 'avance', 'precio_bajo', 'ultimos_cupos']);
 const DASHBOARD_AUTO_REFRESH_MS = 15000;
 
 const dom = {
   sorteoGrid: document.getElementById('sorteosActivos'),
-  searchInput: document.getElementById('sorteoSearchInput'),
-  sortSelect: document.getElementById('sorteoSortSelect'),
   tipoFiltros: document.getElementById('tipoSorteoFiltros'),
   estadoFiltros: document.getElementById('estadoSorteoFiltros'),
-  resultadosInfo: document.getElementById('sorteosResultadosInfo'),
-  paginaInfo: document.getElementById('sorteosPaginaInfo'),
   pagination: document.getElementById('sorteosPagination'),
   prevPage: document.getElementById('sorteosPrevPage'),
   nextPage: document.getElementById('sorteosNextPage'),
@@ -26,8 +21,6 @@ const dom = {
 const state = {
   sorteoTipo: 'todos',
   sorteoEstado: 'todos',
-  search: '',
-  sort: 'destacados',
   currentPage: 1,
   sorteos: [],
 };
@@ -55,15 +48,6 @@ function sanitizeFilter(value, validValues, fallback) {
   return validValues.has(value) ? value : fallback;
 }
 
-function normalizeSearchText(value) {
-  return String(value || '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
 function readInitialDashboardState() {
   const params = new URLSearchParams(window.location.search);
 
@@ -77,12 +61,6 @@ function readInitialDashboardState() {
     VALID_ESTADOS,
     'todos'
   );
-  state.sort = sanitizeFilter(
-    params.get('orden') || 'destacados',
-    VALID_ORDENES,
-    'destacados'
-  );
-  state.search = String(params.get('q') || '').trim();
   state.currentPage = sanitizePage(params.get('page'));
 }
 
@@ -91,8 +69,6 @@ function syncDashboardStateToUrl() {
 
   if (state.sorteoTipo !== 'todos') params.set('tipo', state.sorteoTipo);
   if (state.sorteoEstado !== 'todos') params.set('estado', state.sorteoEstado);
-  if (state.sort !== 'destacados') params.set('orden', state.sort);
-  if (state.search) params.set('q', state.search);
   if (state.currentPage > 1) params.set('page', String(state.currentPage));
 
   const nextQuery = params.toString();
@@ -144,10 +120,6 @@ function getTipoProductoLabel(value) {
   return 'Pantalla';
 }
 
-function getModalidadLabel(value) {
-  return normalizarModalidad(value) === 'live' ? 'Live' : 'Normal';
-}
-
 function formatCurrency(value) {
   const amount = Number(value || 0);
   if (!Number.isFinite(amount)) return '0';
@@ -195,21 +167,9 @@ function buildSorteoItem(sorteo, index) {
   const tipoProducto = normalizarTipoProducto(sorteo.tipo_producto);
   const modalidad = normalizarModalidad(sorteo.modalidad);
   const tipoLabel = getTipoProductoLabel(tipoProducto);
-  const modalidadLabel = getModalidadLabel(modalidad);
   const metrics = getSorteoMetrics(sorteo);
   const precioRaw = Number(sorteo.precio_numero ?? sorteo.precio ?? 0) || 0;
   const precioText = formatCurrency(precioRaw);
-
-  const searchIndex = normalizeSearchText([
-    sorteo.descripcion,
-    sorteo.premio,
-    tipoLabel,
-    modalidadLabel,
-    metrics.statusLabel,
-    precioText,
-    `ronda ${sorteo.id}`,
-    `sorteo ${sorteo.id}`,
-  ].join(' '));
 
   return {
     sorteo,
@@ -217,11 +177,9 @@ function buildSorteoItem(sorteo, index) {
     tipoProducto,
     modalidad,
     tipoLabel,
-    modalidadLabel,
     metrics,
     precioRaw,
     precioText,
-    searchIndex,
   };
 }
 
@@ -388,8 +346,6 @@ function renderLoadingCards() {
   `).join('');
 
   if (dom.pagination) dom.pagination.hidden = true;
-  if (dom.resultadosInfo) dom.resultadosInfo.textContent = 'Cargando rondas...';
-  if (dom.paginaInfo) dom.paginaInfo.textContent = 'Preparando catalogo';
 }
 
 function updateTipoSorteoUI() {
@@ -411,22 +367,8 @@ function updateEstadoSorteoUI() {
 }
 
 function syncControlsWithState() {
-  if (dom.searchInput && dom.searchInput.value !== state.search) {
-    dom.searchInput.value = state.search;
-  }
-
-  if (dom.sortSelect) {
-    dom.sortSelect.value = state.sort;
-  }
-
   updateTipoSorteoUI();
   updateEstadoSorteoUI();
-}
-
-function matchesSearch(item) {
-  const query = normalizeSearchText(state.search);
-  if (!query) return true;
-  return item.searchIndex.includes(query);
 }
 
 function matchesTipo(item) {
@@ -448,29 +390,6 @@ function getDestacadoPriority(item) {
 function sortPreparedSorteos(items) {
   const sorted = [...items];
 
-  if (state.sort === 'avance') {
-    sorted.sort((a, b) => {
-      return (b.metrics.porcentaje - a.metrics.porcentaje) || (a.index - b.index);
-    });
-    return sorted;
-  }
-
-  if (state.sort === 'precio_bajo') {
-    sorted.sort((a, b) => {
-      return (a.precioRaw - b.precioRaw) || (a.index - b.index);
-    });
-    return sorted;
-  }
-
-  if (state.sort === 'ultimos_cupos') {
-    sorted.sort((a, b) => {
-      return (a.metrics.disponibles - b.metrics.disponibles)
-        || (b.metrics.porcentaje - a.metrics.porcentaje)
-        || (a.index - b.index);
-    });
-    return sorted;
-  }
-
   sorted.sort((a, b) => {
     return (getDestacadoPriority(b) - getDestacadoPriority(a))
       || (b.metrics.porcentaje - a.metrics.porcentaje)
@@ -485,24 +404,10 @@ function getPreparedVisibleSorteos() {
   const prepared = state.sorteos.map((sorteo, index) => buildSorteoItem(sorteo, index));
 
   const filtered = prepared.filter((item) => {
-    return matchesTipo(item) && matchesEstado(item) && matchesSearch(item);
+    return matchesTipo(item) && matchesEstado(item);
   });
 
   return sortPreparedSorteos(filtered);
-}
-
-function updateResultsMeta({ total, startIndex, endIndex, totalPages }) {
-  if (dom.resultadosInfo) {
-    if (!total) {
-      dom.resultadosInfo.textContent = '0 rondas';
-    } else {
-      dom.resultadosInfo.textContent = `Mostrando ${startIndex}-${endIndex} de ${total} rondas`;
-    }
-  }
-
-  if (dom.paginaInfo) {
-    dom.paginaInfo.textContent = `Pagina ${state.currentPage} de ${totalPages}`;
-  }
 }
 
 function buildPaginationItems(totalPages, currentPage) {
@@ -583,12 +488,9 @@ function renderSorteosView() {
 
   const start = (state.currentPage - 1) * currentItemsPerPage;
   const pageItems = visibleItems.slice(start, start + currentItemsPerPage);
-  const startIndex = totalItems ? start + 1 : 0;
-  const endIndex = totalItems ? start + pageItems.length : 0;
 
   syncControlsWithState();
   syncDashboardStateToUrl();
-  updateResultsMeta({ total: totalItems, startIndex, endIndex, totalPages });
 
   if (!pageItems.length) {
     dom.sorteoGrid.classList.remove('is-loading');
@@ -639,22 +541,6 @@ function initDashboardControls() {
     renderSorteosView();
   });
 
-  dom.searchInput?.addEventListener('input', () => {
-    state.search = dom.searchInput.value.trim();
-    state.currentPage = 1;
-    renderSorteosView();
-  });
-
-  dom.sortSelect?.addEventListener('change', () => {
-    state.sort = sanitizeFilter(
-      dom.sortSelect.value || 'destacados',
-      VALID_ORDENES,
-      'destacados'
-    );
-    state.currentPage = 1;
-    renderSorteosView();
-  });
-
   dom.prevPage?.addEventListener('click', () => {
     if (state.currentPage <= 1) return;
     setPage(state.currentPage - 1);
@@ -680,8 +566,6 @@ function showLoadError() {
   }
 
   if (dom.pagination) dom.pagination.hidden = true;
-  if (dom.resultadosInfo) dom.resultadosInfo.textContent = 'Sin datos';
-  if (dom.paginaInfo) dom.paginaInfo.textContent = 'Pagina 1 de 1';
 }
 
 async function cargarSorteosActivos({ silent = false } = {}) {
