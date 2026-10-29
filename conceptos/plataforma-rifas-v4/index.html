@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#090909" />
+  <meta name="description" content="Plataforma de rifas online con premios, selección de números y experiencia digital para clientes finales." />
+  <title>Plataforma de Rifas — Neon Orange V4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>:root{
+  --bg:#07111f;
+  --bg-2:#0b1630;
+  --surface:rgba(255,255,255,.08);
+  --surface-2:rgba(255,255,255,.12);
+  --surface-3:rgba(255,255,255,.16);
+  --line:rgba(255,255,255,.12);
+  --text:#f6f8ff;
+  --muted:#afbbd8;
+  --soft:#dbe6ff;
+  --accent:#8b5cf6;
+  --accent-2:#22d3ee;
+  --accent-3:#ec4899;
+  --success:#72f0c1;
+  --warning:#ffd36e;
+  --shadow:0 24px 80px rgba(0,0,0,.24);
+  --radius-xl:32px;
+  --radius-lg:24px;
+  --radius-md:18px;
+  --radius-sm:14px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left, rgba(139,92,246,.22), transparent 28%),
+    radial-gradient(circle at 80% 15%, rgba(34,211,238,.18), transparent 24%),
+    radial-gradient(circle at 50% 110%, rgba(236,72,153,.16), transparent 22%),
+    linear-gradient(180deg, #08101d 0%, #0a1430 42%, #08111f 100%);
+  color:var(--text);
+  font:16px/1.6 "Inter",system-ui,sans-serif;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.08));
+  pointer-events:none;
+}
+button,input,textarea,select{font:inherit}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+h1,h2,h3,h4,p{margin:0 0 1rem}
+.shell{max-width:1280px;padding:0 28px;margin:0 auto}
+.ambient{position:fixed;border-radius:999px;filter:blur(90px);pointer-events:none;opacity:.7}
+.ambient-a{width:320px;height:320px;background:rgba(139,92,246,.28);left:-80px;top:140px}
+.ambient-b{width:280px;height:280px;background:rgba(34,211,238,.18);right:-60px;top:220px}
+.ambient-c{width:260px;height:260px;background:rgba(236,72,153,.15);left:40%;bottom:100px}
+.site-header{position:sticky;top:0;z-index:40;background:rgba(7,17,31,.55);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06)}
+.header-inner{height:84px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:12px;min-width:220px}
+.brand-mark{width:44px;height:44px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.04));box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 10px 40px rgba(0,0,0,.18);font-size:20px;color:#fff}
+.brand-copy{display:flex;flex-direction:column;line-height:1.1}
+.brand-copy strong{font-size:1rem;letter-spacing:.02em}
+.brand-copy small{color:var(--muted);font-size:.74rem;margin-top:4px}
+.main-nav{display:flex;align-items:center;gap:28px;color:#dbe7ff}
+.main-nav a{opacity:.82;transition:opacity .2s, transform .2s}
+.main-nav a:hover{opacity:1;transform:translateY(-1px)}
+.header-actions{display:flex;align-items:center;gap:14px}
+.ghost-link{padding:12px 16px;border-radius:999px;background:rgba(255,255,255,.05);backdrop-filter:blur(12px);color:var(--soft)}
+.menu-toggle{display:none;border:0;background:rgba(255,255,255,.08);color:#fff;padding:10px 13px;border-radius:14px}
+.hero{padding:72px 0 48px}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:26px;align-items:stretch}
+.glass{
+  background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,.18);
+  backdrop-filter: blur(20px);
+}
+.hero-copy,.hero-panel,.card,.detail-panel,.info-card,.trust-card,.admin-card,.purchase-panel,.numbers-panel,.stat-card,.how-card,.empty-state,.table-card{border-radius:var(--radius-xl)}
+.hero-copy{padding:48px}
+.kicker{display:inline-flex;gap:10px;align-items:center;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.06);color:#d9e3ff;font-size:.85rem;margin-bottom:24px}
+.kicker::before{content:"";width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--accent-2),var(--accent))}
+.hero h1{font-size:clamp(2.8rem, 7vw, 5.7rem);line-height:.96;letter-spacing:-.05em;margin-bottom:18px}
+.hero h1 span{display:block;background:linear-gradient(90deg, #fff, #d4dfff 42%, #91efff 70%, #f8b4ff 100%);-webkit-background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:620px;font-size:1.03rem}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:52px;padding:0 22px;border-radius:999px;
+  color:#eef5ff;background:rgba(255,255,255,.08);border:0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 10px 30px rgba(0,0,0,.14);
+  backdrop-filter:blur(14px);transition:transform .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.13);box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 18px 40px rgba(0,0,0,.18)}
+.btn.primary{background:linear-gradient(135deg, rgba(139,92,246,.42), rgba(34,211,238,.28));color:#fff}
+.btn.subtle{background:rgba(255,255,255,.04);color:#dce8ff}
+.hero-tags{display:flex;gap:12px;flex-wrap:wrap;margin-top:34px}
+.hero-tags span,.meta-pill,.filter-pill,.mini-chip,.badge{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.06);color:#dce4f8;font-size:.88rem}
+.hero-panel{padding:18px;display:flex;flex-direction:column;gap:14px}
+.featured-visual{border-radius:28px;overflow:hidden;min-height:490px;position:relative;background:linear-gradient(135deg, rgba(139,92,246,.22), rgba(34,211,238,.18));display:flex;align-items:flex-end}
+.featured-visual img{width:100%;height:100%;object-fit:cover;min-height:490px;mix-blend-mode:screen;opacity:.96}
+.featured-overlay{position:absolute;inset:auto 0 0 0;padding:28px;background:linear-gradient(180deg, transparent, rgba(5,9,20,.86) 48%, rgba(5,9,20,.96) 100%)}
+.featured-overlay small{color:#d5ddf4;opacity:.86}
+.featured-overlay h3{font-size:2rem;line-height:1.05;margin:.35rem 0 .7rem}
+.overlay-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.overlay-grid .stat{padding:14px;border-radius:20px;background:rgba(255,255,255,.07)}
+.overlay-grid strong{display:block;font-size:1.15rem;margin-bottom:3px}
+.section{padding:34px 0 96px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:26px}
+.section-head h2{font-size:clamp(2rem,5vw,3.35rem);line-height:1;letter-spacing:-.04em;margin-bottom:.4rem}
+.section-head p{color:var(--muted);max-width:620px}
+.catalog-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.filter-pill{cursor:pointer;transition:background .18s, transform .18s}
+.filter-pill.active,.filter-pill:hover{background:rgba(255,255,255,.13);transform:translateY(-1px)}
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{padding:18px;position:relative;overflow:hidden}
+.card-media{border-radius:24px;overflow:hidden;background:linear-gradient(135deg, rgba(139,92,246,.22), rgba(34,211,238,.12));height:255px;display:flex;align-items:center;justify-content:center}
+.card-media img{width:100%;height:100%;object-fit:cover;mix-blend-mode:screen}
+.card-body{padding:16px 4px 6px}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.card-top .badge{font-size:.76rem;padding:8px 12px}
+.badge.ok{background:rgba(114,240,193,.14);color:#d4fff0}
+.badge.hot{background:rgba(236,72,153,.14);color:#ffd5ea}
+.card h3{font-size:1.4rem;line-height:1.1;margin-bottom:8px}
+.card p{color:var(--muted);font-size:.95rem}
+.card-data{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0}
+.card-data .item{padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.05)}
+.card-data small,.trust-card small,.how-card small,.stat-card small,.overlay-grid small{display:block;color:var(--muted);margin-bottom:4px}
+.card-data strong{font-size:1.06rem}
+.progress{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.progress span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg, var(--accent), var(--accent-2))}
+.card-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px}
+.card-price{font-weight:700;font-size:1.18rem}
+.simple-link{color:#dce6ff;opacity:.9}
+.simple-link:hover{opacity:1}
+.info-grid,.trust-grid,.stat-grid,.how-grid{display:grid;gap:18px}
+.info-grid{grid-template-columns:repeat(3,1fr);margin-top:28px}
+.info-card,.trust-card,.stat-card,.how-card{padding:24px}
+.info-card h3,.trust-card h3,.how-card h3{font-size:1.08rem;margin-bottom:8px}
+.info-card p,.trust-card p,.how-card p{color:var(--muted);font-size:.95rem}
+.how-grid{grid-template-columns:repeat(4,1fr)}
+.how-card .step{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:14px;background:rgba(255,255,255,.07);margin-bottom:16px;font-weight:700}
+.trust-grid{grid-template-columns:repeat(3,1fr)}
+.detail-page{padding:56px 0 90px}
+.back-link{display:inline-flex;margin-bottom:22px;color:#dce6ff;opacity:.86}
+.detail-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:24px}
+.detail-panel,.purchase-panel,.numbers-panel{padding:22px}
+.detail-main-image{border-radius:28px;overflow:hidden;height:420px;background:linear-gradient(135deg, rgba(139,92,246,.18), rgba(34,211,238,.1));display:flex;align-items:center;justify-content:center}
+.detail-main-image img{width:100%;height:100%;object-fit:cover;mix-blend-mode:screen}
+.detail-copy{margin-top:18px}
+.detail-copy h1{font-size:clamp(2.2rem,4vw,3.5rem);line-height:1.02;margin-bottom:12px}
+.detail-copy p{color:var(--muted)}
+.meta-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 22px}
+.meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.meta-grid .box{padding:18px;border-radius:22px;background:rgba(255,255,255,.05)}
+.meta-grid strong{display:block;font-size:1.15rem}
+.purchase-panel h2,.numbers-panel h2{font-size:1.55rem;margin-bottom:8px}
+.purchase-panel p,.numbers-panel p{color:var(--muted)}
+.checkout-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}
+.checkout-summary .box{padding:16px;border-radius:20px;background:rgba(255,255,255,.05)}
+.selected-list{display:flex;flex-wrap:wrap;gap:10px;min-height:42px;margin:12px 0 18px}
+.selected-tag{padding:9px 13px;border-radius:999px;background:rgba(139,92,246,.22)}
+.empty-label{color:var(--muted)}
+.numbers-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:18px 0}
+.numbers-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.number{border:0;border-radius:18px;min-height:56px;background:rgba(255,255,255,.06);color:#eff5ff;box-shadow: inset 0 1px 0 rgba(255,255,255,.14);transition:transform .16s, background .16s, opacity .16s}
+.number:hover{transform:translateY(-2px);background:rgba(255,255,255,.12)}
+.number.selected{background:linear-gradient(135deg, rgba(139,92,246,.52), rgba(34,211,238,.34));color:white}
+.number.blocked{background:rgba(255,255,255,.03);opacity:.38;text-decoration:line-through;pointer-events:none}
+.inline-note{padding:15px 16px;border-radius:18px;background:rgba(255,255,255,.05);color:var(--muted);font-size:.94rem}
+.admin-page{padding:48px 0 90px}
+.admin-shell{display:grid;grid-template-columns:270px 1fr;gap:22px}
+.sidebar{padding:18px;border-radius:28px;position:sticky;top:104px;height:max-content}
+.sidebar a{display:flex;padding:12px 14px;border-radius:16px;color:#dbe6ff;margin-top:8px;background:rgba(255,255,255,.04)}
+.sidebar a.active,.sidebar a:hover{background:rgba(255,255,255,.1)}
+.admin-content{display:grid;gap:18px}
+.admin-head{padding:24px}
+.stat-grid{grid-template-columns:repeat(4,1fr)}
+.stat-card strong{display:block;font-size:1.8rem;margin-top:2px}
+.table-card{padding:20px}
+.table-wrap{overflow:auto}
+.data-table{width:100%;border-collapse:collapse}
+.data-table th,.data-table td{padding:14px 10px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;vertical-align:top}
+.data-table th{color:#d6e1fb;font-size:.9rem}
+.muted{color:var(--muted)}
+.empty-state{padding:28px}
+.empty-state p{color:var(--muted)}
+.form-card{padding:24px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:18px}
+.field label{display:block;margin-bottom:8px;color:#dde8ff}
+.field.full{grid-column:1/-1}
+.field input,.field textarea,.field select{width:100%;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.05);color:white;padding:15px 16px;border-radius:16px;outline:none}
+.field textarea{min-height:126px;resize:vertical}
+.form-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.toast{position:fixed;right:20px;bottom:20px;z-index:100;min-width:230px;max-width:360px;padding:14px 16px;border-radius:18px;background:rgba(12,18,34,.9);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);color:white;opacity:0;pointer-events:none;transform:translateY(14px);transition:.22s}
+.toast.show{opacity:1;transform:translateY(0)}
+.site-footer{padding:26px 0 42px;border-top:1px solid rgba(255,255,255,.08);background:rgba(5,9,19,.28);backdrop-filter:blur(12px)}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:30px;padding-top:18px}
+.footer-grid p,.footer-grid span,.footer-grid a{color:var(--muted);display:block;margin-bottom:8px}
+.footer-grid strong{display:block;margin-bottom:12px}
+.footer-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.08);margin-top:18px;padding-top:18px;color:var(--muted);font-size:.9rem}
+@media (max-width: 1100px){
+  .hero-grid,.detail-grid,.admin-shell{grid-template-columns:1fr}
+  .card-grid,.info-grid,.trust-grid,.how-grid,.stat-grid{grid-template-columns:repeat(2,1fr)}
+  .sidebar{position:static}
+}
+@media (max-width: 820px){
+  .main-nav{display:none;position:absolute;top:84px;left:16px;right:16px;flex-direction:column;align-items:flex-start;padding:16px;border-radius:24px;background:rgba(7,17,31,.92);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08)}
+  .main-nav.open{display:flex}
+  .menu-toggle{display:block}
+  .ghost-link{display:none}
+  .overlay-grid,.meta-grid,.checkout-summary,.numbers-grid,.form-grid{grid-template-columns:repeat(2,1fr)}
+  .section-head{flex-direction:column;align-items:flex-start}
+  .footer-grid{grid-template-columns:1fr}
+}
+@media (max-width: 560px){
+  .shell{padding:0 18px}
+  .hero-copy,.hero-panel,.card,.detail-panel,.purchase-panel,.numbers-panel,.info-card,.trust-card,.how-card,.stat-card,.admin-head,.table-card,.form-card,.empty-state{padding:18px}
+  .card-grid,.info-grid,.trust-grid,.how-grid,.stat-grid,.meta-grid,.checkout-summary,.numbers-grid{grid-template-columns:1fr}
+  .hero-actions,.hero-tags,.catalog-filters,.form-actions{flex-direction:column;align-items:stretch}
+  .btn{width:100%}
+}
+
+/* ─────────────────────────────────────────────────────────────
+   V4 / BLACK × NEON ORANGE
+   Minimalist transparent controls: no permanent button frames.
+   The glowing edge is a subtle bottom light, amplified on hover.
+   ───────────────────────────────────────────────────────────── */
+:root{
+  color-scheme:dark;
+  --bg:#070707;
+  --bg-2:#10100e;
+  --surface:rgba(20,19,17,.72);
+  --surface-2:rgba(27,25,22,.84);
+  --surface-3:rgba(34,29,25,.9);
+  --line:rgba(255,133,46,.12);
+  --text:#f8f7f4;
+  --muted:#aaa7a1;
+  --soft:#f2eae1;
+  --accent:#ff6b1a;
+  --accent-2:#ff9e3d;
+  --accent-3:#e7440c;
+  --success:#8fe5bc;
+  --warning:#ffcc70;
+  --shadow:0 30px 70px rgba(0,0,0,.3);
+  --radius-xl:25px;
+  --radius-lg:19px;
+  --radius-md:14px;
+  --radius-sm:10px;
+}
+html{background:#080807;scroll-padding-top:100px}
+body{
+  background:
+    radial-gradient(ellipse 52% 35% at 89% 6%, rgba(255,103,9,.21), transparent 72%),
+    radial-gradient(ellipse 48% 34% at 5% 34%, rgba(160,52,4,.15), transparent 78%),
+    radial-gradient(ellipse 54% 24% at 78% 77%, rgba(255,123,16,.1), transparent 80%),
+    linear-gradient(145deg,#080808 0%,#0f0e0b 46%,#080807 100%);
+  letter-spacing:-.012em;
+}
+body::before{
+  background:
+    linear-gradient(rgba(255,132,23,.017) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,132,23,.017) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:linear-gradient(180deg,rgba(0,0,0,.75),transparent 86%);
+}
+.ambient{filter:blur(110px);opacity:.6}
+.ambient-a{background:rgba(239,82,4,.27);left:-130px;top:180px}
+.ambient-b{background:rgba(255,120,25,.23);right:-110px;top:330px}
+.ambient-c{background:rgba(212,63,9,.2);left:38%;bottom:0}
+.site-header{background:rgba(8,8,8,.75);border-bottom:1px solid rgba(255,123,25,.07)}
+.brand-mark{
+  border-radius:13px;
+  background:linear-gradient(135deg,rgba(255,118,14,.22),rgba(13,12,10,.78));
+  color:#ff8a33;
+  text-shadow:0 0 16px rgba(255,98,0,.6);
+  box-shadow:0 0 30px rgba(255,85,0,.09),inset 0 1px 0 rgba(255,149,53,.2);
+}
+.brand-copy small,.main-nav{color:#bdb3aa}
+.main-nav a:hover,.ghost-link:hover,.simple-link:hover{color:#ff9951}
+.ghost-link{border-radius:12px;background:transparent;color:#ffc18e;box-shadow:inset 0 -1px rgba(255,117,23,.52)}
+.ghost-link:hover{background:rgba(255,99,12,.075);box-shadow:inset 0 -2px rgba(255,137,27,.95),0 7px 22px rgba(255,90,0,.12)}
+.menu-toggle{border:0;border-radius:12px;background:rgba(255,130,32,.12);color:#fff}
+.hero{padding:68px 0 52px}
+.hero-grid{grid-template-columns:1.07fr .93fr;gap:20px}
+.glass{
+  border:0;
+  background:linear-gradient(142deg,rgba(33,29,24,.82),rgba(14,14,13,.8) 65%,rgba(16,15,13,.7));
+  box-shadow:0 26px 70px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.055);
+  backdrop-filter:blur(16px);
+}
+.hero-copy{position:relative;overflow:hidden;padding:52px 47px}
+.hero-copy::after{
+  content:"";position:absolute;right:-80px;top:-130px;width:390px;height:390px;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,97,0,.16),transparent 68%);
+}
+.kicker{background:rgba(255,114,22,.075);color:#ffae70;border-radius:11px;font-size:.76rem;letter-spacing:.1em;font-weight:700}
+.kicker::before{background:#ff7520;box-shadow:0 0 0 4px rgba(255,109,15,.09),0 0 15px #ff6b1aaa}
+.hero h1{font-size:clamp(2.95rem,6.1vw,5.5rem);font-weight:800;letter-spacing:-.063em;line-height:1.02}
+.hero h1 span{
+  background:linear-gradient(100deg,#ffb164 0%,#ff7419 50%,#ff4b16 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 70px rgba(255,88,4,.19);
+}
+.hero p,.section-head p,.card p,.info-card p,.trust-card p,.how-card p,.detail-copy p,.purchase-panel p,.numbers-panel p,.empty-state p{color:var(--muted)}
+/* Transparent neon action language: no stroke boxes, no pill frames. */
+.btn{
+  position:relative;isolation:isolate;
+  border:0!important;border-radius:12px;
+  background:rgba(255,110,21,.055);color:#f8f2ea;
+  padding:0 22px;min-height:51px;font-weight:650;
+  box-shadow:inset 0 -1px 0 rgba(255,132,30,.48);
+  backdrop-filter:blur(15px);
+  overflow:hidden;
+  transition:transform .22s ease,background .22s ease,color .22s ease,box-shadow .22s ease;
+}
+.btn::after{
+  content:"";position:absolute;left:16%;right:16%;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,125,17,.95),transparent);
+  filter:drop-shadow(0 0 7px rgba(255,115,0,.78));
+  transition:left .2s,right .2s,height .2s,filter .2s;
+  pointer-events:none;
+}
+.btn:hover{
+  transform:translateY(-2px);color:#fff;
+  background:rgba(255,101,12,.12);
+  box-shadow:inset 0 -1px rgba(255,131,22,.86),0 11px 30px rgba(255,82,0,.14),0 0 22px rgba(255,85,0,.075);
+}
+.btn:hover::after{left:6%;right:6%;height:2px;filter:drop-shadow(0 0 11px rgba(255,120,0,1))}
+.btn.primary{
+  background:linear-gradient(125deg,rgba(255,104,20,.19),rgba(255,97,8,.06));
+  color:#ffdfc4;
+  box-shadow:inset 0 -1px 0 rgba(255,133,26,.7),0 7px 26px rgba(231,70,0,.09);
+}
+.btn.primary:hover{background:linear-gradient(120deg,rgba(255,122,21,.27),rgba(255,84,6,.1));color:#fff;box-shadow:inset 0 -1px rgba(255,131,22,1),0 10px 34px rgba(255,88,0,.22),0 0 26px rgba(255,88,0,.14)}
+.btn.subtle{background:transparent;color:#d5c7b9;box-shadow:inset 0 -1px rgba(255,255,255,.12)}
+.btn.subtle::after{background:linear-gradient(90deg,transparent,rgba(255,120,30,.46),transparent)}
+.btn.subtle:hover{color:#ffd2aa;background:rgba(255,104,16,.06)}
+.btn:disabled,.btn[disabled]{opacity:.38;cursor:not-allowed;box-shadow:none;transform:none}
+.btn:disabled::after{opacity:0}
+.btn:focus-visible,.number:focus-visible,.filter-pill:focus-visible,.ghost-link:focus-visible,.menu-toggle:focus-visible,
+.sidebar a:focus-visible,.main-nav a:focus-visible{outline:2px solid #ff963b;outline-offset:4px}
+.hero-tags span,.meta-pill,.mini-chip,.badge{
+  background:rgba(255,112,23,.07);color:#dfc4af;
+  border-radius:11px;
+}
+.hero-tags span{padding:9px 12px;font-size:.81rem}
+.hero-panel{padding:13px}
+.featured-visual{border-radius:19px;background:radial-gradient(circle at 62% 39%,rgba(255,115,21,.24),transparent 51%),linear-gradient(135deg,#1e1611,#090909)}
+.featured-visual img{filter:saturate(.75) contrast(1.11);opacity:.9}
+.featured-overlay{background:linear-gradient(180deg,transparent,rgba(6,6,6,.68) 33%,rgba(6,6,6,.97) 100%)}
+.featured-overlay small{color:#ffac75}
+.overlay-grid .stat{background:rgba(255,130,32,.075);border-radius:14px}
+.section{padding-bottom:80px}
+.section-head h2{letter-spacing:-.05em}
+.catalog-filters{gap:9px}
+.filter-pill{
+  border:0;border-radius:9px;cursor:pointer;
+  padding:10px 16px;background:transparent;color:#b5aaa0;
+  box-shadow:inset 0 -1px rgba(255,255,255,.09);
+}
+.filter-pill.active,.filter-pill:hover{
+  background:rgba(255,115,20,.07);color:#ffb77d;
+  box-shadow:inset 0 -2px #ff7925,0 5px 21px rgba(255,94,0,.08);
+}
+.card{padding:12px;border-radius:19px;transition:transform .25s ease,box-shadow .25s ease}
+.card:hover{transform:translateY(-4px);box-shadow:0 24px 60px #0008,0 0 26px rgba(255,93,3,.1),inset 0 1px 0 rgba(255,151,68,.1)}
+.card-media{border-radius:15px;background:radial-gradient(circle at 60% 49%,rgba(255,110,22,.2),transparent 62%),#100e0c}
+.card-media img{filter:saturate(.81)}
+.card-body{padding:18px 10px 10px}
+.card-top .badge{border-radius:8px}
+.badge.ok,.badge.hot{background:rgba(255,108,22,.09);color:#ffc397}
+.card-data .item,.meta-grid .box,.checkout-summary .box{border-radius:13px;background:rgba(255,119,19,.045)}
+.card-data strong,.card-price,.meta-grid strong{color:#ffe0c7}
+.progress{height:5px;background:rgba(255,150,44,.09)}
+.progress span{background:linear-gradient(90deg,#e64b0a,#ff9a32);box-shadow:0 0 16px rgba(255,104,0,.7)}
+.simple-link,.back-link{color:#ffbf8a}
+.how-card .step{background:rgba(255,112,24,.11);color:#ffaf73;border-radius:11px}
+.detail-main-image{border-radius:18px;background:radial-gradient(circle at 62% 46%,rgba(255,96,12,.24),transparent 62%),#110e0b}
+.detail-main-image img{filter:saturate(.78)}
+.selected-tag{border-radius:10px;background:rgba(255,115,20,.16);color:#ffbe8c}
+.numbers-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.number{
+  border:0;border-radius:9px;
+  background:rgba(255,115,30,.06);color:#f2e9df;
+  box-shadow:inset 0 -1px rgba(255,134,38,.16);
+}
+.number:hover{background:rgba(255,121,25,.18);box-shadow:inset 0 -2px #ff871f,0 0 17px rgba(255,99,2,.14)}
+.number.selected{background:rgba(255,109,15,.23);color:#fff;box-shadow:inset 0 -2px #ff8b27,0 0 21px rgba(255,92,0,.28)}
+.number.blocked{background:rgba(255,255,255,.025);opacity:.34}
+.inline-note{background:rgba(255,116,26,.055);border-radius:12px}
+.sidebar a{border-radius:10px;background:transparent;color:#d9c8b8}
+.sidebar a.active,.sidebar a:hover{color:#ffbd89;background:rgba(255,110,19,.075);box-shadow:inset 0 -1px rgba(255,114,18,.4)}
+.data-table th,.data-table td{border-color:rgba(255,126,19,.095)}
+.field input,.field textarea,.field select{border:0;border-radius:11px;background:rgba(255,255,255,.04);color:#f7ece5;box-shadow:inset 0 -1px rgba(255,130,34,.18)}
+.field input:focus,.field textarea:focus,.field select:focus{outline:2px solid rgba(255,136,33,.56);outline-offset:1px}
+.field select option{background:#16110e}
+.toast{background:rgba(18,13,9,.95);border:0;box-shadow:0 10px 40px #0009,inset 0 -1px #ff7620}
+.site-footer{background:#080807a8;border-color:rgba(255,114,18,.09)}
+.footer-grid span,.footer-grid p,.footer-grid a{color:var(--muted)}
+.footer-grid a:hover{color:#ffb57b}
+.footer-bottom{border-color:rgba(255,119,20,.095)}
+@media(max-width:1100px){.hero-grid{grid-template-columns:1fr}.hero-copy{padding:42px}}
+@media(max-width:820px){.main-nav{background:rgba(13,11,9,.97);border:0;box-shadow:0 20px 50px #000a}}
+@media(max-width:560px){
+ .hero-copy{padding:24px}.hero h1{font-size:clamp(2.55rem,12vw,4rem)}
+ .btn{width:100%;min-height:49px}
+ .card-grid{grid-template-columns:1fr}
+ .numbers-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .overlay-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .overlay-grid .stat{padding:9px}
+ .overlay-grid strong{font-size:.88rem}
+ .featured-overlay{padding:23px 16px}
+ .featured-overlay h3{font-size:1.6rem}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+/* Let the featured artwork fill the hero panel instead of leaving an empty bottom area. */
+.hero-panel{min-height:100%;}
+.hero-panel .featured-visual{flex:1;height:100%;min-height:490px;position:relative;isolation:isolate;}
+.hero-panel .featured-visual img{position:absolute;inset:0;height:100%;width:100%;object-fit:cover;}
+.hero-panel .featured-overlay{z-index:2;}
+</style>
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+  <div class="ambient ambient-c"></div>
+
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a href="#inicio" class="brand" aria-label="Ir al inicio">
+        <span class="brand-mark">✦</span>
+        <span class="brand-copy">
+          <strong>[ TU MARCA ]</strong>
+          <small>Premios increíbles · experiencia digital</small>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="Navegación principal">
+        <a href="#inicio">Inicio</a>
+        <a href="#rifas">Explorar premios</a>
+        <a href="#como-funciona">Cómo participar</a>
+        <a href="#confianza">Confianza</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="#admin" class="ghost-link">Administración</a>
+        <button id="mobile-menu" class="menu-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div>
+        <div class="brand footer-brand">
+          <span class="brand-mark">✦</span>
+          <span class="brand-copy">
+            <strong>[ TU MARCA ]</strong>
+            <small>Plataforma digital de rifas</small>
+          </span>
+        </div>
+        <p>
+          Este sitio es una demostración visual del ecosistema digital. La operación comercial,
+          los pagos y la habilitación definitiva dependerán de la implementación regulatoria y técnica.
+        </p>
+      </div>
+      <div>
+        <strong>Explora</strong>
+        <a href="#rifas">Explorar premios</a>
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#confianza">Seguridad y confianza</a>
+      </div>
+      <div>
+        <strong>Soporte</strong>
+        <span>Atención al cliente</span>
+        <span>Estado de participación</span>
+        <span>Premios e historial</span>
+      </div>
+    </div>
+    <div class="shell footer-bottom">
+      <span>© 2026 · Marca por definir</span>
+      <span>Concepto visual V4 · datos ilustrativos · sin ventas habilitadas</span>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>(() => {
+  const app = document.getElementById('app');
+  const toastNode = document.getElementById('toast');
+  const menuBtn = document.getElementById('mobile-menu');
+  const nav = document.querySelector('.main-nav');
+  const draftKey = 'plataforma-rifas-v3-drafts';
+  const reserveKey = 'plataforma-rifas-v3-reserves';
+
+  const raffles = [
+    {
+      id: 'moto-01',
+      name: 'Yamaha MT-03 2026',
+      category: 'moto',
+      badge: 'Favorita',
+      badgeClass: 'hot',
+      image: 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%201000%20640%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22bg%22%3E%3Cstop%20stop-color%3D%22%23273d5c%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23101c2b%22/%3E%3C/radialGradient%3E%3ClinearGradient%20id%3D%22metal%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23e6eef5%22/%3E%3Cstop%20offset%3D%22.45%22%20stop-color%3D%22%238497aa%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23d9e4e9%22/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%22gold%22%3E%3Cstop%20stop-color%3D%22%23f8d88d%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a87838%22/%3E%3C/linearGradient%3E%3Cfilter%20id%3D%22shadow%22%3E%3CfeGaussianBlur%20stdDeviation%3D%2219%22/%3E%3C/filter%3E%3C/defs%3E%3Crect%20width%3D%221000%22%20height%3D%22640%22%20fill%3D%22url%28%23bg%29%22/%3E%3Cg%20opacity%3D%22.23%22%20stroke%3D%22%2391a7bd%22%20stroke-width%3D%221%22%3E%3Cpath%20d%3D%22M0%20480H1000M0%20535H1000M0%20595H1000M70%200V640M250%200V640M430%200V640M610%200V640M790%200V640M970%200V640%22/%3E%3C/g%3E%3Cellipse%20cx%3D%22510%22%20cy%3D%22538%22%20rx%3D%22370%22%20ry%3D%2238%22%20fill%3D%22%23000%22%20opacity%3D%22.6%22%20filter%3D%22url%28%23shadow%29%22/%3E%3Cg%20transform%3D%22translate%2835%2033%29%22%3E%3Ccircle%20cx%3D%22242%22%20cy%3D%22463%22%20r%3D%22112%22%20fill%3D%22%230b1017%22%20stroke%3D%22%23b8c1c6%22%20stroke-width%3D%2214%22/%3E%3Ccircle%20cx%3D%22242%22%20cy%3D%22463%22%20r%3D%2275%22%20fill%3D%22%23111c28%22%20stroke%3D%22%23415669%22%20stroke-width%3D%2217%22/%3E%3Ccircle%20cx%3D%22242%22%20cy%3D%22463%22%20r%3D%2227%22%20fill%3D%22%23a7b7c7%22/%3E%3Ccircle%20cx%3D%22771%22%20cy%3D%22463%22%20r%3D%22112%22%20fill%3D%22%230b1017%22%20stroke%3D%22%23b8c1c6%22%20stroke-width%3D%2214%22/%3E%3Ccircle%20cx%3D%22771%22%20cy%3D%22463%22%20r%3D%2275%22%20fill%3D%22%23111c28%22%20stroke%3D%22%23415669%22%20stroke-width%3D%2217%22/%3E%3Ccircle%20cx%3D%22771%22%20cy%3D%22463%22%20r%3D%2227%22%20fill%3D%22%23a7b7c7%22/%3E%3Cg%20stroke%3D%22%23718597%22%20stroke-width%3D%228%22%20opacity%3D%22.85%22%3E%3Cpath%20d%3D%22M242%20388v150M167%20463h150M189%20410l106%20106M189%20516l106-106M771%20388v150M696%20463h150M718%20410l106%20106M718%20516l106-106%22/%3E%3C/g%3E%3Cpath%20d%3D%22M247%20463l142-147%20148%2018%2088%20130H247z%22%20fill%3D%22none%22%20stroke%3D%22url%28%23metal%29%22%20stroke-width%3D%2227%22%20stroke-linejoin%3D%22round%22/%3E%3Cpath%20d%3D%22M364%20303q64-112%20187-92l100%2081-48%2068-83-31-105%203z%22%20fill%3D%22url%28%23gold%29%22/%3E%3Cpath%20d%3D%22M391%20311q67-69%20150-51l67%2043-33%2021-139-2z%22%20fill%3D%22%23172438%22/%3E%3Cpath%20d%3D%22M575%20325l88-65%2075%2024-48%2032-69%2048z%22%20fill%3D%22%23e9edf1%22/%3E%3Cpath%20d%3D%22M644%20267l93-30%2053%2030-70%2016z%22%20fill%3D%22%23121b27%22/%3E%3Cpath%20d%3D%22M341%20291q85-41%20160-15l-29%2028-116%2015z%22%20fill%3D%22%230d131d%22/%3E%3Cpath%20d%3D%22M533%20334l51%20139h-76l-51-111z%22%20fill%3D%22%23a0acb9%22/%3E%3Cpath%20d%3D%22M591%20359l98%20106h84%22%20fill%3D%22none%22%20stroke%3D%22%23c4cdd3%22%20stroke-width%3D%2219%22/%3E%3Cpath%20d%3D%22M744%20255l27-103%2024-2%2020%2022%22%20stroke%3D%22%23c4cdd3%22%20stroke-width%3D%2213%22%20stroke-linecap%3D%22round%22%20fill%3D%22none%22/%3E%3Cpath%20d%3D%22M782%20151h67%22%20stroke%3D%22%23f6d898%22%20stroke-width%3D%2215%22%20stroke-linecap%3D%22round%22/%3E%3Cpath%20d%3D%22M332%20288l-39-33-95%206%22%20fill%3D%22none%22%20stroke%3D%22%23aab7c5%22%20stroke-width%3D%2213%22%20stroke-linecap%3D%22round%22/%3E%3Cpath%20d%3D%22M190%20259h-47%22%20stroke%3D%22%23e7d39d%22%20stroke-width%3D%2216%22%20stroke-linecap%3D%22round%22/%3E%3Cpath%20d%3D%22M384%20370l-49%2070h178%22%20fill%3D%22none%22%20stroke%3D%22%23d7dee4%22%20stroke-width%3D%2217%22/%3E%3Cpath%20d%3D%22M649%20297l46%2043%2042-13%22%20fill%3D%22none%22%20stroke%3D%22%23eacb82%22%20stroke-width%3D%228%22/%3E%3Cpath%20d%3D%22M408%20320l50%201%22%20stroke%3D%22%23f6e7b2%22%20stroke-width%3D%227%22/%3E%3C/g%3E%3Ctext%20x%3D%2265%22%20y%3D%2285%22%20fill%3D%22%23e6be76%22%20font-size%3D%2218%22%20font-family%3D%22Arial%22%20letter-spacing%3D%229%22%3EEDICI%C3%93N%20PREMIOS%3C/text%3E%3Ccircle%20cx%3D%22890%22%20cy%3D%2290%22%20r%3D%2246%22%20stroke%3D%22%23d5b675%22%20fill%3D%22none%22%20opacity%3D%22.28%22/%3E%3C/svg%3E%0A',
+      price: 25000,
+      total: 10000,
+      soldPercent: 67,
+      drawDate: '28 de diciembre de 2026',
+      winnerDate: '8:00 p. m.',
+      desc: 'Una motocicleta deportiva ideal para ciudad y carretera, con diseño agresivo, excelente maniobrabilidad y estilo premium.',
+      legal: 'Rifa en fase de configuración comercial. Datos visuales de demostración.',
+      highlights: ['Factura y garantía del premio', 'Atención al cliente', 'Selección de números en línea'],
+    },
+    {
+      id: 'auto-02',
+      name: 'Mazda 2 Grand Touring',
+      category: 'auto',
+      badge: 'Nuevo',
+      badgeClass: 'ok',
+      image: 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20900%20600%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22b%22%3E%3Cstop%20stop-color%3D%22%2322434f%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2310232e%22/%3E%3C/radialGradient%3E%3ClinearGradient%20id%3D%22c%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23faf8ed%22/%3E%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%239eaeae%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23e8e5d7%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22900%22%20height%3D%22600%22%20fill%3D%22url%28%23b%29%22/%3E%3Ccircle%20cx%3D%22700%22%20cy%3D%22170%22%20r%3D%22170%22%20fill%3D%22%238bc8c6%22%20opacity%3D%22.05%22/%3E%3Cellipse%20cx%3D%22470%22%20cy%3D%22468%22%20rx%3D%22352%22%20ry%3D%2230%22%20fill%3D%22%2303070c%22%20opacity%3D%22.4%22/%3E%3Cpath%20d%3D%22M115%20337l83-30%20100-103q27-25%2086-25h175q46%200%2081%2026l83%2096%2060%2027q34%2014%2035%2058v46H100v-50q0-28%2015-45z%22%20fill%3D%22url%28%23c%29%22%20stroke%3D%22%23829598%22%20stroke-width%3D%225%22/%3E%3Cpath%20d%3D%22M298%20289l65-77h191l70%2077z%22%20fill%3D%22%2316303e%22/%3E%3Cpath%20d%3D%22M481%20211v78%22%20stroke%3D%22%23b9c6c4%22%20stroke-width%3D%227%22/%3E%3Cpath%20d%3D%22M126%20350h648%22%20stroke%3D%22%23e4efed%22%20opacity%3D%22.5%22%20stroke-width%3D%226%22/%3E%3Ccircle%20cx%3D%22269%22%20cy%3D%22430%22%20r%3D%2281%22%20fill%3D%22%230a1119%22/%3E%3Ccircle%20cx%3D%22269%22%20cy%3D%22430%22%20r%3D%2249%22%20fill%3D%22%23c6d2d2%22/%3E%3Ccircle%20cx%3D%22269%22%20cy%3D%22430%22%20r%3D%2224%22%20fill%3D%22%23768b90%22/%3E%3Ccircle%20cx%3D%22674%22%20cy%3D%22430%22%20r%3D%2281%22%20fill%3D%22%230a1119%22/%3E%3Ccircle%20cx%3D%22674%22%20cy%3D%22430%22%20r%3D%2249%22%20fill%3D%22%23c6d2d2%22/%3E%3Ccircle%20cx%3D%22674%22%20cy%3D%22430%22%20r%3D%2224%22%20fill%3D%22%23768b90%22/%3E%3Cpath%20d%3D%22M120%20356h67v36h-77M732%20356h70v37h-64%22%20fill%3D%22%23ffdb93%22/%3E%3Cpath%20d%3D%22M382%20337h79%22%20stroke%3D%22%237e9295%22%20stroke-width%3D%226%22/%3E%3Ctext%20x%3D%2246%22%20y%3D%2273%22%20fill%3D%22%23e6c785%22%20font-family%3D%22Arial%22%20font-size%3D%2219%22%20letter-spacing%3D%227%22%3EGRAN%20PREMIO%3C/text%3E%3C/svg%3E%0A',
+      price: 50000,
+      total: 15000,
+      soldPercent: 42,
+      drawDate: '15 de enero de 2027',
+      winnerDate: '7:30 p. m.',
+      desc: 'Automóvil elegante, moderno y eficiente, pensado para quienes buscan comodidad, tecnología y diseño en un solo premio.',
+      legal: 'Visualización de producto. No corresponde a una campaña activa de venta.',
+      highlights: ['Premio principal de alto valor', 'Múltiples medios de pago', 'Historial de participación'],
+    },
+    {
+      id: 'tech-03',
+      name: 'Kit Tech Premium',
+      category: 'tecnologia',
+      badge: 'Popular',
+      badgeClass: 'ok',
+      image: 'data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20900%20600%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22bg%22%3E%3Cstop%20stop-color%3D%22%233e2c5d%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23151a32%22/%3E%3C/radialGradient%3E%3ClinearGradient%20id%3D%22phone%22%3E%3Cstop%20stop-color%3D%22%239c8bc2%22/%3E%3Cstop%20offset%3D%22.5%22%20stop-color%3D%22%23f9edf8%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%238f77b3%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22900%22%20height%3D%22600%22%20fill%3D%22url%28%23bg%29%22/%3E%3Ccircle%20cx%3D%22665%22%20cy%3D%22145%22%20r%3D%22180%22%20fill%3D%22%23c5a1ff%22%20opacity%3D%22.05%22/%3E%3Cellipse%20cx%3D%22440%22%20cy%3D%22504%22%20rx%3D%22245%22%20ry%3D%2222%22%20fill%3D%22%23000%22%20opacity%3D%22.2%22/%3E%3Cg%20transform%3D%22rotate%28-16%20450%20300%29%22%3E%3Crect%20x%3D%22310%22%20y%3D%2277%22%20width%3D%22284%22%20height%3D%22451%22%20rx%3D%2244%22%20fill%3D%22%23070a13%22%20stroke%3D%22url%28%23phone%29%22%20stroke-width%3D%2213%22/%3E%3Crect%20x%3D%22327%22%20y%3D%2295%22%20width%3D%22250%22%20height%3D%22414%22%20rx%3D%2230%22%20fill%3D%22%23191f48%22/%3E%3Ccircle%20cx%3D%22440%22%20cy%3D%22282%22%20r%3D%22110%22%20fill%3D%22%23846cba%22%20opacity%3D%22.5%22/%3E%3Ccircle%20cx%3D%22454%22%20cy%3D%22298%22%20r%3D%2282%22%20fill%3D%22%23d4c4f2%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M354%20436q105-220%20200-220%22%20stroke%3D%22%23b9a7e3%22%20stroke-width%3D%2224%22%20opacity%3D%22.4%22%20fill%3D%22none%22/%3E%3Crect%20x%3D%22401%22%20y%3D%22108%22%20width%3D%22105%22%20height%3D%2222%22%20rx%3D%2211%22%20fill%3D%22%23050913%22/%3E%3C/g%3E%3Cg%20transform%3D%22rotate%2813%20630%20290%29%22%3E%3Crect%20x%3D%22596%22%20y%3D%22180%22%20width%3D%22155%22%20height%3D%22238%22%20rx%3D%2229%22%20fill%3D%22%23bcb4ce%22/%3E%3Ccircle%20cx%3D%22638%22%20cy%3D%22221%22%20r%3D%2224%22%20fill%3D%22%233a3a58%22%20stroke%3D%22%23dcd7e5%22%20stroke-width%3D%226%22/%3E%3Ccircle%20cx%3D%22700%22%20cy%3D%22221%22%20r%3D%2224%22%20fill%3D%22%233a3a58%22%20stroke%3D%22%23dcd7e5%22%20stroke-width%3D%226%22/%3E%3Ccircle%20cx%3D%22640%22%20cy%3D%22280%22%20r%3D%2221%22%20fill%3D%22%233a3a58%22%20stroke%3D%22%23dcd7e5%22%20stroke-width%3D%226%22/%3E%3C/g%3E%3Ctext%20x%3D%2247%22%20y%3D%2274%22%20fill%3D%22%23dfbdfb%22%20font-family%3D%22Arial%22%20font-size%3D%2219%22%20letter-spacing%3D%227%22%3ETECNOLOG%C3%8DA%3C/text%3E%3C/svg%3E%0A',
+      price: 12000,
+      total: 8000,
+      soldPercent: 81,
+      drawDate: '12 de diciembre de 2026',
+      winnerDate: '6:00 p. m.',
+      desc: 'Incluye smartphone de alta gama, portátil, audífonos inalámbricos y smartwatch. Un combo tecnológico pensado para el día a día.',
+      legal: 'Contenido referencial para pruebas de experiencia de usuario.',
+      highlights: ['Acceso rápido desde celular', 'Boleta digital', 'Resumen de compra claro'],
+    }
+  ];
+
+  let filter = 'all';
+  let currentRaffle = raffles[0];
+  let selected = [];
+  let drafts = load(draftKey, []);
+  let reserves = load(reserveKey, []);
+
+  function load(key, fallback){ try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
+  function save(key, value){ try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch { toast('No se pudo guardar en este navegador'); return false; } }
+  function fmt(v){ return new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(v); }
+  function intFmt(v){ return new Intl.NumberFormat('es-CO').format(v); }
+  function toast(msg){ toastNode.textContent = msg; toastNode.classList.add('show'); clearTimeout(toastNode._t); toastNode._t = setTimeout(() => toastNode.classList.remove('show'), 2400); }
+  function route(){ return (location.hash || '#inicio').replace(/^#/, ''); }
+  function go(to){ location.hash = to; }
+  function esc(s){ return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m])); }
+  function isActive(h){ return route() === h || (h === 'inicio' && route() === ''); }
+
+  function pageHome(){
+    const featured = raffles[0];
+    return `
+      <section class="hero" id="inicio">
+        <div class="shell hero-grid">
+          <div class="hero-copy glass">
+            <div class="kicker">EXPERIENCIA DIGITAL · DEMOSTRACIÓN</div>
+            <h1>Grandes premios. <span>Una experiencia diferente.</span></h1>
+            <p>
+              Descubre premios de ejemplo, conoce cada detalle, revisa la fecha del sorteo y selecciona números
+              favoritos y visualiza una experiencia pensada para el cliente final: rápida, clara y confiable.
+            </p>
+            <div class="hero-actions">
+              <a class="btn primary" href="#rifas">Explorar premios →</a>
+              <a class="btn subtle" href="#detalle/${featured.id}">Ver premio destacado</a>
+            </div>
+            <div class="hero-tags">
+              <span>Selección de números en línea</span>
+              <span>Resumen de compra claro</span>
+              <span>Diseño optimizado para celular</span>
+            </div>
+          </div>
+
+          <div class="hero-panel glass">
+            <div class="featured-visual">
+              <img src="${featured.image}" alt="${esc(featured.name)}">
+              <div class="featured-overlay">
+                <small>PREMIO DESTACADO · SIMULACIÓN</small>
+                <h3>${esc(featured.name)}</h3>
+                <div class="overlay-grid">
+                  <div class="stat"><small>Precio por número</small><strong>${fmt(featured.price)}</strong></div>
+                  <div class="stat"><small>Avance demo</small><strong>${featured.soldPercent}%</strong></div>
+                  <div class="stat"><small>Sorteo</small><strong>${featured.drawDate}</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="rifas">
+        <div class="shell">
+          <div class="section-head">
+            <div>
+              <h2>Descubre los premios</h2>
+              <p>Una experiencia con imágenes, precios, fechas y selección de números. Todos los datos son ilustrativos, no son rifas autorizadas.</p>
+            </div>
+          </div>
+          <div class="catalog-filters">
+            ${[['all','Todas'],['moto','Motos'],['auto','Vehículos'],['tecnologia','Tecnología']].map(([k,v])=>`<button class="filter-pill ${filter===k?'active':''}" data-filter="${k}">${v}</button>`).join('')}
+          </div>
+          <div class="card-grid">
+            ${catalogCards()}
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="como-funciona">
+        <div class="shell">
+          <div class="section-head">
+            <div>
+              <h2>Cómo participa el cliente</h2>
+              <p>La experiencia está pensada para que cualquier usuario entienda rápidamente cómo entrar, elegir sus números y seguir el proceso.</p>
+            </div>
+          </div>
+          <div class="how-grid">
+            ${[
+              ['1','Explora las rifas','El usuario ve premios, valores y fechas con un diseño claro y visual.'],
+              ['2','Elige sus números','Selecciona varios números desde celular o computador.'],
+              ['3','Confirma su compra','Revisa resumen, datos y próximos pasos antes del pago.'],
+              ['4','Consulta su participación','Puede volver a ver sus números, boleta y estado.']
+            ].map(([n,t,d])=>`<article class="how-card glass"><div class="step">${n}</div><h3>${t}</h3><p>${d}</p></article>`).join('')}
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="confianza">
+        <div class="shell">
+          <div class="section-head">
+            <div>
+              <h2>Confianza para el usuario final</h2>
+              <p>Más allá del diseño, la plataforma debe transmitir seriedad, claridad y control de la información para que el cliente se sienta tranquilo al participar.</p>
+            </div>
+          </div>
+          <div class="trust-grid">
+            ${[
+              ['Información visible del premio','Fotos, descripción, condiciones, fecha del sorteo y valor por número en una sola vista.'],
+              ['Proceso de compra entendible','Resumen de selección, total calculado y próximos pasos antes del pago.'],
+              ['Comunicación y soporte','Estados de participación, seguimiento y atención para resolver dudas.']
+            ].map(([t,d])=>`<article class="trust-card glass"><h3>${t}</h3><p>${d}</p></article>`).join('')}
+          </div>
+          <div class="info-grid">
+            <article class="info-card glass"><h3>Diseño mobile first</h3><p>La navegación prioriza celulares porque la mayoría de clientes descubrirán y participarán desde redes o enlaces directos.</p></article>
+            <article class="info-card glass"><h3>Contenido orientado a conversión</h3><p>Los premios y llamadas a la acción tienen protagonismo visual, con menos ruido técnico y más enfoque comercial.</p></article>
+            <article class="info-card glass"><h3>Preparado para crecer</h3><p>La experiencia del cliente puede convivir con un panel administrativo robusto para gestión, reportes e integraciones futuras.</p></article>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function catalogCards(){
+    const visible = filter === 'all' ? raffles : raffles.filter(r => r.category === filter);
+    return visible.map(r => `
+      <article class="card glass">
+        <div class="card-media"><img src="${r.image}" alt="${esc(r.name)}"></div>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="badge ${r.badgeClass}">${r.badge}</span>
+            <span class="mini-chip">${categoryLabel(r.category)}</span>
+          </div>
+          <h3>${esc(r.name)}</h3>
+          <p>${esc(r.desc)}</p>
+          <div class="card-data">
+            <div class="item"><small>Precio</small><strong>${fmt(r.price)}</strong></div>
+            <div class="item"><small>Sorteo</small><strong>${r.drawDate}</strong></div>
+            <div class="item"><small>Números</small><strong>${intFmt(r.total)}</strong></div>
+            <div class="item"><small>Disponibilidad</small><strong>${100-r.soldPercent}%</strong></div>
+          </div>
+          <div class="progress"><span style="width:${r.soldPercent}%"></span></div>
+          <div class="card-footer">
+            <div><div class="card-price">${fmt(r.price)}</div><small class="muted">por número</small></div>
+            <a class="btn" href="#detalle/${r.id}">Ver y participar</a>
+          </div>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  function categoryLabel(k){ return ({moto:'Moto',auto:'Vehículo',tecnologia:'Tecnología'})[k] || 'Premio'; }
+
+  function pageDetail(id){
+    const r = raffles.find(x => x.id === id) || raffles[0];
+    if(currentRaffle.id !== r.id) selected = [];
+    currentRaffle = r;
+    const sold = Math.round(r.total * r.soldPercent / 100);
+    const available = r.total - sold;
+    const selectedPrice = selected.length * r.price;
+    const reservedCount = reserves.filter(x => x.raffleId === r.id).length;
+    const blocked = new Set(Array.from({length:12}, (_,i)=> (i+1)*3));
+
+    return `
+      <section class="detail-page">
+        <div class="shell">
+          <a href="#rifas" class="back-link">← Volver a los premios</a>
+          <div class="detail-grid">
+            <div class="detail-panel glass">
+              <div class="detail-main-image"><img src="${r.image}" alt="${esc(r.name)}"></div>
+              <div class="detail-copy">
+                <div class="meta-row">
+                  <span class="meta-pill">${categoryLabel(r.category)}</span>
+                  <span class="meta-pill">${r.badge}</span>
+                  <span class="meta-pill">Cliente final</span>
+                </div>
+                <h1>${esc(r.name)}</h1>
+                <p>${esc(r.desc)}</p>
+                <div class="meta-grid">
+                  <div class="box"><small>Precio por número</small><strong>${fmt(r.price)}</strong></div>
+                  <div class="box"><small>Fecha del sorteo</small><strong>${r.drawDate}</strong></div>
+                  <div class="box"><small>Hora</small><strong>${r.winnerDate}</strong></div>
+                  <div class="box"><small>Números totales</small><strong>${intFmt(r.total)}</strong></div>
+                  <div class="box"><small>Vendidos (demo)</small><strong>${intFmt(sold)}</strong></div>
+                  <div class="box"><small>Disponibles</small><strong>${intFmt(available)}</strong></div>
+                </div>
+                <div class="meta-row">
+                  ${r.highlights.map(h=>`<span class="meta-pill">${h}</span>`).join('')}
+                </div>
+                <div class="inline-note">${r.legal}</div>
+              </div>
+            </div>
+
+            <div style="display:grid; gap:24px;">
+              <div class="purchase-panel glass">
+                <h2>Resumen del cliente</h2>
+                <p>Selecciona números y conoce cómo se verá un resumen de compra. No hay pagos reales.</p>
+                <div class="checkout-summary">
+                  <div class="box"><small>Números elegidos</small><strong id="count">${selected.length}</strong></div>
+                  <div class="box"><small>Total estimado</small><strong id="total-price">${fmt(selectedPrice)}</strong></div>
+                </div>
+                <small class="muted">Números seleccionados</small>
+                <div id="selected-list" class="selected-list">
+                  ${selected.length ? selected.map(x=>`<span class="selected-tag">${String(x).padStart(4,'0')}</span>`).join('') : '<span class="empty-label">Aún no has seleccionado números.</span>'}
+                </div>
+                <div class="form-actions">
+                  <button class="btn primary" id="save-selection" ${selected.length ? '' : 'disabled'}>Guardar selección</button>
+                  <button class="btn subtle" id="simulate-checkout" ${selected.length ? '' : 'disabled'}>Continuar al pago</button>
+                </div>
+                <div class="inline-note" style="margin-top:16px">Selecciones guardadas localmente en esta demo: <strong>${reservedCount}</strong>. Los pagos reales aún no están integrados.</div>
+              </div>
+
+              <div class="numbers-panel glass">
+                <h2>Elige tus números</h2>
+                <p>Puedes seleccionar hasta cinco números para simular la experiencia de compra del cliente.</p>
+                <div class="numbers-toolbar">
+                  <span class="mini-chip">Máximo 5 números</span>
+                  <span class="mini-chip">Bloqueados = ya apartados</span>
+                </div>
+                <div class="numbers-grid">
+                  ${Array.from({length:20}, (_,i) => {
+                    const n = i + 1;
+                    const isBlocked = blocked.has(n);
+                    const isSelected = selected.includes(n);
+                    return `<button class="number ${isBlocked ? 'blocked' : isSelected ? 'selected' : ''}" data-num="${n}" ${isBlocked ? 'disabled' : ''}>${String(n).padStart(4,'0')}</button>`;
+                  }).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function pageAdmin(){
+    const totalRaffles = raffles.length + drafts.length;
+    return `
+      <section class="admin-page">
+        <div class="shell admin-shell">
+          <aside class="sidebar glass">
+            <strong>Portal administrativo</strong>
+            <a href="#admin" class="${isActive('admin') ? 'active' : ''}">Resumen</a>
+            <a href="#admin/rifas" class="${route()==='admin/rifas' ? 'active' : ''}">Rifas</a>
+            <a href="#admin/nueva" class="${route()==='admin/nueva' ? 'active' : ''}">Nueva rifa</a>
+            <a href="#admin/clientes" class="${route()==='admin/clientes' ? 'active' : ''}">Clientes</a>
+            <a href="#admin/pagos" class="${route()==='admin/pagos' ? 'active' : ''}">Pagos</a>
+          </aside>
+
+          <div class="admin-content">
+            <div class="admin-head glass">
+              <h2>Panel de administración</h2>
+              <p class="muted">Esta sección mantiene el ecosistema completo: experiencia del cliente por fuera, control del negocio por dentro.</p>
+            </div>
+            <div class="stat-grid">
+              <article class="stat-card glass"><small>Rifas visibles</small><strong>${raffles.length}</strong><span class="muted">catálogo demo</span></article>
+              <article class="stat-card glass"><small>Borradores locales</small><strong>${drafts.length}</strong><span class="muted">este navegador</span></article>
+              <article class="stat-card glass"><small>Módulos listos</small><strong>5</strong><span class="muted">frontend conceptual</span></article>
+              <article class="stat-card glass"><small>Ventas reales</small><strong>0</strong><span class="muted">desactivadas</span></article>
+            </div>
+            <div class="table-card glass">
+              <h3>Estado del prototipo</h3>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead><tr><th>Módulo</th><th>Estado</th><th>Detalle</th></tr></thead>
+                  <tbody>
+                    <tr><td>Portal cliente final</td><td>Listo</td><td>Catálogo, detalle y selección de números</td></tr>
+                    <tr><td>Estilo visual V3</td><td>Listo</td><td>Minimalista, futurista y glass</td></tr>
+                    <tr><td>Administración</td><td>Demo</td><td>Resumen, rifas, borradores y formularios</td></tr>
+                    <tr><td>Base de datos</td><td>Pendiente</td><td>Se integrará en la siguiente fase</td></tr>
+                    <tr><td>Pagos</td><td>Pendiente</td><td>No hay procesamiento real</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function pageAdminRaffles(){
+    const rows = [...drafts.map(d => ({...d, status:'Borrador local'})), ...raffles.map(r => ({...r, status:'Visible demo'}))];
+    return `
+      <section class="admin-page">
+        <div class="shell admin-shell">
+          ${sidebar('admin/rifas')}
+          <div class="admin-content">
+            <div class="admin-head glass"><h2>Rifas y premios</h2><p class="muted">Listado de rifas visibles en la demo y borradores guardados localmente.</p></div>
+            <div class="table-card glass">
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead><tr><th>Nombre</th><th>Precio</th><th>Cantidad</th><th>Estado</th><th>Acción</th></tr></thead>
+                  <tbody>
+                    ${rows.map(r=>`<tr><td><strong>${esc(r.name)}</strong><br><span class="muted">${categoryLabel(r.category)}</span></td><td>${fmt(r.price)}</td><td>${intFmt(r.total)}</td><td>${esc(r.status)}</td><td>${String(r.id).startsWith('draft-') ? `<button class="btn subtle" data-remove="${r.id}">Eliminar</button>` : `<a class="simple-link" href="#detalle/${r.id}">Ver</a>`}</td></tr>`).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function pageAdminNew(){
+    return `
+      <section class="admin-page">
+        <div class="shell admin-shell">
+          ${sidebar('admin/nueva')}
+          <div class="admin-content">
+            <div class="admin-head glass"><h2>Crear borrador</h2><p class="muted">Este formulario permite construir nuevas campañas de manera local mientras definimos la estructura real del sistema.</p></div>
+            <div class="form-card glass">
+              <form id="draft-form">
+                <div class="form-grid">
+                  <div class="field full"><label>Nombre de la rifa</label><input name="name" required placeholder="Ej. BMW G 310 R Edición Especial"></div>
+                  <div class="field"><label>Categoría</label><select name="category"><option value="moto">Moto</option><option value="auto">Vehículo</option><option value="tecnologia">Tecnología</option></select></div>
+                  <div class="field"><label>Fecha del sorteo</label><input type="date" name="draw"></div>
+                  <div class="field"><label>Precio por número</label><input type="number" name="price" required placeholder="25000"></div>
+                  <div class="field"><label>Cantidad de números</label><input type="number" name="total" required placeholder="10000"></div>
+                  <div class="field full"><label>Descripción</label><textarea name="desc" required placeholder="Describe el premio y la experiencia para el usuario final..."></textarea></div>
+                </div>
+                <div class="form-actions">
+                  <a href="#admin/rifas" class="btn subtle">Cancelar</a>
+                  <button class="btn primary" type="submit">Guardar borrador</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function sidebar(active){
+    return `
+      <aside class="sidebar glass">
+        <strong>Portal administrativo</strong>
+        <a href="#admin" class="${active==='admin' ? 'active' : ''}">Resumen</a>
+        <a href="#admin/rifas" class="${active==='admin/rifas' ? 'active' : ''}">Rifas</a>
+        <a href="#admin/nueva" class="${active==='admin/nueva' ? 'active' : ''}">Nueva rifa</a>
+        <a href="#admin/clientes" class="${active==='admin/clientes' ? 'active' : ''}">Clientes</a>
+        <a href="#admin/pagos" class="${active==='admin/pagos' ? 'active' : ''}">Pagos</a>
+      </aside>
+    `;
+  }
+
+  function pagePlaceholder(kind){
+    const map = kind === 'clientes'
+      ? ['Clientes','Aquí irá el historial de participantes, compras, datos y seguimiento de soporte.']
+      : ['Pagos','Aquí irá la conciliación, estados de transacciones y reportes de recaudo.'];
+    return `
+      <section class="admin-page">
+        <div class="shell admin-shell">
+          ${sidebar(`admin/${kind}`)}
+          <div class="admin-content">
+            <div class="empty-state glass">
+              <h2>${map[0]}</h2>
+              <p>${map[1]}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function render(){
+    const r = route();
+    let html = '';
+    if(r === 'inicio' || r === '') html = pageHome();
+    else if(r === 'rifas') html = pageHome();
+    else if(r.startsWith('detalle/')) html = pageDetail(r.replace('detalle/',''));
+    else if(r === 'admin') html = pageAdmin();
+    else if(r === 'admin/rifas') html = pageAdminRaffles();
+    else if(r === 'admin/nueva') html = pageAdminNew();
+    else if(r === 'admin/clientes') html = pagePlaceholder('clientes');
+    else if(r === 'admin/pagos') html = pagePlaceholder('pagos');
+    else if(r === 'como-funciona' || r === 'confianza') html = pageHome();
+    else html = pageHome();
+    app.innerHTML = html;
+    requestAnimationFrame(() => {
+      if(r === 'como-funciona' || r === 'confianza' || r === 'rifas') {
+        const sectionId = r === 'rifas' ? 'rifas' : r;
+        document.getElementById(sectionId)?.scrollIntoView({behavior:'smooth'});
+      } else {
+        window.scrollTo({top:0, behavior:'instant'});
+      }
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    const filterBtn = e.target.closest('[data-filter]');
+    if(filterBtn){ filter = filterBtn.dataset.filter; render(); return; }
+
+    const num = e.target.closest('[data-num]');
+    if(num){
+      const value = Number(num.dataset.num);
+      if(selected.includes(value)) selected = selected.filter(v => v !== value);
+      else if(selected.length < 5) selected = [...selected, value].sort((a,b)=>a-b);
+      else return toast('Puedes elegir máximo cinco números');
+      document.querySelectorAll('[data-num]').forEach(button => button.classList.toggle('selected', selected.includes(Number(button.dataset.num))));
+      const count = document.getElementById('count');
+      const total = document.getElementById('total-price');
+      const list = document.getElementById('selected-list');
+      if(count) count.textContent = selected.length;
+      if(total) total.textContent = fmt(selected.length * currentRaffle.price);
+      if(list) list.innerHTML = selected.length
+        ? selected.map(n => `<span class="selected-tag">${String(n).padStart(4,'0')}</span>`).join('')
+        : '<span class="empty-label">Aún no has seleccionado números.</span>';
+      ['save-selection','simulate-checkout'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=!selected.length;});
+      return;
+    }
+
+    const remove = e.target.closest('[data-remove]');
+    if(remove){
+      drafts = drafts.filter(x => x.id !== remove.dataset.remove);
+      save(draftKey, drafts);
+      render();
+      toast('Borrador eliminado');
+      return;
+    }
+
+    const saveSelection = e.target.closest('#save-selection');
+    if(saveSelection){
+      if(!selected.length) return;
+      reserves.unshift({ raffleId: currentRaffle.id, numbers:[...selected], createdAt: new Date().toISOString() });
+      save(reserveKey, reserves);
+      toast('Selección guardada en esta demo');
+      return;
+    }
+
+    const simulate = e.target.closest('#simulate-checkout');
+    if(simulate){
+      if(!selected.length) return;
+      toast('Checkout demo: siguiente fase conectará datos, login y pagos');
+      return;
+    }
+  });
+
+  document.addEventListener('submit', (e) => {
+    if(e.target.id !== 'draft-form') return;
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const name = String(fd.get('name') || '').trim();
+    const desc = String(fd.get('desc') || '').trim();
+    const category = String(fd.get('category') || 'moto');
+    const price = Number(fd.get('price') || 0);
+    const total = Number(fd.get('total') || 0);
+    const draw = String(fd.get('draw') || '');
